@@ -32,12 +32,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. A responder user is associated with a specific unit (e.g., AMB-01); the unit record stores GPS coordinates as geography type with a GiST spatial index
   4. Creating an incident populates all lifecycle fields (timestamps, vitals JSONB, assessment_tags, coordinates geography) and appends an entry to the incident timeline audit log
   5. The 86 Butuan City barangay boundary polygons are seeded and a point-in-polygon query correctly identifies which barangay contains a given coordinate
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
-- [ ] 01-03: TBD
+- [ ] 01-01-PLAN.md -- Database foundation: PostgreSQL/PostGIS, migrations, models, enums, factories, seeders, RBAC middleware/gates
+- [ ] 01-02-PLAN.md -- Admin panel: User/role CRUD, incident type management, barangay metadata editing
+- [ ] 01-03-PLAN.md -- Role-based navigation: sidebar per role, Inertia shared props, placeholder pages
 
 ### Phase 2: Intake
 **Goal**: Dispatchers can receive incident reports from multiple channels, triage them with auto-suggested priority, geocode locations to barangay boundaries, and view a priority-ordered dispatch queue
@@ -146,7 +146,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/3 | Not started | - |
+| 1. Foundation | 0/3 | Planning complete | - |
 | 2. Intake | 0/3 | Not started | - |
 | 3. Real-Time Infrastructure | 0/2 | Not started | - |
 | 4. Dispatch Console | 0/4 | Not started | - |
