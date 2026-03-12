@@ -3,6 +3,7 @@
 use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\IoTWebhookController;
 use App\Http\Controllers\SmsWebhookController;
+use App\Http\Controllers\StateSyncController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
@@ -40,6 +41,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('api/priority/suggest', [IncidentController::class, 'suggestPriority'])->name('api.priority.suggest');
         Route::get('api/geocoding/search', [IncidentController::class, 'geocodingSearch'])->name('api.geocoding.search');
+
+        Route::get('state-sync', StateSyncController::class)->name('state-sync');
     });
 
     // Messages -- accessible to ALL communication roles

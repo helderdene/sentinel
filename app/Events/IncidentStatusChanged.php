@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Events;
+
+use App\Enums\IncidentStatus;
+use App\Models\Incident;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
+
+class IncidentStatusChanged implements ShouldBroadcast, ShouldDispatchAfterCommit
+{
+    use Dispatchable, InteractsWithSockets, SerializesModels;
+
+    public function __construct(
+        public Incident $incident,
+        public IncidentStatus $oldStatus,
+    ) {}
+
+    /**
+     * @return array<int, PrivateChannel>
+     */
+    public function broadcastOn(): array
+    {
+        return [
+            new PrivateChannel('dispatch.incidents'),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function broadcastWith(): array
+    {
+        return [
+            'id' => $this->incident->id,
+            'incident_no' => $this->incident->incident_no,
+            'old_status' => $this->oldStatus->value,
+            'new_status' => $this->incident->status->value,
+            'priority' => $this->incident->priority->value,
+        ];
+    }
+}

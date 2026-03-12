@@ -6,6 +6,7 @@ use App\Contracts\GeocodingServiceInterface;
 use App\Enums\IncidentChannel;
 use App\Enums\IncidentPriority;
 use App\Enums\IncidentStatus;
+use App\Events\IncidentCreated;
 use App\Http\Requests\StoreIncidentRequest;
 use App\Models\Incident;
 use App\Models\IncidentTimeline;
@@ -109,6 +110,9 @@ class IncidentController extends Controller
         }
 
         $incident = Incident::query()->create($data);
+
+        $incident->load('incidentType', 'barangay');
+        IncidentCreated::dispatch($incident);
 
         $incidentType = IncidentType::find($validated['incident_type_id']);
 
