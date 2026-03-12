@@ -94,3 +94,35 @@ export interface IncidentForQueue {
     caller_name: string | null;
     created_at: string;
 }
+
+export interface IncidentCreatedPayload {
+    id: string;
+    incident_no: string;
+    priority: IncidentPriority;
+    status: IncidentStatus;
+    incident_type: string | null;
+    location_text: string;
+    barangay: string | null;
+    channel: IncidentChannel;
+    created_at: string;
+}
+
+export interface IncidentStatusChangedPayload {
+    id: string;
+    incident_no: string;
+    old_status: IncidentStatus;
+    new_status: IncidentStatus;
+    priority: IncidentPriority;
+}
+
+export interface StateSyncResponse {
+    incidents: IncidentForQueue[];
+    channelCounts: Record<string, number>;
+    units: Array<{
+        id: string;
+        callsign: string;
+        type: string;
+        status: string;
+        coordinates: { lat: number; lng: number } | null;
+    }>;
+}
