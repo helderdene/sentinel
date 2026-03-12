@@ -19,6 +19,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 5: Responder Workflow** - Mobile-optimized assignment receipt, status transitions, GPS tracking, scene documentation, messaging
 - [ ] **Phase 6: Integration Layer** - Stubbed external connectors (SMS, geocoding, directions, weather, hospital, government agencies)
 - [ ] **Phase 7: Analytics** - KPI dashboard, incident heatmap, DILG/NDRRMC/quarterly/annual compliance reports
+- [ ] **Phase 8: Operator Role & Intake Station** - 5th role (operator), TRIAGED status, full-screen intake station UI with design system
 
 ## Phase Details
 
@@ -139,10 +140,31 @@ Plans:
 - [ ] 07-02: TBD
 - [ ] 07-03: TBD
 
+### Phase 8: Implement operator role and intake layer UI
+**Goal**: Operators can log in and land directly on a full-screen intake station where they triage incoming incidents from a live feed, classify them with priority and location, and push them to the dispatch queue -- all in real-time with WebSocket updates
+**Depends on**: Phase 2, Phase 3
+**Requirements**: OP-01, OP-02, OP-03, OP-04, OP-05, OP-06, OP-07, OP-08, OP-09, OP-10, OP-11, OP-12, OP-13, OP-14, OP-15
+**Success Criteria** (what must be TRUE):
+  1. Operator role exists as 5th role with intake-specific gates; operator login redirects to /intake (not dashboard)
+  2. TRIAGED status exists between PENDING and DISPATCHED; triage form transitions incidents from PENDING to TRIAGED
+  3. Full-screen intake station renders three columns: channel feed (left, 296px), triage form (center, flex), dispatch queue (right, 304px)
+  4. Left panel shows PENDING incidents arriving via WebSocket with filter tabs (All/Pending/Triaged)
+  5. Clicking a feed card pre-fills the center triage form; submitting transitions to TRIAGED and moves to dispatch queue
+  6. Supervisor/admin see Override Priority, Recall, and Session Log; operator does not
+  7. Design system adopted app-wide: DM Sans + Space Mono fonts, color tokens, dark mode
+**Plans**: 4 plans
+
+Plans:
+- [ ] 08-01-PLAN.md -- Backend foundation: Operator role, TRIAGED status, 6 intake gates, IntakeStationController, triage endpoint, Fortify redirect, channel auth, tests
+- [ ] 08-02-PLAN.md -- Design system and layout shell: Tailwind tokens, fonts, IntakeLayout, IntakeTopbar, IntakeStatusbar, custom SVG icons, badge components
+- [ ] 08-03-PLAN.md -- Core intake workflow: IntakeStation page, ChannelFeed (left panel), TriageForm (center panel), composables, priority picker
+- [ ] 08-04-PLAN.md -- Dispatch queue and supervisor features: DispatchQueuePanel (right panel), SessionMetrics, PriorityBreakdown, Override/Recall, SessionLog, visual verification
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7
+Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
+(Phase 8 depends on Phases 2 and 3, can run before Phases 4-7)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -153,3 +175,4 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7
 | 5. Responder Workflow | 0/4 | Not started | - |
 | 6. Integration Layer | 0/3 | Not started | - |
 | 7. Analytics | 0/3 | Not started | - |
+| 8. Operator Role & Intake Station | 0/4 | Planning complete | - |
