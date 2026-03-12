@@ -13,7 +13,7 @@ IRMS transforms CDRRMO Butuan City's paper-based emergency workflow into a real-
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - PostgreSQL + PostGIS database, core data models, RBAC with 4 roles, barangay boundaries
-- [ ] **Phase 2: Intake** - Multi-channel incident triage, geocoding, priority classification, dispatch queue
+- [x] **Phase 2: Intake** - Multi-channel incident triage, geocoding, priority classification, dispatch queue
 - [ ] **Phase 3: Real-Time Infrastructure** - Laravel Reverb WebSocket server, broadcast events, channel auth, reconnection strategy
 - [ ] **Phase 4: Dispatch Console** - 2D MapLibre map with WebGL markers, unit assignment, proximity ranking, audio alerts, session metrics
 - [ ] **Phase 5: Responder Workflow** - Mobile-optimized assignment receipt, status transitions, GPS tracking, scene documentation, messaging
@@ -52,9 +52,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01-PLAN.md -- Backend services: IncidentChannel enum, service contracts (Geocoding, SMS), PrioritySuggestionService, BarangayLookupService, IncidentController with CRUD + triage form validation, routes, and tests
-- [ ] 02-02-PLAN.md -- Frontend UI: Combobox component, triage form (Create.vue), priority selector, dispatch queue (Queue.vue), incidents list (Index.vue), incident detail (Show.vue), channel monitor widget, sidebar navigation
-- [ ] 02-03-PLAN.md -- Webhook endpoints: IoT sensor webhook with HMAC-SHA256 validation, SMS inbound webhook with keyword classifier, channel monitor count tests
+- [x] 02-01-PLAN.md -- Backend services: IncidentChannel enum, service contracts (Geocoding, SMS), PrioritySuggestionService, BarangayLookupService, IncidentController with CRUD + triage form validation, routes, and tests
+- [x] 02-02-PLAN.md -- Frontend UI: Combobox component, triage form (Create.vue), priority selector, dispatch queue (Queue.vue), incidents list (Index.vue), incident detail (Show.vue), channel monitor widget, sidebar navigation
+- [x] 02-03-PLAN.md -- Webhook endpoints: IoT sensor webhook with HMAC-SHA256 validation, SMS inbound webhook with keyword classifier, channel monitor count tests
 
 ### Phase 3: Real-Time Infrastructure
 **Goal**: WebSocket infrastructure is operational so all subsequent layers can push and receive real-time updates without polling
@@ -147,7 +147,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete | 2026-03-12 |
-| 2. Intake | 1/3 | In Progress|  |
+| 2. Intake | 3/3 | Complete | 2026-03-13 |
 | 3. Real-Time Infrastructure | 0/2 | Not started | - |
 | 4. Dispatch Console | 0/4 | Not started | - |
 | 5. Responder Workflow | 0/4 | Not started | - |
