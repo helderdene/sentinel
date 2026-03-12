@@ -34,8 +34,8 @@ class UnitLocationUpdated implements ShouldBroadcast, ShouldDispatchAfterCommit
         return [
             'id' => $this->unit->id,
             'callsign' => $this->unit->callsign,
-            'latitude' => $this->unit->coordinates?->latitude,
-            'longitude' => $this->unit->coordinates?->longitude,
+            'latitude' => $this->unit->coordinates?->getLatitude(),
+            'longitude' => $this->unit->coordinates?->getLongitude(),
             'updated_at' => $this->unit->updated_at->toISOString(),
         ];
     }

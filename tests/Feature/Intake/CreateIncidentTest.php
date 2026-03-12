@@ -1,9 +1,14 @@
 <?php
 
-use App\Enums\IncidentChannel;
+use App\Events\IncidentCreated;
 use App\Models\Incident;
 use App\Models\IncidentType;
 use App\Models\User;
+use Illuminate\Support\Facades\Event;
+
+beforeEach(function () {
+    Event::fake([IncidentCreated::class]);
+});
 
 it('allows dispatcher to create incident with all required fields', function () {
     $dispatcher = User::factory()->dispatcher()->create();

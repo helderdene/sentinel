@@ -1,10 +1,16 @@
 <?php
 
+use App\Events\IncidentCreated;
 use App\Models\Barangay;
 use App\Models\Incident;
 use App\Models\IncidentType;
 use App\Models\User;
 use Database\Seeders\BarangaySeeder;
+use Illuminate\Support\Facades\Event;
+
+beforeEach(function () {
+    Event::fake([IncidentCreated::class]);
+});
 
 it('auto-assigns barangay from coordinates via PostGIS ST_Contains', function () {
     $this->seed(BarangaySeeder::class);
