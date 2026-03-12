@@ -49,12 +49,12 @@ Plans:
   3. Typing a location address triggers geocoding (stubbed Mapbox) and auto-populates coordinates; PostGIS ST_Contains assigns the correct barangay from those coordinates
   4. The dispatch queue displays all triaged incidents ordered by priority (P1 first) then FIFO; new incidents appear without page refresh
   5. IoT sensor webhook and SMS inbound webhook endpoints accept payloads and auto-create incidents (both using stubbed integrations with HMAC validation for IoT)
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
-- [ ] 02-03: TBD
+- [ ] 02-01-PLAN.md -- Backend services: IncidentChannel enum, service contracts (Geocoding, SMS), PrioritySuggestionService, BarangayLookupService, IncidentController with CRUD + triage form validation, routes, and tests
+- [ ] 02-02-PLAN.md -- Frontend UI: Combobox component, triage form (Create.vue), priority selector, dispatch queue (Queue.vue), incidents list (Index.vue), incident detail (Show.vue), channel monitor widget, sidebar navigation
+- [ ] 02-03-PLAN.md -- Webhook endpoints: IoT sensor webhook with HMAC-SHA256 validation, SMS inbound webhook with keyword classifier, channel monitor count tests
 
 ### Phase 3: Real-Time Infrastructure
 **Goal**: WebSocket infrastructure is operational so all subsequent layers can push and receive real-time updates without polling
