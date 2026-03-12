@@ -1,13 +1,44 @@
 <script setup lang="ts">
+import { useEcho } from '@laravel/echo-vue';
 import { Cpu, Globe, MessageSquare, Phone, Radio } from 'lucide-vue-next';
 import type { Component } from 'vue';
+import { ref, watch } from 'vue';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import type { IncidentChannel } from '@/types/incident';
+import type { IncidentChannel, IncidentCreatedPayload } from '@/types/incident';
 
-defineProps<{
-    channelCounts: Record<string, number>;
-}>();
+const props = withDefaults(
+    defineProps<{
+        channelCounts: Record<string, number>;
+        realtime?: boolean;
+    }>(),
+    {
+        realtime: false,
+    },
+);
+
+const localCounts = ref<Record<string, number>>({
+    ...props.channelCounts,
+});
+
+watch(
+    () => props.channelCounts,
+    (newCounts) => {
+        localCounts.value = { ...newCounts };
+    },
+    { deep: true },
+);
+
+if (props.realtime) {
+    useEcho<IncidentCreatedPayload>(
+        'dispatch.incidents',
+        '.IncidentCreated',
+        (e) => {
+            localCounts.value[e.channel] =
+                (localCounts.value[e.channel] ?? 0) + 1;
+        },
+    );
+}
 
 type ChannelConfig = {
     key: IncidentChannel;
@@ -41,7 +72,7 @@ function getCount(counts: Record<string, number>, key: string): number {
                 :key="ch.key"
                 :class="[
                     'flex flex-col items-center justify-center py-4',
-                    getCount(channelCounts, ch.key) === 0 ? 'opacity-50' : '',
+                    getCount(localCounts, ch.key) === 0 ? 'opacity-50' : '',
                 ]"
             >
                 <CardHeader class="p-0 pb-2">
@@ -56,12 +87,12 @@ function getCount(counts: Record<string, number>, key: string): number {
                     </CardTitle>
                     <Badge
                         :variant="
-                            getCount(channelCounts, ch.key) > 0
+                            getCount(localCounts, ch.key) > 0
                                 ? 'default'
                                 : 'secondary'
                         "
                     >
-                        {{ getCount(channelCounts, ch.key) }}
+                        {{ getCount(localCounts, ch.key) }}
                     </Badge>
                 </CardContent>
             </Card>

@@ -72,6 +72,7 @@ const roleLabels: Record<UserRole, string> = {
             <ChannelMonitor
                 v-if="showChannelMonitor && channelCounts"
                 :channel-counts="channelCounts"
+                realtime
             />
 
             <!-- Admin Dashboard -->

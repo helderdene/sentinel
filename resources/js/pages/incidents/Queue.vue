@@ -1,18 +1,23 @@
 <script setup lang="ts">
-import { Head, Link, router, usePoll } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { useEcho } from '@laravel/echo-vue';
 import { Plus } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import Heading from '@/components/Heading.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { playAlertSound, useWebSocket } from '@/composables/useWebSocket';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
 import { create, show } from '@/routes/incidents';
 import type { BreadcrumbItem } from '@/types';
 import type {
     IncidentChannel,
+    IncidentCreatedPayload,
     IncidentForQueue,
     IncidentPriority,
+    IncidentStatusChangedPayload,
+    IncidentType,
 } from '@/types/incident';
 
 const props = defineProps<{
@@ -20,7 +25,11 @@ const props = defineProps<{
     channelCounts: Record<string, number>;
 }>();
 
-usePoll(10000, { only: ['incidents', 'channelCounts'] });
+const localIncidents = ref<IncidentForQueue[]>([...props.incidents]);
+const localChannelCounts = ref<Record<string, number>>({
+    ...props.channelCounts,
+});
+const highlightedId = ref<string | null>(null);
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: dashboard() },
@@ -49,7 +58,89 @@ const channelLabels: Record<IncidentChannel, string> = {
     radio: 'Radio',
 };
 
-const hasIncidents = computed(() => props.incidents.length > 0);
+const priorityOrder: Record<IncidentPriority, number> = {
+    P1: 1,
+    P2: 2,
+    P3: 3,
+    P4: 4,
+};
+
+const hasIncidents = computed(() => localIncidents.value.length > 0);
+
+useEcho<IncidentCreatedPayload>(
+    'dispatch.incidents',
+    '.IncidentCreated',
+    (e) => {
+        const newIncident: IncidentForQueue = {
+            id: e.id,
+            incident_no: e.incident_no,
+            incident_type: {
+                name: e.incident_type ?? '',
+            } as IncidentType,
+            priority: e.priority,
+            status: e.status,
+            channel: e.channel,
+            location_text: e.location_text,
+            barangay: e.barangay ? { id: 0, name: e.barangay } : null,
+            caller_name: null,
+            created_at: e.created_at,
+        };
+
+        const insertIndex = localIncidents.value.findIndex(
+            (inc) =>
+                priorityOrder[inc.priority] >
+                priorityOrder[newIncident.priority],
+        );
+
+        if (insertIndex === -1) {
+            localIncidents.value.push(newIncident);
+        } else {
+            localIncidents.value.splice(insertIndex, 0, newIncident);
+        }
+
+        highlightedId.value = newIncident.id;
+        setTimeout(() => {
+            highlightedId.value = null;
+        }, 3000);
+
+        localChannelCounts.value[e.channel] =
+            (localChannelCounts.value[e.channel] ?? 0) + 1;
+
+        if (e.priority === 'P1' || e.priority === 'P2') {
+            playAlertSound();
+        }
+    },
+);
+
+useEcho<IncidentStatusChangedPayload>(
+    'dispatch.incidents',
+    '.IncidentStatusChanged',
+    (e) => {
+        if (e.old_status === 'PENDING' && e.new_status !== 'PENDING') {
+            const index = localIncidents.value.findIndex(
+                (inc) => inc.id === e.id,
+            );
+
+            if (index !== -1) {
+                const removed = localIncidents.value[index];
+                localIncidents.value.splice(index, 1);
+
+                if (
+                    removed.channel &&
+                    localChannelCounts.value[removed.channel] > 0
+                ) {
+                    localChannelCounts.value[removed.channel]--;
+                }
+            }
+        }
+    },
+);
+
+const { onStateSync } = useWebSocket();
+onStateSync((data) => {
+    localIncidents.value = data.incidents;
+    localChannelCounts.value = data.channelCounts;
+});
 
 function timeElapsed(createdAt: string): string {
     const diff = Math.floor(
@@ -112,11 +203,14 @@ function navigateToIncident(id: string): void {
                     </thead>
                     <tbody>
                         <tr
-                            v-for="incident in incidents"
+                            v-for="incident in localIncidents"
                             :key="incident.id"
                             :class="[
                                 'cursor-pointer border-b transition-colors last:border-0 hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-800/50',
                                 priorityBorderClass[incident.priority],
+                                highlightedId === incident.id
+                                    ? 'animate-highlight'
+                                    : '',
                             ]"
                             @click="navigateToIncident(incident.id)"
                         >
@@ -182,3 +276,17 @@ function navigateToIncident(id: string): void {
         </div>
     </AppLayout>
 </template>
+
+<style scoped>
+@keyframes highlight {
+    0% {
+        background-color: rgb(253 224 71 / 0.4);
+    }
+    100% {
+        background-color: transparent;
+    }
+}
+.animate-highlight {
+    animation: highlight 3s ease-out;
+}
+</style>
