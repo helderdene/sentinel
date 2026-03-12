@@ -5,7 +5,6 @@ namespace App\Http\Middleware;
 use App\Enums\IncidentStatus;
 use App\Models\Incident;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -63,7 +62,7 @@ class HandleInertiaRequests extends Middleware
                 ) : null,
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
-            'channelCounts' => Inertia::lazy(function () use ($user) {
+            'channelCounts' => function () use ($user) {
                 if (! $user || ! in_array($user->role->value, ['dispatcher', 'supervisor', 'admin'])) {
                     return null;
                 }
@@ -73,7 +72,7 @@ class HandleInertiaRequests extends Middleware
                     ->selectRaw('channel, count(*) as count')
                     ->groupBy('channel')
                     ->pluck('count', 'channel');
-            }),
+            },
         ];
     }
 }

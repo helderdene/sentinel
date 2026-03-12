@@ -15,6 +15,7 @@ class StubMapboxGeocodingService implements GeocodingServiceInterface
      * Forward geocode an address text to coordinates.
      *
      * Returns deterministic Butuan City area results based on query hash.
+     * Coordinates stay within ~0.03 degrees of Butuan center (~3km radius).
      *
      * @return array{lat: float, lng: float, display_name: string}[]
      */
@@ -22,15 +23,16 @@ class StubMapboxGeocodingService implements GeocodingServiceInterface
     {
         Log::info('StubMapboxGeocodingService::forward', compact('query', 'country'));
 
-        $hash = crc32($query);
+        $hash = abs(crc32($query));
         $results = [];
 
         for ($i = 0; $i < 3; $i++) {
-            $offset = (($hash + $i * 1000) % 1000) / 10000;
+            $latOffset = ((($hash + $i * 7919) % 600) - 300) / 10000;
+            $lngOffset = ((($hash + $i * 6271) % 600) - 300) / 10000;
 
             $results[] = [
-                'lat' => self::BUTUAN_LAT + $offset,
-                'lng' => self::BUTUAN_LNG + $offset,
+                'lat' => round(self::BUTUAN_LAT + $latOffset, 6),
+                'lng' => round(self::BUTUAN_LNG + $lngOffset, 6),
                 'display_name' => $query.', Butuan City, Agusan del Norte #'.($i + 1),
             ];
         }
