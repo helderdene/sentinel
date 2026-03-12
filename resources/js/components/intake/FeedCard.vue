@@ -63,8 +63,10 @@ function timeElapsed(createdAt: string): string {
 
 <template>
     <div
-        class="cursor-pointer rounded-lg border border-t-border transition-all"
-        :class="[triaged ? 'opacity-55' : '']"
+        class="rounded-lg border border-t-border transition-all"
+        :class="[
+            triaged ? 'opacity-55' : 'cursor-pointer',
+        ]"
         :style="{
             backgroundColor: active
                 ? 'rgba(37,99,235,0.08)'

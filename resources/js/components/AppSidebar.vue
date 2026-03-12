@@ -85,6 +85,11 @@ const mainNavItems = computed<NavItem[]>(() => {
                 icon: MessageSquare,
             },
             {
+                title: 'Intake Station',
+                href: '/intake',
+                icon: ClipboardList,
+            },
+            {
                 title: 'Analytics',
                 href: '/analytics',
                 icon: BarChart3,

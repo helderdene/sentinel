@@ -49,10 +49,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('incidents/{incident}', [IncidentController::class, 'show'])->name('incidents.show');
         Route::get('incidents', [IncidentController::class, 'index'])->name('incidents.index');
 
+        Route::get('state-sync', StateSyncController::class)->name('state-sync');
+    });
+
+    // Shared API routes -- accessible to operator, dispatcher, supervisor, admin
+    Route::middleware(['role:operator,dispatcher,supervisor,admin'])->group(function () {
         Route::get('api/priority/suggest', [IncidentController::class, 'suggestPriority'])->name('api.priority.suggest');
         Route::get('api/geocoding/search', [IncidentController::class, 'geocodingSearch'])->name('api.geocoding.search');
-
-        Route::get('state-sync', StateSyncController::class)->name('state-sync');
     });
 
     // Messages -- accessible to ALL communication roles

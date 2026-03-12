@@ -78,6 +78,10 @@ watch(
 );
 
 function onSelectIncident(incident: Incident): void {
+    if (incident.status === 'TRIAGED') {
+        return;
+    }
+
     isManualEntry.value = false;
     selectIncident(incident);
 }
