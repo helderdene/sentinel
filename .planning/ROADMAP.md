@@ -65,11 +65,11 @@ Plans:
   2. Broadcast events (IncidentCreated, IncidentStatusChanged, UnitLocationUpdated, UnitStatusChanged, AssignmentPushed, MessageSent) are received by subscribed clients within 500ms
   3. When a client loses connection and reconnects, it calls a state-sync endpoint and receives the current state of all active incidents and units, with a visible "Reconnecting..." indicator during the gap
   4. Redis is configured and operational for cache, queue (Horizon), and Reverb pub/sub
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
+- [ ] 03-01-PLAN.md -- Backend infrastructure: Reverb + Horizon + Redis config, 6 broadcast events, channel auth, state-sync endpoint, dev script, tests
+- [ ] 03-02-PLAN.md -- Frontend integration: Echo init, useWebSocket composable, ConnectionBanner, Queue.vue + ChannelMonitor.vue WebSocket replacement, P1/P2 audio alerts
 
 ### Phase 4: Dispatch Console
 **Goal**: Dispatchers can see all incidents and units on a live 2D map, assign the nearest available unit to an incident, and track response progress in real-time with audio/visual alerts
