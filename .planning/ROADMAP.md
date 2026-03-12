@@ -82,13 +82,13 @@ Plans:
   3. A dispatcher can select an incident, see available units ranked by proximity (PostGIS ST_DWithin) with distance and ETA, and assign one or more units; the assignment is pushed to the responder via WebSocket
   4. A 90-second acknowledgement timer counts down after assignment; audio alerts with distinct tones per priority level play; P1 incidents trigger a red screen flash
   5. Session metrics (total incidents, triaged/pending, active incidents, units available/deployed, average handle time) are visible in the console header and update in real-time
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
-- [ ] 04-03: TBD
-- [ ] 04-04: TBD
+- [ ] 04-01-PLAN.md -- Backend foundation: incident_unit pivot, Agency model, ProximityRankingService, DispatchConsoleController with assign/unassign/advance/mutual-aid endpoints, tests
+- [ ] 04-02-PLAN.md -- Map and layout shell: MapLibre GL JS map, DispatchLayout, incident/unit WebGL marker layers, connection lines, useAlertSystem audio tones, P1 flash
+- [ ] 04-03-PLAN.md -- Panel components: left queue panel with filters, right contextual panels (incident detail, unit status, unit detail), assignment chips, ack timer, SLA bar, status pipeline
+- [ ] 04-04-PLAN.md -- WebSocket wiring and mutual aid: useDispatchFeed composable, real-time map/queue/metric updates, MutualAidModal, live ticker, visual verification
 
 ### Phase 5: Responder Workflow
 **Goal**: Field responders can receive assignments on mobile, navigate to scenes, document what they find, communicate with dispatch, and close incidents with structured outcome data
