@@ -39,7 +39,7 @@ type UnitOption = {
 
 type Props = {
     user?: AdminUser;
-    roles: Array<{ value: string }>;
+    roles: UserRole[];
     units: UnitOption[];
 };
 
@@ -170,12 +170,11 @@ function submit(): void {
                         <SelectContent>
                             <SelectItem
                                 v-for="role in roles"
-                                :key="role.value"
-                                :value="role.value"
+                                :key="role"
+                                :value="role"
                             >
                                 {{
-                                    role.value.charAt(0).toUpperCase() +
-                                    role.value.slice(1)
+                                    role.charAt(0).toUpperCase() + role.slice(1)
                                 }}
                             </SelectItem>
                         </SelectContent>
