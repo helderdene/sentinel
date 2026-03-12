@@ -22,10 +22,6 @@ const props = withDefaults(defineProps<Props>(), {
     priorityConfig: undefined,
 });
 
-const emit = defineEmits<{
-    'triage-submitted': [];
-}>();
-
 const hasContent = computed(
     () => props.activeIncident !== null || props.isManualEntry,
 );
@@ -64,7 +60,6 @@ const hasContent = computed(
                     :channels="channels"
                     :priorities="priorities"
                     :priority-config="priorityConfig"
-                    @triage-submitted="emit('triage-submitted')"
                 />
             </div>
 

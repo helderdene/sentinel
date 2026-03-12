@@ -49,9 +49,6 @@ const props = withDefaults(defineProps<Props>(), {
     priorityConfig: undefined,
 });
 
-const emit = defineEmits<{
-    'triage-submitted': [];
-}>();
 
 const channelLabels: Record<IncidentChannel, string> = {
     phone: 'Voice',
@@ -256,10 +253,6 @@ function submit(): void {
 
     form.post(url, {
         preserveScroll: true,
-        onSuccess: () => {
-            emit('triage-submitted');
-            resetForm();
-        },
     });
 }
 

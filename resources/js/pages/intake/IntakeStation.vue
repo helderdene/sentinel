@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { usePage } from '@inertiajs/vue3';
 import { useEcho } from '@laravel/echo-vue';
-import { computed, provide, ref } from 'vue';
+import { computed, provide, ref, watch } from 'vue';
 
 import ChannelFeed from '@/components/intake/ChannelFeed.vue';
 import DispatchQueuePanel from '@/components/intake/DispatchQueuePanel.vue';
@@ -51,6 +51,32 @@ const session = useIntakeSession();
 const isManualEntry = ref(false);
 const sessionLogRef = ref<InstanceType<typeof SessionLog> | null>(null);
 
+// When Inertia refreshes page props after triage redirect, the triaged
+// incident disappears from pendingIncidents. Detect this and clear the
+// active selection so the form resets to the empty state.
+watch(
+    () => props.pendingIncidents,
+    (newPending) => {
+        if (activeIncident.value && !isManualEntry.value) {
+            const stillPending = newPending.some(
+                (i) => i.id === activeIncident.value!.id,
+            );
+
+            if (!stillPending) {
+                const incident = activeIncident.value;
+
+                selectIncident(null);
+                isManualEntry.value = false;
+                session.recordTriaged(0);
+                sessionLogRef.value?.addEntry({
+                    action: `Triaged ${incident.incident_no} as ${incident.priority}`,
+                    priority: incident.priority,
+                });
+            }
+        }
+    },
+);
+
 function onSelectIncident(incident: Incident): void {
     isManualEntry.value = false;
     selectIncident(incident);
@@ -61,20 +87,21 @@ function onManualEntry(): void {
     isManualEntry.value = true;
 }
 
-function onTriageSubmitted(): void {
-    const incident = activeIncident.value;
-
-    selectIncident(null);
-    isManualEntry.value = false;
-    session.recordTriaged(0);
-
-    if (incident) {
-        sessionLogRef.value?.addEntry({
-            action: `Triaged ${incident.incident_no} as ${incident.priority}`,
-            priority: incident.priority,
-        });
-    }
-}
+// When manual entry succeeds, the new incident appears in triagedIncidents
+// (it was never in pendingIncidents). Detect this and clear the form.
+watch(
+    () => props.triagedIncidents,
+    () => {
+        if (isManualEntry.value) {
+            isManualEntry.value = false;
+            selectIncident(null);
+            session.recordTriaged(0);
+            sessionLogRef.value?.addEntry({
+                action: 'Manual entry triaged',
+            });
+        }
+    },
+);
 
 function onOverridden(incidentId: string, newPriority: IncidentPriority): void {
     const incident = triagedIncidents.value.find((i) => i.id === incidentId);
@@ -166,7 +193,6 @@ provide('topbarStats', {
             :channels="channels"
             :priorities="priorities"
             :priority-config="priorityConfig"
-            @triage-submitted="onTriageSubmitted"
         />
 
         <!-- Right: Dispatch Queue Panel (304px) -->
