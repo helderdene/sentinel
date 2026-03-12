@@ -32,6 +32,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('intake', [IntakeStationController::class, 'show'])->name('intake.station');
         Route::post('intake/{incident}/triage', [IntakeStationController::class, 'triage'])->name('intake.triage');
         Route::post('intake/manual', [IntakeStationController::class, 'storeAndTriage'])->name('intake.store-and-triage');
+        Route::post('intake/{incident}/override-priority', [IntakeStationController::class, 'overridePriority'])->name('intake.override-priority');
+        Route::post('intake/{incident}/recall', [IntakeStationController::class, 'recall'])->name('intake.recall');
     });
 
     // Dispatcher + Supervisor + Admin routes

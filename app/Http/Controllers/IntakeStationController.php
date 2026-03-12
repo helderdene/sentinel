@@ -15,6 +15,8 @@ use App\Models\IncidentType;
 use App\Models\User;
 use Clickbar\Magellan\Data\Geometries\Point;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -179,5 +181,68 @@ class IntakeStationController extends Controller
         IncidentStatusChanged::dispatch($incident, IncidentStatus::Pending);
 
         return back()->with('success', "Incident {$incident->incident_no} created and triaged.");
+    }
+
+    /**
+     * Override the priority of a triaged incident (supervisor/admin only).
+     */
+    public function overridePriority(Request $request, Incident $incident): RedirectResponse
+    {
+        Gate::authorize('override-priority');
+
+        $validated = $request->validate([
+            'priority' => ['required', 'in:P1,P2,P3,P4'],
+        ]);
+
+        $oldPriority = $incident->priority->value;
+
+        $incident->update([
+            'priority' => $validated['priority'],
+        ]);
+
+        IncidentTimeline::query()->create([
+            'incident_id' => $incident->id,
+            'event_type' => 'priority_override',
+            'event_data' => [
+                'old_priority' => $oldPriority,
+                'new_priority' => $validated['priority'],
+            ],
+            'actor_type' => User::class,
+            'actor_id' => $request->user()->id,
+            'notes' => "Priority overridden from {$oldPriority} to {$validated['priority']}",
+        ]);
+
+        IncidentStatusChanged::dispatch($incident, $incident->status);
+
+        return back()->with('success', "Priority updated to {$validated['priority']}.");
+    }
+
+    /**
+     * Recall a triaged incident back to pending status (supervisor/admin only).
+     */
+    public function recall(Incident $incident): RedirectResponse
+    {
+        Gate::authorize('recall-incident');
+
+        $oldStatus = $incident->status;
+
+        $incident->update([
+            'status' => IncidentStatus::Pending,
+        ]);
+
+        IncidentTimeline::query()->create([
+            'incident_id' => $incident->id,
+            'event_type' => 'incident_recalled',
+            'event_data' => [
+                'previous_status' => $oldStatus->value,
+            ],
+            'actor_type' => User::class,
+            'actor_id' => request()->user()->id,
+            'notes' => "Incident recalled from {$oldStatus->value} to PENDING",
+        ]);
+
+        IncidentStatusChanged::dispatch($incident, $oldStatus);
+
+        return back()->with('success', "Incident {$incident->incident_no} recalled.");
     }
 }
