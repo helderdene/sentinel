@@ -1,12 +1,25 @@
+export type UserRole = 'admin' | 'dispatcher' | 'responder' | 'supervisor';
+
+export type UserPermissions = {
+    manage_users: boolean;
+    manage_incident_types: boolean;
+    manage_barangays: boolean;
+    create_incidents: boolean;
+    dispatch_units: boolean;
+    respond_incidents: boolean;
+    view_analytics: boolean;
+    view_all_incidents: boolean;
+    manage_system: boolean;
+};
+
 export type User = {
     id: number;
     name: string;
     email: string;
     avatar?: string;
+    role: UserRole;
+    can: UserPermissions;
     email_verified_at: string | null;
-    created_at: string;
-    updated_at: string;
-    [key: string]: unknown;
 };
 
 export type Auth = {
