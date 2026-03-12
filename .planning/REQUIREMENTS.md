@@ -26,9 +26,9 @@
 - [x] **INTK-04**: Location text is geocoded via Mapbox API with Philippines filter; coordinates auto-populated
 - [x] **INTK-05**: PostGIS ST_Contains query auto-assigns barangay from geocoded coordinates; dispatcher can manually correct
 - [x] **INTK-06**: Dispatch queue displays all triaged incidents ordered by priority (P1 first) then FIFO within same priority
-- [ ] **INTK-07**: IoT sensor webhook endpoint accepts alerts with HMAC-SHA256 validation; auto-creates incidents from threshold exceedances (stubbed sensor integration)
-- [ ] **INTK-08**: SMS inbound webhook parses incoming messages with keyword classifier for incident type suggestion; auto-reply on creation (stubbed Semaphore integration)
-- [ ] **INTK-09**: Channel monitor panel shows live feed from all 5 channels with unacknowledged message highlighting and pending count badges
+- [x] **INTK-07**: IoT sensor webhook endpoint accepts alerts with HMAC-SHA256 validation; auto-creates incidents from threshold exceedances (stubbed sensor integration)
+- [x] **INTK-08**: SMS inbound webhook parses incoming messages with keyword classifier for incident type suggestion; auto-reply on creation (stubbed Semaphore integration)
+- [x] **INTK-09**: Channel monitor panel shows live feed from all 5 channels with unacknowledged message highlighting and pending count badges
 
 ### Dispatch
 
@@ -126,9 +126,9 @@
 | INTK-04 | Phase 2 | Complete |
 | INTK-05 | Phase 2 | Complete |
 | INTK-06 | Phase 2 | Complete |
-| INTK-07 | Phase 2 | Pending |
-| INTK-08 | Phase 2 | Pending |
-| INTK-09 | Phase 2 | Pending |
+| INTK-07 | Phase 2 | Complete |
+| INTK-08 | Phase 2 | Complete |
+| INTK-09 | Phase 2 | Complete |
 | DSPTCH-01 | Phase 4 | Pending |
 | DSPTCH-02 | Phase 4 | Pending |
 | DSPTCH-03 | Phase 4 | Pending |

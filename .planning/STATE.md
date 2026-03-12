@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in-progress
-stopped_at: Completed 02-01-PLAN.md
-last_updated: "2026-03-12T17:35:34.000Z"
-last_activity: "2026-03-12 — Completed 02-01: Backend service layer (contracts, services, controller, tests)"
+stopped_at: Completed 02-03-PLAN.md
+last_updated: "2026-03-12T17:49:40.000Z"
+last_activity: "2026-03-12 — Completed 02-03: IoT/SMS webhooks with HMAC validation and keyword classification"
 progress:
   total_phases: 7
   completed_phases: 1
   total_plans: 4
-  completed_plans: 4
-  percent: 19
+  completed_plans: 5
+  percent: 24
 ---
 
 # Project State
@@ -26,29 +26,29 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 ## Current Position
 
 Phase: 2 of 7 (Intake)
-Plan: 1 of 3 in current phase
+Plan: 3 of 3 in current phase
 Status: In Progress
-Last activity: 2026-03-12 — Completed 02-01: Backend service layer (contracts, services, controller, tests)
+Last activity: 2026-03-12 — Completed 02-03: IoT/SMS webhooks with HMAC validation and keyword classification
 
-Progress: [▓▓░░░░░░░░] 19%
+Progress: [▓▓▓░░░░░░░] 24%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: 18min
-- Total execution time: 1.2 hours
+- Total plans completed: 5
+- Average duration: 16min
+- Total execution time: 1.4 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Foundation | 3/3 | 54min | 18min |
-| 2. Intake | 1/3 | 16min | 16min |
+| 2. Intake | 2/3 | 23min | 12min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (11min), 01-03 (16min), 01-02 (27min), 02-01 (16min)
-- Trend: Stable
+- Last 5 plans: 01-01 (11min), 01-03 (16min), 01-02 (27min), 02-01 (16min), 02-03 (7min)
+- Trend: Accelerating
 
 *Updated after each plan completion*
 
@@ -77,6 +77,9 @@ Recent decisions affecting current work:
 - [02-01]: Raw SQL for PostGIS ST_Contains in BarangayLookupService (proven Phase 1 pattern, Magellan ST::contains() unverified for geography columns)
 - [02-01]: Multi-level priority escalation via floor(adjustment/threshold) -- extreme keyword combinations can jump multiple levels
 - [02-01]: Unit tests extend TestCase in Pest.php for Laravel config/facade access
+- [02-03]: SmsParserService as standalone service (not SmsServiceInterface) for single-responsibility keyword classification
+- [02-03]: Webhook routes at top of routes/web.php before auth group with per-route CSRF exclusion
+- [02-03]: Location extraction uses regex for Filipino (sa, dito sa) and English (at, near) prepositions
 
 ### Pending Todos
 
@@ -91,6 +94,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-12T17:35:34Z
-Stopped at: Completed 02-01-PLAN.md
-Resume file: .planning/phases/02-intake/02-01-SUMMARY.md
+Last session: 2026-03-12T17:49:40Z
+Stopped at: Completed 02-03-PLAN.md
+Resume file: .planning/phases/02-intake/02-03-SUMMARY.md
