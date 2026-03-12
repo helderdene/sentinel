@@ -1,14 +1,13 @@
+import { useEcho } from '@laravel/echo-vue';
 import type { Ref } from 'vue';
 import { computed, ref } from 'vue';
-import { useEcho } from '@laravel/echo-vue';
 import { channelDisplayMap } from '@/components/intake/ChBadge.vue';
+import type { ChannelKey } from '@/components/intake/ChBadge.vue';
 import type {
     Incident,
-    IncidentChannel,
     IncidentCreatedPayload,
     IncidentStatusChangedPayload,
 } from '@/types/incident';
-import type { ChannelKey } from '@/components/intake/ChBadge.vue';
 
 export type FeedFilter = 'all' | 'pending' | 'triaged';
 
@@ -35,10 +34,7 @@ export function useIntakeFeed(
                 return triagedIncidents.value;
 
             default:
-                return [
-                    ...pendingIncidents.value,
-                    ...triagedIncidents.value,
-                ];
+                return [...pendingIncidents.value, ...triagedIncidents.value];
         }
     });
 
@@ -82,9 +78,7 @@ export function useIntakeFeed(
                 return;
             }
 
-            if (
-                pendingIncidents.value.some((inc) => inc.id === e.id)
-            ) {
+            if (pendingIncidents.value.some((inc) => inc.id === e.id)) {
                 return;
             }
 
@@ -106,9 +100,7 @@ export function useIntakeFeed(
                 location_text: e.location_text,
                 coordinates: null,
                 barangay_id: null,
-                barangay: e.barangay
-                    ? { id: 0, name: e.barangay }
-                    : null,
+                barangay: e.barangay ? { id: 0, name: e.barangay } : null,
                 caller_name: null,
                 caller_contact: null,
                 raw_message: null,
@@ -150,10 +142,7 @@ export function useIntakeFeed(
                 );
 
                 if (index !== -1) {
-                    const [moved] = pendingIncidents.value.splice(
-                        index,
-                        1,
-                    );
+                    const [moved] = pendingIncidents.value.splice(index, 1);
                     moved.status = 'TRIAGED';
                     triagedIncidents.value.unshift(moved);
 
