@@ -20,12 +20,12 @@
 
 ### Intake
 
-- [ ] **INTK-01**: Dispatcher can create incident with type (40+ types across 8 categories), priority (P1-P4), location, caller info, channel, and notes
-- [ ] **INTK-02**: System auto-generates unique incident number (INC-YYYY-NNNNN) on creation
-- [ ] **INTK-03**: System auto-suggests priority (P1-P4) based on incident type keywords with confidence score; dispatcher can override
-- [ ] **INTK-04**: Location text is geocoded via Mapbox API with Philippines filter; coordinates auto-populated
-- [ ] **INTK-05**: PostGIS ST_Contains query auto-assigns barangay from geocoded coordinates; dispatcher can manually correct
-- [ ] **INTK-06**: Dispatch queue displays all triaged incidents ordered by priority (P1 first) then FIFO within same priority
+- [x] **INTK-01**: Dispatcher can create incident with type (40+ types across 8 categories), priority (P1-P4), location, caller info, channel, and notes
+- [x] **INTK-02**: System auto-generates unique incident number (INC-YYYY-NNNNN) on creation
+- [x] **INTK-03**: System auto-suggests priority (P1-P4) based on incident type keywords with confidence score; dispatcher can override
+- [x] **INTK-04**: Location text is geocoded via Mapbox API with Philippines filter; coordinates auto-populated
+- [x] **INTK-05**: PostGIS ST_Contains query auto-assigns barangay from geocoded coordinates; dispatcher can manually correct
+- [x] **INTK-06**: Dispatch queue displays all triaged incidents ordered by priority (P1 first) then FIFO within same priority
 - [ ] **INTK-07**: IoT sensor webhook endpoint accepts alerts with HMAC-SHA256 validation; auto-creates incidents from threshold exceedances (stubbed sensor integration)
 - [ ] **INTK-08**: SMS inbound webhook parses incoming messages with keyword classifier for incident type suggestion; auto-reply on creation (stubbed Semaphore integration)
 - [ ] **INTK-09**: Channel monitor panel shows live feed from all 5 channels with unacknowledged message highlighting and pending count badges
@@ -120,12 +120,12 @@
 | FNDTN-08 | Phase 1 | Complete |
 | FNDTN-09 | Phase 3 | Pending |
 | FNDTN-10 | Phase 3 | Pending |
-| INTK-01 | Phase 2 | Pending |
-| INTK-02 | Phase 2 | Pending |
-| INTK-03 | Phase 2 | Pending |
-| INTK-04 | Phase 2 | Pending |
-| INTK-05 | Phase 2 | Pending |
-| INTK-06 | Phase 2 | Pending |
+| INTK-01 | Phase 2 | Complete |
+| INTK-02 | Phase 2 | Complete |
+| INTK-03 | Phase 2 | Complete |
+| INTK-04 | Phase 2 | Complete |
+| INTK-05 | Phase 2 | Complete |
+| INTK-06 | Phase 2 | Complete |
 | INTK-07 | Phase 2 | Pending |
 | INTK-08 | Phase 2 | Pending |
 | INTK-09 | Phase 2 | Pending |
