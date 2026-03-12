@@ -2,9 +2,12 @@
 
 namespace App\Providers;
 
+use App\Enums\UserRole;
+use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -24,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        $this->configureGates();
     }
 
     /**
@@ -46,5 +50,37 @@ class AppServiceProvider extends ServiceProvider
                 ->uncompromised()
             : null,
         );
+    }
+
+    /**
+     * Configure authorization gates per IRMS spec Section 9 permissions matrix.
+     */
+    protected function configureGates(): void
+    {
+        Gate::define('manage-users', fn (User $user): bool => $user->role === UserRole::Admin);
+
+        Gate::define('manage-incident-types', fn (User $user): bool => $user->role === UserRole::Admin);
+
+        Gate::define('manage-barangays', fn (User $user): bool => $user->role === UserRole::Admin);
+
+        Gate::define('create-incidents', fn (User $user): bool => in_array($user->role, [
+            UserRole::Dispatcher, UserRole::Supervisor, UserRole::Admin,
+        ], true));
+
+        Gate::define('dispatch-units', fn (User $user): bool => in_array($user->role, [
+            UserRole::Dispatcher, UserRole::Supervisor, UserRole::Admin,
+        ], true));
+
+        Gate::define('respond-incidents', fn (User $user): bool => $user->role === UserRole::Responder);
+
+        Gate::define('view-analytics', fn (User $user): bool => in_array($user->role, [
+            UserRole::Supervisor, UserRole::Admin,
+        ], true));
+
+        Gate::define('view-all-incidents', fn (User $user): bool => in_array($user->role, [
+            UserRole::Dispatcher, UserRole::Supervisor, UserRole::Admin,
+        ], true));
+
+        Gate::define('manage-system', fn (User $user): bool => $user->role === UserRole::Admin);
     }
 }
