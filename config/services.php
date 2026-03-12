@@ -35,4 +35,15 @@ return [
         ],
     ],
 
+    'iot' => [
+        'webhook_secret' => env('IOT_WEBHOOK_SECRET'),
+        'sensor_mappings' => [
+            'flood_gauge' => ['incident_type_code' => 'NAT-002', 'priority' => 'P2'],
+            'fire_alarm' => ['incident_type_code' => 'FIR-001', 'priority' => 'P1'],
+            'weather' => ['incident_type_code' => 'NAT-004', 'priority' => 'P2'],
+            'seismic' => ['incident_type_code' => 'NAT-001', 'priority' => 'P1'],
+            'cctv_analytics' => ['incident_type_code' => 'PUB-001', 'priority' => 'P3'],
+        ],
+    ],
+
 ];

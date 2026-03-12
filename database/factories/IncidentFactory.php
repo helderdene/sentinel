@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\IncidentChannel;
 use App\Enums\IncidentPriority;
 use App\Enums\IncidentStatus;
 use App\Models\Incident;
@@ -27,7 +28,7 @@ class IncidentFactory extends Factory
             'incident_type_id' => IncidentType::factory(),
             'priority' => fake()->randomElement(IncidentPriority::cases()),
             'status' => IncidentStatus::Pending,
-            'channel' => fake()->randomElement(['phone', 'radio', 'walk-in', 'sms', 'iot']),
+            'channel' => fake()->randomElement(IncidentChannel::cases()),
             'location_text' => fake()->address(),
             'coordinates' => Point::makeGeodetic(
                 8.9475 + fake()->randomFloat(4, -0.05, 0.05),

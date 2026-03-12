@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
+use App\Contracts\GeocodingServiceInterface;
+use App\Contracts\SmsServiceInterface;
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Services\StubMapboxGeocodingService;
+use App\Services\StubSemaphoreSmsService;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +22,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(GeocodingServiceInterface::class, StubMapboxGeocodingService::class);
+        $this->app->bind(SmsServiceInterface::class, StubSemaphoreSmsService::class);
     }
 
     /**

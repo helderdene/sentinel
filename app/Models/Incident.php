@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\IncidentChannel;
 use App\Enums\IncidentPriority;
 use App\Enums\IncidentStatus;
 use Clickbar\Magellan\Data\Geometries\Point;
@@ -64,6 +65,7 @@ class Incident extends Model
             'coordinates' => Point::class,
             'priority' => IncidentPriority::class,
             'status' => IncidentStatus::class,
+            'channel' => IncidentChannel::class,
             'vitals' => 'array',
             'assessment_tags' => 'array',
             'dispatched_at' => 'datetime',

@@ -15,8 +15,16 @@ it('escalates priority when escalation keywords exceed threshold', function () {
     $service = new PrioritySuggestionService;
     $result = $service->suggest('P3', 'there are multiple children trapped and unconscious');
 
-    expect($result['priority'])->toBe('P1')
+    expect($result['priority'])->toBe('P2')
         ->and($result['confidence'])->toBeGreaterThan(70);
+});
+
+it('escalates priority multiple levels with extreme keywords', function () {
+    $service = new PrioritySuggestionService;
+    $result = $service->suggest('P3', 'multiple children trapped unconscious critical dying mass explosion');
+
+    expect($result['priority'])->toBe('P1')
+        ->and($result['confidence'])->toBe(99);
 });
 
 it('de-escalates priority when de-escalation keywords exceed threshold', function () {
@@ -31,7 +39,7 @@ it('handles Filipino escalation keywords', function () {
     $service = new PrioritySuggestionService;
     $result = $service->suggest('P3', 'marami ang nakulong at walang malay ang bata');
 
-    expect($result['priority'])->toBe('P1')
+    expect($result['priority'])->toBe('P2')
         ->and($result['confidence'])->toBeGreaterThan(70);
 });
 
