@@ -2,8 +2,14 @@
 
 use App\Enums\IncidentChannel;
 use App\Enums\IncidentStatus;
+use App\Events\IncidentCreated;
 use App\Models\Incident;
 use App\Models\IncidentType;
+use Illuminate\Support\Facades\Event;
+
+beforeEach(function () {
+    Event::fake([IncidentCreated::class]);
+});
 
 /**
  * Generate a valid HMAC signature for a given payload and timestamp.

@@ -2,9 +2,15 @@
 
 use App\Enums\IncidentChannel;
 use App\Enums\IncidentStatus;
+use App\Events\IncidentCreated;
 use App\Models\Incident;
 use App\Models\IncidentType;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
+
+beforeEach(function () {
+    Event::fake([IncidentCreated::class]);
+});
 
 it('creates Structure Fire incident from "sunog sa merkado"', function () {
     $fireType = IncidentType::factory()->create(['code' => 'FIR-001', 'default_priority' => 'P1']);

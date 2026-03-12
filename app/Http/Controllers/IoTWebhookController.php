@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\IncidentChannel;
 use App\Enums\IncidentPriority;
 use App\Enums\IncidentStatus;
+use App\Events\IncidentCreated;
 use App\Models\Incident;
 use App\Models\IncidentTimeline;
 use App\Models\IncidentType;
@@ -86,6 +87,9 @@ class IoTWebhookController extends Controller
                 'sensor_id' => $validated['sensor_id'],
             ],
         ]);
+
+        $incident->load('incidentType', 'barangay');
+        IncidentCreated::dispatch($incident);
 
         return response()->json([
             'incident_no' => $incident->incident_no,

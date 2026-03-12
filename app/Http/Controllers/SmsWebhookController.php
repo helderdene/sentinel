@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Contracts\SmsServiceInterface;
 use App\Enums\IncidentChannel;
 use App\Enums\IncidentStatus;
+use App\Events\IncidentCreated;
 use App\Models\Incident;
 use App\Models\IncidentTimeline;
 use App\Models\IncidentType;
@@ -67,6 +68,9 @@ class SmsWebhookController extends Controller
                 'matched_keyword' => $classification['matched_keyword'],
             ],
         ]);
+
+        $incident->load('incidentType', 'barangay');
+        IncidentCreated::dispatch($incident);
 
         $this->smsService->send(
             $parsed['sender'],
