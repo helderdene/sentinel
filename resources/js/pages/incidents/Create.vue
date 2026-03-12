@@ -27,8 +27,8 @@ import {
 import { useGeocodingSearch } from '@/composables/useGeocodingSearch';
 import { usePrioritySuggestion } from '@/composables/usePrioritySuggestion';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { queue as incidentsQueue } from '@/routes/incidents';
 import { dashboard } from '@/routes';
+import { queue as incidentsQueue } from '@/routes/incidents';
 import type { BreadcrumbItem } from '@/types';
 import type {
     GeocodingResult,
@@ -230,17 +230,13 @@ function submit(): void {
                         </div>
 
                         <div class="grid gap-2">
-                            <Label for="caller_contact">
-                                Caller Contact
-                            </Label>
+                            <Label for="caller_contact"> Caller Contact </Label>
                             <Input
                                 id="caller_contact"
                                 v-model="form.caller_contact"
                                 placeholder="e.g. 09171234567"
                             />
-                            <InputError
-                                :message="form.errors.caller_contact"
-                            />
+                            <InputError :message="form.errors.caller_contact" />
                         </div>
                     </div>
                 </fieldset>
@@ -343,13 +339,13 @@ function submit(): void {
                                 showGeocodingDropdown &&
                                 geocodingResults.length > 0
                             "
-                            class="bg-popover text-popover-foreground absolute top-full z-50 mt-1 w-full rounded-md border shadow-md"
+                            class="absolute top-full z-50 mt-1 w-full rounded-md border bg-popover text-popover-foreground shadow-md"
                         >
                             <ul class="max-h-[200px] overflow-y-auto p-1">
                                 <li
                                     v-for="(result, i) in geocodingResults"
                                     :key="i"
-                                    class="hover:bg-accent hover:text-accent-foreground cursor-pointer rounded-sm px-2 py-1.5 text-sm"
+                                    class="cursor-pointer rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground"
                                     @mousedown.prevent="
                                         selectGeocodingResult(result)
                                     "
@@ -407,7 +403,7 @@ function submit(): void {
                         <textarea
                             id="notes"
                             v-model="form.notes"
-                            class="border-input dark:bg-input/30 placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-[100px] w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
+                            class="flex min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30"
                             placeholder="Describe the incident, caller report, and any additional details..."
                             rows="4"
                         />
@@ -418,7 +414,11 @@ function submit(): void {
                 <!-- Submit -->
                 <div class="flex items-center gap-4">
                     <Button type="submit" :disabled="form.processing">
-                        {{ form.processing ? 'Creating...' : '+ Create Incident' }}
+                        {{
+                            form.processing
+                                ? 'Creating...'
+                                : '+ Create Incident'
+                        }}
                     </Button>
                 </div>
             </form>

@@ -8,6 +8,7 @@ import {
     ListOrdered,
     Map,
     MessageSquare,
+    Plus,
     RadioTower,
     Shield,
     Truck,
@@ -26,6 +27,11 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import {
+    create as incidentsCreate,
+    index as incidentsIndex,
+    queue as incidentsQueue,
+} from '@/routes/incidents';
 import type { NavItem } from '@/types';
 import type { UserRole } from '@/types/auth';
 
@@ -55,13 +61,18 @@ const mainNavItems = computed<NavItem[]>(() => {
             },
             {
                 title: 'Incident Queue',
-                href: '/incidents/queue',
+                href: incidentsQueue(),
                 icon: ListOrdered,
             },
             {
                 title: 'Incidents',
-                href: '/incidents',
+                href: incidentsIndex(),
                 icon: AlertTriangle,
+            },
+            {
+                title: '+ New Incident',
+                href: incidentsCreate(),
+                icon: Plus,
             },
             {
                 title: 'Units',
@@ -97,13 +108,18 @@ const mainNavItems = computed<NavItem[]>(() => {
             },
             {
                 title: 'Incident Queue',
-                href: '/incidents/queue',
+                href: incidentsQueue(),
                 icon: ListOrdered,
             },
             {
                 title: 'Incidents',
-                href: '/incidents',
+                href: incidentsIndex(),
                 icon: AlertTriangle,
+            },
+            {
+                title: '+ New Incident',
+                href: incidentsCreate(),
+                icon: Plus,
             },
             {
                 title: 'Messages',
@@ -140,9 +156,19 @@ const mainNavItems = computed<NavItem[]>(() => {
                 icon: Map,
             },
             {
+                title: 'Incident Queue',
+                href: incidentsQueue(),
+                icon: ListOrdered,
+            },
+            {
                 title: 'All Incidents',
-                href: '/incidents',
+                href: incidentsIndex(),
                 icon: AlertTriangle,
+            },
+            {
+                title: '+ New Incident',
+                href: incidentsCreate(),
+                icon: Plus,
             },
             {
                 title: 'Units',

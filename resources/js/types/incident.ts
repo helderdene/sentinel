@@ -63,6 +63,21 @@ export interface Incident {
     report_pdf_url: string | null;
     created_by: number | null;
     created_by_user?: { id: number; name: string } | null;
+    timeline?: IncidentTimelineEntry[];
+    messages?: unknown[];
+    created_at: string;
+    updated_at: string;
+}
+
+export interface IncidentTimelineEntry {
+    id: number;
+    incident_id: string;
+    event_type: string;
+    event_data: Record<string, unknown> | null;
+    actor_type: string | null;
+    actor_id: number | null;
+    actor?: { id: number; name: string } | null;
+    notes: string | null;
     created_at: string;
     updated_at: string;
 }

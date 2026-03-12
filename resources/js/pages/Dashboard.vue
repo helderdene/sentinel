@@ -11,6 +11,7 @@ import {
     Users,
 } from 'lucide-vue-next';
 import { computed } from 'vue';
+import ChannelMonitor from '@/components/incidents/ChannelMonitor.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem } from '@/types';
@@ -31,6 +32,16 @@ const userRole = computed(
     () =>
         (page.props.auth as { user?: { role?: UserRole } })?.user?.role ??
         'dispatcher',
+);
+const channelCounts = computed(
+    () => (page.props.channelCounts as Record<string, number>) ?? {},
+);
+
+const showChannelMonitor = computed(
+    () =>
+        userRole.value === 'dispatcher' ||
+        userRole.value === 'supervisor' ||
+        userRole.value === 'admin',
 );
 
 const roleLabels: Record<UserRole, string> = {
@@ -56,6 +67,12 @@ const roleLabels: Record<UserRole, string> = {
                     {{ roleLabels[userRole] }} Dashboard
                 </p>
             </div>
+
+            <!-- Channel Monitor (dispatcher/supervisor/admin) -->
+            <ChannelMonitor
+                v-if="showChannelMonitor && channelCounts"
+                :channel-counts="channelCounts"
+            />
 
             <!-- Admin Dashboard -->
             <div
@@ -162,7 +179,7 @@ const roleLabels: Record<UserRole, string> = {
                     <p
                         class="mt-1 text-xs text-neutral-500 dark:text-neutral-400"
                     >
-                        Data available after Phase 2
+                        Real-time data coming in Phase 3
                     </p>
                 </div>
                 <div
@@ -186,7 +203,7 @@ const roleLabels: Record<UserRole, string> = {
                     <p
                         class="mt-1 text-xs text-neutral-500 dark:text-neutral-400"
                     >
-                        Data available after Phase 2
+                        Real-time data coming in Phase 3
                     </p>
                 </div>
                 <div
