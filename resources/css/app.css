@@ -9,9 +9,11 @@
 
 @theme inline {
     --font-sans:
-        Instrument Sans, ui-sans-serif, system-ui, sans-serif,
+        'DM Sans', ui-sans-serif, system-ui, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
+    --font-mono:
+        'Space Mono', ui-monospace, monospace;
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -59,6 +61,46 @@
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
+
+    /* Intake Design System — Surfaces */
+    --color-t-bg: var(--t-bg);
+    --color-t-surface: var(--t-surface);
+    --color-t-surface-alt: var(--t-surface-alt);
+
+    /* Intake Design System — Text */
+    --color-t-text: var(--t-text);
+    --color-t-text-mid: var(--t-text-mid);
+    --color-t-text-dim: var(--t-text-dim);
+    --color-t-text-faint: var(--t-text-faint);
+
+    /* Intake Design System — Borders */
+    --color-t-border: var(--t-border);
+    --color-t-border-med: var(--t-border-med);
+    --color-t-border-foc: var(--t-border-foc);
+
+    /* Intake Design System — Brand & Accent */
+    --color-t-brand: var(--t-brand);
+    --color-t-accent: var(--t-accent);
+    --color-t-online: var(--t-online);
+    --color-t-queued: var(--t-queued);
+
+    /* Intake Design System — Priority */
+    --color-t-p1: var(--t-p1);
+    --color-t-p2: var(--t-p2);
+    --color-t-p3: var(--t-p3);
+    --color-t-p4: var(--t-p4);
+
+    /* Intake Design System — Channel */
+    --color-t-ch-sms: var(--t-ch-sms);
+    --color-t-ch-app: var(--t-ch-app);
+    --color-t-ch-voice: var(--t-ch-voice);
+    --color-t-ch-iot: var(--t-ch-iot);
+    --color-t-ch-walkin: var(--t-ch-walkin);
+
+    /* Intake Design System — Role */
+    --color-t-role-operator: var(--t-role-operator);
+    --color-t-role-supervisor: var(--t-role-supervisor);
+    --color-t-role-admin: var(--t-role-admin);
 }
 
 /*
@@ -83,7 +125,7 @@
     body,
     html {
         --font-sans:
-            'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+            'DM Sans', ui-sans-serif, system-ui, sans-serif,
             'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
             'Noto Color Emoji';
     }
@@ -124,6 +166,34 @@
     --sidebar-border: hsl(0 0% 91%);
     --sidebar-ring: hsl(217.2 91.2% 59.8%);
     --sidebar: hsl(0 0% 98%);
+
+    /* Intake Design System Tokens — Light */
+    --t-bg: #f4f6f9;
+    --t-surface: #ffffff;
+    --t-surface-alt: #f8fafc;
+    --t-text: #0f172a;
+    --t-text-mid: #334155;
+    --t-text-dim: #64748b;
+    --t-text-faint: #94a3b8;
+    --t-border: #e2e8f0;
+    --t-border-med: #cbd5e1;
+    --t-border-foc: #2563eb;
+    --t-brand: #1e3a6e;
+    --t-accent: #2563eb;
+    --t-online: #16a34a;
+    --t-queued: #2563eb;
+    --t-p1: #dc2626;
+    --t-p2: #ea580c;
+    --t-p3: #ca8a04;
+    --t-p4: #16a34a;
+    --t-ch-sms: #059669;
+    --t-ch-app: #2563eb;
+    --t-ch-voice: #d97706;
+    --t-ch-iot: #7c3aed;
+    --t-ch-walkin: #dc2626;
+    --t-role-operator: #2563eb;
+    --t-role-supervisor: #7c3aed;
+    --t-role-admin: #0f766e;
 }
 
 .dark {
@@ -160,6 +230,18 @@
     --sidebar-border: hsl(0 0% 15.9%);
     --sidebar-ring: hsl(217.2 91.2% 59.8%);
     --sidebar: hsl(240 5.9% 10%);
+
+    /* Intake Design System Tokens — Dark */
+    --t-bg: #0f172a;
+    --t-surface: #1e293b;
+    --t-surface-alt: #334155;
+    --t-text: #f8fafc;
+    --t-text-mid: #cbd5e1;
+    --t-text-dim: #94a3b8;
+    --t-text-faint: #64748b;
+    --t-border: #334155;
+    --t-border-med: #475569;
+    --t-border-foc: #3b82f6;
 }
 
 @layer base {
