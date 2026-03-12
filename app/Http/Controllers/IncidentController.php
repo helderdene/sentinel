@@ -30,19 +30,19 @@ class IncidentController extends Controller
     ) {}
 
     /**
-     * Display the dispatch queue with PENDING incidents ordered by priority then FIFO.
+     * Display the dispatch queue with TRIAGED incidents ordered by priority then FIFO.
      */
     public function queue(): Response
     {
         $incidents = Incident::query()
             ->with('incidentType', 'barangay')
-            ->where('status', IncidentStatus::Pending)
+            ->where('status', IncidentStatus::Triaged)
             ->orderByRaw("CASE priority WHEN 'P1' THEN 1 WHEN 'P2' THEN 2 WHEN 'P3' THEN 3 WHEN 'P4' THEN 4 END")
             ->orderBy('created_at', 'asc')
             ->get();
 
         $channelCounts = Incident::query()
-            ->where('status', IncidentStatus::Pending)
+            ->where('status', IncidentStatus::Triaged)
             ->selectRaw('channel, count(*) as count')
             ->groupBy('channel')
             ->pluck('count', 'channel');

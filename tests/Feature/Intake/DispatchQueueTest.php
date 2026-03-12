@@ -5,10 +5,10 @@ use App\Models\Incident;
 use App\Models\IncidentType;
 use App\Models\User;
 
-it('returns only PENDING incidents in queue', function () {
+it('returns only TRIAGED incidents in queue', function () {
     $dispatcher = User::factory()->dispatcher()->create();
 
-    Incident::factory()->count(3)->create(['status' => IncidentStatus::Pending]);
+    Incident::factory()->count(3)->create(['status' => IncidentStatus::Triaged]);
     Incident::factory()->create(['status' => IncidentStatus::Dispatched]);
     Incident::factory()->create(['status' => IncidentStatus::Resolved]);
 
@@ -28,25 +28,25 @@ it('orders queue by priority P1 first then FIFO', function () {
 
     $p3 = Incident::factory()->create([
         'priority' => 'P3',
-        'status' => IncidentStatus::Pending,
+        'status' => IncidentStatus::Triaged,
         'created_at' => now()->subMinutes(10),
     ]);
 
     $p1 = Incident::factory()->create([
         'priority' => 'P1',
-        'status' => IncidentStatus::Pending,
+        'status' => IncidentStatus::Triaged,
         'created_at' => now()->subMinutes(5),
     ]);
 
     $p1_older = Incident::factory()->create([
         'priority' => 'P1',
-        'status' => IncidentStatus::Pending,
+        'status' => IncidentStatus::Triaged,
         'created_at' => now()->subMinutes(8),
     ]);
 
     $p2 = Incident::factory()->create([
         'priority' => 'P2',
-        'status' => IncidentStatus::Pending,
+        'status' => IncidentStatus::Triaged,
         'created_at' => now(),
     ]);
 
@@ -63,15 +63,15 @@ it('orders queue by priority P1 first then FIFO', function () {
         );
 });
 
-it('returns channel counts for pending incidents', function () {
+it('returns channel counts for triaged incidents', function () {
     $dispatcher = User::factory()->dispatcher()->create();
 
     Incident::factory()->count(2)->create([
-        'status' => IncidentStatus::Pending,
+        'status' => IncidentStatus::Triaged,
         'channel' => 'phone',
     ]);
     Incident::factory()->create([
-        'status' => IncidentStatus::Pending,
+        'status' => IncidentStatus::Triaged,
         'channel' => 'sms',
     ]);
 

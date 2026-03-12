@@ -79,8 +79,9 @@ function handleRecall(): void {
 }
 
 const priorityLevels: IncidentPriority[] = ['P1', 'P2', 'P3', 'P4'];
-const currentPriorityNum = computed(() =>
-    parseInt(props.incident.priority.replace('P', '')),
+const currentPriorityNum = computed(
+    (): 1 | 2 | 3 | 4 =>
+        parseInt(props.incident.priority.replace('P', '')) as 1 | 2 | 3 | 4,
 );
 </script>
 
@@ -94,7 +95,7 @@ const currentPriorityNum = computed(() =>
     >
         <!-- Top row: PriBadge + incident_no + time -->
         <div class="flex items-center gap-2">
-            <PriBadge :p="currentPriorityNum as 1 | 2 | 3 | 4" size="sm" />
+            <PriBadge :p="currentPriorityNum" size="sm" />
             <span class="font-mono text-[10px] text-t-text-faint">
                 {{ incident.incident_no }}
             </span>
@@ -152,10 +153,7 @@ const currentPriorityNum = computed(() =>
         </div>
 
         <!-- Inline priority picker -->
-        <div
-            v-if="showPriorityPicker"
-            class="mt-2 grid grid-cols-4 gap-1"
-        >
+        <div v-if="showPriorityPicker" class="mt-2 grid grid-cols-4 gap-1">
             <button
                 v-for="p in priorityLevels"
                 :key="p"
@@ -168,10 +166,7 @@ const currentPriorityNum = computed(() =>
                             : `color-mix(in srgb, ${priorityColors[parseInt(p.replace('P', ''))]} 10%, transparent)`,
                     color: priorityColors[parseInt(p.replace('P', ''))],
                     opacity: p === incident.priority ? 0.4 : 1,
-                    cursor:
-                        p === incident.priority
-                            ? 'not-allowed'
-                            : 'pointer',
+                    cursor: p === incident.priority ? 'not-allowed' : 'pointer',
                 }"
                 @click="handleOverride(p)"
             >

@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, type Ref } from 'vue';
+import { computed } from 'vue';
+import type { Ref } from 'vue';
 
 import PriorityBreakdown from '@/components/intake/PriorityBreakdown.vue';
 import QueueRow from '@/components/intake/QueueRow.vue';
 import SessionMetrics from '@/components/intake/SessionMetrics.vue';
-import type { Incident, IncidentPriority } from '@/types/incident';
 import type { UserPermissions } from '@/types/auth';
+import type { Incident, IncidentPriority } from '@/types/incident';
 
 const props = defineProps<{
     triagedIncidents: Ref<Incident[]> | Incident[];
@@ -35,8 +36,7 @@ const incidents = computed(() => {
         }
 
         return (
-            new Date(a.created_at).getTime() -
-            new Date(b.created_at).getTime()
+            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
         );
     });
 });
@@ -52,7 +52,7 @@ const hasTriaged = computed(() => queueCount.value > 0);
         <!-- Header -->
         <div class="flex items-center gap-2 px-4 py-3">
             <span
-                class="font-mono text-[9px] font-medium uppercase tracking-[2px] text-t-text-faint"
+                class="font-mono text-[9px] font-medium tracking-[2px] text-t-text-faint uppercase"
             >
                 Dispatch Queue
             </span>
@@ -72,9 +72,7 @@ const hasTriaged = computed(() => queueCount.value > 0);
                     :incident="incident"
                     :can-override="userCan.override_priority"
                     :can-recall="userCan.recall_incident"
-                    @overridden="
-                        (id, p) => emit('overridden', id, p)
-                    "
+                    @overridden="(id, p) => emit('overridden', id, p)"
                     @recalled="(id) => emit('recalled', id)"
                 />
             </TransitionGroup>

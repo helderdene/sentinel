@@ -34,18 +34,14 @@ const avgLabel = computed(() => {
             </div>
 
             <div class="flex flex-col">
-                <span
-                    class="font-mono text-[20px] font-bold text-t-online"
-                >
+                <span class="font-mono text-[20px] font-bold text-t-online">
                     {{ triaged }}
                 </span>
                 <span class="text-[11px] text-t-text-dim">Triaged</span>
             </div>
 
             <div class="flex flex-col">
-                <span
-                    class="font-mono text-[20px] font-bold text-t-accent"
-                >
+                <span class="font-mono text-[20px] font-bold text-t-accent">
                     {{ pending }}
                 </span>
                 <span class="text-[11px] text-t-text-dim">Pending</span>
@@ -55,9 +51,7 @@ const avgLabel = computed(() => {
                 <span class="font-mono text-[20px] font-bold text-t-text">
                     {{ avgLabel }}
                 </span>
-                <span class="text-[11px] text-t-text-dim">
-                    Avg Handle
-                </span>
+                <span class="text-[11px] text-t-text-dim"> Avg Handle </span>
             </div>
         </div>
     </div>

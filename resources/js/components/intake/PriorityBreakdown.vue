@@ -56,9 +56,7 @@ const levels = computed<PriorityLevel[]>(() => {
     ];
 });
 
-const total = computed(() =>
-    levels.value.reduce((sum, l) => sum + l.count, 0),
-);
+const total = computed(() => levels.value.reduce((sum, l) => sum + l.count, 0));
 
 function barWidth(count: number): string {
     if (total.value === 0) {
@@ -78,7 +76,7 @@ function barWidth(count: number): string {
 <template>
     <div class="mt-3">
         <p
-            class="mb-2 font-mono text-[9px] font-medium uppercase tracking-[2px] text-t-text-faint"
+            class="mb-2 font-mono text-[9px] font-medium tracking-[2px] text-t-text-faint uppercase"
         >
             Priority Breakdown
         </p>
@@ -101,9 +99,7 @@ function barWidth(count: number): string {
                     </span>
                 </div>
 
-                <div
-                    class="h-3 flex-1 overflow-hidden rounded-sm bg-t-surface"
-                >
+                <div class="h-3 flex-1 overflow-hidden rounded-sm bg-t-surface">
                     <div
                         class="h-full rounded-sm transition-all duration-300"
                         :style="{

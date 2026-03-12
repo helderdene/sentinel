@@ -1,11 +1,16 @@
 <script setup lang="ts">
+import { usePage } from '@inertiajs/vue3';
 import { useEcho } from '@laravel/echo-vue';
 import { computed, provide, ref } from 'vue';
+
 import ChannelFeed from '@/components/intake/ChannelFeed.vue';
+import DispatchQueuePanel from '@/components/intake/DispatchQueuePanel.vue';
+import SessionLog from '@/components/intake/SessionLog.vue';
 import TriagePanel from '@/components/intake/TriagePanel.vue';
 import { useIntakeFeed } from '@/composables/useIntakeFeed';
 import { useIntakeSession } from '@/composables/useIntakeSession';
 import IntakeLayout from '@/layouts/IntakeLayout.vue';
+import type { Auth } from '@/types/auth';
 import type {
     Incident,
     IncidentChannel,
@@ -25,8 +30,13 @@ const props = defineProps<{
     priorityConfig?: Record<string, unknown>;
 }>();
 
+const page = usePage<{ auth: Auth }>();
+const userCan = computed(() => page.props.auth.user.can);
+
 const {
     feedIncidents,
+    pendingIncidents,
+    triagedIncidents,
     pendingCount,
     triagedCount,
     activeFilter,
@@ -39,6 +49,7 @@ const {
 const session = useIntakeSession();
 
 const isManualEntry = ref(false);
+const sessionLogRef = ref<InstanceType<typeof SessionLog> | null>(null);
 
 function onSelectIncident(incident: Incident): void {
     isManualEntry.value = false;
@@ -54,6 +65,41 @@ function onTriageSubmitted(): void {
     selectIncident(null);
     isManualEntry.value = false;
     session.recordTriaged(0);
+
+    if (activeIncident.value) {
+        sessionLogRef.value?.addEntry({
+            action: `Triaged ${activeIncident.value.incident_no} as ${activeIncident.value.priority}`,
+            priority: activeIncident.value.priority,
+        });
+    }
+}
+
+function onOverridden(incidentId: string, newPriority: IncidentPriority): void {
+    const incident = triagedIncidents.value.find((i) => i.id === incidentId);
+
+    if (incident) {
+        const oldPriority = incident.priority;
+        incident.priority = newPriority;
+
+        sessionLogRef.value?.addEntry({
+            action: `Override ${incident.incident_no} priority ${oldPriority} -> ${newPriority}`,
+            priority: newPriority,
+        });
+    }
+}
+
+function onRecalled(incidentId: string): void {
+    const index = triagedIncidents.value.findIndex((i) => i.id === incidentId);
+
+    if (index !== -1) {
+        const [recalled] = triagedIncidents.value.splice(index, 1);
+        recalled.status = 'PENDING';
+        pendingIncidents.value.unshift(recalled);
+
+        sessionLogRef.value?.addEntry({
+            action: `Recalled ${recalled.incident_no} from queue`,
+        });
+    }
 }
 
 const tickerEvents = ref<string[]>([]);
@@ -121,33 +167,20 @@ provide('topbarStats', {
             @triage-submitted="onTriageSubmitted"
         />
 
-        <!-- Right: Queue Panel Placeholder (304px) -->
-        <div
-            class="flex w-[304px] shrink-0 flex-col items-center justify-center border-l border-t-border bg-t-surface"
+        <!-- Right: Dispatch Queue Panel (304px) -->
+        <DispatchQueuePanel
+            :triaged-incidents="triagedIncidents"
+            :received="session.received.value"
+            :triaged="session.triaged.value"
+            :pending="session.pending.value"
+            :avg-handle-time="session.avgHandleTime.value"
+            :user-can="userCan"
+            @overridden="onOverridden"
+            @recalled="onRecalled"
         >
-            <div
-                class="flex size-12 items-center justify-center rounded-xl bg-t-surface-alt"
-            >
-                <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="var(--t-text-faint)"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <rect x="3" y="3" width="7" height="7" rx="1" />
-                    <rect x="14" y="3" width="7" height="7" rx="1" />
-                    <rect x="3" y="14" width="7" height="7" rx="1" />
-                    <rect x="14" y="14" width="7" height="7" rx="1" />
-                </svg>
-            </div>
-            <p class="mt-3 text-[12px] font-medium text-t-text-faint">
-                Queue panel coming soon
-            </p>
-            <p class="mt-0.5 text-[10px] text-t-text-faint">Plan 04</p>
-        </div>
+            <template v-if="userCan.view_session_log" #session-log>
+                <SessionLog ref="sessionLogRef" />
+            </template>
+        </DispatchQueuePanel>
     </div>
 </template>

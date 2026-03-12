@@ -120,7 +120,45 @@ useEcho<IncidentStatusChangedPayload>(
     'dispatch.incidents',
     'IncidentStatusChanged',
     (e) => {
-        if (e.old_status === 'PENDING' && e.new_status !== 'PENDING') {
+        // Add newly triaged incidents to the dispatch queue
+        if (e.new_status === 'TRIAGED') {
+            if (!localIncidents.value.some((inc) => inc.id === e.id)) {
+                const newIncident: IncidentForQueue = {
+                    id: e.id,
+                    incident_no: e.incident_no,
+                    incident_type: { name: '' } as IncidentType,
+                    priority: e.priority,
+                    status: 'TRIAGED' as IncidentStatusChangedPayload['new_status'],
+                    channel: '' as IncidentChannel,
+                    location_text: '',
+                    barangay: null,
+                    caller_name: null,
+                    created_at: new Date().toISOString(),
+                };
+
+                const insertIndex = localIncidents.value.findIndex(
+                    (inc) =>
+                        priorityOrder[inc.priority] >
+                        priorityOrder[newIncident.priority],
+                );
+
+                if (insertIndex === -1) {
+                    localIncidents.value.push(newIncident);
+                } else {
+                    localIncidents.value.splice(insertIndex, 0, newIncident);
+                }
+
+                highlightedId.value = newIncident.id;
+                setTimeout(() => {
+                    highlightedId.value = null;
+                }, 3000);
+            }
+
+            return;
+        }
+
+        // Remove incidents that leave PENDING/TRIAGED
+        if (e.old_status === 'PENDING' || e.old_status === 'TRIAGED') {
             const index = localIncidents.value.findIndex(
                 (inc) => inc.id === e.id,
             );
