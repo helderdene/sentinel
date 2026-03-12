@@ -68,7 +68,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01-PLAN.md -- Backend infrastructure: Reverb + Horizon + Redis config, 6 broadcast events, channel auth, state-sync endpoint, dev script, tests
+- [x] 03-01-PLAN.md -- Backend infrastructure: Reverb + Horizon + Redis config, 6 broadcast events, channel auth, state-sync endpoint, dev script, tests
 - [ ] 03-02-PLAN.md -- Frontend integration: Echo init, useWebSocket composable, ConnectionBanner, Queue.vue + ChannelMonitor.vue WebSocket replacement, P1/P2 audio alerts
 
 ### Phase 4: Dispatch Console
@@ -148,7 +148,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete | 2026-03-12 |
 | 2. Intake | 3/3 | Complete | 2026-03-13 |
-| 3. Real-Time Infrastructure | 0/2 | Not started | - |
+| 3. Real-Time Infrastructure | 1/2 | In Progress | - |
 | 4. Dispatch Console | 0/4 | Not started | - |
 | 5. Responder Workflow | 0/4 | Not started | - |
 | 6. Integration Layer | 0/3 | Not started | - |

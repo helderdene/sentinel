@@ -15,8 +15,8 @@
 - [x] **FNDTN-06**: Units data model with GPS coordinates (geography), status, type, agency, crew count, shift, and GiST spatial index
 - [x] **FNDTN-07**: Incident timeline table (append-only audit log with event_type, event_data JSONB, actor_type, actor_id)
 - [x] **FNDTN-08**: Incident messages table for bi-directional dispatch-responder communication
-- [ ] **FNDTN-09**: Laravel Reverb WebSocket server configured with channel authorization and presence channels
-- [ ] **FNDTN-10**: Redis configured for cache, queue (Horizon), and Reverb pub/sub
+- [x] **FNDTN-09**: Laravel Reverb WebSocket server configured with channel authorization and presence channels
+- [x] **FNDTN-10**: Redis configured for cache, queue (Horizon), and Reverb pub/sub
 
 ### Intake
 
@@ -118,8 +118,8 @@
 | FNDTN-06 | Phase 1 | Complete |
 | FNDTN-07 | Phase 1 | Complete |
 | FNDTN-08 | Phase 1 | Complete |
-| FNDTN-09 | Phase 3 | Pending |
-| FNDTN-10 | Phase 3 | Pending |
+| FNDTN-09 | Phase 3 | Complete |
+| FNDTN-10 | Phase 3 | Complete |
 | INTK-01 | Phase 2 | Complete |
 | INTK-02 | Phase 2 | Complete |
 | INTK-03 | Phase 2 | Complete |
