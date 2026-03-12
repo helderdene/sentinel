@@ -53,7 +53,8 @@ const {
     selectIncident,
 } = useIntakeFeed(props.pendingIncidents, props.triagedIncidents);
 
-const session = useIntakeSession();
+const initialTotal = props.pendingIncidents.length + props.triagedIncidents.length;
+const session = useIntakeSession(initialTotal, props.triagedIncidents.length);
 
 const isManualEntry = ref(false);
 const sessionLogRef = ref<InstanceType<typeof SessionLog> | null>(null);

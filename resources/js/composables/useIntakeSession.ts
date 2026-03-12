@@ -1,8 +1,8 @@
 import { computed, ref } from 'vue';
 
-export function useIntakeSession() {
-    const received = ref(0);
-    const triaged = ref(0);
+export function useIntakeSession(initialReceived = 0, initialTriaged = 0) {
+    const received = ref(initialReceived);
+    const triaged = ref(initialTriaged);
     const handleTimes = ref<number[]>([]);
 
     const pending = computed(() => Math.max(0, received.value - triaged.value));
