@@ -1,3 +1,92 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+IRMS (Incident Response Management System) is a full-stack platform for the CDRRMO of Butuan City. It manages the full emergency incident lifecycle: Report → Intake → Triage → Dispatch → Response → Resolution → Reporting. The system has five operational layers: Intake, Dispatch, Responder, Integration, and Analytics.
+
+The full technical specification is at `docs/IRMS-Specification.md`.
+
+## Tech Stack
+
+- **Backend:** Laravel 12 (PHP 8.2+), Laravel Fortify (auth with 2FA)
+- **Frontend:** Vue 3 + Inertia.js v2 + TypeScript (strict mode)
+- **Styling:** Tailwind CSS v4 with Reka UI components
+- **Build:** Vite 7
+- **Routing:** Laravel Wayfinder (generates TypeScript functions from Laravel routes)
+- **Testing:** Pest 4
+- **Database:** SQLite (dev), PostgreSQL + PostGIS (production)
+- **Local server:** Laravel Herd (site at `irms.test`)
+
+## Common Commands
+
+```bash
+# Development server (runs Laravel server + queue + pail logs + Vite concurrently)
+composer run dev
+
+# Run all tests
+php artisan test --compact
+
+# Run a single test file
+php artisan test --compact tests/Feature/Auth/AuthenticationTest.php
+
+# Run a specific test by name
+php artisan test --compact --filter=testName
+
+# PHP code formatting (run after modifying PHP files)
+vendor/bin/pint --dirty --format agent
+
+# Frontend linting and formatting
+npm run lint          # ESLint with auto-fix
+npm run format        # Prettier
+
+# TypeScript type checking
+npm run types:check
+
+# Build frontend assets
+npm run build
+
+# Full CI check
+composer run ci:check
+```
+
+## Architecture
+
+### Backend Structure (Laravel 12)
+
+- `bootstrap/app.php` — Middleware registration, routing, exception handling (no `Kernel.php`)
+- `bootstrap/providers.php` — Service providers: `AppServiceProvider`, `FortifyServiceProvider`
+- `app/Actions/Fortify/` — Auth actions (CreateNewUser, ResetUserPassword)
+- `app/Concerns/` — Shared validation rule traits (PasswordValidationRules, ProfileValidationRules)
+- `app/Http/Requests/Settings/` — Form Request classes for validation (array-style rules)
+- `routes/web.php` → `routes/settings.php` — Inertia routes (no API routes yet)
+
+### Frontend Structure (Vue 3 + Inertia)
+
+- `resources/js/pages/` — Route-mapped Inertia page components (auth/, settings/)
+- `resources/js/layouts/` — AppLayout (authenticated), AuthLayout (guest)
+- `resources/js/components/` — Reusable components; `components/ui/` has Shadcn-style primitives (Reka UI based)
+- `resources/js/composables/` — Vue composition functions (e.g., useAppearance)
+- `resources/js/actions/` — **Auto-generated** by Wayfinder (controller route functions)
+- `resources/js/routes/` — **Auto-generated** by Wayfinder (named route functions)
+- `resources/js/types/` — TypeScript type definitions (auth, navigation, ui)
+- Path alias: `@/*` maps to `resources/js/*`
+
+### Testing
+
+- Pest 4 with `RefreshDatabase` on all Feature tests (SQLite in-memory)
+- Tests in `tests/Feature/` (auth, settings, dashboard) and `tests/Unit/`
+- Create tests with: `php artisan make:test --pest {name}` (add `--unit` for unit tests)
+
+### Code Style
+
+- **PHP:** Pint formatter, curly braces always, constructor promotion, explicit return types, PHPDoc over inline comments
+- **TypeScript:** Strict mode, `type` imports enforced (`prefer-type-imports`), import ordering (builtin → external → internal → parent → sibling → index)
+- **Vue:** Essential rules, `1tbs` brace style, blank lines around control statements
+- **Prettier:** Single quotes, semicolons, 4-space indent, 80 char width, Tailwind class sorting
+- ESLint ignores auto-generated dirs: `resources/js/actions/`, `resources/js/routes/`, `resources/js/wayfinder/`, `resources/js/components/ui/`
+
 <laravel-boost-guidelines>
 === foundation rules ===
 
@@ -9,11 +98,13 @@ The Laravel Boost guidelines are specifically curated by Laravel maintainers for
 
 This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
 
-- php - 8.5.2
+- php - 8.4.18
 - inertiajs/inertia-laravel (INERTIA_LARAVEL) - v2
 - laravel/fortify (FORTIFY) - v1
 - laravel/framework (LARAVEL) - v12
+- laravel/horizon (HORIZON) - v5
 - laravel/prompts (PROMPTS) - v0
+- laravel/reverb (REVERB) - v1
 - laravel/wayfinder (WAYFINDER) - v0
 - laravel/boost (BOOST) - v2
 - laravel/mcp (MCP) - v0
@@ -22,13 +113,22 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - laravel/sail (SAIL) - v1
 - pestphp/pest (PEST) - v4
 - phpunit/phpunit (PHPUNIT) - v12
+- @inertiajs/vue3 (INERTIA_VUE) - v2
+- tailwindcss (TAILWINDCSS) - v4
+- vue (VUE) - v3
+- @laravel/vite-plugin-wayfinder (WAYFINDER_VITE) - v0
+- eslint (ESLINT) - v9
+- prettier (PRETTIER) - v3
 
 ## Skills Activation
 
 This project has domain-specific skills available. You MUST activate the relevant skill whenever you work in that domain—don't wait until you're stuck.
 
+- `configuring-horizon` — Use this skill whenever the user mentions Horizon by name in a Laravel context. Covers the full Horizon lifecycle: installing Horizon (horizon:install, Sail setup), configuring config/horizon.php (supervisor blocks, queue assignments, balancing strategies, minProcesses/maxProcesses), fixing the dashboard (authorization via Gate::define viewHorizon, blank metrics, horizon:snapshot scheduling), and troubleshooting production issues (worker crashes, timeout chain ordering, LongWaitDetected notifications, waits config). Also covers job tagging and silencing. Do not use for generic Laravel queues without Horizon, SQS or database drivers, standalone Redis setup, Linux supervisord, Telescope, or job batching.
 - `wayfinder-development` — Activates whenever referencing backend routes in frontend components. Use when importing from @/actions or @/routes, calling Laravel routes from TypeScript, or working with Wayfinder route functions.
 - `pest-testing` — Tests applications using the Pest 4 PHP framework. Activates when writing tests, creating unit or feature tests, adding assertions, testing Livewire components, browser testing, debugging test failures, working with datasets or mocking; or when the user mentions test, spec, TDD, expects, assertion, coverage, or needs to verify functionality works.
+- `inertia-vue-development` — Develops Inertia.js v2 Vue client-side applications. Activates when creating Vue pages, forms, or navigation; using <Link>, <Form>, useForm, or router; working with deferred props, prefetching, or polling; or when user mentions Vue with Inertia, Vue pages, Vue forms, or Vue navigation.
+- `tailwindcss-development` — Styles applications using Tailwind CSS v4 utilities. Activates when adding styles, restyling components, working with gradients, spacing, layout, flex, grid, responsive design, dark mode, colors, typography, or borders; or when the user mentions CSS, styling, classes, Tailwind, restyle, hero section, cards, buttons, or any visual/UI changes.
 
 ## Conventions
 
@@ -159,6 +259,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Inertia creates fully client-side rendered SPAs without modern SPA complexity, leveraging existing server-side patterns.
 - Components live in `resources/js/pages` (unless specified in `vite.config.js`). Use `Inertia::render()` for server-side routing instead of Blade views.
 - ALWAYS use `search-docs` tool for version-specific Inertia documentation and updated code examples.
+- IMPORTANT: Activate `inertia-vue-development` when working with Inertia Vue client-side patterns.
 
 # Inertia v2
 
@@ -274,5 +375,20 @@ Wayfinder generates TypeScript functions for Laravel routes. Import from `@/acti
 - Do NOT delete tests without approval.
 - CRITICAL: ALWAYS use `search-docs` tool for version-specific Pest documentation and updated code examples.
 - IMPORTANT: Activate `pest-testing` every time you're working with a Pest or testing-related task.
+
+=== inertia-vue/core rules ===
+
+# Inertia + Vue
+
+Vue components must have a single root element.
+- IMPORTANT: Activate `inertia-vue-development` when working with Inertia Vue client-side patterns.
+
+=== tailwindcss/core rules ===
+
+# Tailwind CSS
+
+- Always use existing Tailwind conventions; check project patterns before adding new ones.
+- IMPORTANT: Always use `search-docs` tool for version-specific Tailwind CSS documentation and updated code examples. Never rely on training data.
+- IMPORTANT: Activate `tailwindcss-development` every time you're working with a Tailwind CSS or styling-related task.
 
 </laravel-boost-guidelines>
