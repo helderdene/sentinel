@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\IncidentController;
+use App\Http\Controllers\IntakeStationController;
 use App\Http\Controllers\IoTWebhookController;
 use App\Http\Controllers\SmsWebhookController;
 use App\Http\Controllers\StateSyncController;
@@ -25,6 +26,13 @@ Route::inertia('/', 'Welcome', [
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+
+    // Operator + Supervisor + Admin intake routes
+    Route::middleware(['role:operator,supervisor,admin'])->group(function () {
+        Route::get('intake', [IntakeStationController::class, 'show'])->name('intake.station');
+        Route::post('intake/{incident}/triage', [IntakeStationController::class, 'triage'])->name('intake.triage');
+        Route::post('intake/manual', [IntakeStationController::class, 'storeAndTriage'])->name('intake.store-and-triage');
+    });
 
     // Dispatcher + Supervisor + Admin routes
     Route::middleware(['role:dispatcher,supervisor,admin'])->group(function () {

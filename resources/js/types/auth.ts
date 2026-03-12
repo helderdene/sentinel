@@ -1,4 +1,9 @@
-export type UserRole = 'admin' | 'dispatcher' | 'operator' | 'responder' | 'supervisor';
+export type UserRole =
+    | 'admin'
+    | 'dispatcher'
+    | 'operator'
+    | 'responder'
+    | 'supervisor';
 
 export type UserPermissions = {
     manage_users: boolean;

@@ -95,6 +95,23 @@ const mainNavItems = computed<NavItem[]>(() => {
                 icon: Shield,
             },
         ],
+        operator: [
+            {
+                title: 'Intake Station',
+                href: '/intake',
+                icon: ClipboardList,
+            },
+            {
+                title: 'Incident Queue',
+                href: incidentsQueue(),
+                icon: ListOrdered,
+            },
+            {
+                title: 'Messages',
+                href: '/messages',
+                icon: MessageSquare,
+            },
+        ],
         dispatcher: [
             {
                 title: 'Dashboard',

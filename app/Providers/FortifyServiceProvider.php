@@ -4,14 +4,17 @@ namespace App\Providers;
 
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
+use App\Enums\UserRole;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Laravel\Fortify\Contracts\LoginResponse;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
+use Symfony\Component\HttpFoundation\Response;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -29,6 +32,7 @@ class FortifyServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureActions();
+        $this->configureRedirects();
         $this->configureViews();
         $this->configureRateLimiting();
     }
@@ -40,6 +44,34 @@ class FortifyServiceProvider extends ServiceProvider
     {
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::createUsersUsing(CreateNewUser::class);
+    }
+
+    /**
+     * Configure role-based redirect after authentication.
+     */
+    private function configureRedirects(): void
+    {
+        $this->app->singleton(LoginResponse::class, function () {
+            return new class implements LoginResponse
+            {
+                /**
+                 * Create an HTTP response that represents the object.
+                 *
+                 * @param  Request  $request
+                 * @return Response
+                 */
+                public function toResponse($request)
+                {
+                    $user = $request->user();
+
+                    if ($user && $user->role === UserRole::Operator) {
+                        return redirect()->intended(route('intake.station'));
+                    }
+
+                    return redirect()->intended(Fortify::redirects('login'));
+                }
+            };
+        });
     }
 
     /**

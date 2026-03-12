@@ -35,6 +35,8 @@ const priorityBadgeClass: Record<IncidentPriority, string> = {
 const statusBadgeClass: Record<IncidentStatus, string> = {
     PENDING:
         'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-700',
+    TRIAGED:
+        'bg-teal-100 text-teal-800 border-teal-300 dark:bg-teal-900/30 dark:text-teal-400 dark:border-teal-700',
     DISPATCHED:
         'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-700',
     ACKNOWLEDGED:

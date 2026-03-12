@@ -47,6 +47,7 @@ const showChannelMonitor = computed(
 const roleLabels: Record<UserRole, string> = {
     admin: 'Administrator',
     dispatcher: 'Dispatcher',
+    operator: 'Operator',
     responder: 'Responder',
     supervisor: 'Supervisor',
 };
