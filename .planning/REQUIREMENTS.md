@@ -48,11 +48,11 @@
 
 - [ ] **RSPDR-01**: Responder receives assignment via WebSocket with toast notification and audio cue; full incident card with type, priority, location, notes
 - [ ] **RSPDR-02**: Responder can acknowledge assignment with single tap; timestamp captured and dispatch timer closed
-- [ ] **RSPDR-03**: Responder can transition status (Acknowledged → En Route → On Scene → Resolving → Resolved) with large touch targets (44px min); each transition broadcasts to dispatch via WebSocket
+- [ ] **RSPDR-03**: Responder can transition status (Acknowledged > En Route > On Scene > Resolving > Resolved) with large touch targets (44px min); each transition broadcasts to dispatch via WebSocket
 - [ ] **RSPDR-04**: Navigation deep-link to Google Maps with incident coordinates; embedded MapLibre mini-map with animated route polyline, unit position, incident pulse ring, and live ETA countdown
 - [ ] **RSPDR-05**: Bi-directional messaging with dispatch; 8 preset quick-reply chips plus free text; message history persists for incident duration
 - [ ] **RSPDR-06**: Contextual arrival checklists per incident type (cardiac, road accident, structure fire, default) with animated checkboxes and progress bar; completion % broadcast to dispatch
-- [ ] **RSPDR-07**: Patient vitals form: blood pressure (mmHg), heart rate (bpm), SpO₂ (%), GCS score (3-15) with validation ranges and placeholders
+- [ ] **RSPDR-07**: Patient vitals form: blood pressure (mmHg), heart rate (bpm), SpO2 (%), GCS score (3-15) with validation ranges and placeholders
 - [ ] **RSPDR-08**: Quick assessment tags as toggle chips: Conscious, Breathing, Bleeding, Unresponsive, Fracture, Burns, Shock, Chest Pain, Head Trauma, Airway Compromised, Anaphylaxis
 - [ ] **RSPDR-09**: Outcome selection required before closure: Treated On Scene, Transported to Hospital (with hospital picker), Patient Refused Treatment, Declared DOA, Stand Down/False Alarm
 - [ ] **RSPDR-10**: Resource request from field: 6 types (additional ambulance, fire unit, police backup, rescue boat, medical officer, medevac); request creates timeline entry and dispatch notification
@@ -100,7 +100,7 @@
 
 | Feature | Reason |
 |---------|--------|
-| Full ePCR/NEMSIS compliance | US Medicare standard; 270 data elements irrelevant for Philippine CDRRMO. Simplified vitals (BP, HR, SpO₂, GCS) + tags is sufficient |
+| Full ePCR/NEMSIS compliance | US Medicare standard; 270 data elements irrelevant for Philippine CDRRMO. Simplified vitals (BP, HR, SpO2, GCS) + tags is sufficient |
 | Automated dispatch (auto-assign) | Removing human judgment dangerous in Philippine context (informal settlements, flooding, road conditions). Recommend-then-confirm is correct |
 | Custom map tile server | Infrastructure complexity with marginal benefit. Mapbox hosted basemap is sufficient |
 | Video/image upload | Storage, bandwidth, moderation costs. Text-based scene documentation sufficient for v1 |
@@ -110,68 +110,68 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FNDTN-01 | — | Pending |
-| FNDTN-02 | — | Pending |
-| FNDTN-03 | — | Pending |
-| FNDTN-04 | — | Pending |
-| FNDTN-05 | — | Pending |
-| FNDTN-06 | — | Pending |
-| FNDTN-07 | — | Pending |
-| FNDTN-08 | — | Pending |
-| FNDTN-09 | — | Pending |
-| FNDTN-10 | — | Pending |
-| INTK-01 | — | Pending |
-| INTK-02 | — | Pending |
-| INTK-03 | — | Pending |
-| INTK-04 | — | Pending |
-| INTK-05 | — | Pending |
-| INTK-06 | — | Pending |
-| INTK-07 | — | Pending |
-| INTK-08 | — | Pending |
-| INTK-09 | — | Pending |
-| DSPTCH-01 | — | Pending |
-| DSPTCH-02 | — | Pending |
-| DSPTCH-03 | — | Pending |
-| DSPTCH-04 | — | Pending |
-| DSPTCH-05 | — | Pending |
-| DSPTCH-06 | — | Pending |
-| DSPTCH-07 | — | Pending |
-| DSPTCH-08 | — | Pending |
-| DSPTCH-09 | — | Pending |
-| DSPTCH-10 | — | Pending |
-| DSPTCH-11 | — | Pending |
-| RSPDR-01 | — | Pending |
-| RSPDR-02 | — | Pending |
-| RSPDR-03 | — | Pending |
-| RSPDR-04 | — | Pending |
-| RSPDR-05 | — | Pending |
-| RSPDR-06 | — | Pending |
-| RSPDR-07 | — | Pending |
-| RSPDR-08 | — | Pending |
-| RSPDR-09 | — | Pending |
-| RSPDR-10 | — | Pending |
-| RSPDR-11 | — | Pending |
-| INTGR-01 | — | Pending |
-| INTGR-02 | — | Pending |
-| INTGR-03 | — | Pending |
-| INTGR-04 | — | Pending |
-| INTGR-05 | — | Pending |
-| INTGR-06 | — | Pending |
-| INTGR-07 | — | Pending |
-| INTGR-08 | — | Pending |
-| INTGR-09 | — | Pending |
-| ANLTCS-01 | — | Pending |
-| ANLTCS-02 | — | Pending |
-| ANLTCS-03 | — | Pending |
-| ANLTCS-04 | — | Pending |
-| ANLTCS-05 | — | Pending |
-| ANLTCS-06 | — | Pending |
+| FNDTN-01 | Phase 1 | Pending |
+| FNDTN-02 | Phase 1 | Pending |
+| FNDTN-03 | Phase 1 | Pending |
+| FNDTN-04 | Phase 1 | Pending |
+| FNDTN-05 | Phase 1 | Pending |
+| FNDTN-06 | Phase 1 | Pending |
+| FNDTN-07 | Phase 1 | Pending |
+| FNDTN-08 | Phase 1 | Pending |
+| FNDTN-09 | Phase 3 | Pending |
+| FNDTN-10 | Phase 3 | Pending |
+| INTK-01 | Phase 2 | Pending |
+| INTK-02 | Phase 2 | Pending |
+| INTK-03 | Phase 2 | Pending |
+| INTK-04 | Phase 2 | Pending |
+| INTK-05 | Phase 2 | Pending |
+| INTK-06 | Phase 2 | Pending |
+| INTK-07 | Phase 2 | Pending |
+| INTK-08 | Phase 2 | Pending |
+| INTK-09 | Phase 2 | Pending |
+| DSPTCH-01 | Phase 4 | Pending |
+| DSPTCH-02 | Phase 4 | Pending |
+| DSPTCH-03 | Phase 4 | Pending |
+| DSPTCH-04 | Phase 4 | Pending |
+| DSPTCH-05 | Phase 4 | Pending |
+| DSPTCH-06 | Phase 4 | Pending |
+| DSPTCH-07 | Phase 4 | Pending |
+| DSPTCH-08 | Phase 4 | Pending |
+| DSPTCH-09 | Phase 4 | Pending |
+| DSPTCH-10 | Phase 4 | Pending |
+| DSPTCH-11 | Phase 4 | Pending |
+| RSPDR-01 | Phase 5 | Pending |
+| RSPDR-02 | Phase 5 | Pending |
+| RSPDR-03 | Phase 5 | Pending |
+| RSPDR-04 | Phase 5 | Pending |
+| RSPDR-05 | Phase 5 | Pending |
+| RSPDR-06 | Phase 5 | Pending |
+| RSPDR-07 | Phase 5 | Pending |
+| RSPDR-08 | Phase 5 | Pending |
+| RSPDR-09 | Phase 5 | Pending |
+| RSPDR-10 | Phase 5 | Pending |
+| RSPDR-11 | Phase 5 | Pending |
+| INTGR-01 | Phase 6 | Pending |
+| INTGR-02 | Phase 6 | Pending |
+| INTGR-03 | Phase 6 | Pending |
+| INTGR-04 | Phase 6 | Pending |
+| INTGR-05 | Phase 6 | Pending |
+| INTGR-06 | Phase 6 | Pending |
+| INTGR-07 | Phase 6 | Pending |
+| INTGR-08 | Phase 6 | Pending |
+| INTGR-09 | Phase 6 | Pending |
+| ANLTCS-01 | Phase 7 | Pending |
+| ANLTCS-02 | Phase 7 | Pending |
+| ANLTCS-03 | Phase 7 | Pending |
+| ANLTCS-04 | Phase 7 | Pending |
+| ANLTCS-05 | Phase 7 | Pending |
+| ANLTCS-06 | Phase 7 | Pending |
 
 **Coverage:**
-- v1 requirements: 50 total
-- Mapped to phases: 0
-- Unmapped: 50 ⚠️
+- v1 requirements: 56 total
+- Mapped to phases: 56
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-12*
-*Last updated: 2026-03-12 after initial definition*
+*Last updated: 2026-03-12 after roadmap phase assignment*
