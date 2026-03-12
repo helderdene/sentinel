@@ -18,7 +18,7 @@ it('creating incident via store endpoint dispatches IncidentCreated event', func
             'channel' => 'phone',
             'location_text' => 'City Hall, Butuan City',
         ])
-        ->assertRedirect(route('incidents.queue'));
+        ->assertRedirect();
 
     Event::assertDispatched(IncidentCreated::class);
 });

@@ -133,7 +133,7 @@ class IncidentController extends Controller
 
         $this->logPriorityOverrideIfNeeded($incident, $validated);
 
-        return redirect()->route('incidents.queue')
+        return redirect()->route('incidents.show', $incident)
             ->with('success', "Incident {$incident->incident_no} created successfully.");
     }
 

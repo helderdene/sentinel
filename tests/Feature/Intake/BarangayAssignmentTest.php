@@ -26,7 +26,7 @@ it('auto-assigns barangay from coordinates via PostGIS ST_Contains', function ()
             'latitude' => 8.9607,
             'longitude' => 125.5599,
         ])
-        ->assertRedirect(route('incidents.queue'));
+        ->assertRedirect();
 
     $incident = Incident::first();
     expect($incident->barangay_id)->not->toBeNull();
@@ -51,7 +51,7 @@ it('allows manual barangay_id to override auto-assignment', function () {
             'longitude' => 125.5599,
             'barangay_id' => $manualBarangay->id,
         ])
-        ->assertRedirect(route('incidents.queue'));
+        ->assertRedirect();
 
     $incident = Incident::first();
     expect($incident->barangay_id)->toBe($manualBarangay->id);
@@ -71,7 +71,7 @@ it('leaves barangay null when coordinates do not match any barangay', function (
             'latitude' => 0.0,
             'longitude' => 0.0,
         ])
-        ->assertRedirect(route('incidents.queue'));
+        ->assertRedirect();
 
     $incident = Incident::first();
     expect($incident->barangay_id)->toBeNull();

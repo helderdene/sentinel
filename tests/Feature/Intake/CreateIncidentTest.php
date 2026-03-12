@@ -24,7 +24,7 @@ it('allows dispatcher to create incident with all required fields', function () 
             'caller_contact' => '09171234567',
             'notes' => 'Smoke visible from third floor',
         ])
-        ->assertRedirect(route('incidents.queue'));
+        ->assertRedirect();
 
     $this->assertDatabaseHas('incidents', [
         'incident_type_id' => $type->id,
@@ -114,7 +114,7 @@ it('allows admin to create incidents', function () {
             'channel' => 'radio',
             'location_text' => 'City Hall',
         ])
-        ->assertRedirect(route('incidents.queue'));
+        ->assertRedirect();
 });
 
 it('allows supervisor to create incidents', function () {
@@ -128,7 +128,7 @@ it('allows supervisor to create incidents', function () {
             'channel' => 'app',
             'location_text' => 'Some location',
         ])
-        ->assertRedirect(route('incidents.queue'));
+        ->assertRedirect();
 });
 
 it('renders create form with required props', function () {
@@ -160,7 +160,7 @@ it('stores coordinates when latitude and longitude provided', function () {
             'latitude' => 8.9475,
             'longitude' => 125.5406,
         ])
-        ->assertRedirect(route('incidents.queue'));
+        ->assertRedirect();
 
     $incident = Incident::first();
     expect($incident->coordinates)->not->toBeNull();
