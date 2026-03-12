@@ -58,12 +58,18 @@ class HandleInertiaRequests extends Middleware
                         'view_analytics' => $user->can('view-analytics'),
                         'view_all_incidents' => $user->can('view-all-incidents'),
                         'manage_system' => $user->can('manage-system'),
+                        'triage_incidents' => $user->can('triage-incidents'),
+                        'manual_entry' => $user->can('manual-entry'),
+                        'submit_dispatch' => $user->can('submit-dispatch'),
+                        'override_priority' => $user->can('override-priority'),
+                        'recall_incident' => $user->can('recall-incident'),
+                        'view_session_log' => $user->can('view-session-log'),
                     ]]
                 ) : null,
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'channelCounts' => function () use ($user) {
-                if (! $user || ! in_array($user->role->value, ['dispatcher', 'supervisor', 'admin'])) {
+                if (! $user || ! in_array($user->role->value, ['operator', 'dispatcher', 'supervisor', 'admin'])) {
                     return null;
                 }
 

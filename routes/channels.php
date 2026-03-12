@@ -4,7 +4,7 @@ use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
 
-$dispatchRoles = [UserRole::Dispatcher, UserRole::Supervisor, UserRole::Admin];
+$dispatchRoles = [UserRole::Operator, UserRole::Dispatcher, UserRole::Supervisor, UserRole::Admin];
 
 Broadcast::channel('dispatch.incidents', function (User $user) use ($dispatchRoles): bool {
     return in_array($user->role, $dispatchRoles);

@@ -4,6 +4,7 @@ export type IncidentPriority = 'P1' | 'P2' | 'P3' | 'P4';
 
 export type IncidentStatus =
     | 'PENDING'
+    | 'TRIAGED'
     | 'DISPATCHED'
     | 'ACKNOWLEDGED'
     | 'EN_ROUTE'

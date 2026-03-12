@@ -73,6 +73,16 @@ class UserFactory extends Factory
     }
 
     /**
+     * Set the user role to operator.
+     */
+    public function operator(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => UserRole::Operator,
+        ]);
+    }
+
+    /**
      * Set the user role to dispatcher.
      */
     public function dispatcher(): static

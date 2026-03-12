@@ -69,7 +69,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('manage-barangays', fn (User $user): bool => $user->role === UserRole::Admin);
 
         Gate::define('create-incidents', fn (User $user): bool => in_array($user->role, [
-            UserRole::Dispatcher, UserRole::Supervisor, UserRole::Admin,
+            UserRole::Operator, UserRole::Dispatcher, UserRole::Supervisor, UserRole::Admin,
         ], true));
 
         Gate::define('dispatch-units', fn (User $user): bool => in_array($user->role, [
@@ -87,5 +87,30 @@ class AppServiceProvider extends ServiceProvider
         ], true));
 
         Gate::define('manage-system', fn (User $user): bool => $user->role === UserRole::Admin);
+
+        // Intake layer gates
+        Gate::define('triage-incidents', fn (User $user): bool => in_array($user->role, [
+            UserRole::Operator, UserRole::Supervisor, UserRole::Admin,
+        ], true));
+
+        Gate::define('manual-entry', fn (User $user): bool => in_array($user->role, [
+            UserRole::Operator, UserRole::Supervisor, UserRole::Admin,
+        ], true));
+
+        Gate::define('submit-dispatch', fn (User $user): bool => in_array($user->role, [
+            UserRole::Operator, UserRole::Supervisor, UserRole::Admin,
+        ], true));
+
+        Gate::define('override-priority', fn (User $user): bool => in_array($user->role, [
+            UserRole::Supervisor, UserRole::Admin,
+        ], true));
+
+        Gate::define('recall-incident', fn (User $user): bool => in_array($user->role, [
+            UserRole::Supervisor, UserRole::Admin,
+        ], true));
+
+        Gate::define('view-session-log', fn (User $user): bool => in_array($user->role, [
+            UserRole::Supervisor, UserRole::Admin,
+        ], true));
     }
 }

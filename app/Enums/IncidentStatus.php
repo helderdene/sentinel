@@ -5,6 +5,7 @@ namespace App\Enums;
 enum IncidentStatus: string
 {
     case Pending = 'PENDING';
+    case Triaged = 'TRIAGED';
     case Dispatched = 'DISPATCHED';
     case Acknowledged = 'ACKNOWLEDGED';
     case EnRoute = 'EN_ROUTE';
