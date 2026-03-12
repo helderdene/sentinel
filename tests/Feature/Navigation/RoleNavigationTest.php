@@ -93,3 +93,93 @@ it('allows all roles to access the dashboard', function () {
 it('returns null auth user for guests', function () {
     $this->get(route('dashboard'))->assertRedirect(route('login'));
 });
+
+// Placeholder route access tests
+
+it('allows dispatcher to access dispatch routes', function () {
+    $dispatcher = User::factory()->dispatcher()->create();
+
+    $this->actingAs($dispatcher)->get(route('dispatch.index'))->assertOk();
+    $this->actingAs($dispatcher)->get(route('incidents.queue'))->assertOk();
+    $this->actingAs($dispatcher)->get(route('incidents.index'))->assertOk();
+    $this->actingAs($dispatcher)->get(route('messages.index'))->assertOk();
+});
+
+it('blocks responder from dispatch routes', function () {
+    $responder = User::factory()->responder()->create();
+
+    $this->actingAs($responder)->get(route('dispatch.index'))->assertStatus(403);
+    $this->actingAs($responder)->get(route('incidents.queue'))->assertStatus(403);
+    $this->actingAs($responder)->get(route('incidents.index'))->assertStatus(403);
+});
+
+it('allows responder to access responder-only routes', function () {
+    $responder = User::factory()->responder()->create();
+
+    $this->actingAs($responder)->get(route('assignment.index'))->assertOk();
+    $this->actingAs($responder)->get(route('my-incidents.index'))->assertOk();
+    $this->actingAs($responder)->get(route('messages.index'))->assertOk();
+});
+
+it('blocks dispatcher from responder-only routes', function () {
+    $dispatcher = User::factory()->dispatcher()->create();
+
+    $this->actingAs($dispatcher)->get(route('assignment.index'))->assertStatus(403);
+    $this->actingAs($dispatcher)->get(route('my-incidents.index'))->assertStatus(403);
+});
+
+it('allows supervisor to access supervisor routes', function () {
+    $supervisor = User::factory()->supervisor()->create();
+
+    $this->actingAs($supervisor)->get(route('dispatch.index'))->assertOk();
+    $this->actingAs($supervisor)->get(route('incidents.index'))->assertOk();
+    $this->actingAs($supervisor)->get(route('units.index'))->assertOk();
+    $this->actingAs($supervisor)->get(route('analytics.index'))->assertOk();
+    $this->actingAs($supervisor)->get(route('messages.index'))->assertOk();
+});
+
+it('blocks dispatcher from supervisor-only routes', function () {
+    $dispatcher = User::factory()->dispatcher()->create();
+
+    $this->actingAs($dispatcher)->get(route('units.index'))->assertStatus(403);
+    $this->actingAs($dispatcher)->get(route('analytics.index'))->assertStatus(403);
+});
+
+it('allows admin to access all placeholder routes', function () {
+    $admin = User::factory()->admin()->create();
+
+    $this->actingAs($admin)->get(route('dispatch.index'))->assertOk();
+    $this->actingAs($admin)->get(route('incidents.queue'))->assertOk();
+    $this->actingAs($admin)->get(route('incidents.index'))->assertOk();
+    $this->actingAs($admin)->get(route('messages.index'))->assertOk();
+    $this->actingAs($admin)->get(route('units.index'))->assertOk();
+    $this->actingAs($admin)->get(route('analytics.index'))->assertOk();
+});
+
+it('blocks admin from responder-only routes', function () {
+    $admin = User::factory()->admin()->create();
+
+    $this->actingAs($admin)->get(route('assignment.index'))->assertStatus(403);
+    $this->actingAs($admin)->get(route('my-incidents.index'))->assertStatus(403);
+});
+
+it('renders placeholder pages with correct Inertia component and title', function () {
+    $admin = User::factory()->admin()->create();
+
+    $this->actingAs($admin)->get(route('dispatch.index'))
+        ->assertInertia(fn ($page) => $page
+            ->component('placeholder/ComingSoon')
+            ->where('title', 'Dispatch Console')
+            ->has('description')
+        );
+});
+
+it('allows all communication roles to access messages', function () {
+    collect(['admin', 'dispatcher', 'responder', 'supervisor'])->each(function (string $role) {
+        $user = User::factory()->{$role}()->create();
+
+        $this->actingAs($user)
+            ->get(route('messages.index'))
+            ->assertOk();
+    });
+});

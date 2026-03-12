@@ -9,6 +9,58 @@ Route::inertia('/', 'Welcome', [
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+
+    // Dispatcher + Supervisor + Admin routes
+    Route::middleware(['role:dispatcher,supervisor,admin'])->group(function () {
+        Route::inertia('dispatch', 'placeholder/ComingSoon', [
+            'title' => 'Dispatch Console',
+            'description' => 'Real-time map with incident and unit tracking. Coming in Phase 4.',
+        ])->name('dispatch.index');
+
+        Route::inertia('incidents/queue', 'placeholder/ComingSoon', [
+            'title' => 'Incident Queue',
+            'description' => 'Priority-ordered dispatch queue. Coming in Phase 2.',
+        ])->name('incidents.queue');
+
+        Route::inertia('incidents', 'placeholder/ComingSoon', [
+            'title' => 'Incidents',
+            'description' => 'Incident list and management. Coming in Phase 2.',
+        ])->name('incidents.index');
+    });
+
+    // Messages -- accessible to ALL communication roles
+    Route::middleware(['role:dispatcher,responder,supervisor,admin'])->group(function () {
+        Route::inertia('messages', 'placeholder/ComingSoon', [
+            'title' => 'Messages',
+            'description' => 'Bi-directional dispatch-responder communication. Coming in Phase 5.',
+        ])->name('messages.index');
+    });
+
+    // Responder routes
+    Route::middleware(['role:responder'])->group(function () {
+        Route::inertia('assignment', 'placeholder/ComingSoon', [
+            'title' => 'Active Assignment',
+            'description' => 'Receive and manage your current incident assignment. Coming in Phase 5.',
+        ])->name('assignment.index');
+
+        Route::inertia('my-incidents', 'placeholder/ComingSoon', [
+            'title' => 'My Incidents',
+            'description' => 'History of your incident responses. Coming in Phase 5.',
+        ])->name('my-incidents.index');
+    });
+
+    // Supervisor + Admin routes
+    Route::middleware(['role:supervisor,admin'])->group(function () {
+        Route::inertia('units', 'placeholder/ComingSoon', [
+            'title' => 'Units',
+            'description' => 'Unit status and management. Coming in Phase 4.',
+        ])->name('units.index');
+
+        Route::inertia('analytics', 'placeholder/ComingSoon', [
+            'title' => 'Analytics & Reports',
+            'description' => 'KPI dashboard and compliance reports. Coming in Phase 7.',
+        ])->name('analytics.index');
+    });
 });
 
 require __DIR__.'/settings.php';
