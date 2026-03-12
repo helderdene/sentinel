@@ -19,7 +19,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 5: Responder Workflow** - Mobile-optimized assignment receipt, status transitions, GPS tracking, scene documentation, messaging
 - [ ] **Phase 6: Integration Layer** - Stubbed external connectors (SMS, geocoding, directions, weather, hospital, government agencies)
 - [ ] **Phase 7: Analytics** - KPI dashboard, incident heatmap, DILG/NDRRMC/quarterly/annual compliance reports
-- [ ] **Phase 8: Operator Role & Intake Station** - 5th role (operator), TRIAGED status, full-screen intake station UI with design system
+- [x] **Phase 8: Operator Role & Intake Station** - 5th role (operator), TRIAGED status, full-screen intake station UI with design system (completed 2026-03-13)
 
 ## Phase Details
 
@@ -155,10 +155,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 08-01-PLAN.md -- Backend foundation: Operator role, TRIAGED status, 6 intake gates, IntakeStationController, triage endpoint, Fortify redirect, channel auth, tests
-- [ ] 08-02-PLAN.md -- Design system and layout shell: Tailwind tokens, fonts, IntakeLayout, IntakeTopbar, IntakeStatusbar, custom SVG icons, badge components
-- [ ] 08-03-PLAN.md -- Core intake workflow: IntakeStation page, ChannelFeed (left panel), TriageForm (center panel), composables, priority picker
-- [ ] 08-04-PLAN.md -- Dispatch queue and supervisor features: DispatchQueuePanel (right panel), SessionMetrics, PriorityBreakdown, Override/Recall, SessionLog, visual verification
+- [x] 08-01-PLAN.md -- Backend foundation: Operator role, TRIAGED status, 6 intake gates, IntakeStationController, triage endpoint, Fortify redirect, channel auth, tests
+- [x] 08-02-PLAN.md -- Design system and layout shell: Tailwind tokens, fonts, IntakeLayout, IntakeTopbar, IntakeStatusbar, custom SVG icons, badge components
+- [x] 08-03-PLAN.md -- Core intake workflow: IntakeStation page, ChannelFeed (left panel), TriageForm (center panel), composables, priority picker
+- [x] 08-04-PLAN.md -- Dispatch queue and supervisor features: DispatchQueuePanel (right panel), SessionMetrics, PriorityBreakdown, Override/Recall, SessionLog, visual verification
 
 ## Progress
 
@@ -175,4 +175,4 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 5. Responder Workflow | 0/4 | Not started | - |
 | 6. Integration Layer | 0/3 | Not started | - |
 | 7. Analytics | 0/3 | Not started | - |
-| 8. Operator Role & Intake Station | 3/4 | In Progress|  |
+| 8. Operator Role & Intake Station | 4/4 | Complete   | 2026-03-13 |
