@@ -62,14 +62,16 @@ function onManualEntry(): void {
 }
 
 function onTriageSubmitted(): void {
+    const incident = activeIncident.value;
+
     selectIncident(null);
     isManualEntry.value = false;
     session.recordTriaged(0);
 
-    if (activeIncident.value) {
+    if (incident) {
         sessionLogRef.value?.addEntry({
-            action: `Triaged ${activeIncident.value.incident_no} as ${activeIncident.value.priority}`,
-            priority: activeIncident.value.priority,
+            action: `Triaged ${incident.incident_no} as ${incident.priority}`,
+            priority: incident.priority,
         });
     }
 }

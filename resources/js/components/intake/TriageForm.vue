@@ -244,37 +244,23 @@ const canSubmit = computed(() => {
 });
 
 function submit(): void {
-    if (props.isManualEntry) {
-        form.submit(storeAndTriage(), {
-            onSuccess: () => {
-                if (selectionTimestamp.value) {
-                    const handleTime = Date.now() - selectionTimestamp.value;
-                    emit('triage-submitted');
+    const url = props.isManualEntry
+        ? storeAndTriage.url()
+        : props.activeIncident
+          ? triage.url(props.activeIncident.id)
+          : null;
 
-                    void handleTime;
-                } else {
-                    emit('triage-submitted');
-                }
-
-                resetForm();
-            },
-        });
-    } else if (props.activeIncident) {
-        form.submit(triage(props.activeIncident.id), {
-            onSuccess: () => {
-                if (selectionTimestamp.value) {
-                    const handleTime = Date.now() - selectionTimestamp.value;
-                    emit('triage-submitted');
-
-                    void handleTime;
-                } else {
-                    emit('triage-submitted');
-                }
-
-                resetForm();
-            },
-        });
+    if (!url) {
+        return;
     }
+
+    form.post(url, {
+        preserveScroll: true,
+        onSuccess: () => {
+            emit('triage-submitted');
+            resetForm();
+        },
+    });
 }
 
 const sourceChannel = computed(() => {

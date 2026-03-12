@@ -5,7 +5,7 @@ export function useIntakeSession() {
     const triaged = ref(0);
     const handleTimes = ref<number[]>([]);
 
-    const pending = computed(() => received.value - triaged.value);
+    const pending = computed(() => Math.max(0, received.value - triaged.value));
 
     const avgHandleTime = computed(() => {
         if (handleTimes.value.length === 0) {
