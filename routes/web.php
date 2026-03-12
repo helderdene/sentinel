@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\IncidentController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
@@ -17,15 +18,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'description' => 'Real-time map with incident and unit tracking. Coming in Phase 4.',
         ])->name('dispatch.index');
 
-        Route::inertia('incidents/queue', 'placeholder/ComingSoon', [
-            'title' => 'Incident Queue',
-            'description' => 'Priority-ordered dispatch queue. Coming in Phase 2.',
-        ])->name('incidents.queue');
+        Route::get('incidents/queue', [IncidentController::class, 'queue'])->name('incidents.queue');
+        Route::get('incidents/create', [IncidentController::class, 'create'])->name('incidents.create');
+        Route::post('incidents', [IncidentController::class, 'store'])->name('incidents.store');
+        Route::get('incidents/{incident}', [IncidentController::class, 'show'])->name('incidents.show');
+        Route::get('incidents', [IncidentController::class, 'index'])->name('incidents.index');
 
-        Route::inertia('incidents', 'placeholder/ComingSoon', [
-            'title' => 'Incidents',
-            'description' => 'Incident list and management. Coming in Phase 2.',
-        ])->name('incidents.index');
+        Route::get('api/priority/suggest', [IncidentController::class, 'suggestPriority'])->name('api.priority.suggest');
+        Route::get('api/geocoding/search', [IncidentController::class, 'geocodingSearch'])->name('api.geocoding.search');
     });
 
     // Messages -- accessible to ALL communication roles

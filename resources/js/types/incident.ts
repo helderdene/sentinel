@@ -1,9 +1,4 @@
-export type IncidentChannel =
-    | 'phone'
-    | 'sms'
-    | 'app'
-    | 'iot'
-    | 'radio';
+export type IncidentChannel = 'phone' | 'sms' | 'app' | 'iot' | 'radio';
 
 export type IncidentPriority = 'P1' | 'P2' | 'P3' | 'P4';
 
