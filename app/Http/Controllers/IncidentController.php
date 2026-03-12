@@ -110,6 +110,23 @@ class IncidentController extends Controller
 
         $incident = Incident::query()->create($data);
 
+        $incidentType = IncidentType::find($validated['incident_type_id']);
+
+        IncidentTimeline::query()->create([
+            'incident_id' => $incident->id,
+            'event_type' => 'incident_created',
+            'event_data' => [
+                'channel' => $incident->channel->value,
+                'priority' => $incident->priority->value,
+                'incident_type' => $incidentType?->name,
+                'location' => $incident->location_text,
+                'caller_name' => $incident->caller_name,
+            ],
+            'actor_type' => User::class,
+            'actor_id' => $request->user()->id,
+            'notes' => "Incident reported via {$incident->channel->value} channel",
+        ]);
+
         $this->logPriorityOverrideIfNeeded($incident, $validated);
 
         return redirect()->route('incidents.queue')

@@ -253,6 +253,7 @@ function submit(): void {
                         <Label>Incident Type</Label>
                         <Combobox
                             v-model="selectedTypeValue"
+                            v-model:search-term="typeSearchQuery"
                             :filter-function="
                                 (list: string[]) => {
                                     return list;
@@ -260,8 +261,17 @@ function submit(): void {
                             "
                         >
                             <ComboboxInput
-                                v-model="typeSearchQuery"
                                 placeholder="Search incident types..."
+                                :display-value="
+                                    (val: string) => {
+                                        const t = allTypes.find(
+                                            (t) => String(t.id) === val,
+                                        );
+                                        return t
+                                            ? `${t.code} ${t.name}`
+                                            : '';
+                                    }
+                                "
                             />
                             <ComboboxContent>
                                 <ComboboxEmpty>

@@ -27,6 +27,32 @@ function formatEventData(
         return '';
     }
 
+    if (eventType === 'incident_created') {
+        const parts: string[] = [];
+
+        if (eventData.incident_type) {
+            parts.push(`Type: ${eventData.incident_type}`);
+        }
+
+        if (eventData.priority) {
+            parts.push(`Priority: ${eventData.priority}`);
+        }
+
+        if (eventData.channel) {
+            parts.push(`Channel: ${eventData.channel}`);
+        }
+
+        if (eventData.location) {
+            parts.push(`Location: ${eventData.location}`);
+        }
+
+        if (eventData.caller_name) {
+            parts.push(`Caller: ${eventData.caller_name}`);
+        }
+
+        return parts.join(' · ');
+    }
+
     if (eventType === 'priority_override') {
         return `Priority changed from ${eventData.suggested ?? '--'} to ${eventData.selected ?? '--'} (${eventData.confidence ?? 0}% confidence)`;
     }
