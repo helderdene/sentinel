@@ -1,8 +1,22 @@
 <?php
 
 use App\Http\Controllers\IncidentController;
+use App\Http\Controllers\IoTWebhookController;
+use App\Http\Controllers\SmsWebhookController;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
+
+Route::prefix('webhooks')->group(function () {
+    Route::post('iot-sensor', IoTWebhookController::class)
+        ->middleware('verify-iot-signature')
+        ->withoutMiddleware([VerifyCsrfToken::class])
+        ->name('webhooks.iot-sensor');
+
+    Route::post('sms-inbound', SmsWebhookController::class)
+        ->withoutMiddleware([VerifyCsrfToken::class])
+        ->name('webhooks.sms-inbound');
+});
 
 Route::inertia('/', 'Welcome', [
     'canRegister' => Features::enabled(Features::registration()),
