@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 03-01-PLAN.md
-last_updated: "2026-03-12T19:34:11.000Z"
-last_activity: "2026-03-13 — Completed 03-01: Real-time backend infrastructure (Reverb, Horizon, events, channels)"
+stopped_at: Completed 03-02-PLAN.md
+last_updated: "2026-03-13T03:59:05.000Z"
+last_activity: "2026-03-13 — Completed 03-02: Frontend WebSocket integration (Echo, useWebSocket, ConnectionBanner, real-time Queue)"
 progress:
   total_phases: 7
-  completed_phases: 2
-  total_plans: 7
-  completed_plans: 7
-  percent: 32
+  completed_phases: 3
+  total_plans: 8
+  completed_plans: 8
+  percent: 38
 ---
 
 # Project State
@@ -21,23 +21,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Dispatchers can receive an incident report, triage it, assign the nearest available unit, and track the response in real-time on a live map.
-**Current focus:** Phase 3 - Real-Time Infrastructure
+**Current focus:** Phase 4 - Dispatch Console
 
 ## Current Position
 
-Phase: 3 of 7 (Real-Time Infrastructure)
-Plan: 1 of 2 in current phase (03-01 complete)
-Status: Executing Phase 3 -- Plan 01 complete, Plan 02 next
-Last activity: 2026-03-13 — Completed 03-01: Real-time backend infrastructure (Reverb, Horizon, events, channels)
+Phase: 4 of 7 (Dispatch Console)
+Plan: 0 of 4 in current phase (Phase 3 complete, Phase 4 not started)
+Status: Phase 3 complete -- ready for Phase 4 planning
+Last activity: 2026-03-13 — Completed 03-02: Frontend WebSocket integration (Echo, useWebSocket, ConnectionBanner, real-time Queue)
 
-Progress: [▓▓▓░░░░░░░] 32%
+Progress: [▓▓▓▓░░░░░░] 38%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
+- Total plans completed: 8
 - Average duration: 17min
-- Total execution time: 1.9 hours
+- Total execution time: 2.2 hours
 
 **By Phase:**
 
@@ -45,10 +45,10 @@ Progress: [▓▓▓░░░░░░░] 32%
 |-------|-------|-------|----------|
 | 1. Foundation | 3/3 | 54min | 18min |
 | 2. Intake | 3/3 | 48min | 16min |
-| 3. Real-Time | 1/2 | 16min | 16min |
+| 3. Real-Time | 2/2 | 34min | 17min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (27min), 02-01 (16min), 02-03 (7min), 02-02 (25min), 03-01 (16min)
+- Last 5 plans: 02-01 (16min), 02-03 (7min), 02-02 (25min), 03-01 (16min), 03-02 (18min)
 - Trend: Steady
 
 *Updated after each plan completion*
@@ -89,6 +89,10 @@ Recent decisions affecting current work:
 - [03-01]: Magellan Point uses getLatitude()/getLongitude() methods not property access
 - [03-01]: Existing intake tests use Event::fake([IncidentCreated]) to prevent broadcast errors in test env
 - [03-01]: Presence channel returns user id, name, role for dispatch console user awareness
+- [03-02]: Switched from phpredis to predis (pure PHP) -- avoids system extension requirement for local dev
+- [03-02]: Echo useEcho event names without dot prefix -- @laravel/echo-vue auto-prepends namespace
+- [03-02]: Reactive local copies of Inertia props for WebSocket mutation without full page reload
+- [03-02]: ChannelMonitor realtime prop for self-subscribing mode (Dashboard) vs parent-managed mode (Queue)
 
 ### Pending Todos
 
@@ -103,6 +107,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-12T19:34:11.000Z
-Stopped at: Completed 03-01-PLAN.md
-Resume file: .planning/phases/03-real-time-infrastructure/03-01-SUMMARY.md
+Last session: 2026-03-13T03:59:05.000Z
+Stopped at: Completed 03-02-PLAN.md
+Resume file: .planning/phases/03-real-time-infrastructure/03-02-SUMMARY.md
