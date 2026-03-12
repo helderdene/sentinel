@@ -21,6 +21,12 @@ import type {
 
 defineOptions({ layout: IntakeLayout });
 
+type SessionLogEntry = {
+    timestamp: string;
+    action: string;
+    priority?: IncidentPriority;
+};
+
 const props = defineProps<{
     incidentTypes: Record<string, IncidentType[]>;
     channels: IncidentChannel[];
@@ -28,6 +34,7 @@ const props = defineProps<{
     pendingIncidents: Incident[];
     triagedIncidents: Incident[];
     priorityConfig?: Record<string, unknown>;
+    recentActivity?: SessionLogEntry[];
 }>();
 
 const page = usePage<{ auth: Auth }>();
@@ -211,7 +218,10 @@ provide('topbarStats', {
             @recalled="onRecalled"
         >
             <template v-if="userCan.view_session_log" #session-log>
-                <SessionLog ref="sessionLogRef" />
+                <SessionLog
+                    ref="sessionLogRef"
+                    :initial-entries="props.recentActivity ?? []"
+                />
             </template>
         </DispatchQueuePanel>
     </div>

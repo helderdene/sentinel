@@ -173,6 +173,11 @@ const mainNavItems = computed<NavItem[]>(() => {
                 icon: LayoutGrid,
             },
             {
+                title: 'Intake Station',
+                href: '/intake',
+                icon: ClipboardList,
+            },
+            {
                 title: 'Dispatch Console',
                 href: '/dispatch',
                 icon: Map,

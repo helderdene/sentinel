@@ -14,9 +14,18 @@ export type SessionLogEntry = {
     priority?: IncidentPriority;
 };
 
+const props = withDefaults(
+    defineProps<{
+        initialEntries?: SessionLogEntry[];
+    }>(),
+    {
+        initialEntries: () => [],
+    },
+);
+
 const MAX_ENTRIES = 50;
 
-const entries = ref<SessionLogEntry[]>([]);
+const entries = ref<SessionLogEntry[]>([...props.initialEntries]);
 
 function addEntry(entry: Omit<SessionLogEntry, 'timestamp'>): void {
     const now = new Date();

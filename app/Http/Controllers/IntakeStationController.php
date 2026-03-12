@@ -50,6 +50,19 @@ class IntakeStationController extends Controller
             ->orderBy('created_at', 'asc')
             ->get();
 
+        $recentActivity = IncidentTimeline::query()
+            ->with('incident:id,incident_no,priority')
+            ->whereDate('created_at', today())
+            ->whereIn('event_type', ['incident_triaged', 'priority_override', 'incident_recalled'])
+            ->orderByDesc('created_at')
+            ->limit(50)
+            ->get()
+            ->map(fn (IncidentTimeline $entry) => [
+                'timestamp' => $entry->created_at->format('H:i:s'),
+                'action' => $entry->notes,
+                'priority' => $entry->event_data['priority'] ?? $entry->event_data['new_priority'] ?? null,
+            ]);
+
         return Inertia::render('intake/IntakeStation', [
             'incidentTypes' => $incidentTypes,
             'channels' => IncidentChannel::cases(),
@@ -57,6 +70,7 @@ class IntakeStationController extends Controller
             'pendingIncidents' => $pendingIncidents,
             'triagedIncidents' => $triagedIncidents,
             'priorityConfig' => config('priority'),
+            'recentActivity' => $recentActivity,
         ]);
     }
 
