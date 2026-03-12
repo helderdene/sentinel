@@ -1,23 +1,30 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue';
+import type { Ref } from 'vue';
+import { inject, onMounted, onUnmounted, ref } from 'vue';
 import IntakeIconIntake from '@/components/intake/icons/IntakeIconIntake.vue';
 import UserChip from '@/components/intake/UserChip.vue';
 import type { User } from '@/types/auth';
 
-type Props = {
+defineProps<{
     user: User;
-    incoming?: number;
-    pending?: number;
-    triaged?: number;
-    avgResp?: string;
-};
+}>();
 
-withDefaults(defineProps<Props>(), {
-    incoming: 0,
-    pending: 0,
-    triaged: 0,
-    avgResp: '0m',
+const stats = inject<{
+    incoming: Ref<number>;
+    pending: Ref<number>;
+    triaged: Ref<number>;
+    avgResp: Ref<string>;
+}>('topbarStats', {
+    incoming: ref(0),
+    pending: ref(0),
+    triaged: ref(0),
+    avgResp: ref('0m'),
 });
+
+const tickerEvents = inject<Ref<string[]>>(
+    'tickerEvents',
+    ref<string[]>([]),
+);
 
 const clock = ref('');
 let clockInterval: ReturnType<typeof setInterval> | null = null;
@@ -70,7 +77,7 @@ onUnmounted(() => {
                 class="flex flex-col items-center border-r border-t-border px-4"
             >
                 <span class="font-mono text-[21px] font-bold text-t-accent">
-                    {{ incoming }}
+                    {{ stats.incoming }}
                 </span>
                 <span
                     class="font-mono text-[9px] font-bold tracking-[1.2px] text-t-text-faint uppercase"
@@ -82,7 +89,7 @@ onUnmounted(() => {
                 class="flex flex-col items-center border-r border-t-border px-4"
             >
                 <span class="font-mono text-[21px] font-bold text-t-p2">
-                    {{ pending }}
+                    {{ stats.pending }}
                 </span>
                 <span
                     class="font-mono text-[9px] font-bold tracking-[1.2px] text-t-text-faint uppercase"
@@ -94,7 +101,7 @@ onUnmounted(() => {
                 class="flex flex-col items-center border-r border-t-border px-4"
             >
                 <span class="font-mono text-[21px] font-bold text-t-online">
-                    {{ triaged }}
+                    {{ stats.triaged }}
                 </span>
                 <span
                     class="font-mono text-[9px] font-bold tracking-[1.2px] text-t-text-faint uppercase"
@@ -104,7 +111,7 @@ onUnmounted(() => {
             </div>
             <div class="flex flex-col items-center px-4">
                 <span class="font-mono text-[21px] font-bold text-t-text-dim">
-                    {{ avgResp }}
+                    {{ stats.avgResp }}
                 </span>
                 <span
                     class="font-mono text-[9px] font-bold tracking-[1.2px] text-t-text-faint uppercase"
@@ -129,7 +136,11 @@ onUnmounted(() => {
                 LIVE
             </span>
             <span class="truncate text-xs text-t-text-faint">
-                Awaiting events...
+                {{
+                    tickerEvents.length > 0
+                        ? tickerEvents[0]
+                        : 'Awaiting events...'
+                }}
             </span>
         </div>
 

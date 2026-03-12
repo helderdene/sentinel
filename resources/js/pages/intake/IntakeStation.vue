@@ -179,6 +179,7 @@ provide('topbarStats', {
     triaged: session.triaged,
     avgResp: avgRespLabel,
 });
+provide('tickerEvents', tickerEvents);
 </script>
 
 <template>
