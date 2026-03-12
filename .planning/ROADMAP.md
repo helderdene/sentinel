@@ -12,7 +12,7 @@ IRMS transforms CDRRMO Butuan City's paper-based emergency workflow into a real-
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - PostgreSQL + PostGIS database, core data models, RBAC with 4 roles, barangay boundaries
+- [x] **Phase 1: Foundation** - PostgreSQL + PostGIS database, core data models, RBAC with 4 roles, barangay boundaries
 - [ ] **Phase 2: Intake** - Multi-channel incident triage, geocoding, priority classification, dispatch queue
 - [ ] **Phase 3: Real-Time Infrastructure** - Laravel Reverb WebSocket server, broadcast events, channel auth, reconnection strategy
 - [ ] **Phase 4: Dispatch Console** - 2D MapLibre map with WebGL markers, unit assignment, proximity ranking, audio alerts, session metrics
@@ -36,7 +36,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 Plans:
 - [x] 01-01-PLAN.md -- Database foundation: PostgreSQL/PostGIS, migrations, models, enums, factories, seeders, RBAC middleware/gates
-- [ ] 01-02-PLAN.md -- Admin panel: User/role CRUD, incident type management, barangay metadata editing
+- [x] 01-02-PLAN.md -- Admin panel: User/role CRUD, incident type management, barangay metadata editing
 - [x] 01-03-PLAN.md -- Role-based navigation: sidebar per role, Inertia shared props, placeholder pages
 
 ### Phase 2: Intake
@@ -146,7 +146,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 2/3 | Executing | - |
+| 1. Foundation | 3/3 | Complete | 2026-03-12 |
 | 2. Intake | 0/3 | Not started | - |
 | 3. Real-Time Infrastructure | 0/2 | Not started | - |
 | 4. Dispatch Console | 0/4 | Not started | - |
