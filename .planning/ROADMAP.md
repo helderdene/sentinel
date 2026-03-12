@@ -35,7 +35,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01-PLAN.md -- Database foundation: PostgreSQL/PostGIS, migrations, models, enums, factories, seeders, RBAC middleware/gates
+- [x] 01-01-PLAN.md -- Database foundation: PostgreSQL/PostGIS, migrations, models, enums, factories, seeders, RBAC middleware/gates
 - [ ] 01-02-PLAN.md -- Admin panel: User/role CRUD, incident type management, barangay metadata editing
 - [ ] 01-03-PLAN.md -- Role-based navigation: sidebar per role, Inertia shared props, placeholder pages
 
@@ -146,7 +146,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/3 | Planning complete | - |
+| 1. Foundation | 1/3 | Executing | - |
 | 2. Intake | 0/3 | Not started | - |
 | 3. Real-Time Infrastructure | 0/2 | Not started | - |
 | 4. Dispatch Console | 0/4 | Not started | - |

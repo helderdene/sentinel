@@ -7,14 +7,14 @@
 
 ### Foundation
 
-- [ ] **FNDTN-01**: System uses PostgreSQL with PostGIS extension for all spatial queries
-- [ ] **FNDTN-02**: Barangay reference table with 86 boundary polygons, district, risk level, and GiST spatial index
-- [ ] **FNDTN-03**: Role-based access control with four roles (dispatcher, responder, supervisor, admin) and permissions matrix per spec Section 9
-- [ ] **FNDTN-04**: User can be associated with a unit (responders linked to AMB-01, RESCUE-02, etc.)
-- [ ] **FNDTN-05**: Incident data model with lifecycle timestamps (dispatched_at through resolved_at), vitals JSONB, assessment_tags TEXT[], coordinates geography, and append-only timeline
-- [ ] **FNDTN-06**: Units data model with GPS coordinates (geography), status, type, agency, crew count, shift, and GiST spatial index
-- [ ] **FNDTN-07**: Incident timeline table (append-only audit log with event_type, event_data JSONB, actor_type, actor_id)
-- [ ] **FNDTN-08**: Incident messages table for bi-directional dispatch-responder communication
+- [x] **FNDTN-01**: System uses PostgreSQL with PostGIS extension for all spatial queries
+- [x] **FNDTN-02**: Barangay reference table with 86 boundary polygons, district, risk level, and GiST spatial index
+- [x] **FNDTN-03**: Role-based access control with four roles (dispatcher, responder, supervisor, admin) and permissions matrix per spec Section 9
+- [x] **FNDTN-04**: User can be associated with a unit (responders linked to AMB-01, RESCUE-02, etc.)
+- [x] **FNDTN-05**: Incident data model with lifecycle timestamps (dispatched_at through resolved_at), vitals JSONB, assessment_tags TEXT[], coordinates geography, and append-only timeline
+- [x] **FNDTN-06**: Units data model with GPS coordinates (geography), status, type, agency, crew count, shift, and GiST spatial index
+- [x] **FNDTN-07**: Incident timeline table (append-only audit log with event_type, event_data JSONB, actor_type, actor_id)
+- [x] **FNDTN-08**: Incident messages table for bi-directional dispatch-responder communication
 - [ ] **FNDTN-09**: Laravel Reverb WebSocket server configured with channel authorization and presence channels
 - [ ] **FNDTN-10**: Redis configured for cache, queue (Horizon), and Reverb pub/sub
 
@@ -110,14 +110,14 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FNDTN-01 | Phase 1 | Pending |
-| FNDTN-02 | Phase 1 | Pending |
-| FNDTN-03 | Phase 1 | Pending |
-| FNDTN-04 | Phase 1 | Pending |
-| FNDTN-05 | Phase 1 | Pending |
-| FNDTN-06 | Phase 1 | Pending |
-| FNDTN-07 | Phase 1 | Pending |
-| FNDTN-08 | Phase 1 | Pending |
+| FNDTN-01 | Phase 1 | Complete |
+| FNDTN-02 | Phase 1 | Complete |
+| FNDTN-03 | Phase 1 | Complete |
+| FNDTN-04 | Phase 1 | Complete |
+| FNDTN-05 | Phase 1 | Complete |
+| FNDTN-06 | Phase 1 | Complete |
+| FNDTN-07 | Phase 1 | Complete |
+| FNDTN-08 | Phase 1 | Complete |
 | FNDTN-09 | Phase 3 | Pending |
 | FNDTN-10 | Phase 3 | Pending |
 | INTK-01 | Phase 2 | Pending |
