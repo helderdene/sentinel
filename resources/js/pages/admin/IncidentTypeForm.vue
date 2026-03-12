@@ -1,27 +1,216 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import {
+    store,
+    update,
+} from '@/actions/App/Http/Controllers/Admin/AdminIncidentTypeController';
+import Heading from '@/components/Heading.vue';
+import InputError from '@/components/InputError.vue';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import AppLayout from '@/layouts/AppLayout.vue';
+import { index as typesIndex } from '@/routes/admin/incident-types';
 import type { BreadcrumbItem } from '@/types';
 
-defineProps<{
-    type?: Record<string, unknown>;
-    priorities: Array<Record<string, string>>;
+type IncidentTypeItem = {
+    id: number;
+    category: string;
+    name: string;
+    code: string;
+    default_priority: string;
+    description: string | null;
+    is_active: boolean;
+    sort_order: number | null;
+};
+
+type Props = {
+    type?: IncidentTypeItem;
+    priorities: Array<{ value: string }>;
     categories: string[];
-}>();
+};
+
+const props = defineProps<Props>();
+
+const isEditing = computed(() => !!props.type);
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Admin', href: '#' },
-    { title: 'Incident Types', href: '#' },
-    { title: 'Form', href: '#' },
+    { title: 'Admin', href: typesIndex.url() },
+    { title: 'Incident Types', href: typesIndex.url() },
+    { title: isEditing.value ? 'Edit' : 'Create', href: '#' },
 ];
+
+const form = useForm({
+    category: props.type?.category ?? '',
+    name: props.type?.name ?? '',
+    code: props.type?.code ?? '',
+    default_priority: props.type?.default_priority ?? '',
+    description: props.type?.description ?? '',
+    is_active: props.type?.is_active ?? true,
+    sort_order: props.type?.sort_order ?? undefined,
+});
+
+function submit(): void {
+    if (isEditing.value && props.type) {
+        form.submit(update(props.type.id));
+    } else {
+        form.submit(store());
+    }
+}
 </script>
 
 <template>
-    <Head title="Incident Type Form" />
+    <Head :title="isEditing ? 'Edit Incident Type' : 'Create Incident Type'" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="p-4">
-            <h1>Incident Type Form</h1>
+        <div class="mx-auto max-w-2xl space-y-6 p-4 sm:p-6 lg:p-8">
+            <Heading
+                :title="
+                    isEditing ? 'Edit Incident Type' : 'Create Incident Type'
+                "
+                :description="
+                    isEditing
+                        ? 'Update incident type details'
+                        : 'Add a new incident type to the taxonomy'
+                "
+            />
+
+            <form class="space-y-6" @submit.prevent="submit">
+                <div class="grid gap-2">
+                    <Label for="category">Category</Label>
+                    <div class="flex gap-2">
+                        <Select v-model="form.category">
+                            <SelectTrigger class="w-full">
+                                <SelectValue
+                                    placeholder="Select or type a category"
+                                />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem
+                                    v-for="cat in categories"
+                                    :key="cat"
+                                    :value="cat"
+                                >
+                                    {{ cat }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <Input
+                        v-if="
+                            !categories.includes(form.category) ||
+                            form.category === ''
+                        "
+                        v-model="form.category"
+                        placeholder="Or type a new category"
+                        class="mt-1"
+                    />
+                    <InputError :message="form.errors.category" />
+                </div>
+
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <div class="grid gap-2">
+                        <Label for="name">Name</Label>
+                        <Input
+                            id="name"
+                            v-model="form.name"
+                            required
+                            placeholder="e.g. Cardiac Arrest"
+                        />
+                        <InputError :message="form.errors.name" />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="code">Code</Label>
+                        <Input
+                            id="code"
+                            v-model="form.code"
+                            required
+                            placeholder="e.g. MED-CA"
+                            class="font-mono uppercase"
+                        />
+                        <InputError :message="form.errors.code" />
+                    </div>
+                </div>
+
+                <div class="grid gap-2">
+                    <Label for="default_priority">Default Priority</Label>
+                    <Select v-model="form.default_priority">
+                        <SelectTrigger class="w-full">
+                            <SelectValue placeholder="Select priority" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem
+                                v-for="p in priorities"
+                                :key="p.value"
+                                :value="p.value"
+                            >
+                                {{ p.value }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <InputError :message="form.errors.default_priority" />
+                </div>
+
+                <div class="grid gap-2">
+                    <Label for="description">Description</Label>
+                    <textarea
+                        id="description"
+                        v-model="form.description"
+                        class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                        placeholder="Optional description"
+                        rows="3"
+                    />
+                    <InputError :message="form.errors.description" />
+                </div>
+
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <div class="grid gap-2">
+                        <Label for="sort_order">Sort Order</Label>
+                        <Input
+                            id="sort_order"
+                            v-model.number="form.sort_order"
+                            type="number"
+                            placeholder="0"
+                        />
+                        <InputError :message="form.errors.sort_order" />
+                    </div>
+
+                    <div class="flex items-center gap-2 pt-6">
+                        <Checkbox
+                            id="is_active"
+                            :checked="form.is_active"
+                            @update:checked="
+                                (val: boolean | 'indeterminate') =>
+                                    (form.is_active = val === true)
+                            "
+                        />
+                        <Label for="is_active" class="cursor-pointer">
+                            Active
+                        </Label>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <Button :disabled="form.processing">
+                        {{ isEditing ? 'Update Type' : 'Create Type' }}
+                    </Button>
+                    <Link :href="typesIndex.url()">
+                        <Button variant="outline" type="button">
+                            Cancel
+                        </Button>
+                    </Link>
+                </div>
+            </form>
         </div>
     </AppLayout>
 </template>
