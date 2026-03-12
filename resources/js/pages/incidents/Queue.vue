@@ -69,8 +69,12 @@ const hasIncidents = computed(() => localIncidents.value.length > 0);
 
 useEcho<IncidentCreatedPayload>(
     'dispatch.incidents',
-    '.IncidentCreated',
+    'IncidentCreated',
     (e) => {
+        if (localIncidents.value.some((inc) => inc.id === e.id)) {
+            return;
+        }
+
         const newIncident: IncidentForQueue = {
             id: e.id,
             incident_no: e.incident_no,
@@ -114,7 +118,7 @@ useEcho<IncidentCreatedPayload>(
 
 useEcho<IncidentStatusChangedPayload>(
     'dispatch.incidents',
-    '.IncidentStatusChanged',
+    'IncidentStatusChanged',
     (e) => {
         if (e.old_status === 'PENDING' && e.new_status !== 'PENDING') {
             const index = localIncidents.value.findIndex(

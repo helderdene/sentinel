@@ -32,7 +32,7 @@ watch(
 if (props.realtime) {
     useEcho<IncidentCreatedPayload>(
         'dispatch.incidents',
-        '.IncidentCreated',
+        'IncidentCreated',
         (e) => {
             localCounts.value[e.channel] =
                 (localCounts.value[e.channel] ?? 0) + 1;
