@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Contracts\AnalyticsServiceInterface;
 use App\Http\Requests\AnalyticsFilterRequest;
 use App\Http\Requests\GenerateReportRequest;
+use App\Jobs\GenerateAnnualReport;
+use App\Jobs\GenerateQuarterlyReport;
 use App\Models\Barangay;
 use App\Models\GeneratedReport;
 use App\Models\IncidentType;
@@ -127,36 +129,32 @@ class AnalyticsController extends Controller
     }
 
     /**
-     * Dispatch a report generation job (placeholder for Plan 03).
+     * Dispatch a report generation job.
      */
     public function generateReport(GenerateReportRequest $request): RedirectResponse
     {
-        $validated = $request->validated();
+        $type = $request->validated('type');
+        $period = $request->validated('period');
+        $userId = $request->user()->id;
 
-        // Check for existing report with same type+period
         $existing = GeneratedReport::query()
-            ->where('type', $validated['type'])
-            ->where('period', $validated['period'])
+            ->where('type', $type)
+            ->where('period', $period)
             ->where('status', 'generating')
-            ->first();
+            ->exists();
 
         if ($existing) {
             return redirect()->route('analytics.reports')
                 ->with('warning', 'A report of this type and period is already being generated.');
         }
 
-        // Placeholder: In Plan 03, this dispatches a queued job
-        GeneratedReport::create([
-            'type' => $validated['type'],
-            'title' => ucfirst($validated['type']).' Report - '.$validated['period'],
-            'period' => $validated['period'],
-            'file_path' => 'reports/placeholder.pdf',
-            'status' => 'generating',
-            'generated_by' => $request->user()->id,
-        ]);
+        match ($type) {
+            'quarterly' => GenerateQuarterlyReport::dispatch($period, $userId),
+            'annual' => GenerateAnnualReport::dispatch((int) $period, $userId),
+        };
 
         return redirect()->route('analytics.reports')
-            ->with('success', 'Report generation started. You will be notified when it is ready.');
+            ->with('success', 'Report generation started. It will appear in the list when ready.');
     }
 
     /**
