@@ -19,7 +19,7 @@ it('broadcasts on incident-level message channel', function () {
 
     expect($channels)->toHaveCount(2);
     expect($channels[0])->toBeInstanceOf(PrivateChannel::class);
-    expect($channels[0]->name)->toBe('incident.abc-123.messages');
+    expect($channels[0]->name)->toBe('private-incident.abc-123.messages');
 });
 
 it('broadcasts on dispatch.incidents channel', function () {
@@ -37,7 +37,7 @@ it('broadcasts on dispatch.incidents channel', function () {
     $channels = $event->broadcastOn();
 
     expect($channels[1])->toBeInstanceOf(PrivateChannel::class);
-    expect($channels[1]->name)->toBe('dispatch.incidents');
+    expect($channels[1]->name)->toBe('private-dispatch.incidents');
 });
 
 it('includes full sender context in broadcastWith payload', function () {

@@ -14,11 +14,14 @@ class MessageSent implements ShouldBroadcast, ShouldDispatchAfterCommit
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public function __construct(
-        public int $recipientId,
         public string $incidentId,
         public int $senderId,
         public string $senderName,
+        public string $senderRole,
+        public ?string $senderUnitCallsign,
         public string $body,
+        public bool $isQuickReply,
+        public int $messageId,
     ) {}
 
     /**
@@ -27,7 +30,8 @@ class MessageSent implements ShouldBroadcast, ShouldDispatchAfterCommit
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('user.'.$this->recipientId),
+            new PrivateChannel('incident.'.$this->incidentId.'.messages'),
+            new PrivateChannel('dispatch.incidents'),
         ];
     }
 
@@ -37,10 +41,14 @@ class MessageSent implements ShouldBroadcast, ShouldDispatchAfterCommit
     public function broadcastWith(): array
     {
         return [
+            'id' => $this->messageId,
             'incident_id' => $this->incidentId,
             'sender_id' => $this->senderId,
             'sender_name' => $this->senderName,
+            'sender_role' => $this->senderRole,
+            'sender_unit_callsign' => $this->senderUnitCallsign,
             'body' => $this->body,
+            'is_quick_reply' => $this->isQuickReply,
             'sent_at' => now()->toISOString(),
         ];
     }
