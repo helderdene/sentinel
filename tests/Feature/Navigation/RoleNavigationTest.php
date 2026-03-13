@@ -99,7 +99,7 @@ it('returns null auth user for guests', function () {
 it('allows dispatcher to access dispatch routes', function () {
     $dispatcher = User::factory()->dispatcher()->create();
 
-    $this->actingAs($dispatcher)->get(route('dispatch.index'))->assertOk();
+    $this->actingAs($dispatcher)->get(route('dispatch.console'))->assertOk();
     $this->actingAs($dispatcher)->get(route('incidents.queue'))->assertOk();
     $this->actingAs($dispatcher)->get(route('incidents.index'))->assertOk();
     $this->actingAs($dispatcher)->get(route('messages.index'))->assertOk();
@@ -108,7 +108,7 @@ it('allows dispatcher to access dispatch routes', function () {
 it('blocks responder from dispatch routes', function () {
     $responder = User::factory()->responder()->create();
 
-    $this->actingAs($responder)->get(route('dispatch.index'))->assertStatus(403);
+    $this->actingAs($responder)->get(route('dispatch.console'))->assertStatus(403);
     $this->actingAs($responder)->get(route('incidents.queue'))->assertStatus(403);
     $this->actingAs($responder)->get(route('incidents.index'))->assertStatus(403);
 });
@@ -131,7 +131,7 @@ it('blocks dispatcher from responder-only routes', function () {
 it('allows supervisor to access supervisor routes', function () {
     $supervisor = User::factory()->supervisor()->create();
 
-    $this->actingAs($supervisor)->get(route('dispatch.index'))->assertOk();
+    $this->actingAs($supervisor)->get(route('dispatch.console'))->assertOk();
     $this->actingAs($supervisor)->get(route('incidents.index'))->assertOk();
     $this->actingAs($supervisor)->get(route('units.index'))->assertOk();
     $this->actingAs($supervisor)->get(route('analytics.index'))->assertOk();
@@ -148,7 +148,7 @@ it('blocks dispatcher from supervisor-only routes', function () {
 it('allows admin to access all placeholder routes', function () {
     $admin = User::factory()->admin()->create();
 
-    $this->actingAs($admin)->get(route('dispatch.index'))->assertOk();
+    $this->actingAs($admin)->get(route('dispatch.console'))->assertOk();
     $this->actingAs($admin)->get(route('incidents.queue'))->assertOk();
     $this->actingAs($admin)->get(route('incidents.index'))->assertOk();
     $this->actingAs($admin)->get(route('messages.index'))->assertOk();
@@ -163,14 +163,16 @@ it('blocks admin from responder-only routes', function () {
     $this->actingAs($admin)->get(route('my-incidents.index'))->assertStatus(403);
 });
 
-it('renders placeholder pages with correct Inertia component and title', function () {
+it('renders dispatch console with correct Inertia component', function () {
     $admin = User::factory()->admin()->create();
 
-    $this->actingAs($admin)->get(route('dispatch.index'))
+    $this->actingAs($admin)->get(route('dispatch.console'))
         ->assertInertia(fn ($page) => $page
-            ->component('placeholder/ComingSoon')
-            ->where('title', 'Dispatch Console')
-            ->has('description')
+            ->component('dispatch/Console')
+            ->has('incidents')
+            ->has('units')
+            ->has('agencies')
+            ->has('metrics')
         );
 });
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DispatchConsoleController;
 use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\IntakeStationController;
 use App\Http\Controllers\IoTWebhookController;
@@ -38,10 +39,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Dispatcher + Supervisor + Admin routes
     Route::middleware(['role:dispatcher,supervisor,admin'])->group(function () {
-        Route::inertia('dispatch', 'placeholder/ComingSoon', [
-            'title' => 'Dispatch Console',
-            'description' => 'Real-time map with incident and unit tracking. Coming in Phase 4.',
-        ])->name('dispatch.index');
+        Route::get('dispatch', [DispatchConsoleController::class, 'show'])->name('dispatch.console');
+        Route::post('dispatch/{incident}/assign', [DispatchConsoleController::class, 'assignUnit'])->name('dispatch.assign');
+        Route::post('dispatch/{incident}/unassign', [DispatchConsoleController::class, 'unassignUnit'])->name('dispatch.unassign');
+        Route::post('dispatch/{incident}/advance-status', [DispatchConsoleController::class, 'advanceStatus'])->name('dispatch.advance-status');
+        Route::post('dispatch/{incident}/mutual-aid', [DispatchConsoleController::class, 'requestMutualAid'])->name('dispatch.mutual-aid');
+        Route::get('dispatch/{incident}/nearby-units', [DispatchConsoleController::class, 'nearbyUnits'])->name('dispatch.nearby-units');
 
         Route::get('incidents/queue', [IncidentController::class, 'queue'])->name('incidents.queue');
         Route::get('incidents/create', [IncidentController::class, 'create'])->name('incidents.create');
