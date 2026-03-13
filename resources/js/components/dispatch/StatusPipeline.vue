@@ -60,23 +60,38 @@ const canAdvance = computed(
 
 const isAdvancing = ref(false);
 
-function handleAdvance(): void {
+async function handleAdvance(): Promise<void> {
     if (!nextStatus.value || isAdvancing.value) {
         return;
     }
 
     isAdvancing.value = true;
 
-    router.post(
-        advanceStatus.url(props.incidentId),
-        { status: nextStatus.value },
-        {
-            preserveScroll: true,
-            onFinish: () => {
-                isAdvancing.value = false;
+    try {
+        const xsrfToken = decodeURIComponent(
+            document.cookie
+                .split('; ')
+                .find((row) => row.startsWith('XSRF-TOKEN='))
+                ?.split('=')[1] ?? '',
+        );
+
+        const response = await fetch(advanceStatus.url(props.incidentId), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-XSRF-TOKEN': xsrfToken,
             },
-        },
-    );
+            body: JSON.stringify({ status: nextStatus.value }),
+        });
+
+        if (response.ok) {
+            router.reload({ only: ['incidents', 'units'] });
+        }
+    } finally {
+        isAdvancing.value = false;
+    }
 }
 </script>
 

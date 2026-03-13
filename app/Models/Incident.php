@@ -114,6 +114,25 @@ class Incident extends Model
     }
 
     /**
+     * Serialize coordinates as {lat, lng} for the frontend.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        $array = parent::toArray();
+
+        if ($this->coordinates instanceof Point) {
+            $array['coordinates'] = [
+                'lat' => $this->coordinates->getLatitude(),
+                'lng' => $this->coordinates->getLongitude(),
+            ];
+        }
+
+        return $array;
+    }
+
+    /**
      * Get the incident type.
      */
     public function incidentType(): BelongsTo

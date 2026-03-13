@@ -45,6 +45,59 @@ const STATUS_COLORS: ExpressionSpecification = [
     '#888888',
 ];
 
+// --- Icon generation: white circle with colored icon inside ---
+
+const ICON_SIZE = 64;
+
+// Warning triangle path (centered in 24x24 viewBox)
+const INCIDENT_ICON_PATH =
+    'M12 5.5c-.38 0-.73.2-.92.53l-4.86 8.4c-.19.33-.19.74 0 1.07.19.34.54.54.92.54h9.72c.38 0 .73-.2.92-.54.19-.33.19-.74 0-1.07l-4.86-8.4A1.06 1.06 0 0 0 12 5.5zm.5 8.5a.75.75 0 1 1-1 0 .75.75 0 0 1 1 0zM12 12a.5.5 0 0 1-.5-.5v-2a.5.5 0 1 1 1 0v2a.5.5 0 0 1-.5.5z';
+
+// Vehicle/truck path
+const UNIT_ICON_PATH =
+    'M18 9.5h-2V7H6.5c-.83 0-1.5.68-1.5 1.5v6.5h1.5c0 1.1.9 2 2 2s2-.9 2-2h3c0 1.1.9 2 2 2s2-.9 2-2H19v-3.5l-1-2zm-9.5 7.5c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm9-6.5 1.36 1.75H16V10.5h1.5zM15.5 17c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z';
+
+function buildCircleIconSvg(iconPath: string, color: string): string {
+    return [
+        `<svg xmlns="http://www.w3.org/2000/svg" width="${ICON_SIZE}" height="${ICON_SIZE}" viewBox="0 0 24 24">`,
+        `<circle cx="12" cy="12" r="11.5" fill="${color}"/>`,
+        `<circle cx="12" cy="12" r="10" fill="white"/>`,
+        `<path d="${iconPath}" fill="${color}"/>`,
+        '</svg>',
+    ].join('');
+}
+
+function loadSvgAsImage(svg: string): Promise<HTMLImageElement> {
+    const blob = new Blob([svg], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+
+    return new Promise((resolve) => {
+        const img = new Image(ICON_SIZE, ICON_SIZE);
+
+        img.onload = () => {
+            URL.revokeObjectURL(url);
+            resolve(img);
+        };
+
+        img.src = url;
+    });
+}
+
+const INCIDENT_COLORS: Record<string, string> = {
+    P1: '#dc2626',
+    P2: '#ea580c',
+    P3: '#ca8a04',
+    P4: '#16a34a',
+};
+
+const UNIT_COLORS: Record<string, string> = {
+    AVAILABLE: '#16a34a',
+    DISPATCHED: '#2563eb',
+    EN_ROUTE: '#2563eb',
+    ON_SCENE: '#ca8a04',
+    OFFLINE: '#6b7280',
+};
+
 type ClickCallback<T> = (id: T) => void;
 
 export function useDispatchMap(containerId: string) {
@@ -70,6 +123,52 @@ export function useDispatchMap(containerId: string) {
     const incidentClickCallbacks: ClickCallback<string>[] = [];
     const unitClickCallbacks: ClickCallback<string>[] = [];
     const deselectCallbacks: (() => void)[] = [];
+
+    async function loadIcons(): Promise<void> {
+        if (!map.value) {
+            return;
+        }
+
+        const promises: Promise<void>[] = [];
+
+        for (const [key, color] of Object.entries(INCIDENT_COLORS)) {
+            const name = `incident-${key}`;
+
+            if (!map.value.hasImage(name)) {
+                const m = map.value;
+
+                promises.push(
+                    loadSvgAsImage(
+                        buildCircleIconSvg(INCIDENT_ICON_PATH, color),
+                    ).then((img) => {
+                        if (!m.hasImage(name)) {
+                            m.addImage(name, img);
+                        }
+                    }),
+                );
+            }
+        }
+
+        for (const [key, color] of Object.entries(UNIT_COLORS)) {
+            const name = `unit-${key}`;
+
+            if (!map.value.hasImage(name)) {
+                const m = map.value;
+
+                promises.push(
+                    loadSvgAsImage(
+                        buildCircleIconSvg(UNIT_ICON_PATH, color),
+                    ).then((img) => {
+                        if (!m.hasImage(name)) {
+                            m.addImage(name, img);
+                        }
+                    }),
+                );
+            }
+        }
+
+        await Promise.all(promises);
+    }
 
     function addSources(): void {
         if (!map.value) {
@@ -111,85 +210,105 @@ export function useDispatchMap(containerId: string) {
             },
         });
 
-        // --- Incident layers ---
+        // --- Incident glow (circle behind icon) ---
         map.value.addLayer({
             id: 'incident-halo',
             type: 'circle',
             source: 'incidents',
             paint: {
-                'circle-radius': 18,
+                'circle-radius': 20,
                 'circle-color': PRIORITY_COLORS,
                 'circle-opacity': 0.15,
                 'circle-blur': 1,
             },
         });
 
-        map.value.addLayer({
-            id: 'incident-pulse',
-            type: 'circle',
-            source: 'incidents',
-            paint: {
-                'circle-radius': 14,
-                'circle-color': PRIORITY_COLORS,
-                'circle-opacity': 0.08,
-            },
-        });
-
-        map.value.addLayer({
-            id: 'incident-border',
-            type: 'circle',
-            source: 'incidents',
-            paint: {
-                'circle-radius': 8,
-                'circle-color': '#ffffff',
-                'circle-opacity': 0.8,
-            },
-        });
-
+        // --- Incident icon layer ---
         map.value.addLayer({
             id: 'incident-core',
-            type: 'circle',
+            type: 'symbol',
             source: 'incidents',
-            paint: {
-                'circle-radius': 6,
-                'circle-color': PRIORITY_COLORS,
-                'circle-stroke-width': 0,
-                'circle-opacity': 1,
+            layout: {
+                'icon-image': [
+                    'concat',
+                    'incident-',
+                    ['get', 'priority'],
+                ] as unknown as ExpressionSpecification,
+                'icon-size': 0.55,
+                'icon-allow-overlap': true,
+                'icon-ignore-placement': true,
+                'icon-anchor': 'center',
             },
         });
 
-        // --- Unit layers ---
+        // --- Incident label ---
+        map.value.addLayer({
+            id: 'incident-label',
+            type: 'symbol',
+            source: 'incidents',
+            layout: {
+                'text-field': ['get', 'incident_no'],
+                'text-font': ['Open Sans Bold'],
+                'text-size': 9,
+                'text-offset': [0, 1.8],
+                'text-anchor': 'top',
+                'text-allow-overlap': false,
+            },
+            paint: {
+                'text-color': '#ffffff',
+                'text-halo-color': '#000000',
+                'text-halo-width': 1,
+            },
+        });
+
+        // --- Unit glow ---
         map.value.addLayer({
             id: 'unit-glow',
             type: 'circle',
             source: 'units',
             paint: {
-                'circle-radius': 14,
+                'circle-radius': 18,
                 'circle-color': STATUS_COLORS,
                 'circle-opacity': 0.15,
                 'circle-blur': 1,
             },
         });
 
+        // --- Unit icon layer ---
         map.value.addLayer({
-            id: 'unit-border',
-            type: 'circle',
+            id: 'unit-body',
+            type: 'symbol',
             source: 'units',
-            paint: {
-                'circle-radius': 7,
-                'circle-color': '#ffffff',
-                'circle-opacity': 0.9,
+            layout: {
+                'icon-image': [
+                    'concat',
+                    'unit-',
+                    ['get', 'status'],
+                ] as unknown as ExpressionSpecification,
+                'icon-size': 0.5,
+                'icon-allow-overlap': true,
+                'icon-ignore-placement': true,
+                'icon-anchor': 'center',
             },
         });
 
+        // --- Unit callsign label ---
         map.value.addLayer({
-            id: 'unit-body',
-            type: 'circle',
+            id: 'unit-label',
+            type: 'symbol',
             source: 'units',
+            layout: {
+                'text-field': ['get', 'callsign'],
+                'text-font': ['Open Sans Bold'],
+                'text-size': 9,
+                'text-offset': [0, 1.6],
+                'text-anchor': 'top',
+                'text-allow-overlap': false,
+            },
             paint: {
-                'circle-radius': 5,
-                'circle-color': STATUS_COLORS,
-                'circle-opacity': 1,
+                'text-color': '#ffffff',
+                'text-halo-color': '#000000',
+                'text-halo-width': 1,
             },
         });
     }
@@ -265,7 +384,8 @@ export function useDispatchMap(containerId: string) {
             dragRotate: false,
         });
 
-        map.value.on('load', () => {
+        map.value.on('load', async () => {
+            await loadIcons();
             isLoaded.value = true;
             addSources();
             addLayers();
@@ -489,7 +609,8 @@ export function useDispatchMap(containerId: string) {
 
         map.value.setStyle(dark ? DARK_STYLE : LIGHT_STYLE);
 
-        map.value.once('style.load', () => {
+        map.value.once('style.load', async () => {
+            await loadIcons();
             addSources();
             addLayers();
             addClickHandlers();

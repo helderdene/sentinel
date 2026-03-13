@@ -43,7 +43,18 @@ class DispatchConsoleController extends Controller
             ->whereIn('status', $dispatchStatuses)
             ->with(['incidentType', 'barangay', 'assignedUnits'])
             ->orderByDesc('created_at')
-            ->get();
+            ->get()
+            ->map(function (Incident $incident) {
+                $data = $incident->toArray();
+                $data['assigned_units'] = $incident->assignedUnits->map(fn ($unit) => [
+                    'unit_id' => $unit->id,
+                    'callsign' => $unit->callsign,
+                    'assigned_at' => $unit->pivot->assigned_at,
+                    'acknowledged_at' => $unit->pivot->acknowledged_at,
+                ]);
+
+                return $data;
+            });
 
         $units = Unit::all();
         $agencies = Agency::with('incidentTypes')->get();

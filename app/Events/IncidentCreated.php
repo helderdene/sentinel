@@ -31,6 +31,8 @@ class IncidentCreated implements ShouldBroadcast, ShouldDispatchAfterCommit
      */
     public function broadcastWith(): array
     {
+        $coordinates = $this->incident->coordinates;
+
         return [
             'id' => $this->incident->id,
             'incident_no' => $this->incident->incident_no,
@@ -40,6 +42,10 @@ class IncidentCreated implements ShouldBroadcast, ShouldDispatchAfterCommit
             'location_text' => $this->incident->location_text,
             'barangay' => $this->incident->barangay?->name,
             'channel' => $this->incident->channel->value,
+            'coordinates' => $coordinates ? [
+                'lat' => $coordinates->getLatitude(),
+                'lng' => $coordinates->getLongitude(),
+            ] : null,
             'created_at' => $this->incident->created_at->toISOString(),
         ];
     }

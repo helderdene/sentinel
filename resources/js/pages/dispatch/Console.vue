@@ -210,21 +210,35 @@ function handleAckExpired(): void {
     alertSystem.playAckExpiredTone();
 }
 
-function handleUnassign(unitId: string): void {
+async function handleUnassign(unitId: string): Promise<void> {
     if (!selectedIncidentId.value) {
         return;
     }
 
-    router.post(
+    const xsrfToken = decodeURIComponent(
+        document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('XSRF-TOKEN='))
+            ?.split('=')[1] ?? '',
+    );
+
+    const response = await fetch(
         unassignUnit.url(selectedIncidentId.value),
-        { unit_id: unitId },
         {
-            preserveScroll: true,
-            onSuccess: () => {
-                router.reload({ only: ['incidents', 'units'] });
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-XSRF-TOKEN': xsrfToken,
             },
+            body: JSON.stringify({ unit_id: unitId }),
         },
     );
+
+    if (response.ok) {
+        router.reload({ only: ['incidents', 'units'] });
+    }
 }
 
 onIncidentClick((id: string) => {

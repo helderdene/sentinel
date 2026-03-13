@@ -101,7 +101,7 @@ export function useDispatchFeed(
                 status: e.status,
                 channel: e.channel,
                 location_text: e.location_text,
-                coordinates: null,
+                coordinates: e.coordinates ?? null,
                 barangay_id: null,
                 barangay: e.barangay ? { id: 0, name: e.barangay } : null,
                 caller_name: null,

@@ -11,23 +11,38 @@ const props = defineProps<{
 
 const isAssigning = ref(false);
 
-function handleAssign(): void {
+async function handleAssign(): Promise<void> {
     if (isAssigning.value) {
         return;
     }
 
     isAssigning.value = true;
 
-    router.post(
-        assignUnit.url(props.incidentId),
-        { unit_id: props.unit.id },
-        {
-            preserveScroll: true,
-            onFinish: () => {
-                isAssigning.value = false;
+    try {
+        const xsrfToken = decodeURIComponent(
+            document.cookie
+                .split('; ')
+                .find((row) => row.startsWith('XSRF-TOKEN='))
+                ?.split('=')[1] ?? '',
+        );
+
+        const response = await fetch(assignUnit.url(props.incidentId), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-XSRF-TOKEN': xsrfToken,
             },
-        },
-    );
+            body: JSON.stringify({ unit_id: props.unit.id }),
+        });
+
+        if (response.ok) {
+            router.reload({ only: ['incidents', 'units'] });
+        }
+    } finally {
+        isAssigning.value = false;
+    }
 }
 
 const typeIcons: Record<string, string> = {

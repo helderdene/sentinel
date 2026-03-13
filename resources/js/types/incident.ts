@@ -105,6 +105,7 @@ export interface IncidentCreatedPayload {
     location_text: string;
     barangay: string | null;
     channel: IncidentChannel;
+    coordinates: { lat: number; lng: number } | null;
     created_at: string;
 }
 
