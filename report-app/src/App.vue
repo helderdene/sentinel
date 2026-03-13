@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
+import BottomNav from '@/components/BottomNav.vue';
 
 const route = useRoute();
 
@@ -11,10 +12,25 @@ const isReportFlow = computed(() => {
 
 <template>
     <div class="flex min-h-dvh flex-col bg-t-bg text-t-text">
-        <main class="flex-1 overflow-y-auto">
-            <router-view />
+        <main class="hide-scrollbar flex-1 overflow-y-auto" :class="{ 'pb-20': !isReportFlow }">
+            <router-view v-slot="{ Component }">
+                <transition name="fade" mode="out-in">
+                    <component :is="Component" />
+                </transition>
+            </router-view>
         </main>
-        <!-- BottomNav placeholder - wired in Task 2 -->
-        <div v-if="!isReportFlow" class="h-20 shrink-0 border-t border-t-border bg-t-surface" />
+        <BottomNav v-if="!isReportFlow" />
     </div>
 </template>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.15s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+</style>
