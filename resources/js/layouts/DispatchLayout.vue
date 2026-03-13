@@ -6,13 +6,7 @@ import DispatchStatusbar from '@/components/dispatch/DispatchStatusbar.vue';
 import DispatchTopbar from '@/components/dispatch/DispatchTopbar.vue';
 import { useWebSocket } from '@/composables/useWebSocket';
 import type { BannerLevel } from '@/composables/useWebSocket';
-import type { DispatchMetrics, DispatchUnit } from '@/types/dispatch';
 import type { TickerEvent } from '@/types/incident';
-
-const props = defineProps<{
-    metrics: DispatchMetrics;
-    units: DispatchUnit[];
-}>();
 
 const page = usePage();
 const user = computed(() => page.props.auth.user);
@@ -28,12 +22,12 @@ const dispatchStats: {
     unitsAvailable: Ref<number>;
     unitsTotal: Ref<number>;
 } = {
-    activeIncidents: ref(props.metrics.activeIncidents),
-    criticalIncidents: ref(props.metrics.criticalIncidents),
-    totalIncidents: ref(props.metrics.totalIncidents),
-    averageHandleTime: ref(props.metrics.averageHandleTime),
-    unitsAvailable: ref(props.metrics.unitsAvailable),
-    unitsTotal: ref(props.metrics.unitsTotal),
+    activeIncidents: ref(0),
+    criticalIncidents: ref(0),
+    totalIncidents: ref(0),
+    averageHandleTime: ref(null),
+    unitsAvailable: ref(0),
+    unitsTotal: ref(0),
 };
 
 provide('tickerEvents', tickerEvents);
@@ -60,24 +54,7 @@ const connectionStatus = computed<ConnectionStatus>(() => {
         <DispatchTopbar :user="user" />
 
         <div class="relative flex flex-1 overflow-hidden">
-            <!-- Left panel slot -->
-            <div
-                class="absolute top-0 bottom-0 left-0 z-10 w-80 overflow-y-auto bg-t-bg/95 backdrop-blur-sm dark:bg-[#0f172a]/95"
-            >
-                <slot name="left-panel" />
-            </div>
-
-            <!-- Center map area -->
-            <div class="flex-1">
-                <slot />
-            </div>
-
-            <!-- Right panel slot -->
-            <div
-                class="absolute top-0 right-0 bottom-0 z-10 w-[360px] overflow-y-auto bg-t-bg/95 backdrop-blur-sm dark:bg-[#0f172a]/95"
-            >
-                <slot name="right-panel" />
-            </div>
+            <slot />
         </div>
 
         <DispatchStatusbar :connection-status="connectionStatus" :user="user" />
