@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { STATUS_COLORS, STATUS_SEQUENCE } from '@/types';
+import { computed } from 'vue';
 
 const props = defineProps<{
     currentStatus: string;
@@ -10,6 +10,7 @@ const currentIndex = computed(() => {
     const idx = STATUS_SEQUENCE.indexOf(
         props.currentStatus as (typeof STATUS_SEQUENCE)[number]
     );
+
     return idx >= 0 ? idx : 0;
 });
 

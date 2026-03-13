@@ -13,9 +13,19 @@ const tabs = [
 
 const activeTab = computed(() => {
     const path = route.path;
-    if (path === '/') return '/';
-    if (path.startsWith('/reports') || path.startsWith('/track')) return '/reports';
-    if (path.startsWith('/about')) return '/about';
+
+    if (path === '/') {
+return '/';
+}
+
+    if (path.startsWith('/reports') || path.startsWith('/track')) {
+return '/reports';
+}
+
+    if (path.startsWith('/about')) {
+return '/about';
+}
+
     return '/';
 });
 

@@ -1,5 +1,5 @@
-import { ref } from 'vue';
 import type { StoredReport } from '@/types';
+import { ref } from 'vue';
 
 const STORAGE_KEY = 'irms-citizen-reports';
 const MAX_REPORTS = 50;
@@ -10,6 +10,7 @@ export function useReportStorage() {
     function loadReports(): StoredReport[] {
         try {
             const raw = localStorage.getItem(STORAGE_KEY);
+
             return raw ? (JSON.parse(raw) as StoredReport[]) : [];
         } catch {
             return [];
@@ -24,6 +25,7 @@ export function useReportStorage() {
     function getReports(): StoredReport[] {
         const fresh = loadReports();
         reports.value = fresh;
+
         return fresh;
     }
 

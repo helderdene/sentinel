@@ -1,4 +1,10 @@
 <script setup lang="ts">
+import type { IncidentType } from '@/types';
+import {
+    CITIZEN_STATUS_MAP,
+    PRIORITY_BG,
+    PRIORITY_COLORS,
+} from '@/types';
 import { onMounted, onUnmounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import PriorityBadge from '@/components/PriorityBadge.vue';
@@ -6,12 +12,6 @@ import StatusBadge from '@/components/StatusBadge.vue';
 import StepIndicator from '@/components/StepIndicator.vue';
 import { useReportDraft } from '@/composables/useReportDraft';
 import { useReportStorage } from '@/composables/useReportStorage';
-import type { IncidentType } from '@/types';
-import {
-    CITIZEN_STATUS_MAP,
-    PRIORITY_BG,
-    PRIORITY_COLORS,
-} from '@/types';
 
 const router = useRouter();
 const draft = useReportDraft();

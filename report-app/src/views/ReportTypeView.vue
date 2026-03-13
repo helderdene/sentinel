@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import type { IncidentType } from '@/types';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import StepIndicator from '@/components/StepIndicator.vue';
 import TypeCard from '@/components/TypeCard.vue';
 import { useApi } from '@/composables/useApi';
 import { useReportDraft } from '@/composables/useReportDraft';
-import type { IncidentType } from '@/types';
 
 const router = useRouter();
 const { get, loading } = useApi();

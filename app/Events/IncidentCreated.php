@@ -38,6 +38,7 @@ class IncidentCreated implements ShouldBroadcast, ShouldDispatchAfterCommit
             'incident_no' => $this->incident->incident_no,
             'priority' => $this->incident->priority->value,
             'status' => $this->incident->status->value,
+            'incident_type_id' => $this->incident->incident_type_id,
             'incident_type' => $this->incident->incidentType?->name,
             'location_text' => $this->incident->location_text,
             'barangay' => $this->incident->barangay?->name,
@@ -46,6 +47,9 @@ class IncidentCreated implements ShouldBroadcast, ShouldDispatchAfterCommit
                 'lat' => $coordinates->getLatitude(),
                 'lng' => $coordinates->getLongitude(),
             ] : null,
+            'caller_name' => $this->incident->caller_name,
+            'caller_contact' => $this->incident->caller_contact,
+            'notes' => $this->incident->notes,
             'created_at' => $this->incident->created_at->toISOString(),
         ];
     }

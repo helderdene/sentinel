@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import type { CitizenReport } from '@/types';
+import { CITIZEN_STATUS_MAP } from '@/types';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import PriorityBadge from '@/components/PriorityBadge.vue';
 import StatusPipeline from '@/components/StatusPipeline.vue';
 import { useApi } from '@/composables/useApi';
-import type { CitizenReport } from '@/types';
-import { CITIZEN_STATUS_MAP } from '@/types';
 
 const route = useRoute();
 const router = useRouter();

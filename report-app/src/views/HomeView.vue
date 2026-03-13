@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { CITIZEN_STATUS_MAP, PRIORITY_BG, PRIORITY_COLORS } from '@/types';
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import StatusBadge from '@/components/StatusBadge.vue';
 import { useReportStorage } from '@/composables/useReportStorage';
-import { CITIZEN_STATUS_MAP, PRIORITY_BG, PRIORITY_COLORS } from '@/types';
 
 const router = useRouter();
 const { getReports } = useReportStorage();

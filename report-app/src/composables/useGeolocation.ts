@@ -12,6 +12,7 @@ export function useGeolocation() {
         if (!('geolocation' in navigator)) {
             status.value = 'denied';
             error.value = 'Geolocation is not available on this device';
+
             return false;
         }
 

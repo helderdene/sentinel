@@ -25,6 +25,7 @@ export function useApi() {
 
             if (!response.ok) {
                 const body = await response.json().catch(() => null);
+
                 throw new Error(
                     body?.message ?? `Request failed with status ${response.status}`
                 );
@@ -35,6 +36,7 @@ export function useApi() {
             const message =
                 err instanceof Error ? err.message : 'An unexpected error occurred';
             error.value = message;
+
             throw err;
         } finally {
             loading.value = false;
@@ -62,11 +64,13 @@ export function useApi() {
                 const validationError =
                     (await response.json()) as ApiValidationErrors;
                 error.value = validationError.message;
+
                 throw validationError;
             }
 
             if (!response.ok) {
                 const errorBody = await response.json().catch(() => null);
+
                 throw new Error(
                     errorBody?.message ??
                         `Request failed with status ${response.status}`
@@ -84,6 +88,7 @@ export function useApi() {
                         : 'An unexpected error occurred';
                 error.value = message;
             }
+
             throw err;
         } finally {
             loading.value = false;

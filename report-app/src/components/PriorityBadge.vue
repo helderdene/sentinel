@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { PRIORITY_BG, PRIORITY_COLORS, PRIORITY_LABELS } from '@/types';
+import { computed } from 'vue';
 
 const props = defineProps<{
     priority: number;

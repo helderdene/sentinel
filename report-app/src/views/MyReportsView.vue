@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
-import StatusBadge from '@/components/StatusBadge.vue';
-import { useApi } from '@/composables/useApi';
-import { useReportStorage } from '@/composables/useReportStorage';
 import type { CitizenReport } from '@/types';
 import {
     CITIZEN_STATUS_MAP,
     PRIORITY_BG,
     PRIORITY_COLORS,
 } from '@/types';
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import StatusBadge from '@/components/StatusBadge.vue';
+import { useApi } from '@/composables/useApi';
+import { useReportStorage } from '@/composables/useReportStorage';
 
 const router = useRouter();
 const { getReports, updateReportStatus } = useReportStorage();

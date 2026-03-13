@@ -80,6 +80,8 @@ class CitizenReportController extends Controller
         $latitude = $validated['latitude'] ?? null;
         $longitude = $validated['longitude'] ?? null;
 
+        $barangayName = null;
+
         if ($latitude !== null && $longitude !== null) {
             $data['coordinates'] = Point::makeGeodetic((float) $latitude, (float) $longitude);
 
@@ -87,9 +89,22 @@ class CitizenReportController extends Controller
 
             if ($barangay) {
                 $data['barangay_id'] = $barangay->id;
+                $barangayName = $barangay->name;
             }
-        } elseif (isset($validated['barangay_id'])) {
+        }
+
+        // Fall back to manually selected barangay if GPS lookup didn't resolve one
+        if (! isset($data['barangay_id']) && isset($validated['barangay_id'])) {
             $data['barangay_id'] = $validated['barangay_id'];
+            $barangayName = Barangay::find($validated['barangay_id'])?->name;
+        }
+
+        // Compose location_text: "Barangay Name, Butuan City" with optional landmark
+        if ($barangayName) {
+            $landmark = $validated['location_text'] ?? null;
+            $data['location_text'] = $landmark
+                ? "{$landmark}, {$barangayName}, Butuan City"
+                : "{$barangayName}, Butuan City";
         }
 
         $incident = Incident::query()->create($data);

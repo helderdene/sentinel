@@ -19,7 +19,7 @@ class CitizenIncidentTypeResource extends JsonResource
             'name' => $this->name,
             'category' => $this->category,
             'code' => $this->code,
-            'default_priority' => $this->default_priority,
+            'default_priority' => (int) substr($this->default_priority, 1),
             'description' => $this->description,
         ];
     }

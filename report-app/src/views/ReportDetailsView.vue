@@ -1,15 +1,16 @@
 <script setup lang="ts">
+import type { Barangay, CitizenReport } from '@/types';
+import { PRIORITY_BG, PRIORITY_COLORS } from '@/types';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import PriorityBadge from '@/components/PriorityBadge.vue';
+import SearchableSelect from '@/components/SearchableSelect.vue';
 import StepIndicator from '@/components/StepIndicator.vue';
 import { useApi } from '@/composables/useApi';
 import type { ApiValidationErrors } from '@/composables/useApi';
 import { useGeolocation } from '@/composables/useGeolocation';
 import { useReportDraft } from '@/composables/useReportDraft';
 import { useReportStorage } from '@/composables/useReportStorage';
-import type { Barangay, CitizenReport } from '@/types';
-import { PRIORITY_BG, PRIORITY_COLORS } from '@/types';
 
 const router = useRouter();
 const geo = useGeolocation();
@@ -74,6 +75,10 @@ const typeBg = computed(
     () =>
         PRIORITY_BG[draft.selectedType.value?.default_priority ?? 4] ??
         'rgba(100,116,139,.08)'
+);
+
+const barangayOptions = computed(() =>
+    barangays.value.map((b) => ({ value: b.id, label: b.name }))
 );
 
 const descCharCount = computed(() => draft.description.value.length);
@@ -402,21 +407,11 @@ async function handleSubmit(): Promise<void> {
                             >*</span
                         >
                     </label>
-                    <select
+                    <SearchableSelect
                         v-model="draft.barangayId.value"
-                        class="w-full appearance-none rounded-[10px] border-[1.5px] border-t-border bg-t-surface px-3.5 py-[11px] text-[14px] text-t-text outline-none transition-colors focus:border-t-accent"
-                    >
-                        <option :value="null">
-                            Select barangay...
-                        </option>
-                        <option
-                            v-for="b in barangays"
-                            :key="b.id"
-                            :value="b.id"
-                        >
-                            {{ b.name }}
-                        </option>
-                    </select>
+                        :options="barangayOptions"
+                        placeholder="Search barangay..."
+                    />
                     <div
                         v-if="clientErrors.barangay"
                         class="mt-1 text-[11px] text-t-p1"

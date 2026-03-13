@@ -1,5 +1,5 @@
-import { ref } from 'vue';
 import type { IncidentType } from '@/types';
+import { ref } from 'vue';
 
 const selectedType = ref<IncidentType | null>(null);
 const description = ref('');

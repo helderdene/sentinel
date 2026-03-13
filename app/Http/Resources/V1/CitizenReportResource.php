@@ -34,7 +34,7 @@ class CitizenReportResource extends JsonResource
             'tracking_token' => $this->tracking_token,
             'type' => $this->incidentType?->name,
             'category' => $this->incidentType?->category,
-            'priority' => $this->priority?->value,
+            'priority' => $this->priority ? (int) substr($this->priority->value, 1) : null,
             'status' => self::CITIZEN_STATUS_MAP[$this->status->value] ?? 'Unknown',
             'barangay' => $this->barangay?->name,
             'location_text' => $this->location_text,

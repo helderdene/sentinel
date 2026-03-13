@@ -99,6 +99,7 @@ export interface IncidentForQueue {
 export interface IncidentCreatedPayload {
     id: string;
     incident_no: string;
+    incident_type_id: number;
     priority: IncidentPriority;
     status: IncidentStatus;
     incident_type: string | null;
@@ -106,6 +107,9 @@ export interface IncidentCreatedPayload {
     barangay: string | null;
     channel: IncidentChannel;
     coordinates: { lat: number; lng: number } | null;
+    caller_name: string | null;
+    caller_contact: string | null;
+    notes: string | null;
     created_at: string;
 }
 

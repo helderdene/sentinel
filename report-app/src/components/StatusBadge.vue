@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { STATUS_COLORS } from '@/types';
+import { computed } from 'vue';
 
 const props = defineProps<{
     status: string;
