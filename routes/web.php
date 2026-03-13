@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\DispatchConsoleController;
 use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\IntakeStationController;
@@ -97,11 +98,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'title' => 'Units',
             'description' => 'Unit status and management. Coming in Phase 4.',
         ])->name('units.index');
+    });
 
-        Route::inertia('analytics', 'placeholder/ComingSoon', [
-            'title' => 'Analytics & Reports',
-            'description' => 'KPI dashboard and compliance reports. Coming in Phase 7.',
-        ])->name('analytics.index');
+    // Analytics routes (supervisor + admin, gate-checked in controller)
+    Route::middleware(['role:supervisor,admin'])->prefix('analytics')->group(function () {
+        Route::get('/', [AnalyticsController::class, 'index'])->name('analytics.index');
+        Route::get('/dashboard', [AnalyticsController::class, 'dashboard'])->name('analytics.dashboard');
+        Route::get('/heatmap', [AnalyticsController::class, 'heatmap'])->name('analytics.heatmap');
+        Route::get('/heatmap/barangay/{barangay}', [AnalyticsController::class, 'barangayDetail'])->name('analytics.barangay-detail');
+        Route::get('/reports', [AnalyticsController::class, 'reports'])->name('analytics.reports');
+        Route::get('/reports/{generated_report}/download', [AnalyticsController::class, 'downloadReport'])->name('analytics.download-report');
+        Route::post('/reports/generate', [AnalyticsController::class, 'generateReport'])->name('analytics.generate-report');
     });
 });
 
