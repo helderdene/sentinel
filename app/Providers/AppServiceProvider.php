@@ -2,17 +2,27 @@
 
 namespace App\Providers;
 
+use App\Contracts\BfpSyncServiceInterface;
 use App\Contracts\DirectionsServiceInterface;
 use App\Contracts\GeocodingServiceInterface;
+use App\Contracts\HospitalEhrServiceInterface;
+use App\Contracts\NdrrmcReportServiceInterface;
+use App\Contracts\PnpBlotterServiceInterface;
 use App\Contracts\ProximityServiceInterface;
 use App\Contracts\SmsParserServiceInterface;
 use App\Contracts\SmsServiceInterface;
+use App\Contracts\WeatherServiceInterface;
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Services\ProximityRankingService;
 use App\Services\SmsParserService;
+use App\Services\StubBfpSyncService;
+use App\Services\StubHospitalEhrService;
 use App\Services\StubMapboxDirectionsService;
 use App\Services\StubMapboxGeocodingService;
+use App\Services\StubNdrrmcReportService;
+use App\Services\StubPagasaWeatherService;
+use App\Services\StubPnpBlotterService;
 use App\Services\StubSemaphoreSmsService;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -36,6 +46,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(SmsServiceInterface::class, StubSemaphoreSmsService::class);
         $this->app->bind(SmsParserServiceInterface::class, SmsParserService::class);
         $this->app->bind(DirectionsServiceInterface::class, StubMapboxDirectionsService::class);
+        $this->app->bind(WeatherServiceInterface::class, StubPagasaWeatherService::class);
+        $this->app->bind(HospitalEhrServiceInterface::class, StubHospitalEhrService::class);
+        $this->app->bind(NdrrmcReportServiceInterface::class, StubNdrrmcReportService::class);
+        $this->app->bind(BfpSyncServiceInterface::class, StubBfpSyncService::class);
+        $this->app->bind(PnpBlotterServiceInterface::class, StubPnpBlotterService::class);
     }
 
     /**
