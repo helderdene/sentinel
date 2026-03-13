@@ -29,6 +29,7 @@ class StateSyncController extends Controller
             ->pluck('count', 'channel');
 
         $units = Unit::query()
+            ->active()
             ->where('status', '!=', UnitStatus::Offline)
             ->select('id', 'callsign', 'type', 'status', 'coordinates')
             ->get();

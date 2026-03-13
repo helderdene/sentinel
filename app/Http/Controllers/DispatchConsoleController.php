@@ -58,7 +58,7 @@ class DispatchConsoleController extends Controller
                 return $data;
             });
 
-        $units = Unit::all();
+        $units = Unit::query()->active()->get();
         $agencies = Agency::with('incidentTypes')->get();
 
         $activeStatuses = [
@@ -84,8 +84,8 @@ class DispatchConsoleController extends Controller
                 ->whereIn('status', $activeStatuses)
                 ->where('priority', IncidentPriority::P1)
                 ->count(),
-            'unitsAvailable' => Unit::where('status', UnitStatus::Available)->count(),
-            'unitsTotal' => Unit::where('status', '!=', UnitStatus::Offline)->count(),
+            'unitsAvailable' => Unit::query()->active()->where('status', UnitStatus::Available)->count(),
+            'unitsTotal' => Unit::query()->active()->where('status', '!=', UnitStatus::Offline)->count(),
             'averageHandleTime' => $averageHandleTime !== null
                 ? round((float) $averageHandleTime, 1)
                 : null,

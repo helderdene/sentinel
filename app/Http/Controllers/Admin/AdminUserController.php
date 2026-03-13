@@ -28,7 +28,7 @@ class AdminUserController extends Controller
         return Inertia::render('admin/Users', [
             'users' => $users,
             'roles' => UserRole::cases(),
-            'units' => Unit::all(),
+            'units' => Unit::query()->active()->get(),
         ]);
     }
 
@@ -39,7 +39,7 @@ class AdminUserController extends Controller
     {
         return Inertia::render('admin/UserForm', [
             'roles' => UserRole::cases(),
-            'units' => Unit::all(),
+            'units' => Unit::query()->active()->get(),
         ]);
     }
 
@@ -65,7 +65,7 @@ class AdminUserController extends Controller
         return Inertia::render('admin/UserForm', [
             'user' => $user->load('unit'),
             'roles' => UserRole::cases(),
-            'units' => Unit::all(),
+            'units' => Unit::query()->active()->get(),
         ]);
     }
 
