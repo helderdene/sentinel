@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue';
 import { nearbyUnits as nearbyUnitsAction } from '@/actions/App/Http/Controllers/DispatchConsoleController';
 import AckTimerRing from '@/components/dispatch/AckTimerRing.vue';
 import AssignmentChip from '@/components/dispatch/AssignmentChip.vue';
+import DispatchMessagesSection from '@/components/dispatch/DispatchMessagesSection.vue';
 import MutualAidModal from '@/components/dispatch/MutualAidModal.vue';
 import SlaProgressBar from '@/components/dispatch/SlaProgressBar.vue';
 import StatusPipeline from '@/components/dispatch/StatusPipeline.vue';
@@ -10,6 +11,7 @@ import PriBadge from '@/components/intake/PriBadge.vue';
 import type {
     DispatchAgency,
     DispatchIncident,
+    DispatchMessageItem,
     NearbyUnit,
 } from '@/types/dispatch';
 import type { IncidentTimelineEntry } from '@/types/incident';
@@ -17,12 +19,18 @@ import type { IncidentTimelineEntry } from '@/types/incident';
 const props = defineProps<{
     incident: DispatchIncident;
     agencies: DispatchAgency[];
+    messages: DispatchMessageItem[];
+    messagesExpanded: boolean;
+    currentUserId: number;
+    unreadCount: number;
 }>();
 
 const emit = defineEmits<{
     close: [];
     'ack-expired': [];
     unassign: [unitId: string];
+    'toggle-messages': [];
+    'send-message': [message: DispatchMessageItem];
 }>();
 
 const showMutualAid = ref(false);
@@ -359,6 +367,17 @@ function handleUnassign(unitId: string): void {
                 No available units nearby
             </p>
         </div>
+
+        <!-- Messages -->
+        <DispatchMessagesSection
+            :incident-id="incident.id"
+            :messages="props.messages"
+            :current-user-id="props.currentUserId"
+            :expanded="props.messagesExpanded"
+            :unread-count="props.unreadCount"
+            @toggle="emit('toggle-messages')"
+            @send="emit('send-message', $event)"
+        />
 
         <!-- Timeline -->
         <div

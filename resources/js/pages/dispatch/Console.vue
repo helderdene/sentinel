@@ -16,6 +16,7 @@ import DispatchLayout from '@/layouts/DispatchLayout.vue';
 import type {
     DispatchAgency,
     DispatchIncident,
+    DispatchMessageItem,
     DispatchMetrics,
     DispatchUnit,
 } from '@/types/dispatch';
@@ -67,6 +68,7 @@ const dispatchStats = inject<{
 }>('dispatchStats');
 
 const tickerEventsInjected = inject<Ref<TickerEvent[]>>('tickerEvents');
+const totalUnreadInjected = inject<Ref<number>>('totalUnreadMessages');
 
 watch(
     sessionMetrics,
@@ -83,7 +85,9 @@ watch(
     { immediate: true },
 );
 
+const selectedIncidentId = ref<string | null>(null);
 const selectedUnitId = ref<string | null>(null);
+const messagesExpanded = ref(false);
 
 type RightPanelMode = 'unit-status' | 'incident-detail' | 'unit-detail';
 
@@ -112,8 +116,6 @@ const {
     onUnitClick,
     onDeselect,
 } = mapComposable;
-
-const selectedIncidentId = ref<string | null>(null);
 
 const currentUserId = computed(
     () => (usePage().props as { auth: { user: { id: number } } }).auth.user.id,
@@ -145,6 +147,12 @@ watch(
     { deep: true, immediate: true },
 );
 
+watch(totalUnreadMessages, (val) => {
+    if (totalUnreadInjected) {
+        totalUnreadInjected.value = val;
+    }
+});
+
 const selectedIncident = computed(() =>
     selectedIncidentId.value
         ? (localIncidents.value.find(
@@ -158,6 +166,41 @@ const selectedUnit = computed(() =>
         ? (localUnits.value.find((u) => u.id === selectedUnitId.value) ?? null)
         : null,
 );
+
+const selectedIncidentMessages = computed<DispatchMessageItem[]>(() => {
+    if (!selectedIncidentId.value) {
+        return [];
+    }
+
+    return getMessages(selectedIncidentId.value);
+});
+
+const selectedIncidentUnread = computed(() => {
+    if (!selectedIncidentId.value) {
+        return 0;
+    }
+
+    return unreadByIncident.value.get(selectedIncidentId.value) ?? 0;
+});
+
+watch(selectedIncidentId, (newId, oldId) => {
+    if (newId === oldId) {
+        return;
+    }
+
+    if (newId) {
+        const unread = unreadByIncident.value.get(newId) ?? 0;
+
+        if (unread > 0) {
+            messagesExpanded.value = true;
+            clearUnread(newId);
+        } else {
+            messagesExpanded.value = false;
+        }
+    } else {
+        messagesExpanded.value = false;
+    }
+});
 
 function buildConnectionLines(): void {
     const assignments: Array<{
@@ -224,6 +267,20 @@ function handleAckExpired(): void {
     alertSystem.playAckExpiredTone();
 }
 
+function handleToggleMessages(): void {
+    messagesExpanded.value = !messagesExpanded.value;
+
+    if (messagesExpanded.value && selectedIncidentId.value) {
+        clearUnread(selectedIncidentId.value);
+    }
+}
+
+function handleSendMessage(message: DispatchMessageItem): void {
+    if (selectedIncidentId.value) {
+        addLocalMessage(selectedIncidentId.value, message);
+    }
+}
+
 async function handleUnassign(unitId: string): Promise<void> {
     if (!selectedIncidentId.value) {
         return;
@@ -275,6 +332,7 @@ onDeselect(() => {
             <DispatchQueuePanel
                 :incidents="localIncidents"
                 :selected-incident-id="selectedIncidentId"
+                :unread-by-incident="unreadByIncident"
                 @select-incident="handleIncidentSelect"
             />
         </div>
@@ -293,9 +351,15 @@ onDeselect(() => {
                 v-if="rightPanelMode === 'incident-detail' && selectedIncident"
                 :incident="selectedIncident"
                 :agencies="props.agencies"
+                :messages="selectedIncidentMessages"
+                :messages-expanded="messagesExpanded"
+                :current-user-id="currentUserId"
+                :unread-count="selectedIncidentUnread"
                 @close="handleIncidentClose"
                 @ack-expired="handleAckExpired"
                 @unassign="handleUnassign"
+                @toggle-messages="handleToggleMessages"
+                @send-message="handleSendMessage"
             />
             <UnitDetailPanel
                 v-else-if="rightPanelMode === 'unit-detail' && selectedUnit"

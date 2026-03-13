@@ -7,6 +7,7 @@ import type { IncidentStatus } from '@/types/incident';
 const props = defineProps<{
     incidents: DispatchIncident[];
     selectedIncidentId: string | null;
+    unreadByIncident?: Map<string, number>;
 }>();
 
 const emit = defineEmits<{
@@ -118,6 +119,7 @@ const incidentCount = computed(() => queueIncidents.value.length);
                 :key="incident.id"
                 :incident="incident"
                 :selected="incident.id === selectedIncidentId"
+                :unread-count="props.unreadByIncident?.get(incident.id) ?? 0"
                 @select="emit('select-incident', $event)"
             />
             <div

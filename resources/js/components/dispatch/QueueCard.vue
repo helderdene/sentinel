@@ -6,6 +6,7 @@ import type { DispatchIncident } from '@/types/dispatch';
 const props = defineProps<{
     incident: DispatchIncident;
     selected: boolean;
+    unreadCount?: number;
 }>();
 
 const emit = defineEmits<{
@@ -130,6 +131,12 @@ const firstAssignedCallsign = computed(() => {
                 class="font-mono text-[9px] text-t-text-faint"
             >
                 {{ firstAssignedCallsign }}
+            </span>
+            <span
+                v-if="props.unreadCount && props.unreadCount > 0"
+                class="flex size-4 items-center justify-center rounded-full bg-t-accent font-mono text-[9px] font-bold text-white"
+            >
+                {{ props.unreadCount > 9 ? '9+' : props.unreadCount }}
             </span>
         </div>
     </button>

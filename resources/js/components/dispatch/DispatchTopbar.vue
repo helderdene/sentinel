@@ -31,6 +31,8 @@ const tickerEvents = inject<Ref<TickerEvent[]>>(
     ref<TickerEvent[]>([]),
 );
 
+const totalUnreadMessages = inject<Ref<number>>('totalUnreadMessages', ref(0));
+
 const latestEvent = computed(() =>
     tickerEvents.value.length > 0 ? tickerEvents.value[0] : null,
 );
@@ -173,7 +175,9 @@ onUnmounted(() => {
                     AVG HANDLE
                 </span>
             </div>
-            <div class="flex flex-col items-center px-4">
+            <div
+                class="flex flex-col items-center border-r border-t-border px-4"
+            >
                 <span class="font-mono text-[21px] font-bold text-t-online">
                     {{ stats.unitsAvailable }}/{{ stats.unitsTotal }}
                 </span>
@@ -181,6 +185,23 @@ onUnmounted(() => {
                     class="font-mono text-[9px] font-bold tracking-[1.2px] text-t-text-faint uppercase"
                 >
                     UNITS
+                </span>
+            </div>
+            <div class="flex flex-col items-center px-4">
+                <span
+                    class="font-mono text-[21px] font-bold"
+                    :class="
+                        totalUnreadMessages > 0
+                            ? 'text-t-accent'
+                            : 'text-t-text-dim'
+                    "
+                >
+                    {{ totalUnreadMessages }}
+                </span>
+                <span
+                    class="font-mono text-[9px] font-bold tracking-[1.2px] text-t-text-faint uppercase"
+                >
+                    MSGS
                 </span>
             </div>
         </div>

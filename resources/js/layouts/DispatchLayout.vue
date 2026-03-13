@@ -13,6 +13,7 @@ const user = computed(() => page.props.auth.user);
 const { bannerLevel } = useWebSocket();
 
 const tickerEvents = ref<TickerEvent[]>([]);
+const totalUnreadMessages = ref(0);
 
 const dispatchStats: {
     activeIncidents: Ref<number>;
@@ -32,6 +33,7 @@ const dispatchStats: {
 
 provide('tickerEvents', tickerEvents);
 provide('dispatchStats', dispatchStats);
+provide('totalUnreadMessages', totalUnreadMessages);
 
 type ConnectionStatus = 'online' | 'reconnecting' | 'disconnected';
 
