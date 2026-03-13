@@ -92,6 +92,21 @@
 - [x] **CITIZEN-09**: Public API endpoints under /api/v1/citizen/* with rate limiting (5 submissions/min, 60 reads/min per IP) and CORS configuration
 - [x] **CITIZEN-10**: Report app is a standalone Vue 3 SPA in /report-app/ monorepo subfolder with shared design tokens (DM Sans, Space Mono, color system); mobile-first matching HTML prototype
 
+### Design System Alignment
+
+- [ ] **DS-01**: Shadcn CSS variables (--background, --foreground, --border, --card, --primary, etc.) remap to IRMS design system tokens (--t-bg, --t-text, --t-border, etc.) in both :root and .dark blocks; all Shadcn components inherit design system colors via cascade
+- [ ] **DS-02**: 5-level shadow scale (shadow-1 through shadow-5) defined as CSS custom properties with border+shadow pairing per design system spec
+- [ ] **DS-03**: Focus ring override uses design system combined border-color + box-shadow pattern instead of Shadcn ring utility
+- [ ] **DS-04**: Auth pages use single unified layout with CDRRMO branding (52x52 icon, "CDRRMO Butuan City", subtitle), centered card, Level 4 shadow, 14px border-radius, fadeUp animation; unused auth layout variants deleted
+- [ ] **DS-05**: Sidebar shows CDRRMO icon + "IRMS" text (replacing "Laravel Starter Kit"); navigation section labels use Space Mono uppercase 9px with 2px letter-spacing
+- [ ] **DS-06**: Content area behind sidebar pages uses t-bg background (#f4f6f9 light / #0f172a dark) for visual depth against t-surface sidebar
+- [ ] **DS-07**: Settings pages and Dashboard use design system tokens for typography, elevation, and color (no hardcoded neutral-*/zinc-* classes)
+- [ ] **DS-08**: Admin data tables follow design system table pattern: t-surface background, Level 1 shadow, 7px border-radius, Space Mono column headers, t-border borders, role/priority badges using design system color tokens with color-mix()
+- [ ] **DS-09**: Incidents pages (Index, Create, Queue, Show) use design system tokens for tables, cards, priority/status badges, and typography
+- [ ] **DS-10**: Analytics pages (Dashboard, Heatmap, Reports) use design system card pattern, Space Mono KPI labels, and design system elevation
+- [ ] **DS-11**: Dispatch Console uses design system color/font tokens in panel chrome while preserving existing layout structure, map styling, and custom UX
+- [ ] **DS-12**: Responder Station uses design system color/font tokens while preserving existing mobile layout, touch targets, and purpose-built interfaces
+
 ## v2 Requirements
 
 ### Mobile Enhancement
@@ -189,12 +204,24 @@
 | CITIZEN-08 | Phase 9 | Complete |
 | CITIZEN-09 | Phase 9 | Complete |
 | CITIZEN-10 | Phase 9 | Complete |
+| DS-01 | Phase 10 | Planned |
+| DS-02 | Phase 10 | Planned |
+| DS-03 | Phase 10 | Planned |
+| DS-04 | Phase 10 | Planned |
+| DS-05 | Phase 10 | Planned |
+| DS-06 | Phase 10 | Planned |
+| DS-07 | Phase 10 | Planned |
+| DS-08 | Phase 10 | Planned |
+| DS-09 | Phase 10 | Planned |
+| DS-10 | Phase 10 | Planned |
+| DS-11 | Phase 10 | Planned |
+| DS-12 | Phase 10 | Planned |
 
 **Coverage:**
-- v1 requirements: 66 total
-- Mapped to phases: 66
+- v1 requirements: 78 total
+- Mapped to phases: 78
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-12*
-*Last updated: 2026-03-13 after Phase 9 planning*
+*Last updated: 2026-03-14 after Phase 10 planning*

@@ -21,6 +21,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 7: Analytics** - KPI dashboard, incident heatmap, DILG/NDRRMC/quarterly/annual compliance reports (completed 2026-03-13)
 - [x] **Phase 8: Operator Role & Intake Station** - 5th role (operator), TRIAGED status, full-screen intake station UI with design system (completed 2026-03-13)
 - [x] **Phase 9: Public Citizen Reporting App** - Mobile-first Vue SPA for citizens to report emergencies, track status via token, integrated with existing intake pipeline (completed 2026-03-13)
+- [ ] **Phase 10: Design System Alignment** - Restyle all pages to match IRMS Intake Design System: CSS variable remapping, auth branding, sidebar restyling, data tables, token alignment
 
 ## Phase Details
 
@@ -180,12 +181,32 @@ Plans:
 - [x] 09-02-PLAN.md -- Report app scaffold: Vue 3 SPA setup, Vite config, Vue Router, design tokens, composables (useApi, useGeolocation, useReportStorage), shared components
 - [x] 09-03-PLAN.md -- Report app views: HomeView, ReportTypeView, ReportDetailsView, ReportConfirmView, MyReportsView, TrackReportView, AboutView, visual verification
 
+### Phase 10: Update all pages design to match IRMS Intake Design System
+**Goal**: Every page in the IRMS application uses the IRMS Intake Design System visual language -- CSS variables remapped, auth branded with CDRRMO identity, sidebar restyled, data tables following the design system pattern, and specialized environments (dispatch, responder) aligned to design system tokens
+**Depends on**: Phase 9
+**Requirements**: DS-01, DS-02, DS-03, DS-04, DS-05, DS-06, DS-07, DS-08, DS-09, DS-10, DS-11, DS-12
+**Success Criteria** (what must be TRUE):
+  1. Shadcn CSS variables remap to design system tokens in both light and dark modes; all Shadcn components inherit design system colors via cascade
+  2. Auth pages show CDRRMO branding (shield icon, title, subtitle) in a centered card with Level 4 shadow and fadeUp animation; unused auth layout variants deleted
+  3. Sidebar shows CDRRMO icon + "IRMS" text with Space Mono section labels; content area uses t-bg background for visual depth
+  4. Admin data tables follow design system pattern: Space Mono headers, Level 1 shadow, 7px radius, design system role/priority badges
+  5. Dashboard, Settings, Incidents, and Analytics pages use design system tokens throughout (zero hardcoded neutral-*/zinc-* classes)
+  6. Dispatch Console and Responder Station use design system color/font tokens while preserving their specialized layouts and UX
+**Plans**: 4 plans
+
+Plans:
+- [ ] 10-01-PLAN.md -- CSS foundation and auth consolidation: Shadcn-to-design-system variable remapping, shadow scale, auth layout rebuild with CDRRMO branding, delete old variants
+- [ ] 10-02-PLAN.md -- Sidebar and shared components: AppLogo CDRRMO branding, NavMain Space Mono labels, AppSidebarLayout bg-t-bg content area, Dashboard and Settings restyling
+- [ ] 10-03-PLAN.md -- Admin data tables and incidents: Design system table pattern for 6 admin pages, role badges with color-mix(), 4 incidents pages token alignment
+- [ ] 10-04-PLAN.md -- Analytics, dispatch, responder: Analytics full treatment, dispatch/responder token-only alignment, visual verification checkpoint
+
 ## Progress
 
 **Execution Order:**
 Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 (Phase 8 depends on Phases 2 and 3, can run before Phases 4-7)
 (Phase 9 depends on Phases 2 and 8)
+(Phase 10 depends on Phase 9)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -198,3 +219,4 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 7. Analytics | 3/3 | Complete | 2026-03-13 |
 | 8. Operator Role & Intake Station | 4/4 | Complete | 2026-03-13 |
 | 9. Public Citizen Reporting App | 3/3 | Complete   | 2026-03-13 |
+| 10. Design System Alignment | 0/4 | Planned | - |
