@@ -60,10 +60,10 @@
 
 ### Integration
 
-- [ ] **INTGR-01**: All external integrations behind PHP interfaces bound in service container; stub implementations log calls; real implementations plug in without business logic changes
-- [ ] **INTGR-02**: Stubbed Mapbox Geocoding connector for forward geocoding with Philippines country filter
-- [ ] **INTGR-03**: Stubbed Mapbox Directions connector for road-network ETA calculation
-- [ ] **INTGR-04**: Stubbed Semaphore SMS connector for inbound parsing and outbound acknowledgement/status messages
+- [x] **INTGR-01**: All external integrations behind PHP interfaces bound in service container; stub implementations log calls; real implementations plug in without business logic changes
+- [x] **INTGR-02**: Stubbed Mapbox Geocoding connector for forward geocoding with Philippines country filter
+- [x] **INTGR-03**: Stubbed Mapbox Directions connector for road-network ETA calculation
+- [x] **INTGR-04**: Stubbed Semaphore SMS connector for inbound parsing and outbound acknowledgement/status messages
 - [ ] **INTGR-05**: Stubbed PAGASA Weather connector for rainfall, wind, and flood advisory overlay data
 - [ ] **INTGR-06**: Stubbed Hospital EHR connector (HL7 FHIR R4) for patient pre-notification on transport outcome
 - [ ] **INTGR-07**: Stubbed NDRRMC connector for SitRep XML submission on P1 closure
@@ -164,10 +164,10 @@
 | RSPDR-09 | Phase 5 | Complete |
 | RSPDR-10 | Phase 5 | Complete |
 | RSPDR-11 | Phase 5 | Complete |
-| INTGR-01 | Phase 6 | Pending |
-| INTGR-02 | Phase 6 | Pending |
-| INTGR-03 | Phase 6 | Pending |
-| INTGR-04 | Phase 6 | Pending |
+| INTGR-01 | Phase 6 | Complete |
+| INTGR-02 | Phase 6 | Complete |
+| INTGR-03 | Phase 6 | Complete |
+| INTGR-04 | Phase 6 | Complete |
 | INTGR-05 | Phase 6 | Pending |
 | INTGR-06 | Phase 6 | Pending |
 | INTGR-07 | Phase 6 | Pending |

@@ -121,7 +121,7 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 06-01-PLAN.md -- Architecture foundation: centralized config, SmsParser + Directions interfaces, stubs, controller retrofits, architecture test
+- [x] 06-01-PLAN.md -- Architecture foundation: centralized config, SmsParser + Directions interfaces, stubs, controller retrofits, architecture test
 - [ ] 06-02-PLAN.md -- PAGASA Weather + Hospital EHR: weather advisory interface with 3-level system, FHIR R4 pre-notification interface with Patient/Encounter/Observation stubs
 - [ ] 06-03-PLAN.md -- Government agencies: NDRRMC SitRep XML interface, BFP bidirectional fire sync interface, PNP e-Blotter 5W1H interface with stubs
 

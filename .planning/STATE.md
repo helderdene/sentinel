@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: completed
-stopped_at: Phase 6 context gathered
-last_updated: "2026-03-13T12:06:37.605Z"
-last_activity: "2026-03-13 — Completed 05-04: Assignment notification, navigation, closure, and full Station.vue wiring"
+status: in-progress
+stopped_at: Completed 06-01-PLAN.md
+last_updated: "2026-03-13T12:33:40.627Z"
+last_activity: "2026-03-13 — Completed 06-01: Integration architecture with SmsParser and Directions interfaces"
 progress:
   total_phases: 9
   completed_phases: 7
-  total_plans: 23
-  completed_plans: 23
-  percent: 100
+  total_plans: 26
+  completed_plans: 24
+  percent: 92
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Dispatchers can receive an incident report, triage it, assign the nearest available unit, and track the response in real-time on a live map.
-**Current focus:** Phase 5 Responder Workflow complete. All 4 plans done. All 9 phases complete.
+**Current focus:** Phase 6 Integration Layer in progress. Plan 01 complete, 2 plans remaining.
 
 ## Current Position
 
-Phase: 5 of 9 (Responder Workflow)
-Plan: 4 of 4 in current phase
-Status: 23 of 23 plans complete
-Last activity: 2026-03-13 — Completed 05-04: Assignment notification, navigation, closure, and full Station.vue wiring
+Phase: 6 of 9 (Integration Layer)
+Plan: 1 of 3 in current phase
+Status: 24 of 26 plans complete
+Last activity: 2026-03-13 — Completed 06-01: Integration architecture with SmsParser and Directions interfaces
 
-Progress: [██████████] 100%
+Progress: [█████████░] 92%
 
 ## Performance Metrics
 
@@ -70,6 +70,7 @@ Progress: [██████████] 100%
 | Phase 05 P03 | 5min | 2 tasks | 7 files |
 | Phase 05 P04 | 9min | 2 tasks | 8 files |
 | Phase 05 P01 | 8min | 2 tasks | 32 files |
+| Phase 06 P01 | 4min | 2 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -176,6 +177,9 @@ Recent decisions affecting current work:
 - [05-04]: HospitalSelect as dedicated responder component rather than generic SearchableSelect
 - [05-04]: Status advance POST via direct fetch to Wayfinder action URLs for non-blocking fire-and-forget
 - [05-04]: ClosureSummary uses fixed overlay z-50 for full-screen takeover regardless of tab state
+- [Phase 06]: StubMapboxDirectionsService uses Haversine at 30km/h urban speed matching existing nearbyUnits logic
+- [Phase 06]: DispatchConsoleController wraps DirectionsServiceInterface::route() in try/catch with straight-line fallback
+- [Phase 06]: config/integrations.php centralizes all 7 connector configs with simulate_errors flags defaulting to false
 
 ### Roadmap Evolution
 
@@ -195,6 +199,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-13T12:06:37.594Z
-Stopped at: Phase 6 context gathered
-Resume file: .planning/phases/06-integration-layer/06-CONTEXT.md
+Last session: 2026-03-13T12:33:40.624Z
+Stopped at: Completed 06-01-PLAN.md
+Resume file: None
