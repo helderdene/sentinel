@@ -19,30 +19,30 @@ const priorities: {
     {
         value: 'P1',
         label: 'P1',
-        activeClass: 'bg-red-500 text-white border-red-500',
+        activeClass: 'bg-t-p1 text-white border-t-p1',
         inactiveClass:
-            'border-red-300 text-red-600 hover:bg-red-50 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-950',
+            'border-[color-mix(in_srgb,var(--t-p1)_40%,transparent)] text-t-p1 hover:bg-[color-mix(in_srgb,var(--t-p1)_8%,transparent)]',
     },
     {
         value: 'P2',
         label: 'P2',
-        activeClass: 'bg-orange-500 text-white border-orange-500',
+        activeClass: 'bg-t-p2 text-white border-t-p2',
         inactiveClass:
-            'border-orange-300 text-orange-600 hover:bg-orange-50 dark:border-orange-700 dark:text-orange-400 dark:hover:bg-orange-950',
+            'border-[color-mix(in_srgb,var(--t-p2)_40%,transparent)] text-t-p2 hover:bg-[color-mix(in_srgb,var(--t-p2)_8%,transparent)]',
     },
     {
         value: 'P3',
         label: 'P3',
-        activeClass: 'bg-amber-500 text-white border-amber-500',
+        activeClass: 'bg-t-p3 text-white border-t-p3',
         inactiveClass:
-            'border-amber-300 text-amber-600 hover:bg-amber-50 dark:border-amber-700 dark:text-amber-400 dark:hover:bg-amber-950',
+            'border-[color-mix(in_srgb,var(--t-p3)_40%,transparent)] text-t-p3 hover:bg-[color-mix(in_srgb,var(--t-p3)_8%,transparent)]',
     },
     {
         value: 'P4',
         label: 'P4',
-        activeClass: 'bg-green-500 text-white border-green-500',
+        activeClass: 'bg-t-p4 text-white border-t-p4',
         inactiveClass:
-            'border-green-300 text-green-600 hover:bg-green-50 dark:border-green-700 dark:text-green-400 dark:hover:bg-green-950',
+            'border-[color-mix(in_srgb,var(--t-p4)_40%,transparent)] text-t-p4 hover:bg-[color-mix(in_srgb,var(--t-p4)_8%,transparent)]',
     },
 ];
 </script>

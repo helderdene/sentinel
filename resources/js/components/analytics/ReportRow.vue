@@ -11,34 +11,34 @@ defineProps<{
 const TYPE_BADGES: Record<string, { label: string; class: string }> = {
     quarterly: {
         label: 'Quarterly',
-        class: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+        class: 'bg-[color-mix(in_srgb,var(--t-accent)_12%,transparent)] text-t-accent',
     },
     annual: {
         label: 'Annual',
-        class: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
+        class: 'bg-[color-mix(in_srgb,var(--t-role-supervisor)_12%,transparent)] text-t-role-supervisor',
     },
     dilg_monthly: {
         label: 'DILG',
-        class: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+        class: 'bg-[color-mix(in_srgb,var(--t-online)_12%,transparent)] text-t-online',
     },
     ndrrmc_sitrep: {
         label: 'NDRRMC',
-        class: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+        class: 'bg-[color-mix(in_srgb,var(--t-p2)_12%,transparent)] text-t-p2',
     },
 };
 
 const STATUS_BADGES: Record<string, { label: string; class: string }> = {
     generating: {
         label: 'Generating',
-        class: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
+        class: 'bg-[color-mix(in_srgb,var(--t-p3)_12%,transparent)] text-t-p3',
     },
     ready: {
         label: 'Ready',
-        class: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+        class: 'bg-[color-mix(in_srgb,var(--t-online)_12%,transparent)] text-t-online',
     },
     failed: {
         label: 'Failed',
-        class: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+        class: 'bg-[color-mix(in_srgb,var(--t-p1)_12%,transparent)] text-t-p1',
     },
 };
 
