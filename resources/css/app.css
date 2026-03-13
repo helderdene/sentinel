@@ -110,21 +110,13 @@
     --color-t-unit-offline: var(--t-unit-offline);
 }
 
-/*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
 @layer base {
     *,
     ::after,
     ::before,
     ::backdrop,
     ::file-selector-button {
-        border-color: var(--color-gray-200, currentColor);
+        border-color: var(--color-border, currentColor);
     }
 }
 
@@ -139,42 +131,7 @@
 }
 
 :root {
-    --background: hsl(0 0% 100%);
-    --foreground: hsl(0 0% 3.9%);
-    --card: hsl(0 0% 100%);
-    --card-foreground: hsl(0 0% 3.9%);
-    --popover: hsl(0 0% 100%);
-    --popover-foreground: hsl(0 0% 3.9%);
-    --primary: hsl(0 0% 9%);
-    --primary-foreground: hsl(0 0% 98%);
-    --secondary: hsl(0 0% 92.1%);
-    --secondary-foreground: hsl(0 0% 9%);
-    --muted: hsl(0 0% 96.1%);
-    --muted-foreground: hsl(0 0% 45.1%);
-    --accent: hsl(0 0% 96.1%);
-    --accent-foreground: hsl(0 0% 9%);
-    --destructive: hsl(0 84.2% 60.2%);
-    --destructive-foreground: hsl(0 0% 98%);
-    --border: hsl(0 0% 92.8%);
-    --input: hsl(0 0% 89.8%);
-    --ring: hsl(0 0% 3.9%);
-    --chart-1: hsl(12 76% 61%);
-    --chart-2: hsl(173 58% 39%);
-    --chart-3: hsl(197 37% 24%);
-    --chart-4: hsl(43 74% 66%);
-    --chart-5: hsl(27 87% 67%);
-    --radius: 0.5rem;
-    --sidebar-background: hsl(0 0% 98%);
-    --sidebar-foreground: hsl(240 5.3% 26.1%);
-    --sidebar-primary: hsl(0 0% 10%);
-    --sidebar-primary-foreground: hsl(0 0% 98%);
-    --sidebar-accent: hsl(0 0% 94%);
-    --sidebar-accent-foreground: hsl(0 0% 30%);
-    --sidebar-border: hsl(0 0% 91%);
-    --sidebar-ring: hsl(217.2 91.2% 59.8%);
-    --sidebar: hsl(0 0% 98%);
-
-    /* Intake Design System Tokens — Light */
+    /* Intake Design System Tokens — Light (authoritative hex values) */
     --t-bg: #f4f6f9;
     --t-surface: #ffffff;
     --t-surface-alt: #f8fafc;
@@ -206,44 +163,57 @@
     --t-unit-enroute: #2563eb;
     --t-unit-onscene: #ca8a04;
     --t-unit-offline: #6b7280;
+
+    /* Shadcn variables — remapped to design system tokens */
+    --background: var(--t-bg);
+    --foreground: var(--t-text);
+    --card: var(--t-surface);
+    --card-foreground: var(--t-text);
+    --popover: var(--t-surface);
+    --popover-foreground: var(--t-text);
+    --primary: var(--t-brand);
+    --primary-foreground: #ffffff;
+    --secondary: var(--t-surface-alt);
+    --secondary-foreground: var(--t-text-mid);
+    --muted: var(--t-surface-alt);
+    --muted-foreground: var(--t-text-dim);
+    --accent: var(--t-surface-alt);
+    --accent-foreground: var(--t-text);
+    --destructive: var(--t-p1);
+    --destructive-foreground: #ffffff;
+    --border: var(--t-border);
+    --input: var(--t-border);
+    --ring: var(--t-accent);
+    --radius: 0.4375rem;
+
+    /* Chart variables */
+    --chart-1: var(--t-accent);
+    --chart-2: var(--t-online);
+    --chart-3: var(--t-p2);
+    --chart-4: var(--t-p3);
+    --chart-5: var(--t-ch-iot);
+
+    /* Sidebar variables */
+    --sidebar-background: var(--t-surface);
+    --sidebar-foreground: var(--t-text-mid);
+    --sidebar-primary: var(--t-brand);
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: color-mix(in srgb, var(--t-accent) 8%, transparent);
+    --sidebar-accent-foreground: var(--t-accent);
+    --sidebar-border: var(--t-border);
+    --sidebar-ring: var(--t-accent);
+    --sidebar: var(--t-surface);
+
+    /* Shadow scale */
+    --shadow-1: 0 1px 3px rgba(0, 0, 0, 0.04);
+    --shadow-2: 0 1px 4px rgba(0, 0, 0, 0.06);
+    --shadow-3: 0 2px 8px rgba(0, 0, 0, 0.06);
+    --shadow-4: 0 4px 24px rgba(0, 0, 0, 0.08);
+    --shadow-5: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .dark {
-    --background: hsl(0 0% 3.9%);
-    --foreground: hsl(0 0% 98%);
-    --card: hsl(0 0% 3.9%);
-    --card-foreground: hsl(0 0% 98%);
-    --popover: hsl(0 0% 3.9%);
-    --popover-foreground: hsl(0 0% 98%);
-    --primary: hsl(0 0% 98%);
-    --primary-foreground: hsl(0 0% 9%);
-    --secondary: hsl(0 0% 14.9%);
-    --secondary-foreground: hsl(0 0% 98%);
-    --muted: hsl(0 0% 16.08%);
-    --muted-foreground: hsl(0 0% 63.9%);
-    --accent: hsl(0 0% 14.9%);
-    --accent-foreground: hsl(0 0% 98%);
-    --destructive: hsl(0 84% 60%);
-    --destructive-foreground: hsl(0 0% 98%);
-    --border: hsl(0 0% 14.9%);
-    --input: hsl(0 0% 14.9%);
-    --ring: hsl(0 0% 83.1%);
-    --chart-1: hsl(220 70% 50%);
-    --chart-2: hsl(160 60% 45%);
-    --chart-3: hsl(30 80% 55%);
-    --chart-4: hsl(280 65% 60%);
-    --chart-5: hsl(340 75% 55%);
-    --sidebar-background: hsl(0 0% 7%);
-    --sidebar-foreground: hsl(0 0% 95.9%);
-    --sidebar-primary: hsl(360, 100%, 100%);
-    --sidebar-primary-foreground: hsl(0 0% 100%);
-    --sidebar-accent: hsl(0 0% 15.9%);
-    --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
-    --sidebar-border: hsl(0 0% 15.9%);
-    --sidebar-ring: hsl(217.2 91.2% 59.8%);
-    --sidebar: hsl(240 5.9% 10%);
-
-    /* Intake Design System Tokens — Dark */
+    /* Intake Design System Tokens — Dark (authoritative hex values) */
     --t-bg: #0f172a;
     --t-surface: #1e293b;
     --t-surface-alt: #334155;
@@ -254,6 +224,45 @@
     --t-border: #334155;
     --t-border-med: #475569;
     --t-border-foc: #3b82f6;
+
+    /* Shadcn variables — remapped to design system dark tokens */
+    --background: var(--t-bg);
+    --foreground: var(--t-text);
+    --card: var(--t-surface);
+    --card-foreground: var(--t-text);
+    --popover: var(--t-surface);
+    --popover-foreground: var(--t-text);
+    --primary: #e2e8f0;
+    --primary-foreground: var(--t-bg);
+    --secondary: var(--t-surface-alt);
+    --secondary-foreground: var(--t-text-mid);
+    --muted: var(--t-surface-alt);
+    --muted-foreground: var(--t-text-dim);
+    --accent: var(--t-surface-alt);
+    --accent-foreground: var(--t-text);
+    --destructive: var(--t-p1);
+    --destructive-foreground: #ffffff;
+    --border: var(--t-border);
+    --input: var(--t-border);
+    --ring: var(--t-accent);
+
+    /* Chart variables — dark */
+    --chart-1: #3b82f6;
+    --chart-2: #22c55e;
+    --chart-3: #f97316;
+    --chart-4: #a855f7;
+    --chart-5: #ef4444;
+
+    /* Sidebar variables — dark */
+    --sidebar-background: var(--t-surface);
+    --sidebar-foreground: var(--t-text-mid);
+    --sidebar-primary: #e2e8f0;
+    --sidebar-primary-foreground: var(--t-bg);
+    --sidebar-accent: color-mix(in srgb, var(--t-accent) 12%, transparent);
+    --sidebar-accent-foreground: var(--t-accent);
+    --sidebar-border: var(--t-border);
+    --sidebar-ring: var(--t-accent);
+    --sidebar: var(--t-surface);
 }
 
 @keyframes p1-flash {
@@ -270,11 +279,31 @@
     animation: p1-flash 0.7s ease-in-out 3;
 }
 
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 @layer base {
     * {
-        @apply border-border outline-ring/50;
+        @apply border-border;
     }
     body {
         @apply bg-background text-foreground;
+    }
+
+    /* DS-03: Design system focus ring override
+       Replaces Shadcn's outline-ring/50 with the locked
+       border-color + box-shadow pattern from CONTEXT.md */
+    [data-slot]:focus-visible {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
 }
