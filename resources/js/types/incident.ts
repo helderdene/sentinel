@@ -108,6 +108,15 @@ export interface IncidentCreatedPayload {
     created_at: string;
 }
 
+export interface TickerEvent {
+    incident_no: string;
+    priority: IncidentPriority;
+    channel: IncidentChannel;
+    incident_type: string | null;
+    location_text: string;
+    created_at: string;
+}
+
 export interface IncidentStatusChangedPayload {
     id: string;
     incident_no: string;

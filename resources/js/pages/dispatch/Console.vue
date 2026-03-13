@@ -9,6 +9,7 @@ import MapLegend from '@/components/dispatch/MapLegend.vue';
 import UnitDetailPanel from '@/components/dispatch/UnitDetailPanel.vue';
 import UnitStatusPanel from '@/components/dispatch/UnitStatusPanel.vue';
 import { useAlertSystem } from '@/composables/useAlertSystem';
+import { useDispatchFeed } from '@/composables/useDispatchFeed';
 import { useDispatchMap } from '@/composables/useDispatchMap';
 import { useDispatchSession } from '@/composables/useDispatchSession';
 import DispatchLayout from '@/layouts/DispatchLayout.vue';
@@ -18,6 +19,7 @@ import type {
     DispatchMetrics,
     DispatchUnit,
 } from '@/types/dispatch';
+import type { TickerEvent } from '@/types/incident';
 
 defineOptions({
     layout: DispatchLayout,
@@ -53,7 +55,7 @@ const { metrics: sessionMetrics } = useDispatchSession(
     props.metrics.averageHandleTime,
 );
 
-const { playAckExpiredTone } = useAlertSystem();
+const alertSystem = useAlertSystem();
 
 const dispatchStats = inject<{
     activeIncidents: Ref<number>;
@@ -63,6 +65,8 @@ const dispatchStats = inject<{
     unitsAvailable: Ref<number>;
     unitsTotal: Ref<number>;
 }>('dispatchStats');
+
+const tickerEventsInjected = inject<Ref<TickerEvent[]>>('tickerEvents');
 
 watch(
     sessionMetrics,
@@ -96,6 +100,8 @@ const rightPanelMode = computed<RightPanelMode>(() => {
     return 'unit-status';
 });
 
+const mapComposable = useDispatchMap('dispatch-map');
+
 const {
     isLoaded,
     setIncidentData,
@@ -106,7 +112,24 @@ const {
     onIncidentClick,
     onUnitClick,
     onDeselect,
-} = useDispatchMap('dispatch-map');
+} = mapComposable;
+
+const { tickerEvents } = useDispatchFeed(
+    localIncidents,
+    localUnits,
+    mapComposable,
+    alertSystem,
+);
+
+watch(
+    tickerEvents,
+    (events) => {
+        if (tickerEventsInjected) {
+            tickerEventsInjected.value = events;
+        }
+    },
+    { deep: true, immediate: true },
+);
 
 const selectedIncident = computed(() =>
     selectedIncidentId.value
@@ -184,7 +207,7 @@ function handleUnitBack(): void {
 }
 
 function handleAckExpired(): void {
-    playAckExpiredTone();
+    alertSystem.playAckExpiredTone();
 }
 
 function handleUnassign(unitId: string): void {
@@ -244,6 +267,7 @@ onDeselect(() => {
             <IncidentDetailPanel
                 v-if="rightPanelMode === 'incident-detail' && selectedIncident"
                 :incident="selectedIncident"
+                :agencies="props.agencies"
                 @close="handleIncidentClose"
                 @ack-expired="handleAckExpired"
                 @unassign="handleUnassign"

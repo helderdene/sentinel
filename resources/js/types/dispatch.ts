@@ -91,4 +91,11 @@ export interface MutualAidPayload {
     timestamp: string;
 }
 
+export interface UnitStatusChangedPayload {
+    id: string;
+    callsign: string;
+    old_status: UnitStatus;
+    new_status: UnitStatus;
+}
+
 export type { IncidentPriority, IncidentStatus };

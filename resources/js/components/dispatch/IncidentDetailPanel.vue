@@ -3,14 +3,20 @@ import { computed, ref, watch } from 'vue';
 import { nearbyUnits as nearbyUnitsAction } from '@/actions/App/Http/Controllers/DispatchConsoleController';
 import AckTimerRing from '@/components/dispatch/AckTimerRing.vue';
 import AssignmentChip from '@/components/dispatch/AssignmentChip.vue';
+import MutualAidModal from '@/components/dispatch/MutualAidModal.vue';
 import SlaProgressBar from '@/components/dispatch/SlaProgressBar.vue';
 import StatusPipeline from '@/components/dispatch/StatusPipeline.vue';
 import PriBadge from '@/components/intake/PriBadge.vue';
-import type { DispatchIncident, NearbyUnit } from '@/types/dispatch';
+import type {
+    DispatchAgency,
+    DispatchIncident,
+    NearbyUnit,
+} from '@/types/dispatch';
 import type { IncidentTimelineEntry } from '@/types/incident';
 
 const props = defineProps<{
     incident: DispatchIncident;
+    agencies: DispatchAgency[];
 }>();
 
 const emit = defineEmits<{
@@ -18,6 +24,8 @@ const emit = defineEmits<{
     'ack-expired': [];
     unassign: [unitId: string];
 }>();
+
+const showMutualAid = ref(false);
 
 const priorityNumber = computed(() => {
     const num = parseInt(props.incident.priority.replace('P', ''), 10);
@@ -426,11 +434,18 @@ function handleUnassign(unitId: string): void {
         <div class="px-3 py-2.5">
             <button
                 class="w-full rounded border border-t-border bg-t-surface px-3 py-1.5 font-mono text-[10px] font-bold tracking-wider text-t-text-dim transition-colors hover:border-t-accent/40 hover:text-t-accent"
-                disabled
-                title="Coming in Plan 04"
+                @click="showMutualAid = true"
             >
                 REQUEST MUTUAL AID
             </button>
         </div>
+
+        <!-- Mutual Aid Modal -->
+        <MutualAidModal
+            :incident="incident"
+            :agencies="agencies"
+            :open="showMutualAid"
+            @update:open="showMutualAid = $event"
+        />
     </div>
 </template>
