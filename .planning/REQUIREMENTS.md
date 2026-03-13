@@ -103,9 +103,9 @@
 - [x] **DS-07**: Settings pages and Dashboard use design system tokens for typography, elevation, and color (no hardcoded neutral-*/zinc-* classes)
 - [x] **DS-08**: Admin data tables follow design system table pattern: t-surface background, Level 1 shadow, 7px border-radius, Space Mono column headers, t-border borders, role/priority badges using design system color tokens with color-mix()
 - [x] **DS-09**: Incidents pages (Index, Create, Queue, Show) use design system tokens for tables, cards, priority/status badges, and typography
-- [ ] **DS-10**: Analytics pages (Dashboard, Heatmap, Reports) use design system card pattern, Space Mono KPI labels, and design system elevation
-- [ ] **DS-11**: Dispatch Console uses design system color/font tokens in panel chrome while preserving existing layout structure, map styling, and custom UX
-- [ ] **DS-12**: Responder Station uses design system color/font tokens while preserving existing mobile layout, touch targets, and purpose-built interfaces
+- [x] **DS-10**: Analytics pages (Dashboard, Heatmap, Reports) use design system card pattern, Space Mono KPI labels, and design system elevation
+- [x] **DS-11**: Dispatch Console uses design system color/font tokens in panel chrome while preserving existing layout structure, map styling, and custom UX
+- [x] **DS-12**: Responder Station uses design system color/font tokens while preserving existing mobile layout, touch targets, and purpose-built interfaces
 
 ## v2 Requirements
 
@@ -204,18 +204,18 @@
 | CITIZEN-08 | Phase 9 | Complete |
 | CITIZEN-09 | Phase 9 | Complete |
 | CITIZEN-10 | Phase 9 | Complete |
-| DS-01 | Phase 10 | Planned |
-| DS-02 | Phase 10 | Planned |
-| DS-03 | Phase 10 | Planned |
-| DS-04 | Phase 10 | Planned |
-| DS-05 | Phase 10 | Planned |
-| DS-06 | Phase 10 | Planned |
-| DS-07 | Phase 10 | Planned |
-| DS-08 | Phase 10 | Planned |
-| DS-09 | Phase 10 | Planned |
-| DS-10 | Phase 10 | Planned |
-| DS-11 | Phase 10 | Planned |
-| DS-12 | Phase 10 | Planned |
+| DS-01 | Phase 10 | Complete |
+| DS-02 | Phase 10 | Complete |
+| DS-03 | Phase 10 | Complete |
+| DS-04 | Phase 10 | Complete |
+| DS-05 | Phase 10 | Complete |
+| DS-06 | Phase 10 | Complete |
+| DS-07 | Phase 10 | Complete |
+| DS-08 | Phase 10 | Complete |
+| DS-09 | Phase 10 | Complete |
+| DS-10 | Phase 10 | Complete |
+| DS-11 | Phase 10 | Complete |
+| DS-12 | Phase 10 | Complete |
 
 **Coverage:**
 - v1 requirements: 78 total
