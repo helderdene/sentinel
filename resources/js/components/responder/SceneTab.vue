@@ -82,7 +82,7 @@ const sections = computed<AccordionSection[]>(() => [
 </script>
 
 <template>
-    <div class="flex flex-1 flex-col overflow-y-auto">
+    <div class="hide-scrollbar flex flex-1 flex-col overflow-y-auto">
         <div
             v-for="section in sections"
             :key="section.id"
@@ -137,11 +137,11 @@ const sections = computed<AccordionSection[]>(() => [
                 </div>
 
                 <!-- Label and progress -->
-                <span class="flex-1 text-sm font-semibold text-t-text">
+                <span class="flex-1 text-[13px] font-semibold text-t-text">
                     {{ section.label }}
                 </span>
 
-                <span class="font-mono text-xs text-t-text-dim">
+                <span class="font-mono text-[11px] text-t-text-dim">
                     {{ section.progress }}/{{ section.total }}
                 </span>
 

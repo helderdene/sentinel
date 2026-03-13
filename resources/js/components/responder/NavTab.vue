@@ -290,7 +290,8 @@ onUnmounted(() => {
                 :href="googleMapsUrl"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-blue-600 font-sans text-sm font-bold text-white shadow-md transition-transform active:scale-[0.98]"
+                class="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-[13px] bg-blue-600 font-sans text-[14px] font-bold tracking-wide text-white transition-transform active:scale-[0.98]"
+                style="box-shadow: 0 6px 20px rgba(37, 99, 235, 0.31)"
             >
                 <svg
                     width="20"
@@ -298,7 +299,7 @@ onUnmounted(() => {
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    stroke-width="2"
+                    stroke-width="1.8"
                     stroke-linecap="round"
                     stroke-linejoin="round"
                 >
@@ -308,7 +309,7 @@ onUnmounted(() => {
             </a>
             <div
                 v-else
-                class="flex min-h-[52px] w-full items-center justify-center rounded-xl bg-t-surface text-sm text-t-text-dim"
+                class="flex min-h-[52px] w-full items-center justify-center rounded-[10px] bg-t-surface text-[13px] text-t-text-dim"
             >
                 No coordinates available
             </div>
@@ -320,7 +321,7 @@ onUnmounted(() => {
                 class="flex h-full items-center justify-center p-6"
             >
                 <div
-                    class="rounded-xl border border-t-border bg-t-surface p-6 text-center"
+                    class="rounded-[10px] border border-t-border bg-t-surface p-6 text-center shadow-[0_1px_4px_rgba(0,0,0,.04)]"
                 >
                     <p class="text-sm text-t-text-dim">GPS unavailable</p>
                     <p class="mt-1 text-xs text-t-text-faint">
@@ -337,18 +338,18 @@ onUnmounted(() => {
 
             <div
                 v-if="etaMinutes !== null"
-                class="absolute right-3 bottom-3 rounded-lg bg-[#0f172a]/85 px-3 py-1.5 shadow-md backdrop-blur-sm"
+                class="absolute right-3 bottom-3 rounded-[10px] bg-[#0f172a]/85 px-3 py-1.5 shadow-md backdrop-blur-sm"
             >
-                <p class="font-mono text-xs font-bold text-white">
+                <p class="font-mono text-[11px] font-bold text-white">
                     ETA: {{ etaMinutes }} min
                 </p>
             </div>
 
             <div
                 v-if="distanceKm !== null"
-                class="absolute bottom-3 left-3 rounded-lg bg-[#0f172a]/85 px-3 py-1.5 shadow-md backdrop-blur-sm"
+                class="absolute bottom-3 left-3 rounded-[10px] bg-[#0f172a]/85 px-3 py-1.5 shadow-md backdrop-blur-sm"
             >
-                <p class="font-mono text-xs text-t-text-dim">
+                <p class="font-mono text-[11px] text-t-text-dim">
                     {{ distanceKm.toFixed(1) }} km
                 </p>
             </div>

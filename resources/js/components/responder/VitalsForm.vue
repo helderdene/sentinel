@@ -189,10 +189,12 @@ async function saveVitals(): Promise<void> {
         >
             <label
                 :for="`vitals-${field.key}`"
-                class="text-sm font-medium text-t-text"
+                class="text-[12px] font-semibold text-t-text-dim"
             >
                 {{ field.label }}
-                <span class="text-t-text-dim">({{ field.unit }})</span>
+                <span class="text-[11px] text-t-text-faint"
+                    >({{ field.unit }})</span
+                >
             </label>
 
             <input
@@ -203,22 +205,22 @@ async function saveVitals(): Promise<void> {
                 :placeholder="field.placeholder"
                 :min="field.min"
                 :max="field.max"
-                class="min-h-[44px] rounded-lg border bg-t-surface px-3 py-2 font-mono text-base text-t-text transition-colors placeholder:text-t-text-dim/50 focus:ring-2 focus:ring-emerald-500/40 focus:outline-none"
+                class="min-h-[44px] rounded-[10px] border-[1.5px] bg-t-surface px-3.5 py-[11px] font-mono text-[14px] text-t-text transition-colors outline-none placeholder:text-t-text-dim/50"
                 :class="
                     errors[field.key]
-                        ? 'border-red-500'
-                        : 'border-t-border focus:border-emerald-500'
+                        ? 'border-t-p1'
+                        : 'border-t-border focus:border-t-accent'
                 "
             />
 
             <p
                 v-if="errors[field.key]"
-                class="text-xs font-medium text-red-500"
+                class="text-[11px] font-medium text-t-p1"
             >
                 {{ errors[field.key] }}
             </p>
 
-            <p v-else class="text-xs text-t-text-dim">
+            <p v-else class="text-[11px] text-t-text-dim">
                 {{ field.helperText }}
             </p>
         </div>
@@ -226,7 +228,8 @@ async function saveVitals(): Promise<void> {
         <!-- Save button -->
         <button
             type="button"
-            class="flex min-h-[44px] items-center justify-center rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors active:bg-emerald-700 disabled:opacity-50"
+            class="flex min-h-[44px] items-center justify-center rounded-[10px] bg-t-accent px-4 py-2.5 text-[14px] font-bold text-white transition-colors active:opacity-90 disabled:opacity-50"
+            style="box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25)"
             :disabled="isSaving"
             @click="saveVitals"
         >

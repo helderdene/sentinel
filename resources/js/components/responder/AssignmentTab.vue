@@ -62,18 +62,20 @@ function formatTimelineDate(dateStr: string): string {
 </script>
 
 <template>
-    <div class="flex flex-1 flex-col overflow-y-auto p-4">
-        <div class="rounded-xl border border-t-border bg-t-surface shadow-sm">
+    <div class="hide-scrollbar flex flex-1 flex-col overflow-y-auto p-4">
+        <div
+            class="rounded-xl border border-t-border bg-t-surface shadow-[0_1px_4px_rgba(0,0,0,.04)]"
+        >
             <div class="border-b border-t-border p-4">
                 <div class="flex items-center gap-3">
                     <span
-                        class="font-mono text-xs tracking-wider text-t-text-dim"
+                        class="font-mono text-[11px] tracking-[1.5px] text-t-text-dim"
                     >
                         {{ incident.incident_no }}
                     </span>
                     <PriBadge :p="priorityNumber" />
                 </div>
-                <h2 class="mt-1 text-lg font-bold text-t-text">
+                <h2 class="mt-1 text-[16px] font-bold text-t-text">
                     {{ incident.incident_type.name }}
                 </h2>
             </div>
@@ -107,39 +109,57 @@ function formatTimelineDate(dateStr: string): string {
 
             <div class="space-y-3 p-4">
                 <div v-if="incident.location_text">
-                    <p class="text-xs font-semibold text-t-text-dim">
+                    <p
+                        class="font-mono text-[10px] tracking-[1.5px] text-t-text-faint uppercase"
+                    >
                         Location
                     </p>
-                    <p class="text-sm text-t-text">
+                    <p class="text-[13px] text-t-text">
                         {{ incident.location_text }}
                     </p>
-                    <p v-if="incident.barangay" class="text-xs text-t-text-dim">
+                    <p
+                        v-if="incident.barangay"
+                        class="text-[13px] text-t-text-dim"
+                    >
                         Brgy. {{ incident.barangay.name }}
                     </p>
                 </div>
 
                 <div v-if="incident.caller_name || incident.caller_contact">
-                    <p class="text-xs font-semibold text-t-text-dim">Caller</p>
-                    <p v-if="incident.caller_name" class="text-sm text-t-text">
+                    <p
+                        class="font-mono text-[10px] tracking-[1.5px] text-t-text-faint uppercase"
+                    >
+                        Caller
+                    </p>
+                    <p
+                        v-if="incident.caller_name"
+                        class="text-[13px] text-t-text"
+                    >
                         {{ incident.caller_name }}
                     </p>
                     <p
                         v-if="incident.caller_contact"
-                        class="font-mono text-xs text-t-text-dim"
+                        class="font-mono text-[11px] text-t-text-dim"
                     >
                         {{ incident.caller_contact }}
                     </p>
                 </div>
 
                 <div v-if="incident.notes">
-                    <p class="text-xs font-semibold text-t-text-dim">Notes</p>
-                    <p class="text-sm text-t-text-mid">
+                    <p
+                        class="font-mono text-[10px] tracking-[1.5px] text-t-text-faint uppercase"
+                    >
+                        Notes
+                    </p>
+                    <p class="text-[13px] text-t-text-mid">
                         {{ incident.notes }}
                     </p>
                 </div>
 
                 <div v-if="incident.assigned_units.length > 0">
-                    <p class="text-xs font-semibold text-t-text-dim">
+                    <p
+                        class="font-mono text-[10px] tracking-[1.5px] text-t-text-faint uppercase"
+                    >
                         Assigned Units
                     </p>
                     <div class="mt-1 flex flex-wrap gap-1.5">
@@ -154,7 +174,9 @@ function formatTimelineDate(dateStr: string): string {
                 </div>
 
                 <div v-if="recentTimeline.length > 0">
-                    <p class="text-xs font-semibold text-t-text-dim">
+                    <p
+                        class="font-mono text-[10px] tracking-[1.5px] text-t-text-faint uppercase"
+                    >
                         Timeline
                     </p>
                     <div class="mt-1 space-y-1.5">
@@ -167,7 +189,7 @@ function formatTimelineDate(dateStr: string): string {
                                 class="mt-0.5 size-1.5 shrink-0 rounded-full bg-t-text-faint"
                             />
                             <div class="min-w-0 flex-1">
-                                <p class="truncate text-xs text-t-text-mid">
+                                <p class="truncate text-[11px] text-t-text-mid">
                                     {{ entry.event_type.replace(/_/g, ' ') }}
                                 </p>
                             </div>
@@ -184,7 +206,7 @@ function formatTimelineDate(dateStr: string): string {
 
         <button
             type="button"
-            class="mt-4 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl border border-t-border bg-t-surface font-sans text-sm font-semibold text-t-text shadow-sm transition-colors active:bg-t-border/30"
+            class="mt-4 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-[10px] border border-t-border bg-t-surface font-sans text-[13px] font-semibold text-t-text shadow-[0_1px_3px_rgba(0,0,0,.04)] transition-colors active:bg-t-border/30"
             @click="emit('show-resource-modal')"
         >
             <svg
@@ -193,7 +215,7 @@ function formatTimelineDate(dateStr: string): string {
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2"
+                stroke-width="1.8"
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 class="text-t-text-dim"

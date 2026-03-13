@@ -155,7 +155,7 @@ onUnmounted(() => {
 
 <template>
     <div
-        class="fixed inset-0 z-50 flex flex-col bg-t-bg dark:bg-[#0f172a]"
+        class="fixed inset-0 z-50 flex flex-col bg-t-bg"
         :class="[
             `border-4 ${borderColorClass}`,
             isPulsingBorder ? 'animate-pulse-border' : '',
@@ -165,28 +165,28 @@ onUnmounted(() => {
             <PriBadge :p="priorityNumber" size="lg" class="mb-4" />
 
             <h1
-                class="mb-2 text-center font-sans text-2xl font-bold text-t-text"
+                class="mb-2 text-center font-sans text-[26px] font-extrabold text-t-text"
             >
                 {{ incident.incident_type ?? 'Unknown Incident' }}
             </h1>
 
             <p
                 v-if="incident.location_text"
-                class="mb-1 text-center text-base text-t-text-mid"
+                class="mb-1 text-center text-[14px] text-t-text-mid"
             >
                 {{ incident.location_text }}
             </p>
 
             <p
                 v-if="incident.barangay"
-                class="mb-3 text-center text-sm text-t-text-dim"
+                class="mb-3 text-center text-[13px] text-t-text-dim"
             >
                 Brgy. {{ incident.barangay }}
             </p>
 
             <div
                 v-if="incident.notes"
-                class="mb-4 w-full max-w-sm rounded-lg bg-t-surface p-3"
+                class="mb-4 w-full max-w-sm rounded-[10px] border border-t-border bg-t-surface p-3 shadow-[0_1px_3px_rgba(0,0,0,.04)]"
             >
                 <p class="text-sm text-t-text-mid">
                     {{ truncatedNotes }}
@@ -201,7 +201,7 @@ onUnmounted(() => {
                 </button>
             </div>
 
-            <p class="font-mono text-xs tracking-wider text-t-text-dim">
+            <p class="font-mono text-[11px] tracking-[1.5px] text-t-text-dim">
                 {{ incident.incident_no }}
             </p>
         </div>
@@ -209,8 +209,13 @@ onUnmounted(() => {
         <div class="shrink-0 px-4 pb-6">
             <button
                 type="button"
-                class="flex min-h-[64px] w-full items-center justify-center rounded-xl font-mono text-base font-bold tracking-wider text-white shadow-lg transition-transform active:scale-[0.98]"
+                class="flex min-h-[56px] w-full items-center justify-center rounded-[13px] font-mono text-[16px] font-bold tracking-wide text-white transition-transform active:scale-[0.98]"
                 :class="isExpired ? 'bg-amber-600' : 'bg-t-accent'"
+                :style="{
+                    boxShadow: isExpired
+                        ? '0 8px 24px rgba(217, 119, 6, 0.31)'
+                        : '0 8px 24px rgba(37, 99, 235, 0.31)',
+                }"
                 :disabled="isSubmitting"
                 @click="handleAcknowledge"
             >

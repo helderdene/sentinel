@@ -172,14 +172,14 @@ async function toggleItem(key: string): Promise<void> {
     <div class="flex flex-col gap-3">
         <!-- Progress bar -->
         <div class="flex items-center gap-3">
-            <div class="bg-t-bg-dim/40 h-2 flex-1 overflow-hidden rounded-full">
+            <div class="h-2 flex-1 overflow-hidden rounded-full bg-t-border">
                 <div
-                    class="h-full rounded-full bg-emerald-500 transition-all duration-300 ease-out"
+                    class="h-full rounded-full bg-t-accent transition-all duration-300 ease-out"
                     :style="{ width: `${progressPercent}%` }"
                 ></div>
             </div>
 
-            <span class="font-mono text-xs text-t-text-dim">
+            <span class="font-mono text-[11px] text-t-text-dim">
                 {{ completedCount }}/{{ totalCount }}
             </span>
         </div>
@@ -202,7 +202,7 @@ async function toggleItem(key: string): Promise<void> {
                     class="flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-all duration-200"
                     :class="
                         checklistState[item.key]
-                            ? 'border-emerald-500 bg-emerald-500'
+                            ? 'border-t-accent bg-t-accent'
                             : 'border-t-text-dim/40 bg-transparent'
                     "
                 >
@@ -222,7 +222,7 @@ async function toggleItem(key: string): Promise<void> {
 
                 <!-- Label -->
                 <span
-                    class="text-sm transition-all duration-200"
+                    class="text-[13px] transition-all duration-200"
                     :class="
                         checklistState[item.key]
                             ? 'text-t-text-dim line-through'
