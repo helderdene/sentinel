@@ -21,7 +21,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 7: Analytics** - KPI dashboard, incident heatmap, DILG/NDRRMC/quarterly/annual compliance reports (completed 2026-03-13)
 - [x] **Phase 8: Operator Role & Intake Station** - 5th role (operator), TRIAGED status, full-screen intake station UI with design system (completed 2026-03-13)
 - [x] **Phase 9: Public Citizen Reporting App** - Mobile-first Vue SPA for citizens to report emergencies, track status via token, integrated with existing intake pipeline (completed 2026-03-13)
-- [x] **Phase 10: Design System Alignment** - Restyle all pages to match IRMS Intake Design System: CSS variable remapping, auth branding, sidebar restyling, data tables, token alignment (completed 2026-03-14)
+- [ ] **Phase 10: Design System Alignment** - Restyle all pages to match IRMS Intake Design System: CSS variable remapping, auth branding, sidebar restyling, data tables, token alignment (gap closure in progress)
 
 ## Phase Details
 
@@ -192,13 +192,14 @@ Plans:
   4. Admin data tables follow design system pattern: Space Mono headers, Level 1 shadow, 7px radius, design system role/priority badges
   5. Dashboard, Settings, Incidents, and Analytics pages use design system tokens throughout (zero hardcoded neutral-*/zinc-* classes)
   6. Dispatch Console and Responder Station use design system color/font tokens while preserving their specialized layouts and UX
-**Plans**: 4 plans
+**Plans**: 5 plans
 
 Plans:
 - [x] 10-01-PLAN.md -- CSS foundation and auth consolidation: Shadcn-to-design-system variable remapping, shadow scale, auth layout rebuild with CDRRMO branding, delete old variants
 - [x] 10-02-PLAN.md -- Sidebar and shared components: AppLogo CDRRMO branding, NavMain Space Mono labels, AppSidebarLayout bg-t-bg content area, Dashboard and Settings restyling
 - [x] 10-03-PLAN.md -- Admin data tables and incidents: Design system table pattern for 6 admin pages, role badges with color-mix(), 4 incidents pages token alignment
 - [x] 10-04-PLAN.md -- Analytics, dispatch, responder: Analytics full treatment, dispatch/responder token-only alignment, visual verification checkpoint
+- [ ] 10-05-PLAN.md -- Gap closure: Replace residual hardcoded neutral-*/color-* classes in TextLink, TwoFactorChallenge, ReportRow, PrioritySelector, IncidentTimeline with design system tokens
 
 ## Progress
 
@@ -219,4 +220,4 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 7. Analytics | 3/3 | Complete | 2026-03-13 |
 | 8. Operator Role & Intake Station | 4/4 | Complete | 2026-03-13 |
 | 9. Public Citizen Reporting App | 3/3 | Complete   | 2026-03-13 |
-| 10. Design System Alignment | 4/4 | Complete | 2026-03-14 |
+| 10. Design System Alignment | 4/5 | Gap Closure | - |
