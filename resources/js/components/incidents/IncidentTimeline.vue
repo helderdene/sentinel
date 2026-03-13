@@ -97,7 +97,7 @@ function formatTimestamp(dateStr: string): string {
             <div class="-mt-0.5 min-w-0 flex-1">
                 <div class="flex items-baseline gap-2">
                     <span
-                        class="text-sm font-medium text-neutral-900 dark:text-neutral-100"
+                        class="text-sm font-medium text-foreground"
                     >
                         {{ getEventLabel(entry.event_type) }}
                     </span>
@@ -108,14 +108,14 @@ function formatTimestamp(dateStr: string): string {
 
                 <p
                     v-if="entry.event_data"
-                    class="mt-0.5 text-sm text-neutral-600 dark:text-neutral-400"
+                    class="mt-0.5 text-sm text-muted-foreground"
                 >
                     {{ formatEventData(entry.event_type, entry.event_data) }}
                 </p>
 
                 <p
                     v-if="entry.notes"
-                    class="mt-0.5 text-sm text-neutral-500 dark:text-neutral-500"
+                    class="mt-0.5 text-sm text-muted-foreground"
                 >
                     {{ entry.notes }}
                 </p>
