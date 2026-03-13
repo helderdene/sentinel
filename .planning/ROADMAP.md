@@ -262,4 +262,4 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 9. Public Citizen Reporting App | 3/3 | Complete   | 2026-03-13 |
 | 10. Design System Alignment | 5/5 | Complete    | 2026-03-13 |
 | 11. Implement Units CRUD | 2/2 | Complete    | 2026-03-13 |
-| 12. Bi-directional Communication | 0/3 | Planned | - |
+| 12. Bi-directional Communication | 1/3 | In Progress|  |

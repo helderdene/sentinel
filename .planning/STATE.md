@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: completed
-stopped_at: Phase 12 context gathered
-last_updated: "2026-03-13T22:03:32.305Z"
-last_activity: "2026-03-14 — Completed 11-02: Units CRUD frontend with index table and crew multi-select form"
+status: in-progress
+stopped_at: Completed 12-01-PLAN.md
+last_updated: "2026-03-13T22:28:57Z"
+last_activity: "2026-03-14 — Completed 12-01: Backend messaging infrastructure with dual-channel broadcasting"
 progress:
   total_phases: 12
   completed_phases: 11
-  total_plans: 36
-  completed_plans: 36
-  percent: 100
+  total_plans: 39
+  completed_plans: 37
+  percent: 95
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Dispatchers can receive an incident report, triage it, assign the nearest available unit, and track the response in real-time on a live map.
-**Current focus:** All phases complete. v1.0 milestone delivered.
+**Current focus:** Phase 12 - Bi-directional dispatch-responder communication
 
 ## Current Position
 
-Phase: 11 of 11 (Implement Units CRUD)
-Plan: 2 of 2 in current phase
-Status: 36 of 36 plans complete
-Last activity: 2026-03-14 — Completed 11-02: Units CRUD frontend with index table and crew multi-select form
+Phase: 12 of 12 (Bi-directional Dispatch-Responder Communication)
+Plan: 1 of 3 in current phase
+Status: 37 of 39 plans complete
+Last activity: 2026-03-14 — Completed 12-01: Backend messaging infrastructure with dual-channel broadcasting
 
-Progress: [██████████] 100%
+Progress: [█████████░] 95%
 
 ## Performance Metrics
 
@@ -82,6 +82,7 @@ Progress: [██████████] 100%
 | Phase 10 P05 | 2min | 2 tasks | 5 files |
 | Phase 11 P01 | 5min | 2 tasks | 14 files |
 | Phase 11 P02 | 4min | 2 tasks | 2 files |
+| Phase 12 P01 | 5min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -226,6 +227,10 @@ Recent decisions affecting current work:
 - [11-02]: Agency selector uses preset dropdown (CDRRMO/BFP/PNP) with Other option revealing free-text input
 - [11-02]: Decommissioned badge uses t-unit-offline token for visual consistency with offline status
 
+- [12-01]: PrivateChannel for incident messages (not PresenceChannel) -- simpler auth, no online-user tracking needed per-channel
+- [12-01]: Dispatcher senderUnitCallsign is null -- dispatchers operate without unit assignment
+- [12-01]: broadcastWith includes messageId as 'id' for frontend deduplication and optimistic UI matching
+
 ### Roadmap Evolution
 
 - Phase 8 added: Implement operator role and intake layer UI
@@ -247,6 +252,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-13T22:03:32.289Z
-Stopped at: Phase 12 context gathered
-Resume file: .planning/phases/12-bi-directional-dispatch-responder-communication/12-CONTEXT.md
+Last session: 2026-03-13T22:28:57Z
+Stopped at: Completed 12-01-PLAN.md
+Resume file: .planning/phases/12-bi-directional-dispatch-responder-communication/12-02-PLAN.md

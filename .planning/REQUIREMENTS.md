@@ -121,11 +121,11 @@
 
 ### Bi-directional Communication
 
-- [ ] **COMM-01**: MessageSent event broadcasts on incident-level channel (`incident.{id}.messages`) and dispatch channel (`dispatch.incidents`) instead of user-level channel
-- [ ] **COMM-02**: Incident message channel authorization permits dispatch roles (operator, dispatcher, supervisor, admin) and responders whose unit is assigned to the incident
-- [ ] **COMM-03**: Dispatch sendMessage endpoint at POST `dispatch/{incident}/message` creates message and dispatches MessageSent event
-- [ ] **COMM-04**: Responder sendMessage dispatches updated MessageSent event with sender role and unit callsign in payload
-- [ ] **COMM-05**: Unauthorized users (unassigned responders, unauthenticated) cannot subscribe to incident message channels
+- [x] **COMM-01**: MessageSent event broadcasts on incident-level channel (`incident.{id}.messages`) and dispatch channel (`dispatch.incidents`) instead of user-level channel
+- [x] **COMM-02**: Incident message channel authorization permits dispatch roles (operator, dispatcher, supervisor, admin) and responders whose unit is assigned to the incident
+- [x] **COMM-03**: Dispatch sendMessage endpoint at POST `dispatch/{incident}/message` creates message and dispatches MessageSent event
+- [x] **COMM-04**: Responder sendMessage dispatches updated MessageSent event with sender role and unit callsign in payload
+- [x] **COMM-05**: Unauthorized users (unassigned responders, unauthenticated) cannot subscribe to incident message channels
 - [ ] **COMM-06**: Dispatch console shows collapsible Messages section in incident detail panel (above Timeline, collapsed by default, ~200px max height)
 - [ ] **COMM-07**: Messages section auto-expands when selecting incident with unread messages; clears unread count on expand
 - [ ] **COMM-08**: 7 dispatcher quick-reply chips ("Copy", "Stand by", "Proceed", "Return to station", "Backup en route", "Update status", "Acknowledged") plus free text input
