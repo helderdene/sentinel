@@ -101,8 +101,8 @@
 - [x] **DS-05**: Sidebar shows CDRRMO icon + "IRMS" text (replacing "Laravel Starter Kit"); navigation section labels use Space Mono uppercase 9px with 2px letter-spacing
 - [x] **DS-06**: Content area behind sidebar pages uses t-bg background (#f4f6f9 light / #0f172a dark) for visual depth against t-surface sidebar
 - [x] **DS-07**: Settings pages and Dashboard use design system tokens for typography, elevation, and color (no hardcoded neutral-*/zinc-* classes)
-- [ ] **DS-08**: Admin data tables follow design system table pattern: t-surface background, Level 1 shadow, 7px border-radius, Space Mono column headers, t-border borders, role/priority badges using design system color tokens with color-mix()
-- [ ] **DS-09**: Incidents pages (Index, Create, Queue, Show) use design system tokens for tables, cards, priority/status badges, and typography
+- [x] **DS-08**: Admin data tables follow design system table pattern: t-surface background, Level 1 shadow, 7px border-radius, Space Mono column headers, t-border borders, role/priority badges using design system color tokens with color-mix()
+- [x] **DS-09**: Incidents pages (Index, Create, Queue, Show) use design system tokens for tables, cards, priority/status badges, and typography
 - [ ] **DS-10**: Analytics pages (Dashboard, Heatmap, Reports) use design system card pattern, Space Mono KPI labels, and design system elevation
 - [ ] **DS-11**: Dispatch Console uses design system color/font tokens in panel chrome while preserving existing layout structure, map styling, and custom UX
 - [ ] **DS-12**: Responder Station uses design system color/font tokens while preserving existing mobile layout, touch targets, and purpose-built interfaces
