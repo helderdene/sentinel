@@ -31,6 +31,7 @@ class StoreIncidentTypeRequest extends FormRequest
             'default_priority' => ['required', Rule::in(array_column(IncidentPriority::cases(), 'value'))],
             'description' => ['nullable', 'string'],
             'is_active' => ['boolean'],
+            'show_in_public_app' => ['nullable', 'boolean'],
             'sort_order' => ['nullable', 'integer'],
         ];
     }

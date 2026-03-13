@@ -30,6 +30,7 @@ type IncidentTypeItem = {
     default_priority: string;
     description: string | null;
     is_active: boolean;
+    show_in_public_app: boolean;
     sort_order: number | null;
 };
 
@@ -56,6 +57,7 @@ const form = useForm({
     default_priority: props.type?.default_priority ?? '',
     description: props.type?.description ?? '',
     is_active: props.type?.is_active ?? true,
+    show_in_public_app: props.type?.show_in_public_app ?? false,
     sort_order: props.type?.sort_order ?? undefined,
 });
 
@@ -198,6 +200,26 @@ function submit(): void {
                             Active
                         </Label>
                     </div>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2">
+                        <Checkbox
+                            id="show_in_public_app"
+                            :checked="form.show_in_public_app"
+                            @update:checked="
+                                (val: boolean | 'indeterminate') =>
+                                    (form.show_in_public_app = val === true)
+                            "
+                        />
+                        <Label for="show_in_public_app" class="cursor-pointer">
+                            Show in Citizen App
+                        </Label>
+                    </div>
+                    <p class="text-xs text-muted-foreground">
+                        When enabled, this incident type appears in the public
+                        citizen reporting app
+                    </p>
                 </div>
 
                 <div class="flex items-center gap-4">
