@@ -115,13 +115,13 @@ function isOwnMessage(msg: IncidentMessageItem): boolean {
         <!-- Message history -->
         <div
             ref="messagesContainer"
-            class="flex flex-1 flex-col gap-2 overflow-y-auto px-4 py-3"
+            class="hide-scrollbar flex flex-1 flex-col gap-2 overflow-y-auto px-4 py-3"
         >
             <div
                 v-if="props.messages.length === 0"
                 class="flex flex-1 items-center justify-center"
             >
-                <p class="text-sm text-t-text-dim">No messages yet</p>
+                <p class="text-[13px] text-t-text-dim">No messages yet</p>
             </div>
 
             <div
@@ -132,13 +132,13 @@ function isOwnMessage(msg: IncidentMessageItem): boolean {
             >
                 <!-- Sender info -->
                 <div class="mb-0.5 flex items-center gap-1.5">
-                    <span class="text-xs font-medium text-t-text-dim">
+                    <span class="text-[11px] font-medium text-t-text-dim">
                         {{ msg.sender?.name ?? 'System' }}
                     </span>
 
                     <span
                         v-if="msg.sender?.role"
-                        class="bg-t-bg-dim/40 rounded px-1 py-0.5 font-mono text-[10px] text-t-text-dim uppercase"
+                        class="rounded bg-t-border/40 px-1 py-0.5 font-mono text-[10px] text-t-text-dim uppercase"
                     >
                         {{ msg.sender.role }}
                     </span>
@@ -149,11 +149,11 @@ function isOwnMessage(msg: IncidentMessageItem): boolean {
                     class="max-w-[85%] rounded-xl px-3 py-2"
                     :class="
                         isOwnMessage(msg)
-                            ? 'rounded-br-sm bg-emerald-600 text-white'
-                            : 'bg-t-bg-dim/50 rounded-bl-sm text-t-text'
+                            ? 'rounded-br-sm bg-t-accent text-white'
+                            : 'rounded-bl-sm bg-t-border/30 text-t-text'
                     "
                 >
-                    <p class="text-sm leading-relaxed">{{ msg.body }}</p>
+                    <p class="text-[13px] leading-relaxed">{{ msg.body }}</p>
                 </div>
 
                 <!-- Timestamp -->
@@ -171,7 +171,7 @@ function isOwnMessage(msg: IncidentMessageItem): boolean {
                 v-for="chip in QUICK_REPLIES"
                 :key="chip"
                 type="button"
-                class="min-h-[36px] shrink-0 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-600 transition-colors active:bg-emerald-500/20 dark:text-emerald-400"
+                class="min-h-[36px] shrink-0 rounded-[10px] border border-t-accent/40 bg-t-accent/10 px-3 py-1.5 text-[11px] font-medium text-t-accent transition-colors active:bg-t-accent/20"
                 :disabled="isSending"
                 @click="sendQuickReply(chip)"
             >
@@ -185,14 +185,14 @@ function isOwnMessage(msg: IncidentMessageItem): boolean {
                 v-model="messageText"
                 type="text"
                 placeholder="Type a message..."
-                class="min-h-[44px] flex-1 rounded-lg border border-t-border bg-t-surface px-3 py-2 text-sm text-t-text transition-colors placeholder:text-t-text-dim/50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 focus:outline-none"
+                class="min-h-[44px] flex-1 rounded-[10px] border-[1.5px] border-t-border bg-t-surface px-3.5 py-[11px] text-[14px] text-t-text transition-colors outline-none placeholder:text-t-text-dim/50 focus:border-t-accent"
                 :disabled="isSending"
                 @keydown.enter.prevent="sendFreeText"
             />
 
             <button
                 type="button"
-                class="flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-lg bg-emerald-600 text-white transition-colors active:bg-emerald-700 disabled:opacity-50"
+                class="flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-[10px] bg-t-accent text-white transition-colors active:opacity-80 disabled:opacity-50"
                 :disabled="isSending || !messageText.trim()"
                 @click="sendFreeText"
             >

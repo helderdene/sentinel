@@ -61,10 +61,10 @@ const hasVitals = computed(() => props.incident.vitals !== null);
 </script>
 
 <template>
-    <div class="fixed inset-0 z-50 flex flex-col bg-t-bg dark:bg-[#0f172a]">
+    <div class="fixed inset-0 z-50 flex flex-col bg-t-bg">
         <div class="flex flex-1 flex-col items-center justify-center px-6">
             <div
-                class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30"
+                class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-t-p4/10"
             >
                 <svg
                     width="32"
@@ -75,7 +75,7 @@ const hasVitals = computed(() => props.incident.vitals !== null);
                     stroke-width="2.5"
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    class="text-green-600 dark:text-green-400"
+                    class="text-t-p4"
                 >
                     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
                     <polyline points="22 4 12 14.01 9 11.01" />
@@ -83,28 +83,32 @@ const hasVitals = computed(() => props.incident.vitals !== null);
             </div>
 
             <h1
-                class="mb-6 text-center font-sans text-xl font-bold text-t-text"
+                class="mb-6 text-center font-sans text-[20px] font-extrabold text-t-text"
             >
                 Incident Resolved
             </h1>
 
             <div
-                class="w-full max-w-sm space-y-3 rounded-xl border border-t-border bg-t-surface p-4 shadow-sm"
+                class="w-full max-w-sm space-y-3 rounded-[10px] border border-t-border bg-t-surface p-4 shadow-[0_1px_4px_rgba(0,0,0,.04)]"
             >
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-t-text-dim">
+                    <span
+                        class="font-mono text-[10px] tracking-[1.5px] text-t-text-faint uppercase"
+                    >
                         Incident
                     </span>
-                    <span class="font-mono text-sm font-bold text-t-text">
+                    <span class="font-mono text-[13px] font-bold text-t-text">
                         {{ incident.incident_no }}
                     </span>
                 </div>
 
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-t-text-dim">
+                    <span
+                        class="font-mono text-[10px] tracking-[1.5px] text-t-text-faint uppercase"
+                    >
                         Outcome
                     </span>
-                    <span class="text-sm font-semibold text-t-text">
+                    <span class="text-[13px] font-semibold text-t-text">
                         {{ outcomeLabel }}
                     </span>
                 </div>
@@ -113,25 +117,33 @@ const hasVitals = computed(() => props.incident.vitals !== null);
                     v-if="incident.hospital"
                     class="flex items-center justify-between"
                 >
-                    <span class="text-xs font-semibold text-t-text-dim">
+                    <span
+                        class="font-mono text-[10px] tracking-[1.5px] text-t-text-faint uppercase"
+                    >
                         Hospital
                     </span>
-                    <span class="text-sm text-t-text">
+                    <span class="text-[13px] font-semibold text-t-text">
                         {{ incident.hospital }}
                     </span>
                 </div>
 
                 <div v-if="sceneTime" class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-t-text-dim">
+                    <span
+                        class="font-mono text-[10px] tracking-[1.5px] text-t-text-faint uppercase"
+                    >
                         Scene Time
                     </span>
-                    <span class="font-mono text-sm text-t-text">
+                    <span
+                        class="font-mono text-[13px] font-semibold text-t-text"
+                    >
                         {{ sceneTime }}
                     </span>
                 </div>
 
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-t-text-dim">
+                    <span
+                        class="font-mono text-[10px] tracking-[1.5px] text-t-text-faint uppercase"
+                    >
                         Checklist
                     </span>
                     <div class="flex items-center gap-2">
@@ -139,7 +151,7 @@ const hasVitals = computed(() => props.incident.vitals !== null);
                             class="h-2 w-20 overflow-hidden rounded-full bg-t-border"
                         >
                             <div
-                                class="h-full rounded-full bg-green-500 transition-all"
+                                class="h-full rounded-full bg-t-p4 transition-all"
                                 :style="{ width: `${checklistPct}%` }"
                             />
                         </div>
@@ -151,17 +163,19 @@ const hasVitals = computed(() => props.incident.vitals !== null);
 
                 <template v-if="hasVitals">
                     <div class="border-t border-t-border pt-2">
-                        <p class="mb-1.5 text-xs font-semibold text-t-text-dim">
+                        <p
+                            class="mb-1.5 font-mono text-[10px] tracking-[1.5px] text-t-text-faint uppercase"
+                        >
                             Vitals
                         </p>
                         <div class="grid grid-cols-2 gap-2">
                             <div
                                 v-if="incident.vitals?.systolic_bp !== null"
-                                class="rounded-lg bg-t-bg px-2.5 py-1.5"
+                                class="rounded-[10px] bg-t-surface-alt px-3 py-2"
                             >
                                 <p class="text-[10px] text-t-text-faint">BP</p>
                                 <p
-                                    class="font-mono text-sm font-bold text-t-text"
+                                    class="font-mono text-[13px] font-bold text-t-text"
                                 >
                                     {{ incident.vitals!.systolic_bp }}/{{
                                         incident.vitals!.diastolic_bp
@@ -170,35 +184,35 @@ const hasVitals = computed(() => props.incident.vitals !== null);
                             </div>
                             <div
                                 v-if="incident.vitals?.heart_rate !== null"
-                                class="rounded-lg bg-t-bg px-2.5 py-1.5"
+                                class="rounded-[10px] bg-t-surface-alt px-3 py-2"
                             >
                                 <p class="text-[10px] text-t-text-faint">HR</p>
                                 <p
-                                    class="font-mono text-sm font-bold text-t-text"
+                                    class="font-mono text-[13px] font-bold text-t-text"
                                 >
                                     {{ incident.vitals!.heart_rate }} bpm
                                 </p>
                             </div>
                             <div
                                 v-if="incident.vitals?.spo2 !== null"
-                                class="rounded-lg bg-t-bg px-2.5 py-1.5"
+                                class="rounded-[10px] bg-t-surface-alt px-3 py-2"
                             >
                                 <p class="text-[10px] text-t-text-faint">
                                     SpO2
                                 </p>
                                 <p
-                                    class="font-mono text-sm font-bold text-t-text"
+                                    class="font-mono text-[13px] font-bold text-t-text"
                                 >
                                     {{ incident.vitals!.spo2 }}%
                                 </p>
                             </div>
                             <div
                                 v-if="incident.vitals?.gcs !== null"
-                                class="rounded-lg bg-t-bg px-2.5 py-1.5"
+                                class="rounded-[10px] bg-t-surface-alt px-3 py-2"
                             >
                                 <p class="text-[10px] text-t-text-faint">GCS</p>
                                 <p
-                                    class="font-mono text-sm font-bold text-t-text"
+                                    class="font-mono text-[13px] font-bold text-t-text"
                                 >
                                     {{ incident.vitals!.gcs }}/15
                                 </p>
@@ -211,7 +225,9 @@ const hasVitals = computed(() => props.incident.vitals !== null);
                     v-if="incident.assessment_tags.length > 0"
                     class="border-t border-t-border pt-2"
                 >
-                    <p class="mb-1.5 text-xs font-semibold text-t-text-dim">
+                    <p
+                        class="mb-1.5 font-mono text-[10px] tracking-[1.5px] text-t-text-faint uppercase"
+                    >
                         Assessment
                     </p>
                     <div class="flex flex-wrap gap-1.5">
@@ -230,7 +246,7 @@ const hasVitals = computed(() => props.incident.vitals !== null);
         <div class="shrink-0 px-4 pb-6">
             <button
                 type="button"
-                class="flex min-h-[52px] w-full items-center justify-center rounded-xl bg-t-accent font-sans text-sm font-bold text-white shadow-lg transition-transform active:scale-[0.98]"
+                class="flex min-h-[52px] w-full items-center justify-center rounded-[13px] bg-t-accent font-sans text-[16px] font-bold tracking-wide text-white shadow-lg transition-transform active:scale-[0.98]"
                 @click="emit('done')"
             >
                 Done

@@ -85,10 +85,10 @@ async function toggleTag(tag: string): Promise<void> {
                 v-for="tag in ALL_TAGS"
                 :key="tag"
                 type="button"
-                class="flex min-h-[44px] items-center justify-center rounded-lg border px-3 py-2 text-sm font-medium transition-all duration-200 active:scale-95"
+                class="flex min-h-[44px] items-center justify-center rounded-[10px] border px-3 py-2 text-[13px] font-medium transition-all duration-200 active:scale-95"
                 :class="
                     activeTags.has(tag)
-                        ? 'border-emerald-500 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+                        ? 'border-t-accent bg-t-accent/15 text-t-accent'
                         : 'border-t-border bg-t-surface text-t-text-dim hover:border-t-text-dim/40'
                 "
                 @click="toggleTag(tag)"

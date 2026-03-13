@@ -52,14 +52,14 @@ function handleTap(): void {
             @click="handleTap"
         >
             <div
-                class="flex cursor-pointer items-center gap-3 rounded-xl border border-emerald-500/30 bg-emerald-50 px-4 py-3 shadow-lg dark:bg-emerald-950/80"
+                class="flex cursor-pointer items-center gap-3 rounded-[10px] border border-t-accent/30 bg-t-accent/5 px-4 py-3 shadow-lg"
             >
                 <!-- Chat icon -->
                 <div
-                    class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/20"
+                    class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-t-accent/20"
                 >
                     <svg
-                        class="h-4 w-4 text-emerald-600 dark:text-emerald-400"
+                        class="h-4 w-4 text-t-accent"
                         viewBox="0 0 20 20"
                         fill="currentColor"
                     >
@@ -73,23 +73,17 @@ function handleTap(): void {
 
                 <!-- Message content -->
                 <div class="min-w-0 flex-1">
-                    <p
-                        class="text-xs font-semibold text-emerald-700 dark:text-emerald-300"
-                    >
+                    <p class="text-[11px] font-semibold text-t-accent">
                         {{ message.sender?.name ?? 'Dispatch' }}
                     </p>
 
-                    <p
-                        class="truncate text-sm text-emerald-800 dark:text-emerald-200"
-                    >
+                    <p class="truncate text-[13px] text-t-text">
                         {{ message.body }}
                     </p>
                 </div>
 
                 <!-- Tap hint -->
-                <span
-                    class="shrink-0 text-[10px] font-medium text-emerald-600/60 dark:text-emerald-400/60"
-                >
+                <span class="shrink-0 text-[10px] font-medium text-t-accent/60">
                     Tap to view
                 </span>
             </div>

@@ -116,7 +116,7 @@ watch(query, () => {
         <button
             v-if="!open"
             type="button"
-            class="flex w-full cursor-pointer items-center rounded-lg border border-t-border bg-t-bg px-3.5 py-2.5 text-left text-sm transition-colors outline-none focus:border-t-border-foc"
+            class="flex w-full cursor-pointer items-center rounded-[10px] border-[1.5px] border-t-border bg-t-bg px-3.5 py-2.5 text-left text-[14px] transition-colors outline-none focus:border-t-border-foc"
             :class="modelValue !== null ? 'text-t-text' : 'text-t-text-faint'"
             @click="openDropdown"
         >
@@ -142,7 +142,7 @@ watch(query, () => {
 
         <div
             v-if="open"
-            class="relative z-20 rounded-lg border border-t-border-foc bg-t-surface shadow-lg"
+            class="relative z-20 rounded-[10px] border border-t-border-foc bg-t-surface shadow-lg"
         >
             <div class="flex items-center gap-2 px-3.5 py-2.5">
                 <svg
@@ -171,7 +171,7 @@ watch(query, () => {
                     v-model="query"
                     type="text"
                     placeholder="Search hospital..."
-                    class="flex-1 bg-transparent text-sm text-t-text outline-none"
+                    class="flex-1 bg-transparent text-[14px] text-t-text outline-none"
                     @blur="closeDropdown"
                     @keydown="handleKeydown"
                 />
@@ -183,7 +183,7 @@ watch(query, () => {
             >
                 <div
                     v-if="filtered.length === 0"
-                    class="px-3.5 py-3 text-center text-xs text-t-text-faint"
+                    class="px-3.5 py-3 text-center text-[11px] text-t-text-faint"
                 >
                     No hospitals found
                 </div>
@@ -191,7 +191,7 @@ watch(query, () => {
                     v-for="(h, i) in filtered"
                     :key="h.id"
                     type="button"
-                    class="flex w-full cursor-pointer items-center gap-2 border-none bg-transparent px-3.5 py-2.5 text-left text-sm text-t-text transition-colors"
+                    class="flex w-full cursor-pointer items-center gap-2 border-none bg-transparent px-3.5 py-2.5 text-left text-[13px] text-t-text transition-colors"
                     :class="[
                         i === highlightedIndex
                             ? 'bg-t-accent/8'

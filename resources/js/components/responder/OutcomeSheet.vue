@@ -180,14 +180,14 @@ function handleClose(): void {
 
                         <div class="px-5 pb-6">
                             <h3
-                                class="mb-4 text-center text-base font-bold text-t-text"
+                                class="mb-4 text-center text-[16px] font-bold text-t-text"
                             >
                                 Select Outcome
                             </h3>
 
                             <div
                                 v-if="errorMessage"
-                                class="mb-3 rounded-lg border border-red-500/30 bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-300"
+                                class="mb-3 rounded-[10px] border border-t-p1/30 bg-t-p1/5 px-3 py-2 text-[13px] text-t-p1"
                             >
                                 {{ errorMessage }}
                             </div>
@@ -197,7 +197,7 @@ function handleClose(): void {
                                     v-for="option in OUTCOME_OPTIONS"
                                     :key="option.type"
                                     type="button"
-                                    class="flex min-h-[56px] w-full items-center gap-3 rounded-xl border px-4 text-left text-sm font-semibold transition-colors active:scale-[0.99]"
+                                    class="flex min-h-[56px] w-full items-center gap-3 rounded-[10px] border px-4 text-left text-[13px] font-semibold transition-colors active:scale-[0.99]"
                                     :class="
                                         selectedOutcome === option.type
                                             ? 'border-2'
@@ -240,7 +240,7 @@ function handleClose(): void {
                             <Transition name="expand">
                                 <div v-if="showHospitalPicker" class="mt-3">
                                     <label
-                                        class="mb-1 block text-xs font-semibold text-t-text-dim"
+                                        class="mb-1 block text-[11px] font-semibold text-t-text-dim"
                                     >
                                         Hospital
                                     </label>
@@ -253,7 +253,7 @@ function handleClose(): void {
 
                             <div class="mt-3">
                                 <label
-                                    class="mb-1 block text-xs font-semibold text-t-text-dim"
+                                    class="mb-1 block text-[11px] font-semibold text-t-text-dim"
                                 >
                                     Closure Notes (optional)
                                 </label>
@@ -262,13 +262,13 @@ function handleClose(): void {
                                     placeholder="Additional notes..."
                                     rows="2"
                                     maxlength="2000"
-                                    class="w-full resize-none rounded-lg border border-t-border bg-t-bg px-3 py-2 text-sm text-t-text placeholder-t-text-faint outline-none focus:border-t-border-foc"
+                                    class="w-full resize-none rounded-[10px] border-[1.5px] border-t-border bg-t-surface px-3.5 py-[11px] text-[14px] text-t-text placeholder-t-text-faint transition-colors outline-none focus:border-t-accent"
                                 />
                             </div>
 
                             <button
                                 type="button"
-                                class="mt-4 flex min-h-[52px] w-full items-center justify-center rounded-xl font-sans text-sm font-bold text-white shadow-lg transition-transform active:scale-[0.98] disabled:opacity-50"
+                                class="mt-4 flex min-h-[52px] w-full items-center justify-center rounded-[13px] font-sans text-[16px] font-bold tracking-wide text-white shadow-lg transition-transform active:scale-[0.98] disabled:opacity-50"
                                 :class="
                                     canConfirm
                                         ? 'bg-t-accent'

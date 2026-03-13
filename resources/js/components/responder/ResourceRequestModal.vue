@@ -100,7 +100,7 @@ function handleClose(): void {
                 />
 
                 <div
-                    class="relative z-10 w-full max-w-md rounded-t-2xl bg-t-surface p-5 shadow-xl sm:rounded-2xl"
+                    class="relative z-10 w-full max-w-md rounded-t-[14px] bg-t-surface p-5 shadow-xl sm:rounded-[14px]"
                 >
                     <div
                         v-if="successMessage"
@@ -115,19 +115,19 @@ function handleClose(): void {
                             stroke-width="2"
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            class="text-green-500"
+                            class="text-t-p4"
                         >
                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
                             <polyline points="22 4 12 14.01 9 11.01" />
                         </svg>
-                        <p class="mt-3 font-semibold text-t-text">
+                        <p class="mt-3 text-[14px] font-semibold text-t-text">
                             {{ successMessage }}
                         </p>
                     </div>
 
                     <template v-else>
                         <h3
-                            class="mb-4 text-center text-base font-bold text-t-text"
+                            class="mb-4 text-center text-[16px] font-bold text-t-text"
                         >
                             Request Additional Resource
                         </h3>
@@ -137,7 +137,7 @@ function handleClose(): void {
                                 v-for="option in RESOURCE_OPTIONS"
                                 :key="option.type"
                                 type="button"
-                                class="flex min-h-[56px] items-center justify-center rounded-xl border border-t-border bg-t-bg px-3 text-center text-sm font-semibold text-t-text transition-colors active:bg-t-accent/10"
+                                class="flex min-h-[56px] items-center justify-center rounded-[10px] border border-t-border bg-t-bg px-3 text-center text-[13px] font-semibold text-t-text shadow-[0_1px_3px_rgba(0,0,0,.04)] transition-colors active:bg-t-accent/10"
                                 :disabled="isSubmitting"
                                 @click="handleRequest(option.type)"
                             >
@@ -149,12 +149,12 @@ function handleClose(): void {
                             v-model="notes"
                             placeholder="Optional notes..."
                             rows="2"
-                            class="mt-3 w-full resize-none rounded-lg border border-t-border bg-t-bg px-3 py-2 text-sm text-t-text placeholder-t-text-faint outline-none focus:border-t-border-foc"
+                            class="mt-3 w-full resize-none rounded-[10px] border-[1.5px] border-t-border bg-t-surface px-3.5 py-[11px] text-[14px] text-t-text placeholder-t-text-faint transition-colors outline-none focus:border-t-accent"
                         />
 
                         <button
                             type="button"
-                            class="mt-3 flex min-h-[44px] w-full items-center justify-center rounded-xl border border-t-border text-sm font-medium text-t-text-dim transition-colors active:bg-t-border/30"
+                            class="mt-3 flex min-h-[44px] w-full items-center justify-center rounded-[10px] border border-t-border text-[13px] font-medium text-t-text-dim transition-colors active:bg-t-border/30"
                             @click="handleClose"
                         >
                             Cancel
