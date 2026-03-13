@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\IncidentOutcome;
+use App\Enums\IncidentPriority;
 use App\Enums\IncidentStatus;
 use App\Enums\ResourceType;
 use App\Enums\UnitStatus;
@@ -22,6 +23,7 @@ use App\Http\Requests\UpdateChecklistRequest;
 use App\Http\Requests\UpdateLocationRequest;
 use App\Http\Requests\UpdateVitalsRequest;
 use App\Jobs\GenerateIncidentReport;
+use App\Jobs\GenerateNdrrmcSitRep;
 use App\Models\Incident;
 use App\Models\User;
 use Clickbar\Magellan\Data\Geometries\Point;
@@ -44,7 +46,7 @@ class ResponderController extends Controller
 
         if ($unit) {
             $activeIncident = $unit->activeIncidents()
-                ->with(['incidentType', 'barangay', 'timeline', 'messages'])
+                ->with(['incidentType', 'barangay', 'timeline', 'messages', 'assignedUnits'])
                 ->first();
 
             if ($activeIncident) {
@@ -53,9 +55,10 @@ class ResponderController extends Controller
         }
 
         return Inertia::render('responder/Station', [
-            'activeIncident' => $activeIncident,
+            'incident' => $activeIncident,
             'unit' => $unit,
             'hospitals' => config('hospitals'),
+            'userId' => $user->id,
             'messages' => $activeIncident
                 ? Incident::find($activeIncident['id'])?->messages()->orderBy('created_at')->get()
                 : [],
@@ -328,6 +331,10 @@ class ResponderController extends Controller
         IncidentStatusChanged::dispatch($incident->fresh(), $oldStatus);
 
         GenerateIncidentReport::dispatch($incident);
+
+        if ($incident->priority === IncidentPriority::P1) {
+            GenerateNdrrmcSitRep::dispatch($incident);
+        }
 
         return response()->json(['message' => 'Incident resolved.']);
     }
