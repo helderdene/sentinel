@@ -242,4 +242,4 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 8. Operator Role & Intake Station | 4/4 | Complete | 2026-03-13 |
 | 9. Public Citizen Reporting App | 3/3 | Complete   | 2026-03-13 |
 | 10. Design System Alignment | 5/5 | Complete    | 2026-03-13 |
-| 11. Implement Units CRUD | 0/2 | In Progress | - |
+| 11. Implement Units CRUD | 1/2 | In Progress|  |

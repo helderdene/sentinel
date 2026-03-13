@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: completed
-stopped_at: Phase 11 context gathered
-last_updated: "2026-03-13T20:41:47.872Z"
-last_activity: "2026-03-14 — Completed 10-05: Gap closure - eliminated residual hardcoded color classes"
+status: in-progress
+stopped_at: Completed 11-01-PLAN.md
+last_updated: "2026-03-13T21:09:06.374Z"
+last_activity: "2026-03-14 — Completed 11-01: Units CRUD backend with auto-generated IDs"
 progress:
   total_phases: 11
   completed_phases: 10
-  total_plans: 34
-  completed_plans: 34
-  percent: 100
+  total_plans: 36
+  completed_plans: 35
+  percent: 97
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Dispatchers can receive an incident report, triage it, assign the nearest available unit, and track the response in real-time on a live map.
-**Current focus:** ALL PHASES COMPLETE. 34 of 34 plans executed across 10 phases.
+**Current focus:** Phase 11 — Units CRUD. Plan 01 backend complete, Plan 02 frontend next.
 
 ## Current Position
 
-Phase: 10 of 10 (Design System Alignment) - COMPLETE
-Plan: 5 of 5 in current phase
-Status: 34 of 34 plans complete
-Last activity: 2026-03-14 — Completed 10-05: Gap closure - eliminated residual hardcoded color classes
+Phase: 11 of 11 (Implement Units CRUD)
+Plan: 1 of 2 in current phase
+Status: 35 of 36 plans complete
+Last activity: 2026-03-14 — Completed 11-01: Units CRUD backend with auto-generated IDs
 
-Progress: [██████████] 100%
+Progress: [█████████▒] 97%
 
 ## Performance Metrics
 
@@ -80,6 +80,7 @@ Progress: [██████████] 100%
 | Phase 10 P03 | 8min | 2 tasks | 4 files |
 | Phase 10 P04 | 9min | 3 tasks | 10 files |
 | Phase 10 P05 | 2min | 2 tasks | 5 files |
+| Phase 11 P01 | 5min | 2 tasks | 14 files |
 
 ## Accumulated Context
 
@@ -216,6 +217,11 @@ Recent decisions affecting current work:
 - [Phase 10]: [10-05]: ReportRow type badges mapped: quarterly->t-accent, annual->t-role-supervisor, dilg->t-online, ndrrmc->t-p2
 - [Phase 10]: [10-05]: PrioritySelector uses bg-t-p1..p4 active and color-mix() 40%/8% inactive pattern
 
+- [11-01]: Auto-generated unit IDs use PostgreSQL regex SUBSTRING/CAST to extract max sequence from existing units of same type
+- [11-01]: Decommission lifecycle (decommissioned_at timestamp) kept separate from operational status for clean domain separation
+- [11-01]: scopeActive() pattern: whereNull('decommissioned_at') for excluding soft-disabled records without soft deletes
+- [11-01]: Bidirectional crew sync via two-step User.unit_id update instead of pivot table
+
 ### Roadmap Evolution
 
 - Phase 8 added: Implement operator role and intake layer UI
@@ -236,6 +242,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-13T20:41:47.860Z
-Stopped at: Phase 11 context gathered
-Resume file: .planning/phases/11-implement-units-crud/11-CONTEXT.md
+Last session: 2026-03-13T21:09:06.372Z
+Stopped at: Completed 11-01-PLAN.md
+Resume file: None

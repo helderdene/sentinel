@@ -109,15 +109,15 @@
 
 ### Units CRUD
 
-- [ ] **UNIT-01**: Admin can list all units in a data table with ID, callsign, type badge, status badge (colors matching dispatch map markers), crew count (assigned/capacity format), and agency
-- [ ] **UNIT-02**: Admin can create a unit by selecting a type; system auto-generates ID from type prefix + next sequence number (AMB-01, FIRE-02) and default callsign
-- [ ] **UNIT-03**: Admin can edit unit callsign, agency, crew capacity, status (Available/Offline only), shift, notes, and crew assignment
-- [ ] **UNIT-04**: Decommission action sets decommissioned_at timestamp, unassigns all crew members (sets unit_id to null), and displays unit with muted styling and "Decommissioned" badge
-- [ ] **UNIT-05**: Recommission action clears decommissioned_at and restores unit to Available status
-- [ ] **UNIT-06**: Crew assignment via inline multi-select syncs User.unit_id bidirectionally; soft warning badge when crew count exceeds crew_capacity (save not blocked)
-- [ ] **UNIT-07**: Non-admin users blocked from admin unit routes with 403 response
-- [ ] **UNIT-08**: Unit ID uniqueness enforced via type prefix + sequential numbering from max existing units of that type
-- [ ] **UNIT-09**: Admin status selection restricted to Available and Offline; workflow statuses (Dispatched, En Route, On Scene) controlled only by dispatch/responder workflow
+- [x] **UNIT-01**: Admin can list all units in a data table with ID, callsign, type badge, status badge (colors matching dispatch map markers), crew count (assigned/capacity format), and agency
+- [x] **UNIT-02**: Admin can create a unit by selecting a type; system auto-generates ID from type prefix + next sequence number (AMB-01, FIRE-02) and default callsign
+- [x] **UNIT-03**: Admin can edit unit callsign, agency, crew capacity, status (Available/Offline only), shift, notes, and crew assignment
+- [x] **UNIT-04**: Decommission action sets decommissioned_at timestamp, unassigns all crew members (sets unit_id to null), and displays unit with muted styling and "Decommissioned" badge
+- [x] **UNIT-05**: Recommission action clears decommissioned_at and restores unit to Available status
+- [x] **UNIT-06**: Crew assignment via inline multi-select syncs User.unit_id bidirectionally; soft warning badge when crew count exceeds crew_capacity (save not blocked)
+- [x] **UNIT-07**: Non-admin users blocked from admin unit routes with 403 response
+- [x] **UNIT-08**: Unit ID uniqueness enforced via type prefix + sequential numbering from max existing units of that type
+- [x] **UNIT-09**: Admin status selection restricted to Available and Offline; workflow statuses (Dispatched, En Route, On Scene) controlled only by dispatch/responder workflow
 
 ## v2 Requirements
 
