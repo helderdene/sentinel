@@ -37,17 +37,17 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const priorityBorderClass: Record<IncidentPriority, string> = {
-    P1: 'border-l-4 border-l-red-500',
-    P2: 'border-l-4 border-l-orange-500',
-    P3: 'border-l-4 border-l-amber-500',
-    P4: 'border-l-4 border-l-green-500',
+    P1: 'border-l-4 border-l-t-p1',
+    P2: 'border-l-4 border-l-t-p2',
+    P3: 'border-l-4 border-l-t-p3',
+    P4: 'border-l-4 border-l-t-p4',
 };
 
 const priorityBadgeClass: Record<IncidentPriority, string> = {
-    P1: 'bg-red-500 text-white border-red-500',
-    P2: 'bg-orange-500 text-white border-orange-500',
-    P3: 'bg-amber-500 text-white border-amber-500',
-    P4: 'bg-green-500 text-white border-green-500',
+    P1: 'bg-[color-mix(in_srgb,var(--t-p1)_12%,transparent)] text-t-p1',
+    P2: 'bg-[color-mix(in_srgb,var(--t-p2)_12%,transparent)] text-t-p2',
+    P3: 'bg-[color-mix(in_srgb,var(--t-p3)_12%,transparent)] text-t-p3',
+    P4: 'bg-[color-mix(in_srgb,var(--t-p4)_12%,transparent)] text-t-p4',
 };
 
 const channelLabels: Record<IncidentChannel, string> = {
@@ -225,22 +225,46 @@ function navigateToIncident(id: string): void {
 
             <div
                 v-if="hasIncidents"
-                class="overflow-hidden rounded-lg border dark:border-neutral-800"
+                class="overflow-hidden rounded-[7px] border border-border bg-card shadow-[var(--shadow-1)]"
             >
                 <table class="w-full text-sm">
                     <thead>
-                        <tr
-                            class="border-b bg-neutral-50 text-left dark:border-neutral-800 dark:bg-neutral-900"
-                        >
-                            <th class="px-4 py-3 font-medium">Incident #</th>
-                            <th class="px-4 py-3 font-medium">Type</th>
-                            <th class="px-4 py-3 font-medium">Priority</th>
-                            <th class="px-4 py-3 font-medium">
+                        <tr class="border-b border-border bg-card text-left">
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
+                                Incident #
+                            </th>
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
+                                Type
+                            </th>
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
+                                Priority
+                            </th>
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
                                 Location / Barangay
                             </th>
-                            <th class="px-4 py-3 font-medium">Channel</th>
-                            <th class="px-4 py-3 font-medium">Time Elapsed</th>
-                            <th class="px-4 py-3 font-medium">Status</th>
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
+                                Channel
+                            </th>
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
+                                Time Elapsed
+                            </th>
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
+                                Status
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -248,7 +272,7 @@ function navigateToIncident(id: string): void {
                             v-for="incident in localIncidents"
                             :key="incident.id"
                             :class="[
-                                'cursor-pointer border-b transition-colors last:border-0 hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-800/50',
+                                'cursor-pointer border-b border-border transition-colors hover:bg-accent',
                                 priorityBorderClass[incident.priority],
                                 highlightedId === incident.id
                                     ? 'animate-highlight'
@@ -256,10 +280,12 @@ function navigateToIncident(id: string): void {
                             ]"
                             @click="navigateToIncident(incident.id)"
                         >
-                            <td class="px-4 py-3 font-mono text-xs">
+                            <td
+                                class="px-4 py-3 font-mono text-[10px] text-t-text-faint"
+                            >
                                 {{ incident.incident_no }}
                             </td>
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 font-medium text-foreground">
                                 {{ incident.incident_type?.name ?? '--' }}
                             </td>
                             <td class="px-4 py-3">
@@ -280,10 +306,12 @@ function navigateToIncident(id: string): void {
                                     ({{ incident.barangay.name }})
                                 </span>
                             </td>
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 text-muted-foreground">
                                 {{ channelLabels[incident.channel] }}
                             </td>
-                            <td class="px-4 py-3 text-xs">
+                            <td
+                                class="px-4 py-3 font-mono text-[10px] text-t-text-faint"
+                            >
                                 {{ timeElapsed(incident.created_at) }}
                             </td>
                             <td class="px-4 py-3">
@@ -298,14 +326,12 @@ function navigateToIncident(id: string): void {
 
             <div
                 v-else
-                class="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center dark:border-neutral-800"
+                class="flex flex-col items-center justify-center rounded-[7px] border border-dashed border-border bg-card p-12 text-center shadow-[var(--shadow-3)]"
             >
-                <p
-                    class="text-lg font-medium text-neutral-900 dark:text-neutral-100"
-                >
+                <p class="text-lg font-medium text-foreground">
                     No pending incidents
                 </p>
-                <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                <p class="mt-1 text-sm text-t-text-faint">
                     The queue is empty. Create a new incident to get started.
                 </p>
                 <Link :href="create.url()" class="mt-4">

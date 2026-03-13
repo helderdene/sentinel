@@ -188,11 +188,14 @@ function submit(): void {
                 description="Fill out the triage form to create a new incident"
             />
 
-            <form class="space-y-8" @submit.prevent="submit">
+            <form
+                class="space-y-8 rounded-[var(--radius)] border border-border bg-card p-6 shadow-[var(--shadow-1)]"
+                @submit.prevent="submit"
+            >
                 <!-- Channel + Caller Info -->
                 <fieldset class="space-y-4">
                     <legend
-                        class="text-sm font-medium text-neutral-900 dark:text-neutral-100"
+                        class="font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
                     >
                         Channel & Caller Info
                     </legend>
@@ -244,7 +247,7 @@ function submit(): void {
                 <!-- Incident Details -->
                 <fieldset class="space-y-4">
                     <legend
-                        class="text-sm font-medium text-neutral-900 dark:text-neutral-100"
+                        class="font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
                     >
                         Incident Details
                     </legend>
@@ -267,9 +270,7 @@ function submit(): void {
                                         const t = allTypes.find(
                                             (t) => String(t.id) === val,
                                         );
-                                        return t
-                                            ? `${t.code} ${t.name}`
-                                            : '';
+                                        return t ? `${t.code} ${t.name}` : '';
                                     }
                                 "
                             />
@@ -325,7 +326,7 @@ function submit(): void {
                 <!-- Location -->
                 <fieldset class="space-y-4">
                     <legend
-                        class="text-sm font-medium text-neutral-900 dark:text-neutral-100"
+                        class="font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
                     >
                         Location
                     </legend>
@@ -403,7 +404,7 @@ function submit(): void {
                 <!-- Notes -->
                 <fieldset class="space-y-4">
                     <legend
-                        class="text-sm font-medium text-neutral-900 dark:text-neutral-100"
+                        class="font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
                     >
                         Notes
                     </legend>

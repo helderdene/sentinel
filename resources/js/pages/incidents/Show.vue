@@ -26,29 +26,27 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const priorityBadgeClass: Record<IncidentPriority, string> = {
-    P1: 'bg-red-500 text-white border-red-500',
-    P2: 'bg-orange-500 text-white border-orange-500',
-    P3: 'bg-amber-500 text-white border-amber-500',
-    P4: 'bg-green-500 text-white border-green-500',
+    P1: 'bg-[color-mix(in_srgb,var(--t-p1)_12%,transparent)] text-t-p1',
+    P2: 'bg-[color-mix(in_srgb,var(--t-p2)_12%,transparent)] text-t-p2',
+    P3: 'bg-[color-mix(in_srgb,var(--t-p3)_12%,transparent)] text-t-p3',
+    P4: 'bg-[color-mix(in_srgb,var(--t-p4)_12%,transparent)] text-t-p4',
 };
 
 const statusBadgeClass: Record<IncidentStatus, string> = {
-    PENDING:
-        'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-700',
+    PENDING: 'bg-[color-mix(in_srgb,var(--t-p3)_12%,transparent)] text-t-p3',
     TRIAGED:
-        'bg-teal-100 text-teal-800 border-teal-300 dark:bg-teal-900/30 dark:text-teal-400 dark:border-teal-700',
+        'bg-[color-mix(in_srgb,var(--t-accent)_12%,transparent)] text-t-accent',
     DISPATCHED:
-        'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-700',
+        'bg-[color-mix(in_srgb,var(--t-unit-dispatched)_12%,transparent)] text-t-unit-dispatched',
     ACKNOWLEDGED:
-        'bg-indigo-100 text-indigo-800 border-indigo-300 dark:bg-indigo-900/30 dark:text-indigo-400 dark:border-indigo-700',
+        'bg-[color-mix(in_srgb,var(--t-role-supervisor)_12%,transparent)] text-t-role-supervisor',
     EN_ROUTE:
-        'bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-900/30 dark:text-purple-400 dark:border-purple-700',
+        'bg-[color-mix(in_srgb,var(--t-unit-enroute)_12%,transparent)] text-t-unit-enroute',
     ON_SCENE:
-        'bg-cyan-100 text-cyan-800 border-cyan-300 dark:bg-cyan-900/30 dark:text-cyan-400 dark:border-cyan-700',
-    RESOLVING:
-        'bg-orange-100 text-orange-800 border-orange-300 dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-700',
+        'bg-[color-mix(in_srgb,var(--t-unit-onscene)_12%,transparent)] text-t-unit-onscene',
+    RESOLVING: 'bg-[color-mix(in_srgb,var(--t-p2)_12%,transparent)] text-t-p2',
     RESOLVED:
-        'bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-400 dark:border-green-700',
+        'bg-[color-mix(in_srgb,var(--t-online)_12%,transparent)] text-t-online',
 };
 
 const channelLabels: Record<IncidentChannel, string> = {
@@ -69,9 +67,7 @@ const reversedTimeline = [...timeline].reverse();
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4 sm:p-6 lg:p-8">
             <div class="flex items-center gap-3">
-                <h1
-                    class="text-2xl font-semibold text-neutral-900 dark:text-neutral-100"
-                >
+                <h1 class="text-2xl font-semibold text-foreground">
                     {{ incident.incident_no }}
                 </h1>
                 <Badge :class="priorityBadgeClass[incident.priority]">
@@ -99,15 +95,13 @@ const reversedTimeline = [...timeline].reverse();
                                     >
                                         Type
                                     </dt>
-                                    <dd
-                                        class="mt-1 text-sm text-neutral-900 dark:text-neutral-100"
-                                    >
+                                    <dd class="mt-1 text-sm text-foreground">
                                         {{
                                             incident.incident_type?.name ?? '--'
                                         }}
                                         <span
                                             v-if="incident.incident_type?.code"
-                                            class="ml-1 font-mono text-xs text-muted-foreground"
+                                            class="ml-1 font-mono text-[10px] text-t-text-faint"
                                         >
                                             ({{ incident.incident_type.code }})
                                         </span>
@@ -120,9 +114,7 @@ const reversedTimeline = [...timeline].reverse();
                                     >
                                         Channel
                                     </dt>
-                                    <dd
-                                        class="mt-1 text-sm text-neutral-900 dark:text-neutral-100"
-                                    >
+                                    <dd class="mt-1 text-sm text-foreground">
                                         {{ channelLabels[incident.channel] }}
                                     </dd>
                                 </div>
@@ -133,9 +125,7 @@ const reversedTimeline = [...timeline].reverse();
                                     >
                                         Location
                                     </dt>
-                                    <dd
-                                        class="mt-1 text-sm text-neutral-900 dark:text-neutral-100"
-                                    >
+                                    <dd class="mt-1 text-sm text-foreground">
                                         {{ incident.location_text }}
                                     </dd>
                                 </div>
@@ -146,9 +136,7 @@ const reversedTimeline = [...timeline].reverse();
                                     >
                                         Barangay
                                     </dt>
-                                    <dd
-                                        class="mt-1 text-sm text-neutral-900 dark:text-neutral-100"
-                                    >
+                                    <dd class="mt-1 text-sm text-foreground">
                                         {{
                                             incident.barangay?.name ??
                                             'Not assigned'
@@ -162,9 +150,7 @@ const reversedTimeline = [...timeline].reverse();
                                     >
                                         Caller Name
                                     </dt>
-                                    <dd
-                                        class="mt-1 text-sm text-neutral-900 dark:text-neutral-100"
-                                    >
+                                    <dd class="mt-1 text-sm text-foreground">
                                         {{ incident.caller_name ?? '--' }}
                                     </dd>
                                 </div>
@@ -175,9 +161,7 @@ const reversedTimeline = [...timeline].reverse();
                                     >
                                         Caller Contact
                                     </dt>
-                                    <dd
-                                        class="mt-1 text-sm text-neutral-900 dark:text-neutral-100"
-                                    >
+                                    <dd class="mt-1 text-sm text-foreground">
                                         {{ incident.caller_contact ?? '--' }}
                                     </dd>
                                 </div>
@@ -190,7 +174,7 @@ const reversedTimeline = [...timeline].reverse();
                                     Notes
                                 </dt>
                                 <dd
-                                    class="mt-1 text-sm whitespace-pre-wrap text-neutral-900 dark:text-neutral-100"
+                                    class="mt-1 text-sm whitespace-pre-wrap text-foreground"
                                 >
                                     {{ incident.notes }}
                                 </dd>

@@ -33,29 +33,27 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const priorityBadgeClass: Record<IncidentPriority, string> = {
-    P1: 'bg-red-500 text-white border-red-500',
-    P2: 'bg-orange-500 text-white border-orange-500',
-    P3: 'bg-amber-500 text-white border-amber-500',
-    P4: 'bg-green-500 text-white border-green-500',
+    P1: 'bg-[color-mix(in_srgb,var(--t-p1)_12%,transparent)] text-t-p1',
+    P2: 'bg-[color-mix(in_srgb,var(--t-p2)_12%,transparent)] text-t-p2',
+    P3: 'bg-[color-mix(in_srgb,var(--t-p3)_12%,transparent)] text-t-p3',
+    P4: 'bg-[color-mix(in_srgb,var(--t-p4)_12%,transparent)] text-t-p4',
 };
 
 const statusBadgeClass: Record<IncidentStatus, string> = {
-    PENDING:
-        'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-700',
+    PENDING: 'bg-[color-mix(in_srgb,var(--t-p3)_12%,transparent)] text-t-p3',
     TRIAGED:
-        'bg-teal-100 text-teal-800 border-teal-300 dark:bg-teal-900/30 dark:text-teal-400 dark:border-teal-700',
+        'bg-[color-mix(in_srgb,var(--t-accent)_12%,transparent)] text-t-accent',
     DISPATCHED:
-        'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-700',
+        'bg-[color-mix(in_srgb,var(--t-unit-dispatched)_12%,transparent)] text-t-unit-dispatched',
     ACKNOWLEDGED:
-        'bg-indigo-100 text-indigo-800 border-indigo-300 dark:bg-indigo-900/30 dark:text-indigo-400 dark:border-indigo-700',
+        'bg-[color-mix(in_srgb,var(--t-role-supervisor)_12%,transparent)] text-t-role-supervisor',
     EN_ROUTE:
-        'bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-900/30 dark:text-purple-400 dark:border-purple-700',
+        'bg-[color-mix(in_srgb,var(--t-unit-enroute)_12%,transparent)] text-t-unit-enroute',
     ON_SCENE:
-        'bg-cyan-100 text-cyan-800 border-cyan-300 dark:bg-cyan-900/30 dark:text-cyan-400 dark:border-cyan-700',
-    RESOLVING:
-        'bg-orange-100 text-orange-800 border-orange-300 dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-700',
+        'bg-[color-mix(in_srgb,var(--t-unit-onscene)_12%,transparent)] text-t-unit-onscene',
+    RESOLVING: 'bg-[color-mix(in_srgb,var(--t-p2)_12%,transparent)] text-t-p2',
     RESOLVED:
-        'bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-400 dark:border-green-700',
+        'bg-[color-mix(in_srgb,var(--t-online)_12%,transparent)] text-t-online',
 };
 
 const channelLabels: Record<IncidentChannel, string> = {
@@ -135,35 +133,61 @@ function formatDate(dateStr: string): string {
 
             <div
                 v-if="incidents.data.length > 0"
-                class="overflow-hidden rounded-lg border dark:border-neutral-800"
+                class="overflow-hidden rounded-[7px] border border-border bg-card shadow-[var(--shadow-1)]"
             >
                 <table class="w-full text-sm">
                     <thead>
-                        <tr
-                            class="border-b bg-neutral-50 text-left dark:border-neutral-800 dark:bg-neutral-900"
-                        >
-                            <th class="px-4 py-3 font-medium">Incident #</th>
-                            <th class="px-4 py-3 font-medium">Type</th>
-                            <th class="px-4 py-3 font-medium">Priority</th>
-                            <th class="px-4 py-3 font-medium">
+                        <tr class="border-b border-border bg-card text-left">
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
+                                Incident #
+                            </th>
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
+                                Type
+                            </th>
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
+                                Priority
+                            </th>
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
                                 Location / Barangay
                             </th>
-                            <th class="px-4 py-3 font-medium">Channel</th>
-                            <th class="px-4 py-3 font-medium">Status</th>
-                            <th class="px-4 py-3 font-medium">Created</th>
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
+                                Channel
+                            </th>
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
+                                Status
+                            </th>
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
+                                Created
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr
                             v-for="incident in incidents.data"
                             :key="incident.id"
-                            class="cursor-pointer border-b transition-colors last:border-0 hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-800/50"
+                            class="cursor-pointer border-b border-border transition-colors hover:bg-accent"
                             @click="navigateToIncident(incident.id)"
                         >
-                            <td class="px-4 py-3 font-mono text-xs">
+                            <td
+                                class="px-4 py-3 font-mono text-[10px] text-t-text-faint"
+                            >
                                 {{ incident.incident_no }}
                             </td>
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 font-medium text-foreground">
                                 {{ incident.incident_type?.name ?? '--' }}
                             </td>
                             <td class="px-4 py-3">
@@ -184,7 +208,7 @@ function formatDate(dateStr: string): string {
                                     ({{ incident.barangay.name }})
                                 </span>
                             </td>
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 text-muted-foreground">
                                 {{ channelLabels[incident.channel] }}
                             </td>
                             <td class="px-4 py-3">
@@ -198,7 +222,9 @@ function formatDate(dateStr: string): string {
                                     {{ incident.status.replace('_', ' ') }}
                                 </Badge>
                             </td>
-                            <td class="px-4 py-3 text-xs">
+                            <td
+                                class="px-4 py-3 font-mono text-[10px] text-t-text-faint"
+                            >
                                 {{ formatDate(incident.created_at) }}
                             </td>
                         </tr>
@@ -208,14 +234,12 @@ function formatDate(dateStr: string): string {
 
             <div
                 v-else
-                class="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center dark:border-neutral-800"
+                class="flex flex-col items-center justify-center rounded-[7px] border border-dashed border-border bg-card p-12 text-center shadow-[var(--shadow-3)]"
             >
-                <p
-                    class="text-lg font-medium text-neutral-900 dark:text-neutral-100"
-                >
+                <p class="text-lg font-medium text-foreground">
                     No incidents found
                 </p>
-                <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                <p class="mt-1 text-sm text-t-text-faint">
                     No incidents match the current filter.
                 </p>
             </div>
