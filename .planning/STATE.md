@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 04-02-PLAN.md
-last_updated: "2026-03-13T00:22:13Z"
-last_activity: "2026-03-13 — Completed 04-02: Dispatch console map with MapLibre, alert system, layout shell"
+stopped_at: Completed 04-03-PLAN.md
+last_updated: "2026-03-13T00:34:31Z"
+last_activity: "2026-03-13 — Completed 04-03: Dispatch console panels with queue, incident detail, assignment chips, ack timer"
 progress:
   total_phases: 8
   completed_phases: 4
   total_plans: 16
-  completed_plans: 14
-  percent: 88
+  completed_plans: 15
+  percent: 94
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 ## Current Position
 
 Phase: 4 of 8 (Dispatch Console)
-Plan: 2 of 4 in current phase (COMPLETE)
-Status: 14 of 16 plans complete
-Last activity: 2026-03-13 — Completed 04-02: Dispatch console map with MapLibre, alert system, layout shell
+Plan: 3 of 4 in current phase (COMPLETE)
+Status: 15 of 16 plans complete
+Last activity: 2026-03-13 — Completed 04-03: Dispatch console panels with queue, incident detail, assignment chips, ack timer
 
-Progress: [█████████-] 88%
+Progress: [█████████-] 94%
 
 ## Performance Metrics
 
@@ -49,7 +49,7 @@ Progress: [█████████-] 88%
 | 8. Operator & Intake UI | 4/4 | 70min | 18min |
 
 **Recent Trend:**
-- Last 5 plans: 08-02 (7min), 08-03 (7min), 08-04 (45min), 04-01 (7min), 04-02 (7min)
+- Last 5 plans: 08-03 (7min), 08-04 (45min), 04-01 (7min), 04-02 (7min), 04-03 (8min)
 - Trend: Steady
 
 *Updated after each plan completion*
@@ -59,6 +59,7 @@ Progress: [█████████-] 88%
 | Phase 08 P04 | 45min | 3 tasks | 20 files |
 | Phase 04 P01 | 7min | 2 tasks | 26 files |
 | Phase 04 P02 | 7min | 2 tasks | 10 files |
+| Phase 04 P03 | 8min | 2 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -126,6 +127,11 @@ Recent decisions affecting current work:
 - [04-02]: DispatchLayout uses provide/inject (matching IntakeLayout) since Inertia defineOptions layout does not receive page props
 - [04-02]: Console.vue manages panel layout directly as flex siblings
 - [04-02]: useDispatchMap stores GeoJSON in closure for style-switch re-application
+- [04-03]: Local reactive copies of Inertia props with useDispatchSession for client-side metric computation
+- [04-03]: averageHandleTime initialized from server value then recomputed client-side on incident resolution
+- [04-03]: useAckTimer uses @vueuse/core useIntervalFn for automatic cleanup on unmount
+- [04-03]: StatusPipeline maps TRIAGED to REPORTED display label (dispatch context)
+- [04-03]: IncidentDetailPanel fetches nearby units via direct fetch() to Wayfinder URL (GET JSON endpoint)
 
 ### Roadmap Evolution
 
@@ -144,6 +150,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-13T00:22:13Z
-Stopped at: Completed 04-02-PLAN.md
+Last session: 2026-03-13T00:34:31Z
+Stopped at: Completed 04-03-PLAN.md
 Resume file: None

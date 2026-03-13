@@ -39,7 +39,7 @@
 - [x] **DSPTCH-05**: Dispatcher can select incident from queue or map and assign one or more available units
 - [x] **DSPTCH-06**: System ranks available units by proximity using PostGIS ST_DWithin; displays distance and ETA (Mapbox Directions API, stubbed)
 - [x] **DSPTCH-07**: Assignment pushed to responder via WebSocket with full incident payload
-- [ ] **DSPTCH-08**: 90-second acknowledgement timer starts on assignment; visual countdown and audio alert on expiry with reassign/escalate suggestion
+- [x] **DSPTCH-08**: 90-second acknowledgement timer starts on assignment; visual countdown and audio alert on expiry with reassign/escalate suggestion
 - [x] **DSPTCH-09**: Audio alerts via Web Audio API with distinct tones per priority level; P1 triggers red screen flash
 - [x] **DSPTCH-10**: Session metrics displayed in console header: total incidents, triaged/pending, active incidents, units available/deployed, average handle time
 - [x] **DSPTCH-11**: Mutual aid modal with suggested agencies (BFP, PNP, DSWD, adjacent LGU, DOH) based on incident type; contact info, radio channel, and request logged to timeline
@@ -136,7 +136,7 @@
 | DSPTCH-05 | Phase 4 | Complete |
 | DSPTCH-06 | Phase 4 | Complete |
 | DSPTCH-07 | Phase 4 | Complete |
-| DSPTCH-08 | Phase 4 | Pending |
+| DSPTCH-08 | Phase 4 | Complete |
 | DSPTCH-09 | Phase 4 | Complete |
 | DSPTCH-10 | Phase 4 | Complete |
 | DSPTCH-11 | Phase 4 | Complete |
