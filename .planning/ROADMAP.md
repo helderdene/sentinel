@@ -107,7 +107,7 @@ Plans:
 - [x] 05-01-PLAN.md -- Backend foundation: ResponderController (10 endpoints), IncidentOutcome/ResourceType enums, ChecklistUpdated/ResourceRequested events, DomPDF install, PDF job, hospital config, tests
 - [x] 05-02-PLAN.md -- Frontend foundation: TypeScript types, useResponderSession/useGpsTracking composables, ResponderLayout, Station.vue, tab bar, standby screen, status button
 - [x] 05-03-PLAN.md -- Scene documentation and messaging: SceneTab accordion (checklist, vitals, tags), ChatTab (quick-reply chips, free text), MessageBanner
-- [ ] 05-04-PLAN.md -- Assignment notification, navigation, closure: AssignmentNotification (audio + countdown), NavTab (MapLibre mini-map), OutcomeSheet, ResourceRequestModal, ClosureSummary, visual verification
+- [x] 05-04-PLAN.md -- Assignment notification, navigation, closure: AssignmentNotification (audio + countdown), NavTab (MapLibre mini-map), OutcomeSheet, ResourceRequestModal, ClosureSummary, visual verification
 
 ### Phase 6: Integration Layer
 **Goal**: All external API integrations are architecturally wired behind PHP interfaces with working stub implementations, ready to swap for real connectors when API agreements are in place
@@ -122,8 +122,8 @@ Plans:
 
 Plans:
 - [x] 06-01-PLAN.md -- Architecture foundation: centralized config, SmsParser + Directions interfaces, stubs, controller retrofits, architecture test
-- [ ] 06-02-PLAN.md -- PAGASA Weather + Hospital EHR: weather advisory interface with 3-level system, FHIR R4 pre-notification interface with Patient/Encounter/Observation stubs
-- [ ] 06-03-PLAN.md -- Government agencies: NDRRMC SitRep XML interface, BFP bidirectional fire sync interface, PNP e-Blotter 5W1H interface with stubs
+- [x] 06-02-PLAN.md -- PAGASA Weather + Hospital EHR: weather advisory interface with 3-level system, FHIR R4 pre-notification interface with Patient/Encounter/Observation stubs
+- [x] 06-03-PLAN.md -- Government agencies: NDRRMC SitRep XML interface, BFP bidirectional fire sync interface, PNP e-Blotter 5W1H interface with stubs
 
 ### Phase 7: Analytics
 **Goal**: Supervisors and the Mayor's Office can view operational KPIs, identify incident hotspots on a heatmap, and generate compliance reports required by DILG and NDRRMC
@@ -134,12 +134,12 @@ Plans:
   2. An incident heatmap renders a choropleth map colored by incident density per barangay with filters for type, priority, and date range (30/90/365 days); the map is exportable as PNG
   3. On the 1st of each month, the system auto-generates a DILG monthly incident report (PDF + CSV) aggregating incidents by type, priority, barangay, and outcome
   4. On P1 incident closure, an NDRRMC Situation Report is auto-generated (stubbed XML submission with PDF email fallback); quarterly and annual performance reports with trend analysis are available on demand as PDF
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 07-01: TBD
-- [ ] 07-02: TBD
-- [ ] 07-03: TBD
+- [ ] 07-01-PLAN.md -- Backend foundation: AnalyticsService for KPI computation, AnalyticsController with Inertia pages and JSON API endpoints, GeneratedReport model, role-gated routes, tests
+- [ ] 07-02-PLAN.md -- Frontend dashboard and heatmap: Chart.js sparklines and line charts, MapLibre choropleth, filter bar with URL sync, Reports download center UI
+- [ ] 07-03-PLAN.md -- Report generation: DILG monthly (scheduled), NDRRMC SitRep (P1 auto-hook), quarterly and annual (on-demand), PDF Blade templates, league/csv
 
 ### Phase 8: Implement operator role and intake layer UI
 **Goal**: Operators can log in and land directly on a full-screen intake station where they triage incoming incidents from a live feed, classify them with priority and location, and push them to the dispatch queue -- all in real-time with WebSocket updates
@@ -178,7 +178,7 @@ Plans:
 Plans:
 - [x] 09-01-PLAN.md -- Backend API: migrations (tracking_token, show_in_public_app), CitizenReportController, API Resources, rate limiting, CORS, admin toggle, tests
 - [x] 09-02-PLAN.md -- Report app scaffold: Vue 3 SPA setup, Vite config, Vue Router, design tokens, composables (useApi, useGeolocation, useReportStorage), shared components
-- [ ] 09-03-PLAN.md -- Report app views: HomeView, ReportTypeView, ReportDetailsView, ReportConfirmView, MyReportsView, TrackReportView, AboutView, visual verification
+- [x] 09-03-PLAN.md -- Report app views: HomeView, ReportTypeView, ReportDetailsView, ReportConfirmView, MyReportsView, TrackReportView, AboutView, visual verification
 
 ## Progress
 
