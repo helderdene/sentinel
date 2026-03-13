@@ -20,7 +20,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 6: Integration Layer** - Stubbed external connectors (SMS, geocoding, directions, weather, hospital, government agencies)
 - [ ] **Phase 7: Analytics** - KPI dashboard, incident heatmap, DILG/NDRRMC/quarterly/annual compliance reports
 - [x] **Phase 8: Operator Role & Intake Station** - 5th role (operator), TRIAGED status, full-screen intake station UI with design system (completed 2026-03-13)
-- [ ] **Phase 9: Public Citizen Reporting App** - Mobile-first Vue SPA for citizens to report emergencies, track status via token, integrated with existing intake pipeline
+- [x] **Phase 9: Public Citizen Reporting App** - Mobile-first Vue SPA for citizens to report emergencies, track status via token, integrated with existing intake pipeline (completed 2026-03-13)
 
 ## Phase Details
 
@@ -197,4 +197,4 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 6. Integration Layer | 0/3 | Not started | - |
 | 7. Analytics | 0/3 | Not started | - |
 | 8. Operator Role & Intake Station | 4/4 | Complete | 2026-03-13 |
-| 9. Public Citizen Reporting App | 2/3 | In progress | - |
+| 9. Public Citizen Reporting App | 3/3 | Complete   | 2026-03-13 |
