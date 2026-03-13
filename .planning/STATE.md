@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 04-01-PLAN.md
-last_updated: "2026-03-13T00:13:52.596Z"
-last_activity: "2026-03-13 — Completed 04-01: Dispatch backend with controller, proximity service, agencies, and tests"
+stopped_at: Completed 04-02-PLAN.md
+last_updated: "2026-03-13T00:22:13Z"
+last_activity: "2026-03-13 — Completed 04-02: Dispatch console map with MapLibre, alert system, layout shell"
 progress:
   total_phases: 8
   completed_phases: 4
   total_plans: 16
-  completed_plans: 13
-  percent: 81
+  completed_plans: 14
+  percent: 88
 ---
 
 # Project State
@@ -26,17 +26,17 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 ## Current Position
 
 Phase: 4 of 8 (Dispatch Console)
-Plan: 1 of 4 in current phase (COMPLETE)
-Status: 13 of 16 plans complete
-Last activity: 2026-03-13 — Completed 04-01: Dispatch backend with controller, proximity service, agencies, and tests
+Plan: 2 of 4 in current phase (COMPLETE)
+Status: 14 of 16 plans complete
+Last activity: 2026-03-13 — Completed 04-02: Dispatch console map with MapLibre, alert system, layout shell
 
-Progress: [████████--] 81%
+Progress: [█████████-] 88%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 12
-- Average duration: 18min
+- Total plans completed: 13
+- Average duration: 17min
 - Total execution time: 3.6 hours
 
 **By Phase:**
@@ -49,7 +49,7 @@ Progress: [████████--] 81%
 | 8. Operator & Intake UI | 4/4 | 70min | 18min |
 
 **Recent Trend:**
-- Last 5 plans: 03-02 (18min), 08-02 (7min), 08-03 (7min), 08-04 (45min), 04-01 (7min)
+- Last 5 plans: 08-02 (7min), 08-03 (7min), 08-04 (45min), 04-01 (7min), 04-02 (7min)
 - Trend: Steady
 
 *Updated after each plan completion*
@@ -58,6 +58,7 @@ Progress: [████████--] 81%
 | Phase 08 P03 | 7min | 2 tasks | 8 files |
 | Phase 08 P04 | 45min | 3 tasks | 20 files |
 | Phase 04 P01 | 7min | 2 tasks | 26 files |
+| Phase 04 P02 | 7min | 2 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -121,6 +122,10 @@ Recent decisions affecting current work:
 - [Phase 04]: Forward-only status transitions enforced via allowedTransitions map
 - [Phase 04]: incident_unit pivot with unassigned_at null filter for active-only queries
 - [Phase 04]: Route renamed dispatch.index to dispatch.console for semantic clarity
+- [04-02]: MapLibre Map type aliased as MaplibreMap to avoid native JS Map collision
+- [04-02]: DispatchLayout uses provide/inject (matching IntakeLayout) since Inertia defineOptions layout does not receive page props
+- [04-02]: Console.vue manages panel layout directly as flex siblings
+- [04-02]: useDispatchMap stores GeoJSON in closure for style-switch re-application
 
 ### Roadmap Evolution
 
@@ -133,12 +138,12 @@ None yet.
 ### Blockers/Concerns
 
 - [Phase 3]: @laravel/echo-vue installed successfully (blocker resolved)
-- [Phase 4]: MapLibre v5 updateData() with vue-maplibre-gl needs hands-on validation before committing
+- [Phase 4]: MapLibre v5 updateData() validated -- using direct maplibre-gl (no vue-maplibre-gl wrapper) for maximum control
 - [Phase 6]: Semaphore SMS API docs need verification when phase begins — no maintained Laravel package
 - [Phase 7]: NDRRMC SitRep XML schema and DILG monthly report format not publicly documented — need agency contact
 
 ## Session Continuity
 
-Last session: 2026-03-13T00:13:47.242Z
-Stopped at: Completed 04-01-PLAN.md
+Last session: 2026-03-13T00:22:13Z
+Stopped at: Completed 04-02-PLAN.md
 Resume file: None
