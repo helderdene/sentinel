@@ -4,6 +4,7 @@ use App\Http\Controllers\DispatchConsoleController;
 use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\IntakeStationController;
 use App\Http\Controllers\IoTWebhookController;
+use App\Http\Controllers\ResponderController;
 use App\Http\Controllers\SmsWebhookController;
 use App\Http\Controllers\StateSyncController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -71,14 +72,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Responder routes
     Route::middleware(['role:responder'])->group(function () {
-        Route::inertia('assignment', 'placeholder/ComingSoon', [
-            'title' => 'Active Assignment',
-            'description' => 'Receive and manage your current incident assignment. Coming in Phase 5.',
-        ])->name('assignment.index');
+        Route::get('responder', [ResponderController::class, 'show'])->name('responder.station');
+        Route::post('responder/{incident}/acknowledge', [ResponderController::class, 'acknowledge'])->name('responder.acknowledge');
+        Route::post('responder/{incident}/advance-status', [ResponderController::class, 'advanceStatus'])->name('responder.advance-status');
+        Route::post('responder/location', [ResponderController::class, 'updateLocation'])->name('responder.update-location');
+        Route::post('responder/{incident}/message', [ResponderController::class, 'sendMessage'])->name('responder.send-message');
+        Route::patch('responder/{incident}/checklist', [ResponderController::class, 'updateChecklist'])->name('responder.update-checklist');
+        Route::patch('responder/{incident}/vitals', [ResponderController::class, 'updateVitals'])->name('responder.update-vitals');
+        Route::patch('responder/{incident}/assessment-tags', [ResponderController::class, 'updateAssessmentTags'])->name('responder.update-assessment-tags');
+        Route::post('responder/{incident}/resolve', [ResponderController::class, 'resolve'])->name('responder.resolve');
+        Route::post('responder/{incident}/request-resource', [ResponderController::class, 'requestResource'])->name('responder.request-resource');
 
+        // Backward-compatible aliases for placeholder routes replaced by responder.station
+        Route::get('assignment', [ResponderController::class, 'show'])->name('assignment.index');
         Route::inertia('my-incidents', 'placeholder/ComingSoon', [
             'title' => 'My Incidents',
-            'description' => 'History of your incident responses. Coming in Phase 5.',
+            'description' => 'History of your incident responses. Coming soon.',
         ])->name('my-incidents.index');
     });
 

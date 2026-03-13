@@ -53,6 +53,8 @@ class Incident extends Model
         'assessment_tags',
         'closure_notes',
         'report_pdf_url',
+        'resolving_at',
+        'checklist_data',
         'created_by',
     ];
 
@@ -74,9 +76,11 @@ class Incident extends Model
             'acknowledged_at' => 'datetime',
             'en_route_at' => 'datetime',
             'on_scene_at' => 'datetime',
+            'resolving_at' => 'datetime',
             'resolved_at' => 'datetime',
             'scene_time_sec' => 'integer',
             'checklist_pct' => 'integer',
+            'checklist_data' => 'array',
         ];
     }
 
