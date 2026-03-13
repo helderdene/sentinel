@@ -2,14 +2,25 @@
 import { useIntervalFn } from '@vueuse/core';
 import type { ComputedRef, Ref } from 'vue';
 import { computed, inject, ref, watch } from 'vue';
+import {
+    acknowledge as acknowledgeAction,
+    advanceStatus as advanceStatusAction,
+} from '@/actions/App/Http/Controllers/ResponderController';
+import AssignmentNotification from '@/components/responder/AssignmentNotification.vue';
+import AssignmentTab from '@/components/responder/AssignmentTab.vue';
 import ChatTab from '@/components/responder/ChatTab.vue';
+import ClosureSummary from '@/components/responder/ClosureSummary.vue';
 import MessageBanner from '@/components/responder/MessageBanner.vue';
+import NavTab from '@/components/responder/NavTab.vue';
+import OutcomeSheet from '@/components/responder/OutcomeSheet.vue';
+import ResourceRequestModal from '@/components/responder/ResourceRequestModal.vue';
 import SceneTab from '@/components/responder/SceneTab.vue';
 import StandbyScreen from '@/components/responder/StandbyScreen.vue';
 import { useGpsTracking } from '@/composables/useGpsTracking';
 import { useResponderSession } from '@/composables/useResponderSession';
 import ResponderLayout from '@/layouts/ResponderLayout.vue';
 import type {
+    AssignmentPayload,
     Hospital,
     IncidentMessageItem,
     IncidentStatus,
@@ -183,8 +194,17 @@ watch(layoutActiveTab!, (tab) => {
     session.setActiveTab(tab);
 });
 
-function handleAdvance(): void {
-    if (!session.currentStatus.value) {
+function getXsrfToken(): string {
+    return decodeURIComponent(
+        document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('XSRF-TOKEN='))
+            ?.split('=')[1] ?? '',
+    );
+}
+
+async function handleAdvance(): Promise<void> {
+    if (!session.currentStatus.value || !session.activeIncident.value) {
         return;
     }
 
@@ -197,12 +217,65 @@ function handleAdvance(): void {
 
     const next = transitions[session.currentStatus.value];
 
-    if (next) {
-        if (next === 'ACKNOWLEDGED') {
-            session.acknowledgeAssignment();
-        } else {
+    if (!next) {
+        return;
+    }
+
+    if (next === 'ACKNOWLEDGED') {
+        handleAcknowledgeFromButton();
+    } else if (next === 'RESOLVING') {
+        session.showOutcomeSheet.value = true;
+    } else {
+        try {
+            const route = advanceStatusAction({
+                incident: String(session.activeIncident.value.id),
+            });
+
+            await fetch(route.url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-XSRF-TOKEN': getXsrfToken(),
+                },
+                body: JSON.stringify({ status: next }),
+            });
+
             session.advanceStatus(next);
+        } catch {
+            // Silent fail for status advance
         }
+    }
+}
+
+async function handleAcknowledgeFromButton(): Promise<void> {
+    if (!session.activeIncident.value) {
+        return;
+    }
+
+    try {
+        const route = acknowledgeAction({
+            incident: String(session.activeIncident.value.id),
+        });
+
+        await fetch(route.url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-XSRF-TOKEN': getXsrfToken(),
+            },
+            body: JSON.stringify({
+                unit_id: props.unit.id,
+            }),
+        });
+
+        session.acknowledgeAssignment();
+        gps.start();
+    } catch {
+        // Silent fail
     }
 }
 
@@ -216,6 +289,53 @@ if (layoutOnAdvance) {
 
 if (layoutOnShowOutcomeSheet) {
     layoutOnShowOutcomeSheet.value = handleShowOutcomeSheet;
+}
+
+const assignmentPayload = computed<AssignmentPayload | null>(() => {
+    const inc = session.activeIncident.value;
+
+    if (!inc) {
+        return null;
+    }
+
+    return {
+        id: inc.id,
+        incident_no: inc.incident_no,
+        priority: inc.priority,
+        status: inc.status,
+        incident_type: inc.incident_type.name,
+        location_text: inc.location_text,
+        barangay: inc.barangay?.name ?? null,
+        coordinates: inc.coordinates,
+        notes: inc.notes,
+        unit_id: props.unit.id,
+    };
+});
+
+function handleAcknowledged(): void {
+    session.acknowledgeAssignment();
+    gps.start();
+}
+
+function handleOutcomeResolved(): void {
+    session.showOutcomeSheet.value = false;
+    session.advanceStatus('RESOLVED');
+    session.showClosureSummary.value = true;
+}
+
+function handleClosureDone(): void {
+    session.resetAfterClosure();
+    gps.stop();
+}
+
+const showResourceModal = ref(false);
+
+function handleShowResourceModal(): void {
+    showResourceModal.value = true;
+}
+
+function handleResourceModalClose(): void {
+    showResourceModal.value = false;
 }
 
 // MessageBanner state
@@ -267,19 +387,15 @@ function handleMessagesRead(): void {
             :connection-status="connectionStatusValue"
         />
 
-        <!-- Assignment notification placeholder -->
-        <div
-            v-else-if="session.showAssignmentNotification.value"
-            class="flex flex-1 items-center justify-center p-6"
-        >
-            <div
-                class="rounded-xl border border-t-border bg-t-surface p-6 text-center shadow-lg"
-            >
-                <p class="font-mono text-sm font-semibold text-t-text-dim">
-                    Assignment notification coming in Plan 04
-                </p>
-            </div>
-        </div>
+        <!-- Full-screen assignment notification -->
+        <AssignmentNotification
+            v-else-if="
+                session.showAssignmentNotification.value && assignmentPayload
+            "
+            :incident="assignmentPayload"
+            :user-id="props.userId"
+            @acknowledged="handleAcknowledged"
+        />
 
         <!-- Active incident: tab content -->
         <template v-else>
@@ -291,31 +407,24 @@ function handleMessagesRead(): void {
                 @go-to-chat="goToChat"
             />
 
-            <div
-                v-if="session.activeTab.value === 'assignment'"
-                class="flex flex-1 items-center justify-center p-6"
-            >
-                <div
-                    class="rounded-xl border border-t-border bg-t-surface p-6 text-center"
-                >
-                    <p class="font-mono text-sm font-semibold text-t-text-dim">
-                        Assignment tab content (Plan 04)
-                    </p>
-                </div>
-            </div>
+            <AssignmentTab
+                v-if="
+                    session.activeTab.value === 'assignment' &&
+                    session.activeIncident.value
+                "
+                :incident="session.activeIncident.value"
+                @show-resource-modal="handleShowResourceModal"
+            />
 
-            <div
-                v-else-if="session.activeTab.value === 'nav'"
-                class="flex flex-1 items-center justify-center p-6"
-            >
-                <div
-                    class="rounded-xl border border-t-border bg-t-surface p-6 text-center"
-                >
-                    <p class="font-mono text-sm font-semibold text-t-text-dim">
-                        Navigation tab (Plan 04)
-                    </p>
-                </div>
-            </div>
+            <NavTab
+                v-else-if="
+                    session.activeTab.value === 'nav' &&
+                    session.activeIncident.value
+                "
+                :incident="session.activeIncident.value"
+                :gps-position="gps.position.value"
+                :unit-callsign="session.unit.value.callsign"
+            />
 
             <SceneTab
                 v-else-if="
@@ -336,5 +445,33 @@ function handleMessagesRead(): void {
                 @messages-read="handleMessagesRead"
             />
         </template>
+
+        <!-- Outcome bottom sheet -->
+        <OutcomeSheet
+            v-if="session.activeIncident.value"
+            :incident-id="session.activeIncident.value.id"
+            :is-open="session.showOutcomeSheet.value"
+            :hospitals="props.hospitals"
+            @close="session.showOutcomeSheet.value = false"
+            @resolved="handleOutcomeResolved"
+        />
+
+        <!-- Resource request modal -->
+        <ResourceRequestModal
+            v-if="session.activeIncident.value"
+            :incident-id="session.activeIncident.value.id"
+            :is-open="showResourceModal"
+            @close="handleResourceModalClose"
+            @requested="handleResourceModalClose"
+        />
+
+        <!-- Post-closure summary -->
+        <ClosureSummary
+            v-if="
+                session.showClosureSummary.value && session.activeIncident.value
+            "
+            :incident="session.activeIncident.value"
+            @done="handleClosureDone"
+        />
     </div>
 </template>
