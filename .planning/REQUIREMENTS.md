@@ -81,15 +81,15 @@
 
 ### Citizen Reporting
 
-- [ ] **CITIZEN-01**: Citizen can submit emergency report without authentication via mobile-first web app; report creates Incident with channel='app', status=PENDING
-- [ ] **CITIZEN-02**: Each citizen report generates a unique 8-character URL-safe tracking token (uppercase alphanumeric, no ambiguous chars); token stored on incident record
-- [ ] **CITIZEN-03**: Citizen can track report status by entering tracking token; lookup returns citizen-facing status without exposing internal INC number
-- [ ] **CITIZEN-04**: Curated subset of incident types shown as visual card grid; admin-configurable via show_in_public_app boolean on incident_types table; "Other Emergency" always visible
-- [ ] **CITIZEN-05**: GPS geolocation requested from device; if granted, auto-detect coordinates + PostGIS barangay lookup; if denied, fallback to manual barangay dropdown + address text
-- [ ] **CITIZEN-06**: Citizen report flows directly into operator intake feed via existing IncidentCreated broadcast event; operators triage as normal
+- [x] **CITIZEN-01**: Citizen can submit emergency report without authentication via mobile-first web app; report creates Incident with channel='app', status=PENDING
+- [x] **CITIZEN-02**: Each citizen report generates a unique 8-character URL-safe tracking token (uppercase alphanumeric, no ambiguous chars); token stored on incident record
+- [x] **CITIZEN-03**: Citizen can track report status by entering tracking token; lookup returns citizen-facing status without exposing internal INC number
+- [x] **CITIZEN-04**: Curated subset of incident types shown as visual card grid; admin-configurable via show_in_public_app boolean on incident_types table; "Other Emergency" always visible
+- [x] **CITIZEN-05**: GPS geolocation requested from device; if granted, auto-detect coordinates + PostGIS barangay lookup; if denied, fallback to manual barangay dropdown + address text
+- [x] **CITIZEN-06**: Citizen report flows directly into operator intake feed via existing IncidentCreated broadcast event; operators triage as normal
 - [x] **CITIZEN-07**: Submitted reports stored in browser localStorage for "My Reports" tab; status refreshed on page visit (poll on visit, no WebSocket)
 - [x] **CITIZEN-08**: Citizen-facing status mapping: PENDING -> Received, TRIAGED -> Verified, DISPATCHED/ACKNOWLEDGED/EN_ROUTE/ON_SCENE/RESOLVING -> Dispatched, RESOLVED -> Resolved
-- [ ] **CITIZEN-09**: Public API endpoints under /api/v1/citizen/* with rate limiting (5 submissions/min, 60 reads/min per IP) and CORS configuration
+- [x] **CITIZEN-09**: Public API endpoints under /api/v1/citizen/* with rate limiting (5 submissions/min, 60 reads/min per IP) and CORS configuration
 - [x] **CITIZEN-10**: Report app is a standalone Vue 3 SPA in /report-app/ monorepo subfolder with shared design tokens (DM Sans, Space Mono, color system); mobile-first matching HTML prototype
 
 ## v2 Requirements
@@ -179,15 +179,15 @@
 | ANLTCS-04 | Phase 7 | Pending |
 | ANLTCS-05 | Phase 7 | Pending |
 | ANLTCS-06 | Phase 7 | Pending |
-| CITIZEN-01 | Phase 9 | Pending |
-| CITIZEN-02 | Phase 9 | Pending |
-| CITIZEN-03 | Phase 9 | Pending |
-| CITIZEN-04 | Phase 9 | Pending |
-| CITIZEN-05 | Phase 9 | Pending |
-| CITIZEN-06 | Phase 9 | Pending |
+| CITIZEN-01 | Phase 9 | Complete |
+| CITIZEN-02 | Phase 9 | Complete |
+| CITIZEN-03 | Phase 9 | Complete |
+| CITIZEN-04 | Phase 9 | Complete |
+| CITIZEN-05 | Phase 9 | Complete |
+| CITIZEN-06 | Phase 9 | Complete |
 | CITIZEN-07 | Phase 9 | Complete |
 | CITIZEN-08 | Phase 9 | Complete |
-| CITIZEN-09 | Phase 9 | Pending |
+| CITIZEN-09 | Phase 9 | Complete |
 | CITIZEN-10 | Phase 9 | Complete |
 
 **Coverage:**

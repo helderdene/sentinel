@@ -63,7 +63,7 @@ Progress: [█████████░] 95%
 | Phase 04 P02 | 7min | 2 tasks | 10 files |
 | Phase 04 P03 | 8min | 2 tasks | 12 files |
 | Phase 04 P04 | 15min | 2 tasks | 13 files |
-| Phase 09 P01 | 7min | 2 tasks | 20 files |
+| Phase 09 P01 | 10min | 3 tasks | 19 files |
 | Phase 09 P02 | 5min | 2 tasks | 33 files |
 
 ## Accumulated Context
@@ -142,6 +142,11 @@ Recent decisions affecting current work:
 - [04-04]: MutualAidModal filters agencies by incident_type match for type-based suggestions with star highlight
 - [04-04]: State-sync on WebSocket reconnection replaces full localIncidents and localUnits arrays from server
 - [04-04]: Console.vue uses local reactive copies of Inertia props so WebSocket mutations are reflected immediately
+- [09-01]: 30-char unambiguous alphabet (no O/I/L/0/1) for citizen tracking tokens
+- [09-01]: incidentTypes() uses orWhere code=OTHER_EMERGENCY instead of scopePublic alone to always include catch-all type
+- [09-01]: Citizen description stored in notes field for consistency with existing Incident model
+- [09-01]: Rate limiters defined in AppServiceProvider::configureRateLimiters() following existing boot pattern
+- [09-01]: API versioning: /api/v1/citizen/* route group with dedicated controller namespace Api\V1
 - [09-02]: System-aware dark mode via prefers-color-scheme media query (not .dark class selector) for citizen app
 - [09-02]: Module-scoped refs in useReportDraft for shared state across 3-step report flow without Pinia
 - [09-02]: Vite dev server on port 5174 with proxy to irms.test for development API calls
@@ -164,6 +169,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-13T07:49:30Z
-Stopped at: Completed 09-02-PLAN.md
+Last session: 2026-03-13T07:54:39Z
+Stopped at: Re-executed 09-01-PLAN.md (backend API with new commits d577431, 3ac483e, 172786d)
 Resume file: .planning/phases/09-create-a-public-facing-reporting-app/09-03-PLAN.md
