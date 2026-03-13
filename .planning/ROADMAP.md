@@ -21,7 +21,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 7: Analytics** - KPI dashboard, incident heatmap, DILG/NDRRMC/quarterly/annual compliance reports (completed 2026-03-13)
 - [x] **Phase 8: Operator Role & Intake Station** - 5th role (operator), TRIAGED status, full-screen intake station UI with design system (completed 2026-03-13)
 - [x] **Phase 9: Public Citizen Reporting App** - Mobile-first Vue SPA for citizens to report emergencies, track status via token, integrated with existing intake pipeline (completed 2026-03-13)
-- [x] **Phase 10: Design System Alignment** - Restyle all pages to match IRMS Intake Design System: CSS variable remapping, auth branding, sidebar restyling, data tables, token alignment (gap closure in progress) (completed 2026-03-13)
+- [x] **Phase 10: Design System Alignment** - Restyle all pages to match IRMS Intake Design System: CSS variable remapping, auth branding, sidebar restyling, data tables, token alignment (completed 2026-03-13)
+- [ ] **Phase 11: Implement Units CRUD** - Admin CRUD for managing response units with auto-generated IDs, crew assignment, decommission/recommission
 
 ## Phase Details
 
@@ -199,7 +200,26 @@ Plans:
 - [x] 10-02-PLAN.md -- Sidebar and shared components: AppLogo CDRRMO branding, NavMain Space Mono labels, AppSidebarLayout bg-t-bg content area, Dashboard and Settings restyling
 - [x] 10-03-PLAN.md -- Admin data tables and incidents: Design system table pattern for 6 admin pages, role badges with color-mix(), 4 incidents pages token alignment
 - [x] 10-04-PLAN.md -- Analytics, dispatch, responder: Analytics full treatment, dispatch/responder token-only alignment, visual verification checkpoint
-- [ ] 10-05-PLAN.md -- Gap closure: Replace residual hardcoded neutral-*/color-* classes in TextLink, TwoFactorChallenge, ReportRow, PrioritySelector, IncidentTimeline with design system tokens
+- [x] 10-05-PLAN.md -- Gap closure: Replace residual hardcoded neutral-*/color-* classes in TextLink, TwoFactorChallenge, ReportRow, PrioritySelector, IncidentTimeline with design system tokens
+
+### Phase 11: Implement Units CRUD
+**Goal**: Admins can manage response units (AMB-01, FIRE-01, etc.) through a full CRUD interface with auto-generated IDs, crew assignment, decommission/recommission, and design system styling -- replacing the current "Coming Soon" placeholder
+**Depends on**: Phase 10
+**Requirements**: UNIT-01, UNIT-02, UNIT-03, UNIT-04, UNIT-05, UNIT-06, UNIT-07, UNIT-08, UNIT-09
+**Success Criteria** (what must be TRUE):
+  1. An admin can list all units in a data table with type badges, status badges (matching dispatch map colors), crew count (2/4 format), and agency
+  2. An admin can create a unit by selecting a type; the system auto-generates the ID (AMB-01, FIRE-02) and default callsign
+  3. An admin can edit unit callsign, agency, crew capacity, status (Available/Offline only), shift, and crew assignment
+  4. Decommissioning a unit sets decommissioned_at timestamp, unassigns all crew, and shows the unit with muted styling and "Decommissioned" badge
+  5. Recommissioning restores a decommissioned unit to Available status
+  6. Crew assignment via inline multi-select syncs User.unit_id bidirectionally; soft warning when crew exceeds capacity (save not blocked)
+  7. Non-admin users receive 403 on admin unit routes
+  8. Decommissioned units are excluded from dispatch console, state sync, and user form unit dropdowns
+**Plans**: 2 plans
+
+Plans:
+- [ ] 11-01-PLAN.md -- Backend: migration (decommissioned_at), AdminUnitController, form requests, routes, sidebar update, dispatch query filtering, tests
+- [ ] 11-02-PLAN.md -- Frontend: Units.vue index table with type/status badges, UnitForm.vue with crew multi-select, decommission/recommission UI
 
 ## Progress
 
@@ -208,6 +228,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 (Phase 8 depends on Phases 2 and 3, can run before Phases 4-7)
 (Phase 9 depends on Phases 2 and 8)
 (Phase 10 depends on Phase 9)
+(Phase 11 depends on Phase 10)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -221,3 +242,4 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 8. Operator Role & Intake Station | 4/4 | Complete | 2026-03-13 |
 | 9. Public Citizen Reporting App | 3/3 | Complete   | 2026-03-13 |
 | 10. Design System Alignment | 5/5 | Complete    | 2026-03-13 |
+| 11. Implement Units CRUD | 0/2 | In Progress | - |
