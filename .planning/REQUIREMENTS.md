@@ -66,9 +66,9 @@
 - [x] **INTGR-04**: Stubbed Semaphore SMS connector for inbound parsing and outbound acknowledgement/status messages
 - [x] **INTGR-05**: Stubbed PAGASA Weather connector for rainfall, wind, and flood advisory overlay data
 - [x] **INTGR-06**: Stubbed Hospital EHR connector (HL7 FHIR R4) for patient pre-notification on transport outcome
-- [ ] **INTGR-07**: Stubbed NDRRMC connector for SitRep XML submission on P1 closure
-- [ ] **INTGR-08**: Stubbed BFP connector for bidirectional fire incident sync
-- [ ] **INTGR-09**: Stubbed PNP e-Blotter connector for criminal incident auto-blotter entry
+- [x] **INTGR-07**: Stubbed NDRRMC connector for SitRep XML submission on P1 closure
+- [x] **INTGR-08**: Stubbed BFP connector for bidirectional fire incident sync
+- [x] **INTGR-09**: Stubbed PNP e-Blotter connector for criminal incident auto-blotter entry
 
 ### Analytics
 
@@ -170,9 +170,9 @@
 | INTGR-04 | Phase 6 | Complete |
 | INTGR-05 | Phase 6 | Complete |
 | INTGR-06 | Phase 6 | Complete |
-| INTGR-07 | Phase 6 | Pending |
-| INTGR-08 | Phase 6 | Pending |
-| INTGR-09 | Phase 6 | Pending |
+| INTGR-07 | Phase 6 | Complete |
+| INTGR-08 | Phase 6 | Complete |
+| INTGR-09 | Phase 6 | Complete |
 | ANLTCS-01 | Phase 7 | Pending |
 | ANLTCS-02 | Phase 7 | Pending |
 | ANLTCS-03 | Phase 7 | Pending |
