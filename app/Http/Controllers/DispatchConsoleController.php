@@ -9,15 +9,18 @@ use App\Enums\IncidentStatus;
 use App\Enums\UnitStatus;
 use App\Events\AssignmentPushed;
 use App\Events\IncidentStatusChanged;
+use App\Events\MessageSent;
 use App\Events\MutualAidRequested;
 use App\Events\UnitStatusChanged;
 use App\Http\Requests\AdvanceStatusRequest;
 use App\Http\Requests\AssignUnitRequest;
 use App\Http\Requests\MutualAidRequest;
+use App\Http\Requests\SendMessageRequest;
 use App\Http\Requests\UnassignUnitRequest;
 use App\Models\Agency;
 use App\Models\Incident;
 use App\Models\Unit;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -289,6 +292,36 @@ class DispatchConsoleController extends Controller
         );
 
         return response()->json(['message' => 'Mutual aid request sent.']);
+    }
+
+    /**
+     * Send a message from dispatch to an incident's communication channel.
+     */
+    public function sendMessage(SendMessageRequest $request, Incident $incident): JsonResponse
+    {
+        /** @var User $user */
+        $user = $request->user();
+
+        $message = $incident->messages()->create([
+            'sender_type' => User::class,
+            'sender_id' => $user->id,
+            'body' => $request->validated('body'),
+            'message_type' => 'text',
+            'is_quick_reply' => $request->validated('is_quick_reply', false),
+        ]);
+
+        MessageSent::dispatch(
+            $incident->id,
+            $user->id,
+            $user->name,
+            $user->role->value,
+            null,
+            $message->body,
+            (bool) $message->is_quick_reply,
+            $message->id,
+        );
+
+        return response()->json(['message' => 'Message sent.']);
     }
 
     /**

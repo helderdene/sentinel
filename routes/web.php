@@ -47,6 +47,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('dispatch/{incident}/advance-status', [DispatchConsoleController::class, 'advanceStatus'])->name('dispatch.advance-status');
         Route::post('dispatch/{incident}/mutual-aid', [DispatchConsoleController::class, 'requestMutualAid'])->name('dispatch.mutual-aid');
         Route::get('dispatch/{incident}/nearby-units', [DispatchConsoleController::class, 'nearbyUnits'])->name('dispatch.nearby-units');
+        Route::post('dispatch/{incident}/message', [DispatchConsoleController::class, 'sendMessage'])->name('dispatch.send-message');
 
         Route::get('incidents/queue', [IncidentController::class, 'queue'])->name('incidents.queue');
         Route::get('incidents/create', [IncidentController::class, 'create'])->name('incidents.create');

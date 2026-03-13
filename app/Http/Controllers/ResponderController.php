@@ -211,11 +211,14 @@ class ResponderController extends Controller
         ]);
 
         MessageSent::dispatch(
-            0,
             $incident->id,
             $user->id,
             $user->name,
+            $user->role->value,
+            $user->unit?->callsign,
             $message->body,
+            (bool) $message->is_quick_reply,
+            $message->id,
         );
 
         return response()->json(['message' => 'Message sent.']);
