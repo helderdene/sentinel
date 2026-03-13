@@ -2,12 +2,16 @@
 
 namespace App\Providers;
 
+use App\Contracts\DirectionsServiceInterface;
 use App\Contracts\GeocodingServiceInterface;
 use App\Contracts\ProximityServiceInterface;
+use App\Contracts\SmsParserServiceInterface;
 use App\Contracts\SmsServiceInterface;
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Services\ProximityRankingService;
+use App\Services\SmsParserService;
+use App\Services\StubMapboxDirectionsService;
 use App\Services\StubMapboxGeocodingService;
 use App\Services\StubSemaphoreSmsService;
 use Carbon\CarbonImmutable;
@@ -30,6 +34,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(GeocodingServiceInterface::class, StubMapboxGeocodingService::class);
         $this->app->bind(ProximityServiceInterface::class, ProximityRankingService::class);
         $this->app->bind(SmsServiceInterface::class, StubSemaphoreSmsService::class);
+        $this->app->bind(SmsParserServiceInterface::class, SmsParserService::class);
+        $this->app->bind(DirectionsServiceInterface::class, StubMapboxDirectionsService::class);
     }
 
     /**

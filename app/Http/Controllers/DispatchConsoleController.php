@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\DirectionsServiceInterface;
 use App\Contracts\ProximityServiceInterface;
 use App\Enums\IncidentPriority;
 use App\Enums\IncidentStatus;
@@ -25,6 +26,7 @@ class DispatchConsoleController extends Controller
 {
     public function __construct(
         private ProximityServiceInterface $proximityService,
+        private DirectionsServiceInterface $directionsService,
     ) {}
 
     /**
@@ -305,9 +307,24 @@ class DispatchConsoleController extends Controller
             $coordinates->getLongitude(),
         );
 
-        $result = array_map(function ($unit) {
+        $incidentLat = $coordinates->getLatitude();
+        $incidentLng = $coordinates->getLongitude();
+
+        $result = array_map(function ($unit) use ($incidentLat, $incidentLng) {
             $distanceKm = round($unit->distance_meters / 1000, 2);
-            $etaMinutes = round(($distanceKm / 30) * 60, 1);
+
+            try {
+                $route = $this->directionsService->route(
+                    $unit->latitude,
+                    $unit->longitude,
+                    $incidentLat,
+                    $incidentLng,
+                );
+                $etaMinutes = round($route['duration_seconds'] / 60, 1);
+            } catch (\Throwable) {
+                // Fallback to straight-line calculation at 30km/h
+                $etaMinutes = round(($distanceKm / 30) * 60, 1);
+            }
 
             return [
                 'id' => $unit->id,

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\SmsParserServiceInterface;
 use App\Contracts\SmsServiceInterface;
 use App\Enums\IncidentChannel;
 use App\Enums\IncidentStatus;
@@ -10,14 +11,13 @@ use App\Models\Incident;
 use App\Models\IncidentTimeline;
 use App\Models\IncidentType;
 use App\Services\BarangayLookupService;
-use App\Services\SmsParserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class SmsWebhookController extends Controller
 {
     public function __construct(
-        private SmsParserService $smsParser,
+        private SmsParserServiceInterface $smsParser,
         private BarangayLookupService $barangayLookup,
         private SmsServiceInterface $smsService,
     ) {}

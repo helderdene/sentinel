@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
-class SmsParserService
+use App\Contracts\SmsParserServiceInterface;
+
+class SmsParserService implements SmsParserServiceInterface
 {
     /**
      * Classify an SMS message by scanning for keywords in config('sms.keyword_map').
