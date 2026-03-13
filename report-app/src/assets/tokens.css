@@ -1,0 +1,56 @@
+/* Design Tokens - Shared with IRMS main app */
+/* System-aware dark mode via prefers-color-scheme (no manual toggle) */
+
+:root {
+    /* Surfaces */
+    --t-bg: #f4f6f9;
+    --t-surface: #ffffff;
+    --t-surface-alt: #f8fafc;
+
+    /* Text */
+    --t-text: #0f172a;
+    --t-text-mid: #334155;
+    --t-text-dim: #64748b;
+    --t-text-faint: #94a3b8;
+
+    /* Borders */
+    --t-border: #e2e8f0;
+    --t-border-med: #cbd5e1;
+    --t-border-foc: #2563eb;
+
+    /* Brand & Accent */
+    --t-brand: #1e3a6e;
+    --t-accent: #2563eb;
+    --t-accent-lo: rgba(37, 99, 235, 0.08);
+
+    /* Priority */
+    --t-p1: #dc2626;
+    --t-p2: #ea580c;
+    --t-p3: #ca8a04;
+    --t-p4: #16a34a;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* Surfaces */
+        --t-bg: #0f172a;
+        --t-surface: #1e293b;
+        --t-surface-alt: #334155;
+
+        /* Text */
+        --t-text: #f8fafc;
+        --t-text-mid: #cbd5e1;
+        --t-text-dim: #94a3b8;
+        --t-text-faint: #64748b;
+
+        /* Borders */
+        --t-border: #334155;
+        --t-border-med: #475569;
+        --t-border-foc: #3b82f6;
+
+        /* Brand & Accent */
+        --t-brand: #93c5fd;
+        --t-accent: #3b82f6;
+        --t-accent-lo: rgba(59, 130, 246, 0.12);
+    }
+}
