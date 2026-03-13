@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: Dispatch Console** - 2D MapLibre map with WebGL markers, unit assignment, proximity ranking, audio alerts, session metrics (completed 2026-03-13)
 - [x] **Phase 5: Responder Workflow** - Mobile-optimized assignment receipt, status transitions, GPS tracking, scene documentation, messaging (completed 2026-03-13)
 - [x] **Phase 6: Integration Layer** - Stubbed external connectors (SMS, geocoding, directions, weather, hospital, government agencies) (completed 2026-03-13)
-- [ ] **Phase 7: Analytics** - KPI dashboard, incident heatmap, DILG/NDRRMC/quarterly/annual compliance reports
+- [x] **Phase 7: Analytics** - KPI dashboard, incident heatmap, DILG/NDRRMC/quarterly/annual compliance reports (completed 2026-03-13)
 - [x] **Phase 8: Operator Role & Intake Station** - 5th role (operator), TRIAGED status, full-screen intake station UI with design system (completed 2026-03-13)
 - [x] **Phase 9: Public Citizen Reporting App** - Mobile-first Vue SPA for citizens to report emergencies, track status via token, integrated with existing intake pipeline (completed 2026-03-13)
 
@@ -137,9 +137,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 07-01-PLAN.md -- Backend foundation: AnalyticsService for KPI computation, AnalyticsController with Inertia pages and JSON API endpoints, GeneratedReport model, role-gated routes, tests
-- [ ] 07-02-PLAN.md -- Frontend dashboard and heatmap: Chart.js sparklines and line charts, MapLibre choropleth, filter bar with URL sync, Reports download center UI
-- [ ] 07-03-PLAN.md -- Report generation: DILG monthly (scheduled), NDRRMC SitRep (P1 auto-hook), quarterly and annual (on-demand), PDF Blade templates, league/csv
+- [x] 07-01-PLAN.md -- Backend foundation: AnalyticsService for KPI computation, AnalyticsController with Inertia pages and JSON API endpoints, GeneratedReport model, role-gated routes, tests
+- [x] 07-02-PLAN.md -- Frontend dashboard and heatmap: Chart.js sparklines and line charts, MapLibre choropleth, filter bar with URL sync, Reports download center UI
+- [x] 07-03-PLAN.md -- Report generation: DILG monthly (scheduled), NDRRMC SitRep (P1 auto-hook), quarterly and annual (on-demand), PDF Blade templates, league/csv
 
 ### Phase 8: Implement operator role and intake layer UI
 **Goal**: Operators can log in and land directly on a full-screen intake station where they triage incoming incidents from a live feed, classify them with priority and location, and push them to the dispatch queue -- all in real-time with WebSocket updates
@@ -195,6 +195,6 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 4. Dispatch Console | 4/4 | Complete | 2026-03-13 |
 | 5. Responder Workflow | 4/4 | Complete   | 2026-03-13 |
 | 6. Integration Layer | 3/3 | Complete   | 2026-03-13 |
-| 7. Analytics | 0/3 | Not started | - |
+| 7. Analytics | 3/3 | Complete | 2026-03-13 |
 | 8. Operator Role & Intake Station | 4/4 | Complete | 2026-03-13 |
 | 9. Public Citizen Reporting App | 3/3 | Complete   | 2026-03-13 |
