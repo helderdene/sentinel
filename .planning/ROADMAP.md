@@ -118,12 +118,12 @@ Plans:
   2. The stubbed Mapbox geocoding connector resolves location text to coordinates (returning test data); the stubbed Mapbox directions connector returns ETA for a coordinate pair
   3. The stubbed Semaphore SMS connector logs outbound messages and parses inbound webhooks with keyword classification for incident type suggestion
   4. The stubbed government connectors (NDRRMC SitRep XML, BFP fire sync, PNP e-Blotter) and hospital EHR connector (HL7 FHIR R4) log their payloads; the PAGASA weather connector returns sample advisory data
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 06-01: TBD
-- [ ] 06-02: TBD
-- [ ] 06-03: TBD
+- [ ] 06-01-PLAN.md -- Architecture foundation: centralized config, SmsParser + Directions interfaces, stubs, controller retrofits, architecture test
+- [ ] 06-02-PLAN.md -- PAGASA Weather + Hospital EHR: weather advisory interface with 3-level system, FHIR R4 pre-notification interface with Patient/Encounter/Observation stubs
+- [ ] 06-03-PLAN.md -- Government agencies: NDRRMC SitRep XML interface, BFP bidirectional fire sync interface, PNP e-Blotter 5W1H interface with stubs
 
 ### Phase 7: Analytics
 **Goal**: Supervisors and the Mayor's Office can view operational KPIs, identify incident hotspots on a heatmap, and generate compliance reports required by DILG and NDRRMC
