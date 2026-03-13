@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: in-progress
-stopped_at: Completed 05-02-PLAN.md
-last_updated: "2026-03-13T10:32:18.000Z"
+status: completed
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-03-13T10:36:46.711Z"
 last_activity: "2026-03-13 — Completed 05-02: Responder frontend foundation (types, composables, layout, Station.vue)"
 progress:
   total_phases: 9
@@ -67,6 +67,7 @@ Progress: [█████████░] 91%
 | Phase 09 P02 | 5min | 2 tasks | 33 files |
 | Phase 09 P03 | 45min | 3 tasks | 24 files |
 | Phase 05 P02 | 6min | 2 tasks | 9 files |
+| Phase 05 P01 | 8min | 2 tasks | 32 files |
 
 ## Accumulated Context
 
@@ -162,6 +163,10 @@ Recent decisions affecting current work:
 - [05-02]: GPS broadcast URL hardcoded as /responder/update-location pending Plan 01 backend route creation
 - [05-02]: Separate ack timer in Station.vue using useIntervalFn (different API shape from dispatch useAckTimer)
 - [05-02]: Event callback refs (onAdvance, onShowOutcomeSheet) for bidirectional layout-page event handling
+- [Phase 05]: [05-01]: Task 2 (checklist_data migration) merged into Task 1 due to blocking dependency
+- [Phase 05]: [05-01]: Responder advance-status excludes RESOLVED -- must use dedicated resolve endpoint with outcome
+- [Phase 05]: [05-01]: Medical outcomes require vitals recorded before resolution via IncidentOutcome.isMedical() gate
+- [Phase 05]: [05-01]: Backward-compatible route aliases kept for assignment.index and my-incidents.index
 
 ### Roadmap Evolution
 
@@ -181,6 +186,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-13T10:32:18.000Z
-Stopped at: Completed 05-02-PLAN.md
-Resume file: .planning/phases/05-responder-workflow/05-02-SUMMARY.md
+Last session: 2026-03-13T10:36:46.709Z
+Stopped at: Completed 05-01-PLAN.md
+Resume file: None
