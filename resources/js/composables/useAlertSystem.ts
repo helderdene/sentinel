@@ -112,9 +112,37 @@ export function useAlertSystem() {
         document.body.addEventListener('animationend', handler);
     }
 
+    function playMessageTone(): void {
+        const ctx = ensureAudioContext();
+
+        if (!ctx || ctx.state !== 'running') {
+            return;
+        }
+
+        const notes = [523, 659];
+        const duration = 0.1;
+
+        for (let i = 0; i < notes.length; i++) {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'sine';
+            osc.frequency.value = notes[i];
+            gain.gain.value = 0.12;
+            osc.start(ctx.currentTime + i * 0.12);
+            gain.gain.exponentialRampToValueAtTime(
+                0.01,
+                ctx.currentTime + i * 0.12 + duration,
+            );
+            osc.stop(ctx.currentTime + i * 0.12 + duration);
+        }
+    }
+
     return {
         playPriorityTone,
         playAckExpiredTone,
         triggerP1Flash,
+        playMessageTone,
     };
 }

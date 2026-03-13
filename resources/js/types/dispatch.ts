@@ -98,4 +98,27 @@ export interface UnitStatusChangedPayload {
     new_status: UnitStatus;
 }
 
+export interface DispatchMessagePayload {
+    id: number;
+    incident_id: string;
+    sender_id: number;
+    sender_name: string;
+    sender_role: string;
+    sender_unit_callsign: string | null;
+    body: string;
+    is_quick_reply: boolean;
+    sent_at: string;
+}
+
+export interface DispatchMessageItem {
+    id: number;
+    body: string;
+    is_quick_reply: boolean;
+    sender_id: number;
+    sender_name: string;
+    sender_role: string;
+    sender_unit_callsign: string | null;
+    sent_at: string;
+}
+
 export type { IncidentPriority, IncidentStatus };

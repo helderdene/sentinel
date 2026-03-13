@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { router } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 import type { Ref } from 'vue';
 import { computed, inject, ref, watch } from 'vue';
 import { unassignUnit } from '@/actions/App/Http/Controllers/DispatchConsoleController';
@@ -83,7 +83,6 @@ watch(
     { immediate: true },
 );
 
-const selectedIncidentId = ref<string | null>(null);
 const selectedUnitId = ref<string | null>(null);
 
 type RightPanelMode = 'unit-status' | 'incident-detail' | 'unit-detail';
@@ -114,11 +113,26 @@ const {
     onDeselect,
 } = mapComposable;
 
-const { tickerEvents } = useDispatchFeed(
+const selectedIncidentId = ref<string | null>(null);
+
+const currentUserId = computed(
+    () => (usePage().props as { auth: { user: { id: number } } }).auth.user.id,
+);
+
+const {
+    tickerEvents,
+    unreadByIncident,
+    totalUnreadMessages,
+    clearUnread,
+    getMessages,
+    addLocalMessage,
+} = useDispatchFeed(
     localIncidents,
     localUnits,
     mapComposable,
     alertSystem,
+    currentUserId.value,
+    selectedIncidentId,
 );
 
 watch(
@@ -222,19 +236,16 @@ async function handleUnassign(unitId: string): Promise<void> {
             ?.split('=')[1] ?? '',
     );
 
-    const response = await fetch(
-        unassignUnit.url(selectedIncidentId.value),
-        {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Accept: 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-XSRF-TOKEN': xsrfToken,
-            },
-            body: JSON.stringify({ unit_id: unitId }),
+    const response = await fetch(unassignUnit.url(selectedIncidentId.value), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-XSRF-TOKEN': xsrfToken,
         },
-    );
+        body: JSON.stringify({ unit_id: unitId }),
+    });
 
     if (response.ok) {
         router.reload({ only: ['incidents', 'units'] });

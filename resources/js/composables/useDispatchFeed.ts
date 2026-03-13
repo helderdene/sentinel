@@ -1,11 +1,13 @@
 import { useEcho } from '@laravel/echo-vue';
 import type { Ref } from 'vue';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import type { useAlertSystem } from '@/composables/useAlertSystem';
 import type { useDispatchMap } from '@/composables/useDispatchMap';
 import { useWebSocket } from '@/composables/useWebSocket';
 import type {
     DispatchIncident,
+    DispatchMessageItem,
+    DispatchMessagePayload,
     DispatchUnit,
     MutualAidPayload,
     UnitLocationPayload,
@@ -31,8 +33,22 @@ export function useDispatchFeed(
     localUnits: Ref<DispatchUnit[]>,
     mapRef: ReturnType<typeof useDispatchMap>,
     alertSystem: ReturnType<typeof useAlertSystem>,
+    currentUserId: number,
+    selectedIncidentId: Ref<string | null>,
 ) {
     const tickerEvents = ref<TickerEvent[]>([]);
+    const unreadByIncident = ref(new Map<string, number>());
+    const messagesByIncident = ref(new Map<string, DispatchMessageItem[]>());
+
+    const totalUnreadMessages = computed(() => {
+        let total = 0;
+
+        for (const count of unreadByIncident.value.values()) {
+            total += count;
+        }
+
+        return total;
+    });
 
     const { onStateSync } = useWebSocket();
 
@@ -73,6 +89,26 @@ export function useDispatchFeed(
         }
 
         mapRef.updateConnectionLines(assignments);
+    }
+
+    function clearUnread(incidentId: string): void {
+        const updated = new Map(unreadByIncident.value);
+        updated.delete(incidentId);
+        unreadByIncident.value = updated;
+    }
+
+    function getMessages(incidentId: string): DispatchMessageItem[] {
+        return messagesByIncident.value.get(incidentId) ?? [];
+    }
+
+    function addLocalMessage(
+        incidentId: string,
+        message: DispatchMessageItem,
+    ): void {
+        const updated = new Map(messagesByIncident.value);
+        const existing = updated.get(incidentId) ?? [];
+        updated.set(incidentId, [...existing, message]);
+        messagesByIncident.value = updated;
     }
 
     // --- dispatch.incidents channel ---
@@ -173,6 +209,14 @@ export function useDispatchFeed(
 
             if (e.new_status === 'RESOLVED') {
                 localIncidents.value.splice(index, 1);
+
+                const updatedUnread = new Map(unreadByIncident.value);
+                updatedUnread.delete(e.id);
+                unreadByIncident.value = updatedUnread;
+
+                const updatedMessages = new Map(messagesByIncident.value);
+                updatedMessages.delete(e.id);
+                messagesByIncident.value = updatedMessages;
             } else {
                 localIncidents.value[index].status = e.new_status;
             }
@@ -203,6 +247,41 @@ export function useDispatchFeed(
                 location_text: e.notes ?? '',
                 created_at: e.timestamp,
             });
+        },
+    );
+
+    useEcho<DispatchMessagePayload>(
+        'dispatch.incidents',
+        'MessageSent',
+        (m) => {
+            if (m.sender_id === currentUserId) {
+                return;
+            }
+
+            const messageItem: DispatchMessageItem = {
+                id: m.id,
+                body: m.body,
+                is_quick_reply: m.is_quick_reply,
+                sender_id: m.sender_id,
+                sender_name: m.sender_name,
+                sender_role: m.sender_role,
+                sender_unit_callsign: m.sender_unit_callsign,
+                sent_at: m.sent_at,
+            };
+
+            const updatedMessages = new Map(messagesByIncident.value);
+            const existing = updatedMessages.get(m.incident_id) ?? [];
+            updatedMessages.set(m.incident_id, [...existing, messageItem]);
+            messagesByIncident.value = updatedMessages;
+
+            if (m.incident_id !== selectedIncidentId.value) {
+                const updatedUnread = new Map(unreadByIncident.value);
+                const currentCount = updatedUnread.get(m.incident_id) ?? 0;
+                updatedUnread.set(m.incident_id, currentCount + 1);
+                unreadByIncident.value = updatedUnread;
+
+                alertSystem.playMessageTone();
+            }
         },
     );
 
@@ -305,6 +384,9 @@ export function useDispatchFeed(
             localUnits.value = freshUnits;
         }
 
+        unreadByIncident.value = new Map();
+        messagesByIncident.value = new Map();
+
         refreshMapIncidents();
         refreshMapUnits();
         rebuildConnectionLines();
@@ -312,5 +394,11 @@ export function useDispatchFeed(
 
     return {
         tickerEvents,
+        unreadByIncident,
+        totalUnreadMessages,
+        messagesByIncident,
+        clearUnread,
+        getMessages,
+        addLocalMessage,
     };
 }
