@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { Ref } from 'vue';
 import { computed, inject, ref, watch } from 'vue';
+import DispatchQueuePanel from '@/components/dispatch/DispatchQueuePanel.vue';
 import MapLegend from '@/components/dispatch/MapLegend.vue';
 import { useDispatchMap } from '@/composables/useDispatchMap';
+import { useDispatchSession } from '@/composables/useDispatchSession';
 import DispatchLayout from '@/layouts/DispatchLayout.vue';
 import type {
     DispatchAgency,
@@ -22,6 +24,29 @@ const props = defineProps<{
     metrics: DispatchMetrics;
 }>();
 
+const localIncidents = ref<DispatchIncident[]>([...props.incidents]);
+const localUnits = ref<DispatchUnit[]>([...props.units]);
+
+watch(
+    () => props.incidents,
+    (val) => {
+        localIncidents.value = [...val];
+    },
+);
+
+watch(
+    () => props.units,
+    (val) => {
+        localUnits.value = [...val];
+    },
+);
+
+const { metrics: sessionMetrics } = useDispatchSession(
+    localIncidents,
+    localUnits,
+    props.metrics.averageHandleTime,
+);
+
 const dispatchStats = inject<{
     activeIncidents: Ref<number>;
     criticalIncidents: Ref<number>;
@@ -31,14 +56,20 @@ const dispatchStats = inject<{
     unitsTotal: Ref<number>;
 }>('dispatchStats');
 
-if (dispatchStats) {
-    dispatchStats.activeIncidents.value = props.metrics.activeIncidents;
-    dispatchStats.criticalIncidents.value = props.metrics.criticalIncidents;
-    dispatchStats.totalIncidents.value = props.metrics.totalIncidents;
-    dispatchStats.averageHandleTime.value = props.metrics.averageHandleTime;
-    dispatchStats.unitsAvailable.value = props.metrics.unitsAvailable;
-    dispatchStats.unitsTotal.value = props.metrics.unitsTotal;
-}
+watch(
+    sessionMetrics,
+    (m) => {
+        if (dispatchStats) {
+            dispatchStats.activeIncidents.value = m.activeIncidents;
+            dispatchStats.criticalIncidents.value = m.criticalIncidents;
+            dispatchStats.totalIncidents.value = m.totalIncidents;
+            dispatchStats.averageHandleTime.value = m.averageHandleTime;
+            dispatchStats.unitsAvailable.value = m.unitsAvailable;
+            dispatchStats.unitsTotal.value = m.unitsTotal;
+        }
+    },
+    { immediate: true },
+);
 
 const selectedIncidentId = ref<string | null>(null);
 const selectedUnitId = ref<string | null>(null);
@@ -57,14 +88,15 @@ const {
 
 const selectedIncident = computed(() =>
     selectedIncidentId.value
-        ? (props.incidents.find((i) => i.id === selectedIncidentId.value) ??
-          null)
+        ? (localIncidents.value.find(
+              (i) => i.id === selectedIncidentId.value,
+          ) ?? null)
         : null,
 );
 
 const selectedUnit = computed(() =>
     selectedUnitId.value
-        ? (props.units.find((u) => u.id === selectedUnitId.value) ?? null)
+        ? (localUnits.value.find((u) => u.id === selectedUnitId.value) ?? null)
         : null,
 );
 
@@ -74,13 +106,13 @@ function buildConnectionLines(): void {
         unit: DispatchUnit;
     }> = [];
 
-    for (const incident of props.incidents) {
+    for (const incident of localIncidents.value) {
         if (!incident.assigned_units) {
             continue;
         }
 
         for (const au of incident.assigned_units) {
-            const unit = props.units.find((u) => u.id === au.unit_id);
+            const unit = localUnits.value.find((u) => u.id === au.unit_id);
 
             if (unit) {
                 assignments.push({ incident, unit });
@@ -93,28 +125,32 @@ function buildConnectionLines(): void {
 
 watch(isLoaded, (loaded) => {
     if (loaded) {
-        setIncidentData(props.incidents);
-        setUnitData(props.units);
+        setIncidentData(localIncidents.value);
+        setUnitData(localUnits.value);
         buildConnectionLines();
     }
 });
 
-onIncidentClick((id: string) => {
+function handleIncidentSelect(id: string): void {
     selectedIncidentId.value = id;
     selectedUnitId.value = null;
 
-    const incident = props.incidents.find((i) => i.id === id);
+    const incident = localIncidents.value.find((i) => i.id === id);
 
     if (incident) {
         flyToIncident(incident);
     }
+}
+
+onIncidentClick((id: string) => {
+    handleIncidentSelect(id);
 });
 
 onUnitClick((id: string) => {
     selectedUnitId.value = id;
     selectedIncidentId.value = null;
 
-    const unit = props.units.find((u) => u.id === id);
+    const unit = localUnits.value.find((u) => u.id === id);
 
     if (unit) {
         flyToUnit(unit);
@@ -129,20 +165,15 @@ onDeselect(() => {
 
 <template>
     <div class="flex h-full w-full">
-        <!-- Left panel -->
+        <!-- Left panel: Incident Queue -->
         <div
-            class="z-10 w-80 shrink-0 overflow-y-auto border-r border-t-border bg-t-bg/95 backdrop-blur-sm dark:border-t-border dark:bg-[#0f172a]/95"
+            class="z-10 w-80 shrink-0 border-r border-t-border bg-t-bg/95 backdrop-blur-sm dark:border-t-border dark:bg-[#0f172a]/95"
         >
-            <div class="p-3">
-                <div
-                    class="font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
-                >
-                    QUEUE PANEL
-                </div>
-                <p class="mt-2 text-xs text-t-text-dim">
-                    Incident queue will be implemented in Plan 03.
-                </p>
-            </div>
+            <DispatchQueuePanel
+                :incidents="localIncidents"
+                :selected-incident-id="selectedIncidentId"
+                @select-incident="handleIncidentSelect"
+            />
         </div>
 
         <!-- Center map area -->
@@ -165,25 +196,15 @@ onDeselect(() => {
                         {{ selectedIncident.incident_no }} --
                         {{ selectedIncident.priority }}
                     </p>
-                    <p
-                        class="mt-1 font-sans text-xs text-t-text-dim normal-case"
-                    >
-                        Detail panel will be implemented in Plan 03.
-                    </p>
                 </div>
                 <div
                     v-else-if="selectedUnit"
                     class="font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
                 >
-                    UNIT STATUS
+                    UNIT DETAIL
                     <p class="mt-2 font-sans text-xs text-t-text normal-case">
                         {{ selectedUnit.callsign }} --
                         {{ selectedUnit.status }}
-                    </p>
-                    <p
-                        class="mt-1 font-sans text-xs text-t-text-dim normal-case"
-                    >
-                        Unit detail panel will be implemented in Plan 03.
                     </p>
                 </div>
                 <div
@@ -194,7 +215,7 @@ onDeselect(() => {
                     <p
                         class="mt-2 font-sans text-xs text-t-text-dim normal-case"
                     >
-                        Unit roster panel will be implemented in Plan 03.
+                        Right panels will be wired in Task 2.
                     </p>
                 </div>
             </div>
