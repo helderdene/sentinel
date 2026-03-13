@@ -3,11 +3,11 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 11-02-PLAN.md
-last_updated: "2026-03-13T21:22:11.892Z"
+stopped_at: Phase 12 context gathered
+last_updated: "2026-03-13T22:03:32.305Z"
 last_activity: "2026-03-14 — Completed 11-02: Units CRUD frontend with index table and crew multi-select form"
 progress:
-  total_phases: 11
+  total_phases: 12
   completed_phases: 11
   total_plans: 36
   completed_plans: 36
@@ -232,6 +232,7 @@ Recent decisions affecting current work:
 - Phase 9 added: Create a public facing reporting app
 - Phase 10 added: Update all pages design to match IRMS Intake Design System
 - Phase 11 added: Implement Units CRUD
+- Phase 12 added: Bi-directional dispatch-responder communication
 
 ### Pending Todos
 
@@ -246,6 +247,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-13T21:14:49Z
-Stopped at: Completed 11-02-PLAN.md
-Resume file: None
+Last session: 2026-03-13T22:03:32.289Z
+Stopped at: Phase 12 context gathered
+Resume file: .planning/phases/12-bi-directional-dispatch-responder-communication/12-CONTEXT.md
