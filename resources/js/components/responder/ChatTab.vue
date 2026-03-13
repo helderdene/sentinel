@@ -5,7 +5,7 @@ import type { IncidentMessageItem } from '@/types/responder';
 
 const props = defineProps<{
     messages: IncidentMessageItem[];
-    incidentId: number;
+    incidentId: string | number;
     currentUserId: number;
 }>();
 
@@ -132,6 +132,20 @@ function isOwnMessage(msg: IncidentMessageItem): boolean {
             >
                 <!-- Sender info -->
                 <div class="mb-0.5 flex items-center gap-1.5">
+                    <span
+                        v-if="msg.sender?.unit_callsign"
+                        class="font-mono text-[11px] font-bold text-t-text"
+                    >
+                        {{ msg.sender.unit_callsign }}
+                    </span>
+
+                    <span
+                        v-if="msg.sender?.unit_callsign"
+                        class="text-[10px] text-t-text-faint"
+                    >
+                        .
+                    </span>
+
                     <span class="text-[11px] font-medium text-t-text-dim">
                         {{ msg.sender?.name ?? 'System' }}
                     </span>
