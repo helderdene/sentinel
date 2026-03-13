@@ -104,9 +104,9 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 05-01-PLAN.md -- Backend foundation: ResponderController (10 endpoints), IncidentOutcome/ResourceType enums, ChecklistUpdated/ResourceRequested events, DomPDF install, PDF job, hospital config, tests
-- [ ] 05-02-PLAN.md -- Frontend foundation: TypeScript types, useResponderSession/useGpsTracking composables, ResponderLayout, Station.vue, tab bar, standby screen, status button
-- [ ] 05-03-PLAN.md -- Scene documentation and messaging: SceneTab accordion (checklist, vitals, tags), ChatTab (quick-reply chips, free text), MessageBanner
+- [x] 05-01-PLAN.md -- Backend foundation: ResponderController (10 endpoints), IncidentOutcome/ResourceType enums, ChecklistUpdated/ResourceRequested events, DomPDF install, PDF job, hospital config, tests
+- [x] 05-02-PLAN.md -- Frontend foundation: TypeScript types, useResponderSession/useGpsTracking composables, ResponderLayout, Station.vue, tab bar, standby screen, status button
+- [x] 05-03-PLAN.md -- Scene documentation and messaging: SceneTab accordion (checklist, vitals, tags), ChatTab (quick-reply chips, free text), MessageBanner
 - [ ] 05-04-PLAN.md -- Assignment notification, navigation, closure: AssignmentNotification (audio + countdown), NavTab (MapLibre mini-map), OutcomeSheet, ResourceRequestModal, ClosureSummary, visual verification
 
 ### Phase 6: Integration Layer
@@ -193,7 +193,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 2. Intake | 3/3 | Complete | 2026-03-13 |
 | 3. Real-Time Infrastructure | 2/2 | Complete | 2026-03-13 |
 | 4. Dispatch Console | 4/4 | Complete | 2026-03-13 |
-| 5. Responder Workflow | 0/4 | Not started | - |
+| 5. Responder Workflow | 3/4 | In progress | - |
 | 6. Integration Layer | 0/3 | Not started | - |
 | 7. Analytics | 0/3 | Not started | - |
 | 8. Operator Role & Intake Station | 4/4 | Complete | 2026-03-13 |
