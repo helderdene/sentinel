@@ -98,7 +98,10 @@ function submit(): void {
                 "
             />
 
-            <form class="space-y-6" @submit.prevent="submit">
+            <form
+                class="space-y-6 rounded-[var(--radius)] border border-border bg-card p-6 shadow-[var(--shadow-1)]"
+                @submit.prevent="submit"
+            >
                 <div class="grid gap-2">
                     <Label for="name">Name</Label>
                     <Input

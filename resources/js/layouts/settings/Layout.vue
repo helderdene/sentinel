@@ -67,7 +67,9 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
             <Separator class="my-6 lg:hidden" />
 
             <div class="flex-1 md:max-w-2xl">
-                <section class="max-w-xl space-y-12">
+                <section
+                    class="max-w-xl space-y-12 rounded-[var(--radius)] border border-border bg-card p-6 shadow-[var(--shadow-1)]"
+                >
                     <slot />
                 </section>
             </div>

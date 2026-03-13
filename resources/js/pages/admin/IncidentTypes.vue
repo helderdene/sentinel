@@ -54,10 +54,10 @@ const groupedTypes = computed(() => {
 });
 
 const priorityColors: Record<string, string> = {
-    P1: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-    P2: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200',
-    P3: 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200',
-    P4: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+    P1: 'bg-[color-mix(in_srgb,var(--t-p1)_12%,transparent)] text-t-p1',
+    P2: 'bg-[color-mix(in_srgb,var(--t-p2)_12%,transparent)] text-t-p2',
+    P3: 'bg-[color-mix(in_srgb,var(--t-p3)_12%,transparent)] text-t-p3',
+    P4: 'bg-[color-mix(in_srgb,var(--t-p4)_12%,transparent)] text-t-p4',
 };
 
 function toggleCategory(category: string): void {
@@ -128,10 +128,12 @@ function categoryStats(category: string): { active: number; total: number } {
                     :open="openCategories.has(category)"
                     @update:open="toggleCategory(category)"
                 >
-                    <div class="rounded-lg border">
+                    <div
+                        class="overflow-hidden rounded-[7px] border border-border bg-card shadow-[var(--shadow-1)]"
+                    >
                         <CollapsibleTrigger as-child>
                             <button
-                                class="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-muted/30"
+                                class="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-accent"
                             >
                                 <div class="flex items-center gap-3">
                                     <h3 class="text-sm font-semibold">
@@ -165,38 +167,52 @@ function categoryStats(category: string): { active: number; total: number } {
 
                         <CollapsibleContent>
                             <table class="w-full text-left text-sm">
-                                <thead class="border-t bg-muted/30">
+                                <thead class="border-t border-border bg-card">
                                     <tr>
-                                        <th class="px-4 py-2 font-medium">
+                                        <th
+                                            class="px-4 py-2 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                                        >
                                             Code
                                         </th>
-                                        <th class="px-4 py-2 font-medium">
+                                        <th
+                                            class="px-4 py-2 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                                        >
                                             Name
                                         </th>
-                                        <th class="px-4 py-2 font-medium">
+                                        <th
+                                            class="px-4 py-2 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                                        >
                                             Priority
                                         </th>
-                                        <th class="px-4 py-2 font-medium">
+                                        <th
+                                            class="px-4 py-2 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                                        >
                                             Status
                                         </th>
-                                        <th class="px-4 py-2 font-medium">
+                                        <th
+                                            class="px-4 py-2 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                                        >
                                             Actions
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y">
+                                <tbody>
                                     <tr
                                         v-for="type in groupedTypes[category]"
                                         :key="type.id"
-                                        class="hover:bg-muted/20"
+                                        class="border-b border-border transition-colors hover:bg-accent"
                                         :class="{
                                             'opacity-50': !type.is_active,
                                         }"
                                     >
-                                        <td class="px-4 py-2 font-mono text-xs">
+                                        <td
+                                            class="px-4 py-2 font-mono text-[10px] text-t-text-faint"
+                                        >
                                             {{ type.code }}
                                         </td>
-                                        <td class="px-4 py-2">
+                                        <td
+                                            class="px-4 py-2 font-medium text-foreground"
+                                        >
                                             {{ type.name }}
                                         </td>
                                         <td class="px-4 py-2">
@@ -257,7 +273,7 @@ function categoryStats(category: string): { active: number; total: number } {
                                                     v-else
                                                     variant="ghost"
                                                     size="sm"
-                                                    class="text-green-600 hover:text-green-700"
+                                                    class="text-t-online hover:text-t-online"
                                                     @click="enableType(type)"
                                                 >
                                                     Enable
@@ -273,7 +289,7 @@ function categoryStats(category: string): { active: number; total: number } {
 
                 <div
                     v-if="categories.length === 0"
-                    class="rounded-lg border p-8 text-center text-muted-foreground"
+                    class="rounded-[7px] border border-border bg-card p-8 text-center text-t-text-faint shadow-[var(--shadow-3)]"
                 >
                     No incident types found. Add one to get started.
                 </div>

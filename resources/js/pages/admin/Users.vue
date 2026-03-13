@@ -46,12 +46,15 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const roleColors: Record<string, string> = {
-    admin: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
-    dispatcher: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+    admin: 'bg-[color-mix(in_srgb,var(--t-role-admin)_12%,transparent)] text-t-role-admin',
+    dispatcher:
+        'bg-[color-mix(in_srgb,var(--t-accent)_12%,transparent)] text-t-accent',
+    operator:
+        'bg-[color-mix(in_srgb,var(--t-role-operator)_12%,transparent)] text-t-role-operator',
     responder:
-        'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+        'bg-[color-mix(in_srgb,var(--t-online)_12%,transparent)] text-t-online',
     supervisor:
-        'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200',
+        'bg-[color-mix(in_srgb,var(--t-role-supervisor)_12%,transparent)] text-t-role-supervisor',
 };
 
 function deleteUser(user: AdminUser): void {
@@ -84,25 +87,51 @@ function formatDate(dateStr: string): string {
                 </Link>
             </div>
 
-            <div class="overflow-hidden rounded-lg border">
+            <div
+                class="overflow-hidden rounded-[7px] border border-border bg-card shadow-[var(--shadow-1)]"
+            >
                 <table class="w-full text-left text-sm">
-                    <thead class="border-b bg-muted/50">
+                    <thead class="border-b border-border bg-card">
                         <tr>
-                            <th class="px-4 py-3 font-medium">Name</th>
-                            <th class="px-4 py-3 font-medium">Email</th>
-                            <th class="px-4 py-3 font-medium">Role</th>
-                            <th class="px-4 py-3 font-medium">Unit</th>
-                            <th class="px-4 py-3 font-medium">Created</th>
-                            <th class="px-4 py-3 font-medium">Actions</th>
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
+                                Name
+                            </th>
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
+                                Email
+                            </th>
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
+                                Role
+                            </th>
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
+                                Unit
+                            </th>
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
+                                Created
+                            </th>
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
+                                Actions
+                            </th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y">
+                    <tbody>
                         <tr
                             v-for="user in users"
                             :key="user.id"
-                            class="hover:bg-muted/30"
+                            class="border-b border-border transition-colors hover:bg-accent"
                         >
-                            <td class="px-4 py-3 font-medium">
+                            <td class="px-4 py-3 font-medium text-foreground">
                                 {{ user.name }}
                             </td>
                             <td class="px-4 py-3 text-muted-foreground">
@@ -186,7 +215,7 @@ function formatDate(dateStr: string): string {
 
                 <div
                     v-if="users.length === 0"
-                    class="p-8 text-center text-muted-foreground"
+                    class="p-8 text-center text-t-text-faint"
                 >
                     No users found. Create one to get started.
                 </div>

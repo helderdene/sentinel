@@ -66,7 +66,9 @@ const riskLevels = [
                 description="Update barangay metadata. Boundary polygons are managed separately."
             />
 
-            <div class="rounded-lg border bg-muted/30 p-4">
+            <div
+                class="rounded-[var(--radius)] border border-border bg-card p-4 shadow-[var(--shadow-1)]"
+            >
                 <dl class="grid gap-2 sm:grid-cols-2">
                     <div>
                         <dt class="text-sm font-medium text-muted-foreground">
@@ -85,7 +87,10 @@ const riskLevels = [
                 </dl>
             </div>
 
-            <form class="space-y-6" @submit.prevent="submit">
+            <form
+                class="space-y-6 rounded-[var(--radius)] border border-border bg-card p-6 shadow-[var(--shadow-1)]"
+                @submit.prevent="submit"
+            >
                 <div class="grid gap-2">
                     <Label for="district">District</Label>
                     <Input

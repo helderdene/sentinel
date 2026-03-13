@@ -47,11 +47,10 @@ const filteredBarangays = computed(() => {
 });
 
 const riskColors: Record<string, string> = {
-    low: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-    moderate:
-        'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200',
-    high: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200',
-    very_high: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+    low: 'bg-[color-mix(in_srgb,var(--t-p4)_12%,transparent)] text-t-p4',
+    moderate: 'bg-[color-mix(in_srgb,var(--t-p3)_12%,transparent)] text-t-p3',
+    high: 'bg-[color-mix(in_srgb,var(--t-p2)_12%,transparent)] text-t-p2',
+    very_high: 'bg-[color-mix(in_srgb,var(--t-p1)_12%,transparent)] text-t-p1',
 };
 
 function formatPopulation(pop: number | null): string {
@@ -95,24 +94,46 @@ function formatRiskLevel(risk: string | null): string {
                 </span>
             </div>
 
-            <div class="overflow-hidden rounded-lg border">
+            <div
+                class="overflow-hidden rounded-[7px] border border-border bg-card shadow-[var(--shadow-1)]"
+            >
                 <table class="w-full text-left text-sm">
-                    <thead class="border-b bg-muted/50">
+                    <thead class="border-b border-border bg-card">
                         <tr>
-                            <th class="px-4 py-3 font-medium">Name</th>
-                            <th class="px-4 py-3 font-medium">District</th>
-                            <th class="px-4 py-3 font-medium">Population</th>
-                            <th class="px-4 py-3 font-medium">Risk Level</th>
-                            <th class="px-4 py-3 font-medium">Actions</th>
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
+                                Name
+                            </th>
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
+                                District
+                            </th>
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
+                                Population
+                            </th>
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
+                                Risk Level
+                            </th>
+                            <th
+                                class="px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                            >
+                                Actions
+                            </th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y">
+                    <tbody>
                         <tr
                             v-for="barangay in filteredBarangays"
                             :key="barangay.id"
-                            class="hover:bg-muted/30"
+                            class="border-b border-border transition-colors hover:bg-accent"
                         >
-                            <td class="px-4 py-3 font-medium">
+                            <td class="px-4 py-3 font-medium text-foreground">
                                 {{ barangay.name }}
                             </td>
                             <td class="px-4 py-3 text-muted-foreground">
@@ -154,7 +175,7 @@ function formatRiskLevel(risk: string | null): string {
 
                 <div
                     v-if="filteredBarangays.length === 0"
-                    class="p-8 text-center text-muted-foreground"
+                    class="p-8 text-center text-t-text-faint"
                 >
                     {{
                         search

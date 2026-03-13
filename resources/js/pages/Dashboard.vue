@@ -59,12 +59,10 @@ const roleLabels: Record<UserRole, string> = {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4">
             <div>
-                <h1
-                    class="text-2xl font-semibold text-neutral-900 dark:text-neutral-100"
-                >
+                <h1 class="text-2xl font-semibold text-foreground">
                     Welcome, {{ userName }}
                 </h1>
-                <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                <p class="mt-1 text-sm text-muted-foreground">
                     {{ roleLabels[userRole] }} Dashboard
                 </p>
             </div>
@@ -83,73 +81,51 @@ const roleLabels: Record<UserRole, string> = {
             >
                 <Link
                     href="/admin/users"
-                    class="group rounded-xl border border-sidebar-border/70 p-5 transition-colors hover:bg-neutral-50 dark:border-sidebar-border dark:hover:bg-neutral-800/50"
+                    class="group rounded-[var(--radius)] border border-border bg-card p-5 shadow-[var(--shadow-1)] transition-colors hover:bg-accent"
                 >
                     <Users
-                        class="mb-3 h-6 w-6 text-neutral-400 group-hover:text-neutral-600 dark:group-hover:text-neutral-300"
+                        class="mb-3 h-6 w-6 text-t-text-faint group-hover:text-t-text-mid"
                     />
-                    <h3
-                        class="font-medium text-neutral-900 dark:text-neutral-100"
-                    >
-                        User Management
-                    </h3>
-                    <p
-                        class="mt-1 text-sm text-neutral-500 dark:text-neutral-400"
-                    >
+                    <h3 class="font-medium text-foreground">User Management</h3>
+                    <p class="mt-1 text-sm text-muted-foreground">
                         Manage users and roles
                     </p>
                 </Link>
                 <Link
                     href="/dispatch"
-                    class="group rounded-xl border border-sidebar-border/70 p-5 transition-colors hover:bg-neutral-50 dark:border-sidebar-border dark:hover:bg-neutral-800/50"
+                    class="group rounded-[var(--radius)] border border-border bg-card p-5 shadow-[var(--shadow-1)] transition-colors hover:bg-accent"
                 >
                     <Map
-                        class="mb-3 h-6 w-6 text-neutral-400 group-hover:text-neutral-600 dark:group-hover:text-neutral-300"
+                        class="mb-3 h-6 w-6 text-t-text-faint group-hover:text-t-text-mid"
                     />
-                    <h3
-                        class="font-medium text-neutral-900 dark:text-neutral-100"
-                    >
+                    <h3 class="font-medium text-foreground">
                         Dispatch Console
                     </h3>
-                    <p
-                        class="mt-1 text-sm text-neutral-500 dark:text-neutral-400"
-                    >
+                    <p class="mt-1 text-sm text-muted-foreground">
                         Real-time incident map
                     </p>
                 </Link>
                 <Link
                     href="/analytics"
-                    class="group rounded-xl border border-sidebar-border/70 p-5 transition-colors hover:bg-neutral-50 dark:border-sidebar-border dark:hover:bg-neutral-800/50"
+                    class="group rounded-[var(--radius)] border border-border bg-card p-5 shadow-[var(--shadow-1)] transition-colors hover:bg-accent"
                 >
                     <BarChart3
-                        class="mb-3 h-6 w-6 text-neutral-400 group-hover:text-neutral-600 dark:group-hover:text-neutral-300"
+                        class="mb-3 h-6 w-6 text-t-text-faint group-hover:text-t-text-mid"
                     />
-                    <h3
-                        class="font-medium text-neutral-900 dark:text-neutral-100"
-                    >
-                        Analytics
-                    </h3>
-                    <p
-                        class="mt-1 text-sm text-neutral-500 dark:text-neutral-400"
-                    >
+                    <h3 class="font-medium text-foreground">Analytics</h3>
+                    <p class="mt-1 text-sm text-muted-foreground">
                         KPI dashboard and reports
                     </p>
                 </Link>
                 <Link
                     href="/admin/users"
-                    class="group rounded-xl border border-sidebar-border/70 p-5 transition-colors hover:bg-neutral-50 dark:border-sidebar-border dark:hover:bg-neutral-800/50"
+                    class="group rounded-[var(--radius)] border border-border bg-card p-5 shadow-[var(--shadow-1)] transition-colors hover:bg-accent"
                 >
                     <Shield
-                        class="mb-3 h-6 w-6 text-neutral-400 group-hover:text-neutral-600 dark:group-hover:text-neutral-300"
+                        class="mb-3 h-6 w-6 text-t-text-faint group-hover:text-t-text-mid"
                     />
-                    <h3
-                        class="font-medium text-neutral-900 dark:text-neutral-100"
-                    >
-                        Admin Panel
-                    </h3>
-                    <p
-                        class="mt-1 text-sm text-neutral-500 dark:text-neutral-400"
-                    >
+                    <h3 class="font-medium text-foreground">Admin Panel</h3>
+                    <p class="mt-1 text-sm text-muted-foreground">
                         System configuration
                     </p>
                 </Link>
@@ -161,74 +137,44 @@ const roleLabels: Record<UserRole, string> = {
                 class="grid gap-4 md:grid-cols-3"
             >
                 <div
-                    class="rounded-xl border border-sidebar-border/70 p-5 dark:border-sidebar-border"
+                    class="rounded-[var(--radius)] border border-border bg-card p-5 shadow-[var(--shadow-1)]"
                 >
                     <div class="flex items-center justify-between">
-                        <h3
-                            class="text-sm font-medium text-neutral-500 dark:text-neutral-400"
-                        >
+                        <h3 class="text-sm font-medium text-muted-foreground">
                             Active Incidents
                         </h3>
-                        <AlertTriangle
-                            class="h-5 w-5 text-neutral-400 dark:text-neutral-500"
-                        />
+                        <AlertTriangle class="h-5 w-5 text-t-text-faint" />
                     </div>
-                    <p
-                        class="mt-2 text-3xl font-bold text-neutral-900 dark:text-neutral-100"
-                    >
-                        --
-                    </p>
-                    <p
-                        class="mt-1 text-xs text-neutral-500 dark:text-neutral-400"
-                    >
+                    <p class="mt-2 text-3xl font-bold text-foreground">--</p>
+                    <p class="mt-1 text-xs text-muted-foreground">
                         Real-time data coming in Phase 3
                     </p>
                 </div>
                 <div
-                    class="rounded-xl border border-sidebar-border/70 p-5 dark:border-sidebar-border"
+                    class="rounded-[var(--radius)] border border-border bg-card p-5 shadow-[var(--shadow-1)]"
                 >
                     <div class="flex items-center justify-between">
-                        <h3
-                            class="text-sm font-medium text-neutral-500 dark:text-neutral-400"
-                        >
+                        <h3 class="text-sm font-medium text-muted-foreground">
                             Queue Size
                         </h3>
-                        <Map
-                            class="h-5 w-5 text-neutral-400 dark:text-neutral-500"
-                        />
+                        <Map class="h-5 w-5 text-t-text-faint" />
                     </div>
-                    <p
-                        class="mt-2 text-3xl font-bold text-neutral-900 dark:text-neutral-100"
-                    >
-                        --
-                    </p>
-                    <p
-                        class="mt-1 text-xs text-neutral-500 dark:text-neutral-400"
-                    >
+                    <p class="mt-2 text-3xl font-bold text-foreground">--</p>
+                    <p class="mt-1 text-xs text-muted-foreground">
                         Real-time data coming in Phase 3
                     </p>
                 </div>
                 <div
-                    class="rounded-xl border border-sidebar-border/70 p-5 dark:border-sidebar-border"
+                    class="rounded-[var(--radius)] border border-border bg-card p-5 shadow-[var(--shadow-1)]"
                 >
                     <div class="flex items-center justify-between">
-                        <h3
-                            class="text-sm font-medium text-neutral-500 dark:text-neutral-400"
-                        >
+                        <h3 class="text-sm font-medium text-muted-foreground">
                             Units Available
                         </h3>
-                        <Truck
-                            class="h-5 w-5 text-neutral-400 dark:text-neutral-500"
-                        />
+                        <Truck class="h-5 w-5 text-t-text-faint" />
                     </div>
-                    <p
-                        class="mt-2 text-3xl font-bold text-neutral-900 dark:text-neutral-100"
-                    >
-                        --
-                    </p>
-                    <p
-                        class="mt-1 text-xs text-neutral-500 dark:text-neutral-400"
-                    >
+                    <p class="mt-2 text-3xl font-bold text-foreground">--</p>
+                    <p class="mt-1 text-xs text-muted-foreground">
                         Data available after Phase 4
                     </p>
                 </div>
@@ -237,44 +183,32 @@ const roleLabels: Record<UserRole, string> = {
             <!-- Responder Dashboard -->
             <div v-else-if="userRole === 'responder'" class="grid gap-4">
                 <div
-                    class="rounded-xl border border-sidebar-border/70 p-6 text-center dark:border-sidebar-border"
+                    class="rounded-[var(--radius)] border border-border bg-card p-6 text-center shadow-[var(--shadow-1)]"
                 >
                     <RadioTower
-                        class="mx-auto mb-3 h-10 w-10 text-neutral-300 dark:text-neutral-600"
+                        class="mx-auto mb-3 h-10 w-10 text-t-text-faint"
                     />
-                    <h3
-                        class="text-lg font-medium text-neutral-900 dark:text-neutral-100"
-                    >
+                    <h3 class="text-lg font-medium text-foreground">
                         No Active Assignment
                     </h3>
-                    <p
-                        class="mt-1 text-sm text-neutral-500 dark:text-neutral-400"
-                    >
+                    <p class="mt-1 text-sm text-muted-foreground">
                         You will be notified when a new assignment is pushed to
                         you.
                     </p>
-                    <p
-                        class="mt-3 text-xs text-neutral-400 dark:text-neutral-500"
-                    >
+                    <p class="mt-3 text-xs text-t-text-faint">
                         Assignment functionality coming in Phase 5
                     </p>
                 </div>
                 <div
-                    class="rounded-xl border border-sidebar-border/70 p-5 dark:border-sidebar-border"
+                    class="rounded-[var(--radius)] border border-border bg-card p-5 shadow-[var(--shadow-1)]"
                 >
                     <div class="flex items-center gap-3">
-                        <ClipboardList
-                            class="h-5 w-5 text-neutral-400 dark:text-neutral-500"
-                        />
+                        <ClipboardList class="h-5 w-5 text-t-text-faint" />
                         <div>
-                            <h3
-                                class="font-medium text-neutral-900 dark:text-neutral-100"
-                            >
+                            <h3 class="font-medium text-foreground">
                                 Recent Incidents
                             </h3>
-                            <p
-                                class="text-sm text-neutral-500 dark:text-neutral-400"
-                            >
+                            <p class="text-sm text-muted-foreground">
                                 No incident history yet
                             </p>
                         </div>
@@ -288,78 +222,46 @@ const roleLabels: Record<UserRole, string> = {
                 class="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
             >
                 <div
-                    class="rounded-xl border border-sidebar-border/70 p-5 dark:border-sidebar-border"
+                    class="rounded-[var(--radius)] border border-border bg-card p-5 shadow-[var(--shadow-1)]"
                 >
-                    <h3
-                        class="text-sm font-medium text-neutral-500 dark:text-neutral-400"
-                    >
+                    <h3 class="text-sm font-medium text-muted-foreground">
                         Avg Response Time
                     </h3>
-                    <p
-                        class="mt-2 text-3xl font-bold text-neutral-900 dark:text-neutral-100"
-                    >
-                        --
-                    </p>
-                    <p
-                        class="mt-1 text-xs text-neutral-500 dark:text-neutral-400"
-                    >
+                    <p class="mt-2 text-3xl font-bold text-foreground">--</p>
+                    <p class="mt-1 text-xs text-muted-foreground">
                         KPI data coming in Phase 7
                     </p>
                 </div>
                 <div
-                    class="rounded-xl border border-sidebar-border/70 p-5 dark:border-sidebar-border"
+                    class="rounded-[var(--radius)] border border-border bg-card p-5 shadow-[var(--shadow-1)]"
                 >
-                    <h3
-                        class="text-sm font-medium text-neutral-500 dark:text-neutral-400"
-                    >
+                    <h3 class="text-sm font-medium text-muted-foreground">
                         Unit Utilization
                     </h3>
-                    <p
-                        class="mt-2 text-3xl font-bold text-neutral-900 dark:text-neutral-100"
-                    >
-                        --
-                    </p>
-                    <p
-                        class="mt-1 text-xs text-neutral-500 dark:text-neutral-400"
-                    >
+                    <p class="mt-2 text-3xl font-bold text-foreground">--</p>
+                    <p class="mt-1 text-xs text-muted-foreground">
                         KPI data coming in Phase 7
                     </p>
                 </div>
                 <div
-                    class="rounded-xl border border-sidebar-border/70 p-5 dark:border-sidebar-border"
+                    class="rounded-[var(--radius)] border border-border bg-card p-5 shadow-[var(--shadow-1)]"
                 >
-                    <h3
-                        class="text-sm font-medium text-neutral-500 dark:text-neutral-400"
-                    >
+                    <h3 class="text-sm font-medium text-muted-foreground">
                         Resolution Rate
                     </h3>
-                    <p
-                        class="mt-2 text-3xl font-bold text-neutral-900 dark:text-neutral-100"
-                    >
-                        --
-                    </p>
-                    <p
-                        class="mt-1 text-xs text-neutral-500 dark:text-neutral-400"
-                    >
+                    <p class="mt-2 text-3xl font-bold text-foreground">--</p>
+                    <p class="mt-1 text-xs text-muted-foreground">
                         KPI data coming in Phase 7
                     </p>
                 </div>
                 <div
-                    class="rounded-xl border border-sidebar-border/70 p-5 dark:border-sidebar-border"
+                    class="rounded-[var(--radius)] border border-border bg-card p-5 shadow-[var(--shadow-1)]"
                 >
-                    <h3
-                        class="text-sm font-medium text-neutral-500 dark:text-neutral-400"
-                    >
+                    <h3 class="text-sm font-medium text-muted-foreground">
                         Active Incidents
                     </h3>
-                    <p
-                        class="mt-2 text-3xl font-bold text-neutral-900 dark:text-neutral-100"
-                    >
-                        --
-                    </p>
-                    <p
-                        class="mt-1 text-xs text-neutral-500 dark:text-neutral-400"
-                    >
+                    <p class="mt-2 text-3xl font-bold text-foreground">--</p>
+                    <p class="mt-1 text-xs text-muted-foreground">
                         Real-time data coming in Phase 4
                     </p>
                 </div>
