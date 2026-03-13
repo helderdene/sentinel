@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             IncidentTypeSeeder::class,
             UnitSeeder::class,
             BarangaySeeder::class,
+            AgencySeeder::class,
         ]);
     }
 }

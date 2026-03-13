@@ -8,6 +8,7 @@ use Clickbar\Magellan\Data\Geometries\Point;
 use Database\Factories\UnitFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Unit extends Model
@@ -60,10 +61,21 @@ class Unit extends Model
     }
 
     /**
-     * Get incidents currently assigned to this unit.
+     * Get incidents currently assigned to this unit (legacy single FK).
      */
     public function currentIncidents(): HasMany
     {
         return $this->hasMany(Incident::class, 'assigned_unit', 'id');
+    }
+
+    /**
+     * Get all active incidents via the incident_unit pivot.
+     */
+    public function activeIncidents(): BelongsToMany
+    {
+        return $this->belongsToMany(Incident::class, 'incident_unit')
+            ->using(IncidentUnit::class)
+            ->withPivot(['assigned_at', 'acknowledged_at', 'unassigned_at', 'assigned_by'])
+            ->wherePivotNull('unassigned_at');
     }
 }

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
@@ -153,10 +154,21 @@ class Incident extends Model
     }
 
     /**
-     * Get the assigned unit.
+     * Get the assigned unit (legacy single-unit FK, kept for backward compatibility).
      */
     public function assignedUnit(): BelongsTo
     {
         return $this->belongsTo(Unit::class, 'assigned_unit', 'id');
+    }
+
+    /**
+     * Get all actively assigned units via the incident_unit pivot.
+     */
+    public function assignedUnits(): BelongsToMany
+    {
+        return $this->belongsToMany(Unit::class, 'incident_unit')
+            ->using(IncidentUnit::class)
+            ->withPivot(['assigned_at', 'acknowledged_at', 'unassigned_at', 'assigned_by'])
+            ->wherePivotNull('unassigned_at');
     }
 }
