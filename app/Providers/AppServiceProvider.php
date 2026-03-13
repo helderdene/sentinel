@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Contracts\AnalyticsServiceInterface;
 use App\Contracts\BfpSyncServiceInterface;
 use App\Contracts\DirectionsServiceInterface;
 use App\Contracts\GeocodingServiceInterface;
@@ -14,6 +15,7 @@ use App\Contracts\SmsServiceInterface;
 use App\Contracts\WeatherServiceInterface;
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Services\AnalyticsService;
 use App\Services\ProximityRankingService;
 use App\Services\SmsParserService;
 use App\Services\StubBfpSyncService;
@@ -41,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(AnalyticsServiceInterface::class, AnalyticsService::class);
         $this->app->bind(GeocodingServiceInterface::class, StubMapboxGeocodingService::class);
         $this->app->bind(ProximityServiceInterface::class, ProximityRankingService::class);
         $this->app->bind(SmsServiceInterface::class, StubSemaphoreSmsService::class);
