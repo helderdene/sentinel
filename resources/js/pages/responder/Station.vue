@@ -2,6 +2,9 @@
 import { useIntervalFn } from '@vueuse/core';
 import type { ComputedRef, Ref } from 'vue';
 import { computed, inject, ref, watch } from 'vue';
+import ChatTab from '@/components/responder/ChatTab.vue';
+import MessageBanner from '@/components/responder/MessageBanner.vue';
+import SceneTab from '@/components/responder/SceneTab.vue';
 import StandbyScreen from '@/components/responder/StandbyScreen.vue';
 import { useGpsTracking } from '@/composables/useGpsTracking';
 import { useResponderSession } from '@/composables/useResponderSession';
@@ -214,6 +217,42 @@ if (layoutOnAdvance) {
 if (layoutOnShowOutcomeSheet) {
     layoutOnShowOutcomeSheet.value = handleShowOutcomeSheet;
 }
+
+// MessageBanner state
+const bannerMessage = ref<IncidentMessageItem | null>(null);
+const bannerVisible = ref(false);
+
+watch(
+    () => session.messages.value.length,
+    (newLen, oldLen) => {
+        if (
+            newLen > oldLen &&
+            session.activeTab.value !== 'chat' &&
+            session.messages.value.length > 0
+        ) {
+            bannerMessage.value =
+                session.messages.value[session.messages.value.length - 1];
+            bannerVisible.value = true;
+        }
+    },
+);
+
+function dismissBanner(): void {
+    bannerVisible.value = false;
+}
+
+function goToChat(): void {
+    bannerVisible.value = false;
+    session.setActiveTab('chat');
+
+    if (layoutActiveTab) {
+        layoutActiveTab.value = 'chat';
+    }
+}
+
+function handleMessagesRead(): void {
+    session.markMessagesRead();
+}
 </script>
 
 <template>
@@ -244,6 +283,14 @@ if (layoutOnShowOutcomeSheet) {
 
         <!-- Active incident: tab content -->
         <template v-else>
+            <!-- Message banner for incoming messages when not on chat tab -->
+            <MessageBanner
+                :message="bannerMessage"
+                :is-visible="bannerVisible"
+                @dismiss="dismissBanner"
+                @go-to-chat="goToChat"
+            />
+
             <div
                 v-if="session.activeTab.value === 'assignment'"
                 class="flex flex-1 items-center justify-center p-6"
@@ -270,31 +317,24 @@ if (layoutOnShowOutcomeSheet) {
                 </div>
             </div>
 
-            <div
-                v-else-if="session.activeTab.value === 'scene'"
-                class="flex flex-1 items-center justify-center p-6"
-            >
-                <div
-                    class="rounded-xl border border-t-border bg-t-surface p-6 text-center"
-                >
-                    <p class="font-mono text-sm font-semibold text-t-text-dim">
-                        Scene documentation (Plan 03)
-                    </p>
-                </div>
-            </div>
+            <SceneTab
+                v-else-if="
+                    session.activeTab.value === 'scene' &&
+                    session.activeIncident.value
+                "
+                :incident="session.activeIncident.value"
+            />
 
-            <div
-                v-else-if="session.activeTab.value === 'chat'"
-                class="flex flex-1 items-center justify-center p-6"
-            >
-                <div
-                    class="rounded-xl border border-t-border bg-t-surface p-6 text-center"
-                >
-                    <p class="font-mono text-sm font-semibold text-t-text-dim">
-                        Chat tab (Plan 03)
-                    </p>
-                </div>
-            </div>
+            <ChatTab
+                v-else-if="
+                    session.activeTab.value === 'chat' &&
+                    session.activeIncident.value
+                "
+                :messages="session.messages.value"
+                :incident-id="session.activeIncident.value.id"
+                :current-user-id="props.userId"
+                @messages-read="handleMessagesRead"
+            />
         </template>
     </div>
 </template>
