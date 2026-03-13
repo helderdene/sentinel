@@ -25,6 +25,7 @@ class IncidentType extends Model
         'default_priority',
         'description',
         'is_active',
+        'show_in_public_app',
         'sort_order',
     ];
 
@@ -37,6 +38,7 @@ class IncidentType extends Model
     {
         return [
             'is_active' => 'boolean',
+            'show_in_public_app' => 'boolean',
             'sort_order' => 'integer',
         ];
     }
@@ -55,6 +57,14 @@ class IncidentType extends Model
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
+    }
+
+    /**
+     * Scope to incident types visible in the public citizen app.
+     */
+    public function scopePublic(Builder $query): Builder
+    {
+        return $query->where('show_in_public_app', true);
     }
 
     /**

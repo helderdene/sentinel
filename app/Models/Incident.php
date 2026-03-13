@@ -27,6 +27,7 @@ class Incident extends Model
      */
     protected $fillable = [
         'incident_no',
+        'tracking_token',
         'incident_type_id',
         'priority',
         'status',
@@ -111,6 +112,27 @@ class Incident extends Model
         }
 
         return $prefix.str_pad((string) $sequence, 5, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Generate a unique 8-character tracking token using an unambiguous 30-char alphabet.
+     * Excludes O, I, L (letters) and 0, 1 (digits) to avoid visual confusion.
+     */
+    public static function generateTrackingToken(): string
+    {
+        $alphabet = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+        $length = 8;
+
+        do {
+            $token = '';
+            $bytes = random_bytes($length);
+
+            for ($i = 0; $i < $length; $i++) {
+                $token .= $alphabet[ord($bytes[$i]) % 30];
+            }
+        } while (static::query()->where('tracking_token', $token)->exists());
+
+        return $token;
     }
 
     /**

@@ -11,9 +11,12 @@ use App\Services\ProximityRankingService;
 use App\Services\StubMapboxGeocodingService;
 use App\Services\StubSemaphoreSmsService;
 use Carbon\CarbonImmutable;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -36,6 +39,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
         $this->configureGates();
+        $this->configureRateLimiters();
     }
 
     /**
@@ -115,5 +119,25 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('view-session-log', fn (User $user): bool => in_array($user->role, [
             UserRole::Supervisor, UserRole::Admin,
         ], true));
+    }
+
+    /**
+     * Configure rate limiters for citizen API endpoints.
+     */
+    protected function configureRateLimiters(): void
+    {
+        RateLimiter::for('citizen-reports', function (Request $request) {
+            return Limit::perMinute(5)
+                ->by($request->ip())
+                ->response(function () {
+                    return response()->json([
+                        'message' => 'Too many report submissions. Please try again later.',
+                    ], 429);
+                });
+        });
+
+        RateLimiter::for('citizen-reads', function (Request $request) {
+            return Limit::perMinute(60)->by($request->ip());
+        });
     }
 }
