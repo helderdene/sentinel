@@ -74,26 +74,24 @@ watch(
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col">
             <!-- Tab Navigation -->
-            <div
-                class="flex items-center gap-1 border-b border-neutral-200 px-4 dark:border-neutral-800"
-            >
+            <div class="flex items-center gap-1 border-b border-border px-4">
                 <Link
                     :href="dashboard.url()"
-                    class="flex items-center gap-1.5 border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+                    class="flex items-center gap-1.5 border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-t-text-dim hover:text-foreground"
                 >
                     <BarChart3 class="h-4 w-4" />
                     Dashboard
                 </Link>
                 <Link
                     :href="heatmap.url()"
-                    class="flex items-center gap-1.5 border-b-2 border-blue-600 px-3 py-2.5 text-sm font-medium text-blue-600 dark:text-blue-400"
+                    class="flex items-center gap-1.5 border-b-2 border-t-accent px-3 py-2.5 text-sm font-medium text-t-accent"
                 >
                     <Map class="h-4 w-4" />
                     Heatmap
                 </Link>
                 <Link
                     :href="reports.url()"
-                    class="flex items-center gap-1.5 border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+                    class="flex items-center gap-1.5 border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-t-text-dim hover:text-foreground"
                 >
                     <FileDown class="h-4 w-4" />
                     Reports
@@ -119,16 +117,13 @@ watch(
 
             <!-- Map Container -->
             <div class="relative flex-1" style="height: calc(100vh - 10rem)">
-                <div
-                    ref="mapContainer"
-                    class="h-full w-full"
-                />
+                <div ref="mapContainer" class="h-full w-full" />
 
                 <ChoroplethLegend />
 
                 <!-- Export Button -->
                 <button
-                    class="absolute top-4 right-4 z-10 inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 bg-white/90 px-3 py-2 text-xs font-medium text-neutral-700 shadow-sm backdrop-blur transition-colors hover:bg-white dark:border-neutral-700 dark:bg-zinc-900/90 dark:text-neutral-300 dark:hover:bg-zinc-800"
+                    class="absolute top-4 right-4 z-10 inline-flex items-center gap-1.5 rounded-[var(--radius)] border border-border bg-card/90 px-3 py-2 text-xs font-medium text-foreground shadow-[var(--shadow-1)] backdrop-blur transition-colors hover:bg-card"
                     @click="exportPng()"
                 >
                     <Download class="h-3.5 w-3.5" />
@@ -138,9 +133,9 @@ watch(
                 <!-- Loading Overlay -->
                 <div
                     v-if="!isLoaded"
-                    class="absolute inset-0 flex items-center justify-center bg-neutral-100 dark:bg-zinc-900"
+                    class="absolute inset-0 flex items-center justify-center bg-background"
                 >
-                    <div class="text-sm text-neutral-400">Loading map...</div>
+                    <div class="text-sm text-t-text-faint">Loading map...</div>
                 </div>
             </div>
         </div>

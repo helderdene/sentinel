@@ -172,26 +172,24 @@ const METRIC_COLORS: Record<string, string> = {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col">
             <!-- Tab Navigation -->
-            <div
-                class="flex items-center gap-1 border-b border-neutral-200 px-4 dark:border-neutral-800"
-            >
+            <div class="flex items-center gap-1 border-b border-border px-4">
                 <Link
                     :href="dashboard.url()"
-                    class="flex items-center gap-1.5 border-b-2 border-blue-600 px-3 py-2.5 text-sm font-medium text-blue-600 dark:text-blue-400"
+                    class="flex items-center gap-1.5 border-b-2 border-t-accent px-3 py-2.5 text-sm font-medium text-t-accent"
                 >
                     <BarChart3 class="h-4 w-4" />
                     Dashboard
                 </Link>
                 <Link
                     :href="heatmap.url()"
-                    class="flex items-center gap-1.5 border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+                    class="flex items-center gap-1.5 border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-t-text-dim hover:text-foreground"
                 >
                     <Map class="h-4 w-4" />
                     Heatmap
                 </Link>
                 <Link
                     :href="reports.url()"
-                    class="flex items-center gap-1.5 border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+                    class="flex items-center gap-1.5 border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-t-text-dim hover:text-foreground"
                 >
                     <FileDown class="h-4 w-4" />
                     Reports
@@ -242,14 +240,14 @@ const METRIC_COLORS: Record<string, string> = {
                         <div
                             v-for="i in 5"
                             :key="i"
-                            class="h-28 animate-pulse rounded-xl bg-neutral-100 dark:bg-neutral-800"
+                            class="h-28 animate-pulse rounded-[var(--radius)] bg-secondary"
                         />
                     </template>
                 </div>
 
                 <!-- Metric Toggle + Line Chart -->
                 <div
-                    class="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-zinc-900"
+                    class="rounded-[var(--radius)] border border-border bg-card p-4 shadow-[var(--shadow-1)]"
                 >
                     <div class="mb-4 flex flex-wrap gap-2">
                         <label
@@ -258,8 +256,8 @@ const METRIC_COLORS: Record<string, string> = {
                             class="flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors"
                             :class="
                                 visibleMetrics.includes(m.key)
-                                    ? 'bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100'
-                                    : 'text-neutral-400 dark:text-neutral-500'
+                                    ? 'bg-secondary text-foreground'
+                                    : 'text-t-text-faint'
                             "
                         >
                             <input

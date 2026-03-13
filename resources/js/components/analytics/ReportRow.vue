@@ -55,36 +55,32 @@ function formatDate(dateStr: string): string {
 
 <template>
     <div
-        class="flex items-center justify-between rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-zinc-900"
+        class="flex items-center justify-between rounded-[var(--radius)] border border-border bg-card p-4 shadow-[var(--shadow-1)]"
     >
         <div class="flex items-center gap-3">
             <div
-                class="flex h-9 w-9 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-800"
+                class="flex h-9 w-9 items-center justify-center rounded-[var(--radius)] bg-secondary"
             >
-                <FileText
-                    class="h-4 w-4 text-neutral-500 dark:text-neutral-400"
-                />
+                <FileText class="h-4 w-4 text-t-text-dim" />
             </div>
 
             <div>
                 <div class="flex items-center gap-2">
-                    <h4
-                        class="text-sm font-medium text-neutral-900 dark:text-neutral-100"
-                    >
+                    <h4 class="text-sm font-medium text-foreground">
                         {{ report.title }}
                     </h4>
                     <span
-                        class="inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium"
+                        class="inline-flex rounded-full px-2 py-0.5 font-mono text-[9px] font-bold tracking-[1px] uppercase"
                         :class="
                             TYPE_BADGES[report.type]?.class ??
-                            'bg-neutral-100 text-neutral-600'
+                            'bg-secondary text-t-text-dim'
                         "
                     >
                         {{ TYPE_BADGES[report.type]?.label ?? report.type }}
                     </span>
                 </div>
                 <div
-                    class="mt-0.5 flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400"
+                    class="mt-0.5 flex items-center gap-2 font-mono text-xs text-t-text-dim"
                 >
                     <span>{{ report.period }}</span>
                     <span>{{ formatDate(report.created_at) }}</span>
@@ -98,7 +94,7 @@ function formatDate(dateStr: string): string {
                 class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium"
                 :class="
                     STATUS_BADGES[report.status]?.class ??
-                    'bg-neutral-100 text-neutral-600'
+                    'bg-secondary text-t-text-dim'
                 "
             >
                 <Loader2
@@ -112,7 +108,7 @@ function formatDate(dateStr: string): string {
             <template v-if="report.status === 'ready'">
                 <a
                     :href="downloadReport.url(report.id)"
-                    class="inline-flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-blue-700"
+                    class="inline-flex items-center gap-1 rounded-[var(--radius)] bg-t-accent px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-t-accent/90"
                 >
                     <Download class="h-3 w-3" />
                     PDF
@@ -120,7 +116,7 @@ function formatDate(dateStr: string): string {
                 <a
                     v-if="report.csv_path"
                     :href="downloadReport.url(report.id) + '?format=csv'"
-                    class="inline-flex items-center gap-1 rounded-lg bg-neutral-100 px-3 py-1.5 text-xs font-medium text-neutral-700 transition-colors hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                    class="inline-flex items-center gap-1 rounded-[var(--radius)] bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground transition-colors hover:bg-accent"
                 >
                     <Download class="h-3 w-3" />
                     CSV
@@ -128,7 +124,7 @@ function formatDate(dateStr: string): string {
             </template>
 
             <template v-if="report.status === 'generating'">
-                <span class="text-xs text-neutral-400 italic">
+                <span class="text-xs text-t-text-faint italic">
                     Processing...
                 </span>
             </template>

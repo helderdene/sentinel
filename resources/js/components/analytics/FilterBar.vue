@@ -89,7 +89,7 @@ const hasActiveFilters = computed(() => {
 
 <template>
     <div
-        class="sticky top-0 z-10 border-b border-neutral-200 bg-white/80 px-4 py-2.5 backdrop-blur dark:border-neutral-800 dark:bg-zinc-900/80"
+        class="sticky top-0 z-10 border-b border-border bg-card/80 px-4 py-2.5 backdrop-blur"
     >
         <div class="flex flex-wrap items-center gap-3">
             <!-- Date Presets -->
@@ -100,8 +100,8 @@ const hasActiveFilters = computed(() => {
                     class="rounded-full px-3 py-1 text-xs font-medium transition-colors"
                     :class="
                         presetModel === p
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700'
+                            ? 'bg-t-accent text-white'
+                            : 'bg-secondary text-secondary-foreground hover:bg-accent'
                     "
                     @click="handlePreset(p)"
                 >
@@ -111,8 +111,8 @@ const hasActiveFilters = computed(() => {
                     class="rounded-full px-3 py-1 text-xs font-medium transition-colors"
                     :class="
                         presetModel === null
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700'
+                            ? 'bg-t-accent text-white'
+                            : 'bg-secondary text-secondary-foreground hover:bg-accent'
                     "
                     @click="handleCustom"
                 >
@@ -125,26 +125,23 @@ const hasActiveFilters = computed(() => {
                 <input
                     v-model="startDateModel"
                     type="date"
-                    class="rounded border border-neutral-300 px-2 py-1 text-xs dark:border-neutral-700 dark:bg-zinc-800 dark:text-neutral-200"
+                    class="rounded border border-border px-2 py-1 text-xs dark:border-border dark:bg-card dark:text-foreground"
                     @change="handleCustomDateChange"
                 />
-                <span class="text-xs text-neutral-400">to</span>
+                <span class="text-xs text-t-text-faint">to</span>
                 <input
                     v-model="endDateModel"
                     type="date"
-                    class="rounded border border-neutral-300 px-2 py-1 text-xs dark:border-neutral-700 dark:bg-zinc-800 dark:text-neutral-200"
+                    class="rounded border border-border px-2 py-1 text-xs dark:border-border dark:bg-card dark:text-foreground"
                     @change="handleCustomDateChange"
                 />
             </div>
 
-            <div
-                class="h-4 w-px bg-neutral-200 dark:bg-neutral-700"
-                aria-hidden="true"
-            />
+            <div class="h-4 w-px bg-border" aria-hidden="true" />
 
             <!-- Incident Type -->
             <select
-                class="rounded border border-neutral-300 px-2 py-1 text-xs dark:border-neutral-700 dark:bg-zinc-800 dark:text-neutral-200"
+                class="rounded border border-border px-2 py-1 text-xs dark:border-border dark:bg-card dark:text-foreground"
                 :value="incidentTypeModel ?? ''"
                 @change="handleTypeChange"
             >
@@ -166,8 +163,8 @@ const hasActiveFilters = computed(() => {
                     class="rounded px-2 py-0.5 text-xs font-medium transition-colors"
                     :class="
                         priorityModel === p
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700'
+                            ? 'bg-t-accent text-white'
+                            : 'bg-secondary text-secondary-foreground hover:bg-accent'
                     "
                     @click="handlePriority(p)"
                 >
@@ -177,7 +174,7 @@ const hasActiveFilters = computed(() => {
 
             <!-- Barangay Dropdown -->
             <select
-                class="max-w-[180px] rounded border border-neutral-300 px-2 py-1 text-xs dark:border-neutral-700 dark:bg-zinc-800 dark:text-neutral-200"
+                class="max-w-[180px] rounded border border-border px-2 py-1 text-xs dark:border-border dark:bg-card dark:text-foreground"
                 :value="barangayModel ?? ''"
                 @change="handleBarangayChange"
             >
@@ -194,7 +191,7 @@ const hasActiveFilters = computed(() => {
             <!-- Clear -->
             <button
                 v-if="hasActiveFilters"
-                class="flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-800"
+                class="flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium text-t-text-dim transition-colors hover:bg-secondary hover:text-foreground"
                 @click="emit('clearFilters')"
             >
                 <X class="h-3 w-3" />

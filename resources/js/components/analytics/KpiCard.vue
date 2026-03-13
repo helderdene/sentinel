@@ -66,22 +66,20 @@ const chartOptions = {
 
 <template>
     <div
-        class="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-zinc-900"
+        class="rounded-[var(--radius)] border border-border bg-card p-4 shadow-[var(--shadow-1)]"
     >
         <p
-            class="mb-1 text-xs font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400"
+            class="mb-1 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
         >
             {{ title }}
         </p>
 
         <div class="mb-2 flex items-end justify-between">
             <div class="flex items-baseline gap-1">
-                <span
-                    class="font-mono text-2xl font-semibold text-neutral-900 dark:text-neutral-100"
-                >
+                <span class="font-mono text-2xl font-semibold text-foreground">
                     {{ value }}
                 </span>
-                <span class="text-sm text-neutral-500 dark:text-neutral-400">
+                <span class="text-sm text-t-text-dim">
                     {{ unit }}
                 </span>
             </div>
@@ -89,11 +87,7 @@ const chartOptions = {
             <div
                 v-if="trend !== 0"
                 class="flex items-center gap-0.5 text-xs font-medium"
-                :class="
-                    trend > 0
-                        ? 'text-green-600 dark:text-green-400'
-                        : 'text-red-600 dark:text-red-400'
-                "
+                :class="trend > 0 ? 'text-t-online' : 'text-t-p1'"
             >
                 <TrendingUp v-if="trend > 0" class="h-3.5 w-3.5" />
                 <TrendingDown v-else class="h-3.5 w-3.5" />

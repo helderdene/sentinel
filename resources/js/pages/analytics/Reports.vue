@@ -131,26 +131,24 @@ const years = computed(() => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col">
             <!-- Tab Navigation -->
-            <div
-                class="flex items-center gap-1 border-b border-neutral-200 px-4 dark:border-neutral-800"
-            >
+            <div class="flex items-center gap-1 border-b border-border px-4">
                 <Link
                     :href="dashboard.url()"
-                    class="flex items-center gap-1.5 border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+                    class="flex items-center gap-1.5 border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-t-text-dim hover:text-foreground"
                 >
                     <BarChart3 class="h-4 w-4" />
                     Dashboard
                 </Link>
                 <Link
                     :href="heatmap.url()"
-                    class="flex items-center gap-1.5 border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+                    class="flex items-center gap-1.5 border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-t-text-dim hover:text-foreground"
                 >
                     <Map class="h-4 w-4" />
                     Heatmap
                 </Link>
                 <Link
                     :href="reportsRoute.url()"
-                    class="flex items-center gap-1.5 border-b-2 border-blue-600 px-3 py-2.5 text-sm font-medium text-blue-600 dark:text-blue-400"
+                    class="flex items-center gap-1.5 border-b-2 border-t-accent px-3 py-2.5 text-sm font-medium text-t-accent"
                 >
                     <FileDown class="h-4 w-4" />
                     Reports
@@ -161,10 +159,10 @@ const years = computed(() => {
             <div class="flex-1 overflow-y-auto p-4">
                 <!-- Generate Report Section -->
                 <div
-                    class="mb-6 rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-zinc-900"
+                    class="mb-6 rounded-[var(--radius)] border border-border bg-card p-4 shadow-[var(--shadow-1)]"
                 >
                     <h3
-                        class="mb-3 text-sm font-semibold text-neutral-900 dark:text-neutral-100"
+                        class="mb-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
                     >
                         Generate Report
                     </h3>
@@ -174,7 +172,7 @@ const years = computed(() => {
                         <div>
                             <button
                                 v-if="!showQuarterlyForm"
-                                class="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-blue-700"
+                                class="inline-flex items-center gap-1.5 rounded-[var(--radius)] bg-t-accent px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-t-accent/90"
                                 @click="showQuarterlyForm = true"
                             >
                                 <Plus class="h-3.5 w-3.5" />
@@ -187,13 +185,13 @@ const years = computed(() => {
                             >
                                 <div>
                                     <label
-                                        class="mb-1 block text-xs text-neutral-500 dark:text-neutral-400"
+                                        class="mb-1 block font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
                                     >
                                         Period
                                     </label>
                                     <select
                                         v-model="quarterlyForm.period"
-                                        class="rounded border border-neutral-300 px-2 py-1.5 text-xs dark:border-neutral-700 dark:bg-zinc-800 dark:text-neutral-200"
+                                        class="rounded-[var(--radius)] border border-border bg-card px-2 py-1.5 text-xs text-foreground"
                                     >
                                         <option
                                             v-for="q in quarters"
@@ -207,7 +205,7 @@ const years = computed(() => {
                                 <button
                                     type="submit"
                                     :disabled="quarterlyForm.processing"
-                                    class="inline-flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
+                                    class="inline-flex items-center gap-1 rounded-[var(--radius)] bg-t-accent px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-t-accent/90 disabled:opacity-50"
                                 >
                                     <Loader2
                                         v-if="quarterlyForm.processing"
@@ -217,7 +215,7 @@ const years = computed(() => {
                                 </button>
                                 <button
                                     type="button"
-                                    class="rounded-lg px-2 py-1.5 text-xs text-neutral-500 hover:text-neutral-700 dark:text-neutral-400"
+                                    class="rounded-[var(--radius)] px-2 py-1.5 text-xs text-t-text-dim hover:text-foreground"
                                     @click="showQuarterlyForm = false"
                                 >
                                     Cancel
@@ -229,7 +227,7 @@ const years = computed(() => {
                         <div>
                             <button
                                 v-if="!showAnnualForm"
-                                class="inline-flex items-center gap-1.5 rounded-lg bg-purple-600 px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-purple-700"
+                                class="inline-flex items-center gap-1.5 rounded-[var(--radius)] bg-t-ch-iot px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-t-ch-iot/90"
                                 @click="showAnnualForm = true"
                             >
                                 <Plus class="h-3.5 w-3.5" />
@@ -242,13 +240,13 @@ const years = computed(() => {
                             >
                                 <div>
                                     <label
-                                        class="mb-1 block text-xs text-neutral-500 dark:text-neutral-400"
+                                        class="mb-1 block font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
                                     >
                                         Year
                                     </label>
                                     <select
                                         v-model="annualForm.period"
-                                        class="rounded border border-neutral-300 px-2 py-1.5 text-xs dark:border-neutral-700 dark:bg-zinc-800 dark:text-neutral-200"
+                                        class="rounded-[var(--radius)] border border-border bg-card px-2 py-1.5 text-xs text-foreground"
                                     >
                                         <option
                                             v-for="y in years"
@@ -262,7 +260,7 @@ const years = computed(() => {
                                 <button
                                     type="submit"
                                     :disabled="annualForm.processing"
-                                    class="inline-flex items-center gap-1 rounded-lg bg-purple-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-purple-700 disabled:opacity-50"
+                                    class="inline-flex items-center gap-1 rounded-[var(--radius)] bg-t-ch-iot px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-t-ch-iot/90 disabled:opacity-50"
                                 >
                                     <Loader2
                                         v-if="annualForm.processing"
@@ -272,7 +270,7 @@ const years = computed(() => {
                                 </button>
                                 <button
                                     type="button"
-                                    class="rounded-lg px-2 py-1.5 text-xs text-neutral-500 hover:text-neutral-700 dark:text-neutral-400"
+                                    class="rounded-[var(--radius)] px-2 py-1.5 text-xs text-t-text-dim hover:text-foreground"
                                     @click="showAnnualForm = false"
                                 >
                                     Cancel
@@ -285,7 +283,7 @@ const years = computed(() => {
                 <!-- Polling Indicator -->
                 <div
                     v-if="hasGeneratingReports"
-                    class="mb-4 flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400"
+                    class="mb-4 flex items-center gap-2 text-xs text-t-text-dim"
                 >
                     <Loader2 class="h-3 w-3 animate-spin" />
                     Checking for updates...
@@ -303,7 +301,7 @@ const years = computed(() => {
                 <!-- Empty State -->
                 <div
                     v-else
-                    class="flex flex-col items-center justify-center py-16 text-neutral-400"
+                    class="flex flex-col items-center justify-center py-16 text-t-text-faint"
                 >
                     <FileDown class="mb-3 h-10 w-10" />
                     <p class="text-sm">No reports generated yet</p>
@@ -322,11 +320,11 @@ const years = computed(() => {
                         <Link
                             v-if="link.url"
                             :href="link.url"
-                            class="rounded-lg px-3 py-1.5 text-xs font-medium transition-colors"
+                            class="rounded-[var(--radius)] px-3 py-1.5 text-xs font-medium transition-colors"
                             :class="
                                 link.active
-                                    ? 'bg-blue-600 text-white'
-                                    : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700'
+                                    ? 'bg-t-accent text-white'
+                                    : 'bg-secondary text-secondary-foreground hover:bg-accent'
                             "
                             preserve-scroll
                         >
@@ -334,7 +332,7 @@ const years = computed(() => {
                         </Link>
                         <span
                             v-else
-                            class="rounded-lg px-3 py-1.5 text-xs text-neutral-300 dark:text-neutral-600"
+                            class="rounded-[var(--radius)] px-3 py-1.5 text-xs text-t-text-faint"
                             v-html="link.label"
                         />
                     </template>

@@ -10,10 +10,10 @@ const STOPS = [
 
 <template>
     <div
-        class="absolute bottom-4 left-4 z-10 rounded-lg border border-neutral-200 bg-white/90 px-3 py-2 shadow-sm backdrop-blur dark:border-neutral-700 dark:bg-zinc-900/90"
+        class="absolute bottom-4 left-4 z-10 rounded-[var(--radius)] border border-border bg-card/90 px-3 py-2 shadow-[var(--shadow-1)] backdrop-blur"
     >
         <p
-            class="mb-1.5 text-[10px] font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400"
+            class="mb-1.5 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
         >
             Incidents
         </p>
@@ -27,9 +27,7 @@ const STOPS = [
                     class="h-3 w-10"
                     :style="{ backgroundColor: stop.color }"
                 />
-                <span
-                    class="mt-0.5 text-[9px] text-neutral-500 dark:text-neutral-400"
-                >
+                <span class="mt-0.5 font-mono text-[9px] text-t-text-faint">
                     {{ stop.value }}
                 </span>
             </div>
