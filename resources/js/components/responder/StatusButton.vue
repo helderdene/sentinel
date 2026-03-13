@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ChevronRight } from 'lucide-vue-next';
 import { computed } from 'vue';
 import type { IncidentStatus } from '@/types/responder';
 
@@ -78,20 +77,44 @@ function handleClick(): void {
 </script>
 
 <template>
-    <div v-if="isVisible" class="shrink-0 px-3 pt-2 pb-1">
+    <div
+        v-if="isVisible"
+        class="pointer-events-none fixed inset-x-0 bottom-[80px] shrink-0 px-3 pt-8 pb-3"
+        :style="{
+            background: 'linear-gradient(transparent, var(--t-bg) 30%)',
+        }"
+    >
         <button
             type="button"
-            class="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl font-mono text-sm font-bold tracking-wide text-white shadow-lg transition-transform active:scale-[0.98]"
+            class="pointer-events-auto flex min-h-[52px] w-full items-center justify-center gap-2 rounded-[13px] text-[16px] font-bold tracking-wide text-white transition-transform active:scale-[0.98]"
             :style="{
                 backgroundColor: currentAction!.color,
+                boxShadow: `0 6px 20px ${currentAction!.color}45`,
             }"
             @click="handleClick"
         >
-            <span v-if="showTimer" class="mr-1 opacity-80">
+            <span
+                v-if="showTimer"
+                class="mr-1 font-mono text-[14px] opacity-80"
+            >
                 {{ formattedTimer }}
             </span>
             <span>{{ currentAction!.label }}</span>
-            <ChevronRight :size="18" />
+            <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                style="color: currentColor"
+            >
+                <path
+                    d="M9 18L15 12L9 6"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+            </svg>
         </button>
     </div>
 </template>

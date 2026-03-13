@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import PriBadge from '@/components/intake/PriBadge.vue';
 import type { ResponderIncident, ResponderUnit } from '@/types/responder';
 
 const props = defineProps<{
@@ -17,6 +16,17 @@ const priorityNumber = computed<1 | 2 | 3 | 4>(() => {
     const num = parseInt(props.incident.priority.replace('P', ''), 10);
 
     return (num >= 1 && num <= 4 ? num : 4) as 1 | 2 | 3 | 4;
+});
+
+const priorityColor = computed(() => {
+    const colors: Record<number, string> = {
+        1: 'var(--t-p1)',
+        2: 'var(--t-p2)',
+        3: 'var(--t-p3)',
+        4: 'var(--t-p4)',
+    };
+
+    return colors[priorityNumber.value] ?? 'var(--t-p4)';
 });
 
 const statusLabel = computed(() => {
@@ -57,7 +67,7 @@ const connectionDotColor = computed(() => {
 
 <template>
     <header
-        class="flex h-[44px] shrink-0 items-center justify-between border-b border-t-border bg-t-surface px-3"
+        class="flex h-[44px] shrink-0 items-center justify-between border-b border-t-border bg-t-surface px-3 shadow-[0_1px_4px_rgba(0,0,0,.04)]"
     >
         <!-- Left: callsign + connection dot -->
         <div class="flex items-center gap-1.5">
@@ -65,7 +75,7 @@ const connectionDotColor = computed(() => {
                 class="size-2 shrink-0 rounded-full"
                 :style="{ backgroundColor: connectionDotColor }"
             />
-            <span class="font-mono text-sm font-bold text-t-text">
+            <span class="font-mono text-[13px] font-bold text-t-text">
                 {{ unit.callsign }}
             </span>
         </div>
@@ -73,17 +83,28 @@ const connectionDotColor = computed(() => {
         <!-- Center: incident number + priority badge -->
         <div class="flex items-center gap-2">
             <template v-if="incident">
-                <span class="font-mono text-xs text-t-text-mid">
+                <span class="font-mono text-[11px] text-t-text-mid">
                     {{ incident.incident_no }}
                 </span>
-                <PriBadge :p="priorityNumber" size="sm" />
+                <span
+                    class="rounded-full px-1.5 py-px font-mono text-[10px] font-bold tracking-wide uppercase"
+                    :style="{
+                        color: priorityColor,
+                        background: `color-mix(in srgb, ${priorityColor} 8%, transparent)`,
+                        border: `1px solid color-mix(in srgb, ${priorityColor} 19%, transparent)`,
+                    }"
+                >
+                    P{{ priorityNumber }}
+                </span>
             </template>
-            <span v-else class="text-xs text-t-text-faint"> Standing By </span>
+            <span v-else class="text-[11px] text-t-text-faint">
+                Standing By
+            </span>
         </div>
 
         <!-- Right: status chip -->
         <span
-            class="rounded-full px-2 py-0.5 font-mono text-[10px] font-bold text-white"
+            class="rounded-full px-2 py-0.5 font-mono text-[10px] font-bold tracking-wide text-white"
             :style="{
                 backgroundColor: statusColor,
             }"

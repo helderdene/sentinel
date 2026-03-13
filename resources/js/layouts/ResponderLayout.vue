@@ -64,16 +64,14 @@ function handleShowOutcomeSheet(): void {
 </script>
 
 <template>
-    <div
-        class="flex h-screen flex-col overflow-hidden bg-t-bg dark:bg-[#0f172a]"
-    >
+    <div class="flex min-h-dvh flex-col overflow-hidden bg-t-bg">
         <ResponderTopbar
             :unit="unit"
             :incident="incident"
             :connection-status="connectionStatus"
         />
 
-        <div class="flex flex-1 flex-col overflow-hidden">
+        <div class="hide-scrollbar flex flex-1 flex-col overflow-hidden">
             <slot />
         </div>
 

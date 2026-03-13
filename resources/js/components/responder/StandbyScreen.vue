@@ -11,7 +11,7 @@ defineProps<{
     <div class="flex flex-1 flex-col items-center justify-center gap-6 px-6">
         <!-- Callsign -->
         <div class="text-center">
-            <span class="font-mono text-4xl font-bold text-t-text">
+            <span class="font-mono text-[26px] font-extrabold text-t-text">
                 {{ unit.callsign }}
             </span>
         </div>
@@ -37,24 +37,28 @@ defineProps<{
         <!-- Status text -->
         <div class="text-center">
             <p
-                class="font-mono text-sm font-semibold tracking-wider text-t-text-dim uppercase"
+                class="font-mono text-[11px] font-semibold tracking-[1.5px] text-t-text-faint uppercase"
             >
                 Standing By
             </p>
             <p
                 v-if="connectionStatus === 'online'"
-                class="mt-1 text-xs text-t-text-faint"
+                class="mt-1 text-[11px] text-t-text-faint"
             >
                 Connected to dispatch
             </p>
             <p
                 v-else-if="connectionStatus === 'reconnecting'"
-                class="mt-1 text-xs"
+                class="mt-1 text-[11px]"
                 :style="{ color: 'var(--t-p3)' }"
             >
                 Reconnecting...
             </p>
-            <p v-else class="mt-1 text-xs" :style="{ color: 'var(--t-p1)' }">
+            <p
+                v-else
+                class="mt-1 text-[11px]"
+                :style="{ color: 'var(--t-p1)' }"
+            >
                 Disconnected
             </p>
         </div>
