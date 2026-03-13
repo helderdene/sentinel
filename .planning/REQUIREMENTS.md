@@ -119,6 +119,22 @@
 - [x] **UNIT-08**: Unit ID uniqueness enforced via type prefix + sequential numbering from max existing units of that type
 - [x] **UNIT-09**: Admin status selection restricted to Available and Offline; workflow statuses (Dispatched, En Route, On Scene) controlled only by dispatch/responder workflow
 
+### Bi-directional Communication
+
+- [ ] **COMM-01**: MessageSent event broadcasts on incident-level channel (`incident.{id}.messages`) and dispatch channel (`dispatch.incidents`) instead of user-level channel
+- [ ] **COMM-02**: Incident message channel authorization permits dispatch roles (operator, dispatcher, supervisor, admin) and responders whose unit is assigned to the incident
+- [ ] **COMM-03**: Dispatch sendMessage endpoint at POST `dispatch/{incident}/message` creates message and dispatches MessageSent event
+- [ ] **COMM-04**: Responder sendMessage dispatches updated MessageSent event with sender role and unit callsign in payload
+- [ ] **COMM-05**: Unauthorized users (unassigned responders, unauthenticated) cannot subscribe to incident message channels
+- [ ] **COMM-06**: Dispatch console shows collapsible Messages section in incident detail panel (above Timeline, collapsed by default, ~200px max height)
+- [ ] **COMM-07**: Messages section auto-expands when selecting incident with unread messages; clears unread count on expand
+- [ ] **COMM-08**: 7 dispatcher quick-reply chips ("Copy", "Stand by", "Proceed", "Return to station", "Backup en route", "Update status", "Acknowledged") plus free text input
+- [ ] **COMM-09**: Queue card shows unread message dot/count badge; topbar shows global MSGS count stat
+- [ ] **COMM-10**: Subtle audio cue (distinct from priority tones) plays for incoming messages on non-selected incidents; own messages do not trigger audio or increment unread
+- [ ] **COMM-11**: Incoming messages appear in dispatch Messages section in real-time via WebSocket with sender name + unit callsign identification
+- [ ] **COMM-12**: Responder ChatTab subscribes to `incident.{id}.messages` for true group chat (all participants see all messages)
+- [ ] **COMM-13**: Responder ChatTab displays unit callsign + name for sender identification in multi-unit incidents (e.g., "FIRE-01 . J. Cruz")
+
 ## v2 Requirements
 
 ### Mobile Enhancement
@@ -228,21 +244,34 @@
 | DS-10 | Phase 10 | Complete |
 | DS-11 | Phase 10 | Complete |
 | DS-12 | Phase 10 | Complete |
-| UNIT-01 | Phase 11 | Planned |
-| UNIT-02 | Phase 11 | Planned |
-| UNIT-03 | Phase 11 | Planned |
-| UNIT-04 | Phase 11 | Planned |
-| UNIT-05 | Phase 11 | Planned |
-| UNIT-06 | Phase 11 | Planned |
-| UNIT-07 | Phase 11 | Planned |
-| UNIT-08 | Phase 11 | Planned |
-| UNIT-09 | Phase 11 | Planned |
+| UNIT-01 | Phase 11 | Complete |
+| UNIT-02 | Phase 11 | Complete |
+| UNIT-03 | Phase 11 | Complete |
+| UNIT-04 | Phase 11 | Complete |
+| UNIT-05 | Phase 11 | Complete |
+| UNIT-06 | Phase 11 | Complete |
+| UNIT-07 | Phase 11 | Complete |
+| UNIT-08 | Phase 11 | Complete |
+| UNIT-09 | Phase 11 | Complete |
+| COMM-01 | Phase 12 | Planned |
+| COMM-02 | Phase 12 | Planned |
+| COMM-03 | Phase 12 | Planned |
+| COMM-04 | Phase 12 | Planned |
+| COMM-05 | Phase 12 | Planned |
+| COMM-06 | Phase 12 | Planned |
+| COMM-07 | Phase 12 | Planned |
+| COMM-08 | Phase 12 | Planned |
+| COMM-09 | Phase 12 | Planned |
+| COMM-10 | Phase 12 | Planned |
+| COMM-11 | Phase 12 | Planned |
+| COMM-12 | Phase 12 | Planned |
+| COMM-13 | Phase 12 | Planned |
 
 **Coverage:**
-- v1 requirements: 87 total
-- Mapped to phases: 87
+- v1 requirements: 100 total
+- Mapped to phases: 100
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-12*
-*Last updated: 2026-03-14 after Phase 11 planning*
+*Last updated: 2026-03-14 after Phase 12 planning*

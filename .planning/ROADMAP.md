@@ -218,8 +218,26 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 11-01-PLAN.md -- Backend: migration (decommissioned_at), AdminUnitController, form requests, routes, sidebar update, dispatch query filtering, tests
-- [ ] 11-02-PLAN.md -- Frontend: Units.vue index table with type/status badges, UnitForm.vue with crew multi-select, decommission/recommission UI
+- [x] 11-01-PLAN.md -- Backend: migration (decommissioned_at), AdminUnitController, form requests, routes, sidebar update, dispatch query filtering, tests
+- [x] 11-02-PLAN.md -- Frontend: Units.vue index table with type/status badges, UnitForm.vue with crew multi-select, decommission/recommission UI
+
+### Phase 12: Bi-directional dispatch-responder communication
+**Goal**: Dispatchers can see and reply to responder messages in the dispatch console incident detail panel, with incident-level group chat channels replacing user-level messaging, notification indicators (queue badge, topbar count, audio cue), and the responder ChatTab updated for multi-participant awareness
+**Depends on**: Phase 5, Phase 4
+**Requirements**: COMM-01, COMM-02, COMM-03, COMM-04, COMM-05, COMM-06, COMM-07, COMM-08, COMM-09, COMM-10, COMM-11, COMM-12, COMM-13
+**Success Criteria** (what must be TRUE):
+  1. MessageSent event broadcasts on both incident.{id}.messages and dispatch.incidents channels (not user.{id})
+  2. Incident channel authorization permits dispatch roles and assigned responders; denies unauthorized users
+  3. Dispatchers can send messages to any active incident via the dispatch console Messages section
+  4. Dispatch Messages section is collapsible (collapsed by default), auto-expands when incident with unread messages is selected
+  5. Queue card shows unread message badge; topbar shows global MSGS count; subtle audio cue plays for non-selected incidents
+  6. Responder ChatTab subscribes to incident.{id}.messages for true group chat; displays unit callsign + name for sender identification
+**Plans**: 3 plans
+
+Plans:
+- [ ] 12-01-PLAN.md -- Backend: refactor MessageSent event to dual-channel broadcasting, incident channel auth, dispatch sendMessage endpoint, update responder sendMessage, tests
+- [ ] 12-02-PLAN.md -- Dispatch frontend: DispatchMessagesSection component, unread tracking in useDispatchFeed, message notification audio, topbar MSGS count, QueueCard badge, Console.vue wiring
+- [ ] 12-03-PLAN.md -- Responder frontend: migrate useResponderSession channel subscription to incident.{id}.messages, update ChatTab for group chat display with unit callsign
 
 ## Progress
 
@@ -229,6 +247,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 (Phase 9 depends on Phases 2 and 8)
 (Phase 10 depends on Phase 9)
 (Phase 11 depends on Phase 10)
+(Phase 12 depends on Phases 4 and 5)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -243,3 +262,4 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 9. Public Citizen Reporting App | 3/3 | Complete   | 2026-03-13 |
 | 10. Design System Alignment | 5/5 | Complete    | 2026-03-13 |
 | 11. Implement Units CRUD | 2/2 | Complete    | 2026-03-13 |
+| 12. Bi-directional Communication | 0/3 | Planned | - |
