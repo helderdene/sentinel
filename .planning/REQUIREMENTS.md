@@ -72,8 +72,8 @@
 
 ### Analytics
 
-- [ ] **ANLTCS-01**: KPI dashboard with 5 metrics: average response time, average scene arrival time, resolution rate, unit utilization, false alarm rate — filterable by date range, type, priority, barangay
-- [ ] **ANLTCS-02**: Incident heatmap as choropleth map colored by incident density per barangay; filters for type, priority, date range (30/90/365 days); exportable as PNG
+- [x] **ANLTCS-01**: KPI dashboard with 5 metrics: average response time, average scene arrival time, resolution rate, unit utilization, false alarm rate — filterable by date range, type, priority, barangay
+- [x] **ANLTCS-02**: Incident heatmap as choropleth map colored by incident density per barangay; filters for type, priority, date range (30/90/365 days); exportable as PNG
 - [ ] **ANLTCS-03**: DILG monthly incident report auto-generated on 1st of each month as PDF + CSV; incidents aggregated by type, priority, barangay, outcome
 - [ ] **ANLTCS-04**: NDRRMC Situation Report auto-generated on P1 incident closure; IRMS record mapped to NDRRMC XML template (stubbed submission); fallback PDF emailed to OCD Caraga
 - [ ] **ANLTCS-05**: Quarterly performance report with KPI trends, incident volume charts, response time analysis as PDF
@@ -173,8 +173,8 @@
 | INTGR-07 | Phase 6 | Complete |
 | INTGR-08 | Phase 6 | Complete |
 | INTGR-09 | Phase 6 | Complete |
-| ANLTCS-01 | Phase 7 | Pending |
-| ANLTCS-02 | Phase 7 | Pending |
+| ANLTCS-01 | Phase 7 | Complete |
+| ANLTCS-02 | Phase 7 | Complete |
 | ANLTCS-03 | Phase 7 | Pending |
 | ANLTCS-04 | Phase 7 | Pending |
 | ANLTCS-05 | Phase 7 | Pending |
