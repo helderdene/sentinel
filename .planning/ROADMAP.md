@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation** - PostgreSQL + PostGIS database, core data models, RBAC with 4 roles, barangay boundaries
 - [x] **Phase 2: Intake** - Multi-channel incident triage, geocoding, priority classification, dispatch queue
 - [x] **Phase 3: Real-Time Infrastructure** - Laravel Reverb WebSocket server, broadcast events, channel auth, reconnection strategy (completed 2026-03-13)
-- [ ] **Phase 4: Dispatch Console** - 2D MapLibre map with WebGL markers, unit assignment, proximity ranking, audio alerts, session metrics
+- [x] **Phase 4: Dispatch Console** - 2D MapLibre map with WebGL markers, unit assignment, proximity ranking, audio alerts, session metrics (completed 2026-03-13)
 - [ ] **Phase 5: Responder Workflow** - Mobile-optimized assignment receipt, status transitions, GPS tracking, scene documentation, messaging
 - [ ] **Phase 6: Integration Layer** - Stubbed external connectors (SMS, geocoding, directions, weather, hospital, government agencies)
 - [ ] **Phase 7: Analytics** - KPI dashboard, incident heatmap, DILG/NDRRMC/quarterly/annual compliance reports
@@ -85,10 +85,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 04-01-PLAN.md -- Backend foundation: incident_unit pivot, Agency model, ProximityRankingService, DispatchConsoleController with assign/unassign/advance/mutual-aid endpoints, tests
-- [ ] 04-02-PLAN.md -- Map and layout shell: MapLibre GL JS map, DispatchLayout, incident/unit WebGL marker layers, connection lines, useAlertSystem audio tones, P1 flash
-- [ ] 04-03-PLAN.md -- Panel components: left queue panel with filters, right contextual panels (incident detail, unit status, unit detail), assignment chips, ack timer, SLA bar, status pipeline
-- [ ] 04-04-PLAN.md -- WebSocket wiring and mutual aid: useDispatchFeed composable, real-time map/queue/metric updates, MutualAidModal, live ticker, visual verification
+- [x] 04-01-PLAN.md -- Backend foundation: incident_unit pivot, Agency model, ProximityRankingService, DispatchConsoleController with assign/unassign/advance/mutual-aid endpoints, tests
+- [x] 04-02-PLAN.md -- Map and layout shell: MapLibre GL JS map, DispatchLayout, incident/unit WebGL marker layers, connection lines, useAlertSystem audio tones, P1 flash
+- [x] 04-03-PLAN.md -- Panel components: left queue panel with filters, right contextual panels (incident detail, unit status, unit detail), assignment chips, ack timer, SLA bar, status pipeline
+- [x] 04-04-PLAN.md -- WebSocket wiring and mutual aid: useDispatchFeed composable, real-time map/queue/metric updates, MutualAidModal, live ticker, visual verification
 
 ### Phase 5: Responder Workflow
 **Goal**: Field responders can receive assignments on mobile, navigate to scenes, document what they find, communicate with dispatch, and close incidents with structured outcome data
@@ -171,7 +171,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 1. Foundation | 3/3 | Complete | 2026-03-12 |
 | 2. Intake | 3/3 | Complete | 2026-03-13 |
 | 3. Real-Time Infrastructure | 2/2 | Complete | 2026-03-13 |
-| 4. Dispatch Console | 3/4 | In Progress|  |
+| 4. Dispatch Console | 4/4 | Complete | 2026-03-13 |
 | 5. Responder Workflow | 0/4 | Not started | - |
 | 6. Integration Layer | 0/3 | Not started | - |
 | 7. Analytics | 0/3 | Not started | - |

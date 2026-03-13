@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 04-03-PLAN.md
-last_updated: "2026-03-13T00:34:31Z"
-last_activity: "2026-03-13 — Completed 04-03: Dispatch console panels with queue, incident detail, assignment chips, ack timer"
+stopped_at: Completed 04-04-PLAN.md
+last_updated: "2026-03-13T01:22:00Z"
+last_activity: "2026-03-13 — Completed 04-04: WebSocket wiring, mutual aid modal, live ticker, fully operational dispatch console"
 progress:
   total_phases: 8
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 16
-  completed_plans: 15
-  percent: 94
+  completed_plans: 16
+  percent: 100
 ---
 
 # Project State
@@ -21,23 +21,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Dispatchers can receive an incident report, triage it, assign the nearest available unit, and track the response in real-time on a live map.
-**Current focus:** Phase 4 -- Dispatch console backend and frontend
+**Current focus:** Phase 4 complete -- Dispatch console fully operational. Next: Phase 5 (Responder Workflow)
 
 ## Current Position
 
-Phase: 4 of 8 (Dispatch Console)
-Plan: 3 of 4 in current phase (COMPLETE)
-Status: 15 of 16 plans complete
-Last activity: 2026-03-13 — Completed 04-03: Dispatch console panels with queue, incident detail, assignment chips, ack timer
+Phase: 4 of 8 (Dispatch Console) -- COMPLETE
+Plan: 4 of 4 in current phase (COMPLETE)
+Status: 16 of 16 plans complete
+Last activity: 2026-03-13 — Completed 04-04: WebSocket wiring, mutual aid modal, live ticker, fully operational dispatch console
 
-Progress: [█████████-] 94%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13
-- Average duration: 17min
-- Total execution time: 3.6 hours
+- Total plans completed: 16
+- Average duration: 16min
+- Total execution time: 4.2 hours
 
 **By Phase:**
 
@@ -46,10 +46,11 @@ Progress: [█████████-] 94%
 | 1. Foundation | 3/3 | 54min | 18min |
 | 2. Intake | 3/3 | 48min | 16min |
 | 3. Real-Time | 2/2 | 34min | 17min |
+| 4. Dispatch Console | 4/4 | 37min | 9min |
 | 8. Operator & Intake UI | 4/4 | 70min | 18min |
 
 **Recent Trend:**
-- Last 5 plans: 08-03 (7min), 08-04 (45min), 04-01 (7min), 04-02 (7min), 04-03 (8min)
+- Last 5 plans: 08-04 (45min), 04-01 (7min), 04-02 (7min), 04-03 (8min), 04-04 (15min)
 - Trend: Steady
 
 *Updated after each plan completion*
@@ -60,6 +61,7 @@ Progress: [█████████-] 94%
 | Phase 04 P01 | 7min | 2 tasks | 26 files |
 | Phase 04 P02 | 7min | 2 tasks | 10 files |
 | Phase 04 P03 | 8min | 2 tasks | 12 files |
+| Phase 04 P04 | 15min | 2 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -132,6 +134,11 @@ Recent decisions affecting current work:
 - [04-03]: useAckTimer uses @vueuse/core useIntervalFn for automatic cleanup on unmount
 - [04-03]: StatusPipeline maps TRIAGED to REPORTED display label (dispatch context)
 - [04-03]: IncidentDetailPanel fetches nearby units via direct fetch() to Wayfinder URL (GET JSON endpoint)
+- [04-04]: useDispatchFeed as single composable hub consuming all 5 broadcast events and mutating local reactive state
+- [04-04]: Ticker events capped at 20 entries in ring buffer to prevent memory growth in long dispatch sessions
+- [04-04]: MutualAidModal filters agencies by incident_type match for type-based suggestions with star highlight
+- [04-04]: State-sync on WebSocket reconnection replaces full localIncidents and localUnits arrays from server
+- [04-04]: Console.vue uses local reactive copies of Inertia props so WebSocket mutations are reflected immediately
 
 ### Roadmap Evolution
 
@@ -150,6 +157,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-13T00:34:31Z
-Stopped at: Completed 04-03-PLAN.md
+Last session: 2026-03-13T01:22:00Z
+Stopped at: Completed 04-04-PLAN.md
 Resume file: None
