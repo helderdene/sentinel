@@ -118,8 +118,11 @@ watch(
             />
 
             <!-- Map Container -->
-            <div class="relative flex-1">
-                <div ref="mapContainer" class="absolute inset-0" />
+            <div class="relative flex-1" style="height: calc(100vh - 10rem)">
+                <div
+                    ref="mapContainer"
+                    class="h-full w-full"
+                />
 
                 <ChoroplethLegend />
 
