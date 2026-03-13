@@ -12,7 +12,10 @@ const isReportFlow = computed(() => {
 
 <template>
     <div class="flex min-h-dvh flex-col bg-t-bg text-t-text">
-        <main class="hide-scrollbar flex-1 overflow-y-auto" :class="{ 'pb-20': !isReportFlow }">
+        <main
+            class="hide-scrollbar flex-1 overflow-y-auto"
+            :class="{ 'pb-20': !isReportFlow }"
+        >
             <router-view v-slot="{ Component }">
                 <transition name="fade" mode="out-in">
                     <component :is="Component" />
