@@ -17,16 +17,16 @@ const statusConfig = computed(() => {
     switch (props.connectionStatus) {
         case 'reconnecting':
             return {
-                dotColor: 'bg-yellow-500',
-                textColor: 'text-yellow-600 dark:text-yellow-400',
+                dotColor: 'bg-t-p3',
+                textColor: 'text-t-p3',
                 label: 'RECONNECTING...',
                 animate: true,
             };
 
         case 'disconnected':
             return {
-                dotColor: 'bg-red-500',
-                textColor: 'text-red-600 dark:text-red-400',
+                dotColor: 'bg-t-p1',
+                textColor: 'text-t-p1',
                 label: 'CONNECTION LOST',
                 animate: false,
             };

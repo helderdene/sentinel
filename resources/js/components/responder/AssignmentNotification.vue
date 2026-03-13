@@ -210,7 +210,7 @@ onUnmounted(() => {
             <button
                 type="button"
                 class="flex min-h-[56px] w-full items-center justify-center rounded-[13px] font-mono text-[16px] font-bold tracking-wide text-white transition-transform active:scale-[0.98]"
-                :class="isExpired ? 'bg-amber-600' : 'bg-t-accent'"
+                :class="isExpired ? 'bg-t-p2' : 'bg-t-accent'"
                 :style="{
                     boxShadow: isExpired
                         ? '0 8px 24px rgba(217, 119, 6, 0.31)'
@@ -224,7 +224,7 @@ onUnmounted(() => {
                 <span v-else> ACKNOWLEDGE ({{ formattedTime }}) </span>
             </button>
 
-            <p v-if="isExpired" class="mt-2 text-center text-xs text-amber-500">
+            <p v-if="isExpired" class="mt-2 text-center text-xs text-t-p2">
                 Timer expired
             </p>
         </div>

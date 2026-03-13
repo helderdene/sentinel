@@ -4,8 +4,37 @@ import type { GeoJSONSource, Map as MaplibreMap } from 'maplibre-gl';
 import { computed, onMounted, onUnmounted, ref, shallowRef, watch } from 'vue';
 import type { ResponderIncident } from '@/types/responder';
 
-const DARK_STYLE =
-    'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
+const MAP_STYLE: maplibregl.StyleSpecification = {
+    version: 8,
+    name: 'Light',
+    sources: {
+        'carto-light': {
+            type: 'raster',
+            tiles: [
+                'https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png',
+                'https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png',
+                'https://c.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png',
+            ],
+            tileSize: 256,
+            attribution:
+                '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+        },
+    },
+    layers: [
+        {
+            id: 'background',
+            type: 'background',
+            paint: { 'background-color': '#f2f3f0' },
+        },
+        {
+            id: 'carto-light-layer',
+            type: 'raster',
+            source: 'carto-light',
+            minzoom: 0,
+            maxzoom: 20,
+        },
+    ],
+};
 
 const ETA_SPEED_KMH = 30;
 
@@ -20,14 +49,13 @@ const map = shallowRef<MaplibreMap | null>(null);
 const isMapReady = ref(false);
 
 const incidentCoords = computed(() => {
-    if (!props.incident.coordinates) {
+    const c = props.incident.coordinates;
+
+    if (!c || !Number.isFinite(c.lat) || !Number.isFinite(c.lng)) {
         return null;
     }
 
-    return {
-        lng: props.incident.coordinates.longitude,
-        lat: props.incident.coordinates.latitude,
-    };
+    return { lng: c.lng, lat: c.lat };
 });
 
 const googleMapsUrl = computed(() => {
@@ -80,21 +108,25 @@ function initMap(): void {
           ]
         : [incidentCoords.value.lng, incidentCoords.value.lat];
 
-    map.value = new maplibregl.Map({
-        container: mapContainer.value,
-        style: DARK_STYLE,
-        center,
-        zoom: 13,
-        maxPitch: 0,
-        dragRotate: false,
-    });
+    try {
+        map.value = new maplibregl.Map({
+            container: mapContainer.value,
+            style: MAP_STYLE,
+            center,
+            zoom: 13,
+            maxPitch: 0,
+            dragRotate: false,
+        });
 
-    map.value.on('load', () => {
-        isMapReady.value = true;
-        addMapSources();
-        addMapLayers();
-        fitBounds();
-    });
+        map.value.on('load', () => {
+            isMapReady.value = true;
+            addMapSources();
+            addMapLayers();
+            fitBounds();
+        });
+    } catch {
+        // MapLibre init failure — container may not support WebGL
+    }
 }
 
 function addMapSources(): void {
@@ -162,7 +194,7 @@ function addMapLayers(): void {
         type: 'line',
         source: 'route-line',
         paint: {
-            'line-color': '#3b82f6',
+            'line-color': '#2563eb',
             'line-width': 2.5,
             'line-dasharray': [3, 3],
         },
@@ -277,20 +309,26 @@ onMounted(() => {
     initMap();
 });
 
+watch(incidentCoords, (coords) => {
+    if (coords && !map.value) {
+        initMap();
+    }
+});
+
 onUnmounted(() => {
     map.value?.remove();
 });
 </script>
 
 <template>
-    <div class="flex flex-1 flex-col overflow-hidden">
+    <div class="flex min-h-0 flex-1 flex-col overflow-hidden">
         <div class="shrink-0 px-4 pt-3 pb-2">
             <a
                 v-if="googleMapsUrl"
                 :href="googleMapsUrl"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-[13px] bg-blue-600 font-sans text-[14px] font-bold tracking-wide text-white transition-transform active:scale-[0.98]"
+                class="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-[13px] bg-t-accent font-sans text-[14px] font-bold tracking-wide text-white transition-transform active:scale-[0.98]"
                 style="box-shadow: 0 6px 20px rgba(37, 99, 235, 0.31)"
             >
                 <svg
@@ -315,7 +353,7 @@ onUnmounted(() => {
             </div>
         </div>
 
-        <div class="relative flex-1">
+        <div class="relative min-h-0 flex-1">
             <div
                 v-if="gpsPosition === null && !incidentCoords"
                 class="flex h-full items-center justify-center p-6"
@@ -332,7 +370,7 @@ onUnmounted(() => {
 
             <div
                 ref="mapContainer"
-                class="h-full w-full"
+                style="position: absolute; inset: 0"
                 :class="gpsPosition === null && !incidentCoords ? 'hidden' : ''"
             />
 
