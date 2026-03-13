@@ -94,10 +94,10 @@
 
 ### Design System Alignment
 
-- [ ] **DS-01**: Shadcn CSS variables (--background, --foreground, --border, --card, --primary, etc.) remap to IRMS design system tokens (--t-bg, --t-text, --t-border, etc.) in both :root and .dark blocks; all Shadcn components inherit design system colors via cascade
-- [ ] **DS-02**: 5-level shadow scale (shadow-1 through shadow-5) defined as CSS custom properties with border+shadow pairing per design system spec
-- [ ] **DS-03**: Focus ring override uses design system combined border-color + box-shadow pattern instead of Shadcn ring utility
-- [ ] **DS-04**: Auth pages use single unified layout with CDRRMO branding (52x52 icon, "CDRRMO Butuan City", subtitle), centered card, Level 4 shadow, 14px border-radius, fadeUp animation; unused auth layout variants deleted
+- [x] **DS-01**: Shadcn CSS variables (--background, --foreground, --border, --card, --primary, etc.) remap to IRMS design system tokens (--t-bg, --t-text, --t-border, etc.) in both :root and .dark blocks; all Shadcn components inherit design system colors via cascade
+- [x] **DS-02**: 5-level shadow scale (shadow-1 through shadow-5) defined as CSS custom properties with border+shadow pairing per design system spec
+- [x] **DS-03**: Focus ring override uses design system combined border-color + box-shadow pattern instead of Shadcn ring utility
+- [x] **DS-04**: Auth pages use single unified layout with CDRRMO branding (52x52 icon, "CDRRMO Butuan City", subtitle), centered card, Level 4 shadow, 14px border-radius, fadeUp animation; unused auth layout variants deleted
 - [ ] **DS-05**: Sidebar shows CDRRMO icon + "IRMS" text (replacing "Laravel Starter Kit"); navigation section labels use Space Mono uppercase 9px with 2px letter-spacing
 - [ ] **DS-06**: Content area behind sidebar pages uses t-bg background (#f4f6f9 light / #0f172a dark) for visual depth against t-surface sidebar
 - [ ] **DS-07**: Settings pages and Dashboard use design system tokens for typography, elevation, and color (no hardcoded neutral-*/zinc-* classes)
