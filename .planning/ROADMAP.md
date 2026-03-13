@@ -176,8 +176,8 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 09-01-PLAN.md -- Backend API: migrations (tracking_token, show_in_public_app), CitizenReportController, API Resources, rate limiting, CORS, admin toggle, tests
-- [ ] 09-02-PLAN.md -- Report app scaffold: Vue 3 SPA setup, Vite config, Vue Router, design tokens, composables (useApi, useGeolocation, useReportStorage), shared components
+- [x] 09-01-PLAN.md -- Backend API: migrations (tracking_token, show_in_public_app), CitizenReportController, API Resources, rate limiting, CORS, admin toggle, tests
+- [x] 09-02-PLAN.md -- Report app scaffold: Vue 3 SPA setup, Vite config, Vue Router, design tokens, composables (useApi, useGeolocation, useReportStorage), shared components
 - [ ] 09-03-PLAN.md -- Report app views: HomeView, ReportTypeView, ReportDetailsView, ReportConfirmView, MyReportsView, TrackReportView, AboutView, visual verification
 
 ## Progress
@@ -197,4 +197,4 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 6. Integration Layer | 0/3 | Not started | - |
 | 7. Analytics | 0/3 | Not started | - |
 | 8. Operator Role & Intake Station | 4/4 | Complete | 2026-03-13 |
-| 9. Public Citizen Reporting App | 0/3 | Not started | - |
+| 9. Public Citizen Reporting App | 2/3 | In progress | - |
