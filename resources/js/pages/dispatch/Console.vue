@@ -1,8 +1,14 @@
 <script setup lang="ts">
+import { router } from '@inertiajs/vue3';
 import type { Ref } from 'vue';
 import { computed, inject, ref, watch } from 'vue';
+import { unassignUnit } from '@/actions/App/Http/Controllers/DispatchConsoleController';
 import DispatchQueuePanel from '@/components/dispatch/DispatchQueuePanel.vue';
+import IncidentDetailPanel from '@/components/dispatch/IncidentDetailPanel.vue';
 import MapLegend from '@/components/dispatch/MapLegend.vue';
+import UnitDetailPanel from '@/components/dispatch/UnitDetailPanel.vue';
+import UnitStatusPanel from '@/components/dispatch/UnitStatusPanel.vue';
+import { useAlertSystem } from '@/composables/useAlertSystem';
 import { useDispatchMap } from '@/composables/useDispatchMap';
 import { useDispatchSession } from '@/composables/useDispatchSession';
 import DispatchLayout from '@/layouts/DispatchLayout.vue';
@@ -47,6 +53,8 @@ const { metrics: sessionMetrics } = useDispatchSession(
     props.metrics.averageHandleTime,
 );
 
+const { playAckExpiredTone } = useAlertSystem();
+
 const dispatchStats = inject<{
     activeIncidents: Ref<number>;
     criticalIncidents: Ref<number>;
@@ -73,6 +81,20 @@ watch(
 
 const selectedIncidentId = ref<string | null>(null);
 const selectedUnitId = ref<string | null>(null);
+
+type RightPanelMode = 'unit-status' | 'incident-detail' | 'unit-detail';
+
+const rightPanelMode = computed<RightPanelMode>(() => {
+    if (selectedIncidentId.value) {
+        return 'incident-detail';
+    }
+
+    if (selectedUnitId.value) {
+        return 'unit-detail';
+    }
+
+    return 'unit-status';
+});
 
 const {
     isLoaded,
@@ -142,11 +164,11 @@ function handleIncidentSelect(id: string): void {
     }
 }
 
-onIncidentClick((id: string) => {
-    handleIncidentSelect(id);
-});
+function handleIncidentClose(): void {
+    selectedIncidentId.value = null;
+}
 
-onUnitClick((id: string) => {
+function handleUnitSelect(id: string): void {
     selectedUnitId.value = id;
     selectedIncidentId.value = null;
 
@@ -155,6 +177,39 @@ onUnitClick((id: string) => {
     if (unit) {
         flyToUnit(unit);
     }
+}
+
+function handleUnitBack(): void {
+    selectedUnitId.value = null;
+}
+
+function handleAckExpired(): void {
+    playAckExpiredTone();
+}
+
+function handleUnassign(unitId: string): void {
+    if (!selectedIncidentId.value) {
+        return;
+    }
+
+    router.post(
+        unassignUnit.url(selectedIncidentId.value),
+        { unit_id: unitId },
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                router.reload({ only: ['incidents', 'units'] });
+            },
+        },
+    );
+}
+
+onIncidentClick((id: string) => {
+    handleIncidentSelect(id);
+});
+
+onUnitClick((id: string) => {
+    handleUnitSelect(id);
 });
 
 onDeselect(() => {
@@ -184,41 +239,26 @@ onDeselect(() => {
 
         <!-- Right panel -->
         <div
-            class="z-10 w-[360px] shrink-0 overflow-y-auto border-l border-t-border bg-t-bg/95 backdrop-blur-sm dark:border-t-border dark:bg-[#0f172a]/95"
+            class="z-10 w-[360px] shrink-0 border-l border-t-border bg-t-bg/95 backdrop-blur-sm dark:border-t-border dark:bg-[#0f172a]/95"
         >
-            <div class="p-3">
-                <div
-                    v-if="selectedIncident"
-                    class="font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
-                >
-                    INCIDENT DETAIL
-                    <p class="mt-2 font-sans text-xs text-t-text normal-case">
-                        {{ selectedIncident.incident_no }} --
-                        {{ selectedIncident.priority }}
-                    </p>
-                </div>
-                <div
-                    v-else-if="selectedUnit"
-                    class="font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
-                >
-                    UNIT DETAIL
-                    <p class="mt-2 font-sans text-xs text-t-text normal-case">
-                        {{ selectedUnit.callsign }} --
-                        {{ selectedUnit.status }}
-                    </p>
-                </div>
-                <div
-                    v-else
-                    class="font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
-                >
-                    UNIT STATUS
-                    <p
-                        class="mt-2 font-sans text-xs text-t-text-dim normal-case"
-                    >
-                        Right panels will be wired in Task 2.
-                    </p>
-                </div>
-            </div>
+            <IncidentDetailPanel
+                v-if="rightPanelMode === 'incident-detail' && selectedIncident"
+                :incident="selectedIncident"
+                @close="handleIncidentClose"
+                @ack-expired="handleAckExpired"
+                @unassign="handleUnassign"
+            />
+            <UnitDetailPanel
+                v-else-if="rightPanelMode === 'unit-detail' && selectedUnit"
+                :unit="selectedUnit"
+                :incidents="localIncidents"
+                @back="handleUnitBack"
+            />
+            <UnitStatusPanel
+                v-else
+                :units="localUnits"
+                @select-unit="handleUnitSelect"
+            />
         </div>
     </div>
 </template>
