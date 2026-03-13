@@ -79,6 +79,19 @@
 - [ ] **ANLTCS-05**: Quarterly performance report with KPI trends, incident volume charts, response time analysis as PDF
 - [ ] **ANLTCS-06**: Annual statistical summary for Mayor's Office with year-over-year comparison as PDF
 
+### Citizen Reporting
+
+- [ ] **CITIZEN-01**: Citizen can submit emergency report without authentication via mobile-first web app; report creates Incident with channel='app', status=PENDING
+- [ ] **CITIZEN-02**: Each citizen report generates a unique 8-character URL-safe tracking token (uppercase alphanumeric, no ambiguous chars); token stored on incident record
+- [ ] **CITIZEN-03**: Citizen can track report status by entering tracking token; lookup returns citizen-facing status without exposing internal INC number
+- [ ] **CITIZEN-04**: Curated subset of incident types shown as visual card grid; admin-configurable via show_in_public_app boolean on incident_types table; "Other Emergency" always visible
+- [ ] **CITIZEN-05**: GPS geolocation requested from device; if granted, auto-detect coordinates + PostGIS barangay lookup; if denied, fallback to manual barangay dropdown + address text
+- [ ] **CITIZEN-06**: Citizen report flows directly into operator intake feed via existing IncidentCreated broadcast event; operators triage as normal
+- [ ] **CITIZEN-07**: Submitted reports stored in browser localStorage for "My Reports" tab; status refreshed on page visit (poll on visit, no WebSocket)
+- [ ] **CITIZEN-08**: Citizen-facing status mapping: PENDING -> Received, TRIAGED -> Verified, DISPATCHED/ACKNOWLEDGED/EN_ROUTE/ON_SCENE/RESOLVING -> Dispatched, RESOLVED -> Resolved
+- [ ] **CITIZEN-09**: Public API endpoints under /api/v1/citizen/* with rate limiting (5 submissions/min, 60 reads/min per IP) and CORS configuration
+- [ ] **CITIZEN-10**: Report app is a standalone Vue 3 SPA in /report-app/ monorepo subfolder with shared design tokens (DM Sans, Space Mono, color system); mobile-first matching HTML prototype
+
 ## v2 Requirements
 
 ### Mobile Enhancement
@@ -92,7 +105,7 @@
 - **ADV-01**: AI/ML triage classifier trained on accumulated incident data
 - **ADV-02**: Multi-tenancy (stancl/tenancy) for province-wide LGU deployment
 - **ADV-03**: Pinia state management for complex client-side state
-- **ADV-04**: Public-facing incident reporting portal
+- ~~**ADV-04**: Public-facing incident reporting portal~~ (Promoted to v1 as Phase 9 CITIZEN-01 through CITIZEN-10)
 - **ADV-05**: Photo/video upload from responder field
 - **ADV-06**: PAGASA weather overlay on dispatch map (live, not stubbed)
 
@@ -166,12 +179,22 @@
 | ANLTCS-04 | Phase 7 | Pending |
 | ANLTCS-05 | Phase 7 | Pending |
 | ANLTCS-06 | Phase 7 | Pending |
+| CITIZEN-01 | Phase 9 | Pending |
+| CITIZEN-02 | Phase 9 | Pending |
+| CITIZEN-03 | Phase 9 | Pending |
+| CITIZEN-04 | Phase 9 | Pending |
+| CITIZEN-05 | Phase 9 | Pending |
+| CITIZEN-06 | Phase 9 | Pending |
+| CITIZEN-07 | Phase 9 | Pending |
+| CITIZEN-08 | Phase 9 | Pending |
+| CITIZEN-09 | Phase 9 | Pending |
+| CITIZEN-10 | Phase 9 | Pending |
 
 **Coverage:**
-- v1 requirements: 56 total
-- Mapped to phases: 56
+- v1 requirements: 66 total
+- Mapped to phases: 66
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-12*
-*Last updated: 2026-03-12 after roadmap phase assignment*
+*Last updated: 2026-03-13 after Phase 9 planning*

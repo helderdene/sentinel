@@ -20,6 +20,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 6: Integration Layer** - Stubbed external connectors (SMS, geocoding, directions, weather, hospital, government agencies)
 - [ ] **Phase 7: Analytics** - KPI dashboard, incident heatmap, DILG/NDRRMC/quarterly/annual compliance reports
 - [x] **Phase 8: Operator Role & Intake Station** - 5th role (operator), TRIAGED status, full-screen intake station UI with design system (completed 2026-03-13)
+- [ ] **Phase 9: Public Citizen Reporting App** - Mobile-first Vue SPA for citizens to report emergencies, track status via token, integrated with existing intake pipeline
 
 ## Phase Details
 
@@ -160,11 +161,31 @@ Plans:
 - [x] 08-03-PLAN.md -- Core intake workflow: IntakeStation page, ChannelFeed (left panel), TriageForm (center panel), composables, priority picker
 - [x] 08-04-PLAN.md -- Dispatch queue and supervisor features: DispatchQueuePanel (right panel), SessionMetrics, PriorityBreakdown, Override/Recall, SessionLog, visual verification
 
+### Phase 9: Create a public facing reporting app
+**Goal**: Citizens of Butuan City can report emergencies directly to CDRRMO through a mobile-first web app without authentication, select from curated incident types, provide GPS or manual location, receive an 8-character tracking token, and monitor their report status -- all feeding directly into the operator intake pipeline
+**Depends on**: Phase 2, Phase 8
+**Requirements**: CITIZEN-01, CITIZEN-02, CITIZEN-03, CITIZEN-04, CITIZEN-05, CITIZEN-06, CITIZEN-07, CITIZEN-08, CITIZEN-09, CITIZEN-10
+**Success Criteria** (what must be TRUE):
+  1. A citizen can submit an emergency report without authentication; the report creates an Incident with channel='app' and status=PENDING that appears in the operator intake feed via WebSocket
+  2. Each citizen report receives a unique 8-character tracking token (e.g., A7F2B3K9); the citizen uses this token to check status, not the internal INC number
+  3. Citizens see simplified status labels: Received, Verified, Dispatched, Resolved -- mapped from internal statuses
+  4. Incident types shown as a visual card grid are admin-configurable via show_in_public_app boolean; "Other Emergency" always visible
+  5. GPS geolocation auto-detects coordinates with PostGIS barangay lookup; if denied, falls back to manual barangay dropdown
+  6. Report app is a standalone Vue 3 SPA in /report-app/ with its own package.json, sharing design tokens with the main app
+  7. Public API endpoints rate-limited (5 submissions/min, 60 reads/min per IP) with proper CORS configuration
+**Plans**: 3 plans
+
+Plans:
+- [ ] 09-01-PLAN.md -- Backend API: migrations (tracking_token, show_in_public_app), CitizenReportController, API Resources, rate limiting, CORS, admin toggle, tests
+- [ ] 09-02-PLAN.md -- Report app scaffold: Vue 3 SPA setup, Vite config, Vue Router, design tokens, composables (useApi, useGeolocation, useReportStorage), shared components
+- [ ] 09-03-PLAN.md -- Report app views: HomeView, ReportTypeView, ReportDetailsView, ReportConfirmView, MyReportsView, TrackReportView, AboutView, visual verification
+
 ## Progress
 
 **Execution Order:**
 Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 (Phase 8 depends on Phases 2 and 3, can run before Phases 4-7)
+(Phase 9 depends on Phases 2 and 8)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -175,4 +196,5 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 5. Responder Workflow | 0/4 | Not started | - |
 | 6. Integration Layer | 0/3 | Not started | - |
 | 7. Analytics | 0/3 | Not started | - |
-| 8. Operator Role & Intake Station | 4/4 | Complete   | 2026-03-13 |
+| 8. Operator Role & Intake Station | 4/4 | Complete | 2026-03-13 |
+| 9. Public Citizen Reporting App | 0/3 | Not started | - |
