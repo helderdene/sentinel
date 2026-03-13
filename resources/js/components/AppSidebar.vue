@@ -76,7 +76,7 @@ const mainNavItems = computed<NavItem[]>(() => {
             },
             {
                 title: 'Units',
-                href: '/units',
+                href: '/admin/units',
                 icon: Truck,
             },
             {
@@ -199,7 +199,7 @@ const mainNavItems = computed<NavItem[]>(() => {
             },
             {
                 title: 'Units',
-                href: '/units',
+                href: '/admin/units',
                 icon: Truck,
             },
             {

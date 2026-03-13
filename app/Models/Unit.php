@@ -6,6 +6,7 @@ use App\Enums\UnitStatus;
 use App\Enums\UnitType;
 use Clickbar\Magellan\Data\Geometries\Point;
 use Database\Factories\UnitFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -35,6 +36,7 @@ class Unit extends Model
         'coordinates',
         'shift',
         'notes',
+        'decommissioned_at',
     ];
 
     /**
@@ -49,7 +51,30 @@ class Unit extends Model
             'status' => UnitStatus::class,
             'type' => UnitType::class,
             'crew_capacity' => 'integer',
+            'decommissioned_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Scope to only active (non-decommissioned) units.
+     *
+     * @param  Builder<Unit>  $query
+     * @return Builder<Unit>
+     */
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->whereNull('decommissioned_at');
+    }
+
+    /**
+     * Scope alias for clarity.
+     *
+     * @param  Builder<Unit>  $query
+     * @return Builder<Unit>
+     */
+    public function scopeCommissioned(Builder $query): Builder
+    {
+        return $this->scopeActive($query);
     }
 
     /**

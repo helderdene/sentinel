@@ -94,10 +94,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Supervisor + Admin routes
     Route::middleware(['role:supervisor,admin'])->group(function () {
-        Route::inertia('units', 'placeholder/ComingSoon', [
-            'title' => 'Units',
-            'description' => 'Unit status and management. Coming in Phase 4.',
-        ])->name('units.index');
+        Route::redirect('units', '/admin/units')->name('units.index');
     });
 
     // Analytics routes (supervisor + admin, gate-checked in controller)
