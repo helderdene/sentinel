@@ -1,3 +1,5 @@
+@import 'maplibre-gl/dist/maplibre-gl.css';
+
 @import 'tailwindcss';
 
 @import 'tw-animate-css';
@@ -9,11 +11,9 @@
 
 @theme inline {
     --font-sans:
-        'DM Sans', ui-sans-serif, system-ui, sans-serif,
-        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-        'Noto Color Emoji';
-    --font-mono:
-        'Space Mono', ui-monospace, monospace;
+        'DM Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-mono: 'Space Mono', ui-monospace, monospace;
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -101,6 +101,13 @@
     --color-t-role-operator: var(--t-role-operator);
     --color-t-role-supervisor: var(--t-role-supervisor);
     --color-t-role-admin: var(--t-role-admin);
+
+    /* Dispatch Design System — Unit Status */
+    --color-t-unit-available: var(--t-unit-available);
+    --color-t-unit-dispatched: var(--t-unit-dispatched);
+    --color-t-unit-enroute: var(--t-unit-enroute);
+    --color-t-unit-onscene: var(--t-unit-onscene);
+    --color-t-unit-offline: var(--t-unit-offline);
 }
 
 /*
@@ -194,6 +201,11 @@
     --t-role-operator: #2563eb;
     --t-role-supervisor: #7c3aed;
     --t-role-admin: #0f766e;
+    --t-unit-available: #16a34a;
+    --t-unit-dispatched: #2563eb;
+    --t-unit-enroute: #2563eb;
+    --t-unit-onscene: #ca8a04;
+    --t-unit-offline: #6b7280;
 }
 
 .dark {
