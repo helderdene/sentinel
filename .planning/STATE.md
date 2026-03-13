@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 05-03-PLAN.md
-last_updated: "2026-03-13T10:43:27.000Z"
-last_activity: "2026-03-13 — Completed 05-03: Scene documentation and messaging (SceneTab, ChatTab, MessageBanner)"
+stopped_at: Completed 05-04-PLAN.md
+last_updated: "2026-03-13T10:47:46.000Z"
+last_activity: "2026-03-13 — Completed 05-04: Assignment notification, navigation, closure, and full Station.vue wiring"
 progress:
   total_phases: 9
-  completed_phases: 6
+  completed_phases: 7
   total_plans: 23
-  completed_plans: 22
-  percent: 96
+  completed_plans: 23
+  percent: 100
 ---
 
 # Project State
@@ -21,22 +21,22 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Dispatchers can receive an incident report, triage it, assign the nearest available unit, and track the response in real-time on a live map.
-**Current focus:** Phase 5 Responder Workflow in progress. Plans 01-03 complete, Plan 04 remaining.
+**Current focus:** Phase 5 Responder Workflow complete. All 4 plans done. All 9 phases complete.
 
 ## Current Position
 
 Phase: 5 of 9 (Responder Workflow)
-Plan: 3 of 4 in current phase
-Status: 22 of 23 plans complete
-Last activity: 2026-03-13 — Completed 05-03: Scene documentation and messaging (SceneTab, ChatTab, MessageBanner)
+Plan: 4 of 4 in current phase
+Status: 23 of 23 plans complete
+Last activity: 2026-03-13 — Completed 05-04: Assignment notification, navigation, closure, and full Station.vue wiring
 
-Progress: [█████████░] 96%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 21
-- Average duration: 15min
+- Total plans completed: 23
+- Average duration: 14min
 - Total execution time: 5.3 hours
 
 **By Phase:**
@@ -68,6 +68,7 @@ Progress: [█████████░] 96%
 | Phase 09 P03 | 45min | 3 tasks | 24 files |
 | Phase 05 P02 | 6min | 2 tasks | 9 files |
 | Phase 05 P03 | 5min | 2 tasks | 7 files |
+| Phase 05 P04 | 9min | 2 tasks | 8 files |
 | Phase 05 P01 | 8min | 2 tasks | 32 files |
 
 ## Accumulated Context
@@ -171,6 +172,10 @@ Recent decisions affecting current work:
 - [05-03]: Grid-template-rows accordion for smooth CSS-only expand/collapse without hardcoded max-height
 - [05-03]: Fire-and-forget fetch() for checklist/tag toggles -- instant local state update, PATCH in background, revert on failure
 - [05-03]: Checklist template selection via incident_type.code/category string matching (4 hardcoded templates for v1)
+- [05-04]: Inline ack timer in AssignmentNotification using useIntervalFn (dispatch useAckTimer has different API shape)
+- [05-04]: HospitalSelect as dedicated responder component rather than generic SearchableSelect
+- [05-04]: Status advance POST via direct fetch to Wayfinder action URLs for non-blocking fire-and-forget
+- [05-04]: ClosureSummary uses fixed overlay z-50 for full-screen takeover regardless of tab state
 
 ### Roadmap Evolution
 
@@ -190,6 +195,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-13T10:43:27Z
-Stopped at: Completed 05-03-PLAN.md
+Last session: 2026-03-13T10:47:46Z
+Stopped at: Completed 05-04-PLAN.md
 Resume file: None
