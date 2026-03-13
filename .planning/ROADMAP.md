@@ -22,7 +22,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 8: Operator Role & Intake Station** - 5th role (operator), TRIAGED status, full-screen intake station UI with design system (completed 2026-03-13)
 - [x] **Phase 9: Public Citizen Reporting App** - Mobile-first Vue SPA for citizens to report emergencies, track status via token, integrated with existing intake pipeline (completed 2026-03-13)
 - [x] **Phase 10: Design System Alignment** - Restyle all pages to match IRMS Intake Design System: CSS variable remapping, auth branding, sidebar restyling, data tables, token alignment (completed 2026-03-13)
-- [ ] **Phase 11: Implement Units CRUD** - Admin CRUD for managing response units with auto-generated IDs, crew assignment, decommission/recommission
+- [x] **Phase 11: Implement Units CRUD** - Admin CRUD for managing response units with auto-generated IDs, crew assignment, decommission/recommission (completed 2026-03-13)
 
 ## Phase Details
 
@@ -242,4 +242,4 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 8. Operator Role & Intake Station | 4/4 | Complete | 2026-03-13 |
 | 9. Public Citizen Reporting App | 3/3 | Complete   | 2026-03-13 |
 | 10. Design System Alignment | 5/5 | Complete    | 2026-03-13 |
-| 11. Implement Units CRUD | 1/2 | In Progress|  |
+| 11. Implement Units CRUD | 2/2 | Complete   | 2026-03-13 |

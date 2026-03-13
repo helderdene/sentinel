@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: in-progress
-stopped_at: Completed 11-01-PLAN.md
-last_updated: "2026-03-13T21:09:06.374Z"
-last_activity: "2026-03-14 — Completed 11-01: Units CRUD backend with auto-generated IDs"
+status: complete
+stopped_at: Completed 11-02-PLAN.md
+last_updated: "2026-03-13T21:14:49Z"
+last_activity: "2026-03-14 — Completed 11-02: Units CRUD frontend with index table and crew multi-select form"
 progress:
   total_phases: 11
-  completed_phases: 10
+  completed_phases: 11
   total_plans: 36
-  completed_plans: 35
-  percent: 97
+  completed_plans: 36
+  percent: 100
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Dispatchers can receive an incident report, triage it, assign the nearest available unit, and track the response in real-time on a live map.
-**Current focus:** Phase 11 — Units CRUD. Plan 01 backend complete, Plan 02 frontend next.
+**Current focus:** All phases complete. v1.0 milestone delivered.
 
 ## Current Position
 
 Phase: 11 of 11 (Implement Units CRUD)
-Plan: 1 of 2 in current phase
-Status: 35 of 36 plans complete
-Last activity: 2026-03-14 — Completed 11-01: Units CRUD backend with auto-generated IDs
+Plan: 2 of 2 in current phase
+Status: 36 of 36 plans complete
+Last activity: 2026-03-14 — Completed 11-02: Units CRUD frontend with index table and crew multi-select form
 
-Progress: [█████████▒] 97%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -81,6 +81,7 @@ Progress: [█████████▒] 97%
 | Phase 10 P04 | 9min | 3 tasks | 10 files |
 | Phase 10 P05 | 2min | 2 tasks | 5 files |
 | Phase 11 P01 | 5min | 2 tasks | 14 files |
+| Phase 11 P02 | 4min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -221,6 +222,9 @@ Recent decisions affecting current work:
 - [11-01]: Decommission lifecycle (decommissioned_at timestamp) kept separate from operational status for clean domain separation
 - [11-01]: scopeActive() pattern: whereNull('decommissioned_at') for excluding soft-disabled records without soft deletes
 - [11-01]: Bidirectional crew sync via two-step User.unit_id update instead of pivot table
+- [11-02]: Crew multi-select uses Reka UI Combobox with inline content position and manual toggleCrew for array management
+- [11-02]: Agency selector uses preset dropdown (CDRRMO/BFP/PNP) with Other option revealing free-text input
+- [11-02]: Decommissioned badge uses t-unit-offline token for visual consistency with offline status
 
 ### Roadmap Evolution
 
@@ -242,6 +246,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-13T21:09:06.372Z
-Stopped at: Completed 11-01-PLAN.md
+Last session: 2026-03-13T21:14:49Z
+Stopped at: Completed 11-02-PLAN.md
 Resume file: None
