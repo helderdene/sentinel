@@ -36,13 +36,13 @@
 - [ ] **DSPTCH-02**: Incident markers rendered as WebGL circle layers (halo, pulse rings, border, pin, dot) colored by priority (P1 red, P2 orange, P3 amber, P4 green)
 - [ ] **DSPTCH-03**: Unit markers rendered as WebGL circle layers (glow, border, body, ring, dot) colored by status (available green, en route blue, on scene yellow, offline gray)
 - [ ] **DSPTCH-04**: Unit GPS positions update in real-time via Reverb WebSocket (every 10s en route, 60s on scene); markers animate smoothly between positions
-- [ ] **DSPTCH-05**: Dispatcher can select incident from queue or map and assign one or more available units
-- [ ] **DSPTCH-06**: System ranks available units by proximity using PostGIS ST_DWithin; displays distance and ETA (Mapbox Directions API, stubbed)
-- [ ] **DSPTCH-07**: Assignment pushed to responder via WebSocket with full incident payload
+- [x] **DSPTCH-05**: Dispatcher can select incident from queue or map and assign one or more available units
+- [x] **DSPTCH-06**: System ranks available units by proximity using PostGIS ST_DWithin; displays distance and ETA (Mapbox Directions API, stubbed)
+- [x] **DSPTCH-07**: Assignment pushed to responder via WebSocket with full incident payload
 - [ ] **DSPTCH-08**: 90-second acknowledgement timer starts on assignment; visual countdown and audio alert on expiry with reassign/escalate suggestion
 - [ ] **DSPTCH-09**: Audio alerts via Web Audio API with distinct tones per priority level; P1 triggers red screen flash
-- [ ] **DSPTCH-10**: Session metrics displayed in console header: total incidents, triaged/pending, active incidents, units available/deployed, average handle time
-- [ ] **DSPTCH-11**: Mutual aid modal with suggested agencies (BFP, PNP, DSWD, adjacent LGU, DOH) based on incident type; contact info, radio channel, and request logged to timeline
+- [x] **DSPTCH-10**: Session metrics displayed in console header: total incidents, triaged/pending, active incidents, units available/deployed, average handle time
+- [x] **DSPTCH-11**: Mutual aid modal with suggested agencies (BFP, PNP, DSWD, adjacent LGU, DOH) based on incident type; contact info, radio channel, and request logged to timeline
 
 ### Responder
 
@@ -133,13 +133,13 @@
 | DSPTCH-02 | Phase 4 | Pending |
 | DSPTCH-03 | Phase 4 | Pending |
 | DSPTCH-04 | Phase 4 | Pending |
-| DSPTCH-05 | Phase 4 | Pending |
-| DSPTCH-06 | Phase 4 | Pending |
-| DSPTCH-07 | Phase 4 | Pending |
+| DSPTCH-05 | Phase 4 | Complete |
+| DSPTCH-06 | Phase 4 | Complete |
+| DSPTCH-07 | Phase 4 | Complete |
 | DSPTCH-08 | Phase 4 | Pending |
 | DSPTCH-09 | Phase 4 | Pending |
-| DSPTCH-10 | Phase 4 | Pending |
-| DSPTCH-11 | Phase 4 | Pending |
+| DSPTCH-10 | Phase 4 | Complete |
+| DSPTCH-11 | Phase 4 | Complete |
 | RSPDR-01 | Phase 5 | Pending |
 | RSPDR-02 | Phase 5 | Pending |
 | RSPDR-03 | Phase 5 | Pending |

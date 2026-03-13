@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Phase 4 context gathered
-last_updated: "2026-03-12T23:33:45.395Z"
-last_activity: "2026-03-13 — Completed 08-04: Dispatch queue panel with supervisor features, completing full intake station"
+stopped_at: Completed 04-01-PLAN.md
+last_updated: "2026-03-13T00:13:52.596Z"
+last_activity: "2026-03-13 — Completed 04-01: Dispatch backend with controller, proximity service, agencies, and tests"
 progress:
   total_phases: 8
   completed_phases: 4
-  total_plans: 12
-  completed_plans: 12
-  percent: 100
+  total_plans: 16
+  completed_plans: 13
+  percent: 81
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Dispatchers can receive an incident report, triage it, assign the nearest available unit, and track the response in real-time on a live map.
-**Current focus:** Phase 8 complete -- all planned phases delivered
+**Current focus:** Phase 4 -- Dispatch console backend and frontend
 
 ## Current Position
 
-Phase: 8 of 8 (Implement operator role and intake layer UI)
-Plan: 4 of 4 in current phase (PHASE COMPLETE)
-Status: All 12 plans across 4 phases complete
-Last activity: 2026-03-13 — Completed 08-04: Dispatch queue panel with supervisor features, completing full intake station
+Phase: 4 of 8 (Dispatch Console)
+Plan: 1 of 4 in current phase (COMPLETE)
+Status: 13 of 16 plans complete
+Last activity: 2026-03-13 — Completed 04-01: Dispatch backend with controller, proximity service, agencies, and tests
 
-Progress: [██████████] 100%
+Progress: [████████--] 81%
 
 ## Performance Metrics
 
@@ -49,14 +49,15 @@ Progress: [██████████] 100%
 | 8. Operator & Intake UI | 4/4 | 70min | 18min |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (16min), 03-02 (18min), 08-02 (7min), 08-03 (7min), 08-04 (45min)
-- Trend: Steady (08-04 longer due to checkpoint review)
+- Last 5 plans: 03-02 (18min), 08-02 (7min), 08-03 (7min), 08-04 (45min), 04-01 (7min)
+- Trend: Steady
 
 *Updated after each plan completion*
 | Phase 08 P01 | 11min | 2 tasks | 27 files |
 | Phase 08 P02 | 7min | 2 tasks | 23 files |
 | Phase 08 P03 | 7min | 2 tasks | 8 files |
 | Phase 08 P04 | 45min | 3 tasks | 20 files |
+| Phase 04 P01 | 7min | 2 tasks | 26 files |
 
 ## Accumulated Context
 
@@ -113,6 +114,13 @@ Recent decisions affecting current work:
 - [Phase 08]: [08-04]: QueueRow inline priority picker expands on click without modal -- speed-optimized for ops context
 - [Phase 08]: [08-04]: Queue.vue switched from PENDING to TRIAGED status filter to complete intake-to-dispatch handoff
 - [Phase 08]: [08-04]: Session log hydrated from server-side timeline entries on page load for continuity across refreshes
+- [04-01]: Forward-only status transitions enforced via explicit allowedTransitions map in DispatchConsoleController
+- [04-01]: incident_unit pivot with unassigned_at null filter for active-only BelongsToMany queries
+- [04-01]: Route renamed from dispatch.index to dispatch.console for semantic clarity
+- [04-01]: ETA calculated at 30km/h urban speed for Butuan City context
+- [Phase 04]: Forward-only status transitions enforced via allowedTransitions map
+- [Phase 04]: incident_unit pivot with unassigned_at null filter for active-only queries
+- [Phase 04]: Route renamed dispatch.index to dispatch.console for semantic clarity
 
 ### Roadmap Evolution
 
@@ -131,6 +139,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-12T23:33:45.385Z
-Stopped at: Phase 4 context gathered
-Resume file: .planning/phases/04-dispatch-console/04-CONTEXT.md
+Last session: 2026-03-13T00:13:47.242Z
+Stopped at: Completed 04-01-PLAN.md
+Resume file: None
