@@ -101,13 +101,13 @@ Plans:
   3. The responder can view a navigation tab with Google Maps deep-link and embedded MapLibre mini-map showing route, unit position, incident location, and live ETA countdown
   4. On scene, the responder can complete arrival checklists (per incident type), capture patient vitals (BP, HR, SpO2, GCS), toggle assessment tags, send messages to dispatch (quick-reply chips + free text), and request additional resources
   5. The responder must select an outcome (Treated On Scene, Transported to Hospital, Refused Treatment, DOA, False Alarm) before closure; closure auto-generates an incident report PDF with all captured data
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 05-01: TBD
-- [ ] 05-02: TBD
-- [ ] 05-03: TBD
-- [ ] 05-04: TBD
+- [ ] 05-01-PLAN.md -- Backend foundation: ResponderController (10 endpoints), IncidentOutcome/ResourceType enums, ChecklistUpdated/ResourceRequested events, DomPDF install, PDF job, hospital config, tests
+- [ ] 05-02-PLAN.md -- Frontend foundation: TypeScript types, useResponderSession/useGpsTracking composables, ResponderLayout, Station.vue, tab bar, standby screen, status button
+- [ ] 05-03-PLAN.md -- Scene documentation and messaging: SceneTab accordion (checklist, vitals, tags), ChatTab (quick-reply chips, free text), MessageBanner
+- [ ] 05-04-PLAN.md -- Assignment notification, navigation, closure: AssignmentNotification (audio + countdown), NavTab (MapLibre mini-map), OutcomeSheet, ResourceRequestModal, ClosureSummary, visual verification
 
 ### Phase 6: Integration Layer
 **Goal**: All external API integrations are architecturally wired behind PHP interfaces with working stub implementations, ready to swap for real connectors when API agreements are in place
