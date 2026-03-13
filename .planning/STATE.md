@@ -83,6 +83,7 @@ Progress: [██████████] 100%
 | Phase 11 P01 | 5min | 2 tasks | 14 files |
 | Phase 11 P02 | 4min | 2 tasks | 2 files |
 | Phase 12 P01 | 5min | 2 tasks | 9 files |
+| Phase 12 P02 | 6min | 2 tasks | 11 files |
 | Phase 12 P03 | 4min | 2 tasks | 3 files |
 
 ## Accumulated Context
@@ -231,6 +232,9 @@ Recent decisions affecting current work:
 - [12-01]: PrivateChannel for incident messages (not PresenceChannel) -- simpler auth, no online-user tracking needed per-channel
 - [12-01]: Dispatcher senderUnitCallsign is null -- dispatchers operate without unit assignment
 - [12-01]: broadcastWith includes messageId as 'id' for frontend deduplication and optimistic UI matching
+- [12-02]: Reactive Map replacement (new Map(old)) instead of in-place mutation for Vue reactivity on unreadByIncident and messagesByIncident
+- [12-02]: Messages are session-local: start empty, accumulate via WebSocket during session (no lazy-load from backend)
+- [12-02]: Optimistic local push on send: message appears immediately via addLocalMessage, POST fires in background
 - [12-03]: Manual watch + echo().private() for dynamic channel subscription -- useEcho deps only re-binds callbacks, not channel name
 - [12-03]: Skip unread increment for own messages (sender_id === userId) to avoid self-notification
 - [12-03]: Initial subscribe on composable setup if activeIncident already set (handles page reload with active incident)
