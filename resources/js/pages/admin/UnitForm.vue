@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import {
     store,
     update,
@@ -43,8 +43,8 @@ type UnitData = {
 
 type Props = {
     unit?: UnitData;
-    types?: Array<{ value: string }>;
-    statuses: Array<{ value: string }>;
+    types?: string[];
+    statuses: string[];
     responders: Array<{ id: number; name: string; unit_id: string | null }>;
 };
 
@@ -60,35 +60,60 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const presetAgencies = ['CDRRMO', 'BFP', 'PNP'];
 
-const isCustomAgency = computed(
-    () => form.agency !== '' && !presetAgencies.includes(form.agency),
-);
-
-const customAgencyInput = ref(
-    isCustomAgency.value ? (props.unit?.agency ?? '') : '',
-);
-
 const form = useForm({
     type: props.unit?.type ?? '',
     callsign: props.unit?.callsign ?? '',
     agency: props.unit?.agency ?? 'CDRRMO',
     crew_capacity: props.unit?.crew_capacity ?? 4,
     status: props.unit?.status ?? 'AVAILABLE',
-    shift: props.unit?.shift ?? '',
+    shift: props.unit?.shift || 'none',
     notes: props.unit?.notes ?? '',
     crew_ids: props.unit?.users?.map((u) => u.id) ?? [],
 });
 
+const initialIsCustom =
+    !!props.unit?.agency && !presetAgencies.includes(props.unit.agency);
+
+const showCustomAgency = ref(initialIsCustom);
+
+const isCustomAgency = computed(() => showCustomAgency.value);
+
+const customAgencyInput = ref(
+    initialIsCustom ? (props.unit?.agency ?? '') : '',
+);
+
 const crewSearch = ref('');
+
+const availableResponders = computed(() =>
+    props.responders.filter((r) => {
+        // Already selected for this unit — keep visible
+        if (form.crew_ids.includes(r.id)) {
+            return true;
+        }
+
+        // Unassigned — available
+        if (!r.unit_id) {
+            return true;
+        }
+
+        // Assigned to this unit on server (editing) — available
+        if (isEditing.value && r.unit_id === props.unit?.id) {
+            return true;
+        }
+
+        // Assigned elsewhere — hide
+        return false;
+    }),
+);
 
 const filteredResponders = computed(() => {
     const search = crewSearch.value.toLowerCase();
 
     if (!search) {
-        return props.responders;
+        return availableResponders.value;
     }
 
-    return props.responders.filter((r) =>
+    return availableResponders.value.filter((r) =>
         r.name.toLowerCase().includes(search),
     );
 });
@@ -99,18 +124,20 @@ const isOverCapacity = computed(
 
 function handleAgencySelect(value: string): void {
     if (value === '__other__') {
-        form.agency = customAgencyInput.value || '';
+        showCustomAgency.value = true;
+        form.agency = customAgencyInput.value;
     } else {
+        showCustomAgency.value = false;
         form.agency = value;
         customAgencyInput.value = '';
     }
 }
 
-function handleCustomAgencyInput(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    customAgencyInput.value = target.value;
-    form.agency = target.value;
-}
+watch(customAgencyInput, (val) => {
+    if (showCustomAgency.value) {
+        form.agency = val;
+    }
+});
 
 function getResponderUnit(responder: {
     id: number;
@@ -138,6 +165,11 @@ function toggleCrew(responderId: number): void {
 }
 
 function submit(): void {
+    form.transform((data) => ({
+        ...data,
+        shift: data.shift === 'none' ? '' : data.shift,
+    }));
+
     if (isEditing.value && props.unit) {
         form.submit(update(props.unit.id));
     } else {
@@ -181,13 +213,10 @@ function submit(): void {
                             <SelectContent>
                                 <SelectItem
                                     v-for="t in types"
-                                    :key="t.value"
-                                    :value="t.value"
+                                    :key="t"
+                                    :value="t"
                                 >
-                                    {{
-                                        t.value.charAt(0).toUpperCase() +
-                                        t.value.slice(1)
-                                    }}
+                                    {{ t.charAt(0).toUpperCase() + t.slice(1) }}
                                 </SelectItem>
                             </SelectContent>
                         </Select>
@@ -251,9 +280,8 @@ function submit(): void {
                             </Select>
                             <Input
                                 v-if="isCustomAgency"
-                                :value="customAgencyInput"
+                                v-model="customAgencyInput"
                                 placeholder="Enter agency name"
-                                @input="handleCustomAgencyInput"
                             />
                             <InputError :message="form.errors.agency" />
                         </div>
@@ -265,11 +293,11 @@ function submit(): void {
                                     <SelectValue placeholder="Unassigned" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="">
+                                    <SelectItem value="none">
                                         Unassigned
                                     </SelectItem>
-                                    <SelectItem value="Day"> Day </SelectItem>
-                                    <SelectItem value="Night">
+                                    <SelectItem value="day"> Day </SelectItem>
+                                    <SelectItem value="night">
                                         Night
                                     </SelectItem>
                                 </SelectContent>
@@ -308,15 +336,15 @@ function submit(): void {
                             <SelectContent>
                                 <SelectItem
                                     v-for="s in statuses"
-                                    :key="s.value"
-                                    :value="s.value"
+                                    :key="s"
+                                    :value="s"
                                 >
                                     {{
-                                        s.value
+                                        s
                                             .replace(/_/g, ' ')
                                             .charAt(0)
                                             .toUpperCase() +
-                                        s.value
+                                        s
                                             .replace(/_/g, ' ')
                                             .slice(1)
                                             .toLowerCase()
@@ -349,22 +377,21 @@ function submit(): void {
 
                     <div class="grid gap-2">
                         <Label>Assign Responders</Label>
-                        <Combobox
-                            :model-value="form.crew_ids"
-                            multiple
-                            :open="true"
-                        >
+                        <Combobox :model-value="form.crew_ids" multiple>
                             <ComboboxInput
                                 v-model="crewSearch"
                                 placeholder="Search responders..."
                                 @keydown.enter.prevent
                             />
                             <ComboboxContent
-                                position="inline"
-                                class="relative z-auto mt-1 max-h-[200px] w-full overflow-y-auto rounded-md border shadow-none"
+                                class="max-h-[200px] w-[--reka-combobox-trigger-width] overflow-y-auto"
                             >
                                 <ComboboxEmpty>
-                                    No responders found.
+                                    {{
+                                        availableResponders.length === 0
+                                            ? 'No available responders'
+                                            : 'No responders found.'
+                                    }}
                                 </ComboboxEmpty>
                                 <ComboboxItem
                                     v-for="responder in filteredResponders"
