@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in-progress
-stopped_at: Completed 12-01-PLAN.md
-last_updated: "2026-03-13T22:28:57Z"
-last_activity: "2026-03-14 — Completed 12-01: Backend messaging infrastructure with dual-channel broadcasting"
+stopped_at: Completed 12-03-PLAN.md
+last_updated: "2026-03-13T22:36:29Z"
+last_activity: "2026-03-14 — Completed 12-03: Responder incident channel subscription with group chat display"
 progress:
   total_phases: 12
   completed_phases: 11
   total_plans: 39
-  completed_plans: 37
-  percent: 95
+  completed_plans: 39
+  percent: 100
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 ## Current Position
 
 Phase: 12 of 12 (Bi-directional Dispatch-Responder Communication)
-Plan: 1 of 3 in current phase
-Status: 37 of 39 plans complete
-Last activity: 2026-03-14 — Completed 12-01: Backend messaging infrastructure with dual-channel broadcasting
+Plan: 3 of 3 in current phase
+Status: 39 of 39 plans complete
+Last activity: 2026-03-14 — Completed 12-03: Responder incident channel subscription with group chat display
 
-Progress: [█████████░] 95%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -83,6 +83,7 @@ Progress: [█████████░] 95%
 | Phase 11 P01 | 5min | 2 tasks | 14 files |
 | Phase 11 P02 | 4min | 2 tasks | 2 files |
 | Phase 12 P01 | 5min | 2 tasks | 9 files |
+| Phase 12 P03 | 4min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -230,6 +231,9 @@ Recent decisions affecting current work:
 - [12-01]: PrivateChannel for incident messages (not PresenceChannel) -- simpler auth, no online-user tracking needed per-channel
 - [12-01]: Dispatcher senderUnitCallsign is null -- dispatchers operate without unit assignment
 - [12-01]: broadcastWith includes messageId as 'id' for frontend deduplication and optimistic UI matching
+- [12-03]: Manual watch + echo().private() for dynamic channel subscription -- useEcho deps only re-binds callbacks, not channel name
+- [12-03]: Skip unread increment for own messages (sender_id === userId) to avoid self-notification
+- [12-03]: Initial subscribe on composable setup if activeIncident already set (handles page reload with active incident)
 
 ### Roadmap Evolution
 
@@ -252,6 +256,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-13T22:28:57Z
-Stopped at: Completed 12-01-PLAN.md
-Resume file: .planning/phases/12-bi-directional-dispatch-responder-communication/12-02-PLAN.md
+Last session: 2026-03-13T22:36:29Z
+Stopped at: Completed 12-03-PLAN.md (Phase 12 complete)
+Resume file: All plans complete

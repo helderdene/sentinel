@@ -132,8 +132,8 @@
 - [ ] **COMM-09**: Queue card shows unread message dot/count badge; topbar shows global MSGS count stat
 - [ ] **COMM-10**: Subtle audio cue (distinct from priority tones) plays for incoming messages on non-selected incidents; own messages do not trigger audio or increment unread
 - [ ] **COMM-11**: Incoming messages appear in dispatch Messages section in real-time via WebSocket with sender name + unit callsign identification
-- [ ] **COMM-12**: Responder ChatTab subscribes to `incident.{id}.messages` for true group chat (all participants see all messages)
-- [ ] **COMM-13**: Responder ChatTab displays unit callsign + name for sender identification in multi-unit incidents (e.g., "FIRE-01 . J. Cruz")
+- [x] **COMM-12**: Responder ChatTab subscribes to `incident.{id}.messages` for true group chat (all participants see all messages)
+- [x] **COMM-13**: Responder ChatTab displays unit callsign + name for sender identification in multi-unit incidents (e.g., "FIRE-01 . J. Cruz")
 
 ## v2 Requirements
 
