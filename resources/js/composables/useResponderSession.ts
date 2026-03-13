@@ -1,5 +1,5 @@
-import { useEcho } from '@laravel/echo-vue';
-import { computed, ref } from 'vue';
+import { echo, useEcho } from '@laravel/echo-vue';
+import { computed, onUnmounted, ref, watch } from 'vue';
 import { useAlertSystem } from '@/composables/useAlertSystem';
 import type {
     AssignmentPayload,
@@ -44,72 +44,102 @@ export function useResponderSession(
 
     const alertSystem = useAlertSystem();
 
-    useEcho<{ payload: AssignmentPayload }>(
-        `user.${userId}`,
-        'AssignmentPushed',
-        (e) => {
-            const p = e.payload;
+    useEcho<AssignmentPayload>(`user.${userId}`, 'AssignmentPushed', (p) => {
+        activeIncident.value = {
+            id: p.id,
+            incident_no: p.incident_no,
+            priority: p.priority,
+            status: p.status,
+            incident_type: {
+                id: 0,
+                name: p.incident_type ?? 'Unknown',
+                code: '',
+                category: '',
+            },
+            location_text: p.location_text,
+            barangay: p.barangay ? { id: 0, name: p.barangay } : null,
+            coordinates: p.coordinates,
+            notes: p.notes,
+            caller_name: null,
+            caller_contact: null,
+            assigned_units: [],
+            vitals: null,
+            assessment_tags: [],
+            checklist_data: null,
+            checklist_pct: 0,
+            outcome: null,
+            hospital: null,
+            timeline: [],
+            acknowledged_at: null,
+            en_route_at: null,
+            on_scene_at: null,
+            resolving_at: null,
+            resolved_at: null,
+        };
 
-            activeIncident.value = {
-                id: p.id,
-                incident_no: p.incident_no,
-                priority: p.priority,
-                status: p.status,
-                incident_type: {
-                    id: 0,
-                    name: p.incident_type ?? 'Unknown',
-                    code: '',
-                    category: '',
-                },
-                location_text: p.location_text,
-                barangay: p.barangay ? { id: 0, name: p.barangay } : null,
-                coordinates: p.coordinates,
-                notes: p.notes,
-                caller_name: null,
-                caller_contact: null,
-                assigned_units: [],
-                vitals: null,
-                assessment_tags: [],
-                checklist_data: null,
-                checklist_pct: 0,
-                outcome: null,
-                hospital: null,
-                timeline: [],
-                acknowledged_at: null,
-                en_route_at: null,
-                on_scene_at: null,
-                resolving_at: null,
-                resolved_at: null,
-            };
+        showAssignmentNotification.value = true;
+        messages.value = [];
+        unreadCount.value = 0;
+        alertSystem.playPriorityTone(p.priority);
+    });
 
-            showAssignmentNotification.value = true;
-            messages.value = [];
-            unreadCount.value = 0;
-            alertSystem.playPriorityTone(p.priority);
-        },
-    );
+    let currentMessageChannelName: string | null = null;
 
-    useEcho<{ payload: MessagePayload }>(
-        `user.${userId}`,
-        'MessageSent',
-        (e) => {
-            const m = e.payload;
+    function subscribeToIncidentMessages(incidentId: number): void {
+        const channelName = `incident.${incidentId}.messages`;
+        currentMessageChannelName = channelName;
 
-            messages.value.push({
-                id: m.id,
-                body: m.body,
-                is_quick_reply: m.is_quick_reply,
-                sender: m.sender,
-                sender_type: 'user',
-                sender_id: m.sender.id,
-                created_at: m.created_at,
+        echo()
+            .private(channelName)
+            .listen('MessageSent', (m: MessagePayload) => {
+                messages.value.push({
+                    id: m.id,
+                    body: m.body,
+                    is_quick_reply: m.is_quick_reply,
+                    sender: {
+                        id: m.sender_id,
+                        name: m.sender_name,
+                        role: m.sender_role,
+                        unit_callsign: m.sender_unit_callsign,
+                    },
+                    sender_type: 'user',
+                    sender_id: m.sender_id,
+                    created_at: m.sent_at,
+                });
+
+                if (m.sender_id !== userId && activeTab.value !== 'chat') {
+                    unreadCount.value++;
+                }
             });
+    }
 
-            if (activeTab.value !== 'chat') {
-                unreadCount.value++;
+    function unsubscribeFromIncidentMessages(): void {
+        if (currentMessageChannelName) {
+            echo().leaveChannel(`private-${currentMessageChannelName}`);
+            currentMessageChannelName = null;
+        }
+    }
+
+    if (activeIncident.value) {
+        subscribeToIncidentMessages(activeIncident.value.id);
+    }
+
+    watch(
+        () => activeIncident.value?.id,
+        (newId, oldId) => {
+            if (oldId !== undefined && oldId !== null) {
+                unsubscribeFromIncidentMessages();
+            }
+
+            if (newId !== undefined && newId !== null) {
+                subscribeToIncidentMessages(newId);
             }
         },
     );
+
+    onUnmounted(() => {
+        unsubscribeFromIncidentMessages();
+    });
 
     function acknowledgeAssignment(): void {
         showAssignmentNotification.value = false;

@@ -17,7 +17,7 @@ export interface ResponderIncident {
     };
     location_text: string | null;
     barangay: { id: number; name: string } | null;
-    coordinates: { latitude: number; longitude: number } | null;
+    coordinates: { lat: number; lng: number } | null;
     notes: string | null;
     caller_name: string | null;
     caller_contact: string | null;
@@ -41,6 +41,7 @@ export interface ResponderUnit {
     callsign: string;
     type: string;
     status: string;
+    coordinates: { lat: number; lng: number } | null;
 }
 
 export interface VitalsData {
@@ -67,26 +68,33 @@ export interface AssignmentPayload {
     incident_type: string | null;
     location_text: string | null;
     barangay: string | null;
-    coordinates: { latitude: number; longitude: number } | null;
+    coordinates: { lat: number; lng: number } | null;
     notes: string | null;
     unit_id: string;
 }
 
 export interface MessagePayload {
     id: number;
-    incident_id: number;
+    incident_id: string;
+    sender_id: number;
+    sender_name: string;
+    sender_role: string;
+    sender_unit_callsign: string | null;
     body: string;
-    message_type: string;
     is_quick_reply: boolean;
-    sender: { id: number; name: string; role: string };
-    created_at: string;
+    sent_at: string;
 }
 
 export interface IncidentMessageItem {
     id: number;
     body: string;
     is_quick_reply: boolean;
-    sender: { id: number; name: string; role: string } | null;
+    sender: {
+        id: number;
+        name: string;
+        role: string;
+        unit_callsign: string | null;
+    } | null;
     sender_type: string;
     sender_id: number;
     created_at: string;
