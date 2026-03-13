@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: complete
+status: completed
 stopped_at: Completed 11-02-PLAN.md
-last_updated: "2026-03-13T21:14:49Z"
+last_updated: "2026-03-13T21:22:11.892Z"
 last_activity: "2026-03-14 — Completed 11-02: Units CRUD frontend with index table and crew multi-select form"
 progress:
   total_phases: 11
