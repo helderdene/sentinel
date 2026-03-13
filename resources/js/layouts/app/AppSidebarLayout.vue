@@ -21,7 +21,7 @@ const { bannerLevel, isSyncing } = useWebSocket();
 <template>
     <AppShell variant="sidebar">
         <AppSidebar />
-        <AppContent variant="sidebar" class="overflow-x-hidden">
+        <AppContent variant="sidebar" class="overflow-x-hidden bg-t-bg">
             <AppSidebarHeader :breadcrumbs="breadcrumbs" />
             <ConnectionBanner
                 :banner-level="bannerLevel"
