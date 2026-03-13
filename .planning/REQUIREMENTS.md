@@ -46,10 +46,10 @@
 
 ### Responder
 
-- [ ] **RSPDR-01**: Responder receives assignment via WebSocket with toast notification and audio cue; full incident card with type, priority, location, notes
-- [ ] **RSPDR-02**: Responder can acknowledge assignment with single tap; timestamp captured and dispatch timer closed
-- [ ] **RSPDR-03**: Responder can transition status (Acknowledged > En Route > On Scene > Resolving > Resolved) with large touch targets (44px min); each transition broadcasts to dispatch via WebSocket
-- [ ] **RSPDR-04**: Navigation deep-link to Google Maps with incident coordinates; embedded MapLibre mini-map with animated route polyline, unit position, incident pulse ring, and live ETA countdown
+- [x] **RSPDR-01**: Responder receives assignment via WebSocket with toast notification and audio cue; full incident card with type, priority, location, notes
+- [x] **RSPDR-02**: Responder can acknowledge assignment with single tap; timestamp captured and dispatch timer closed
+- [x] **RSPDR-03**: Responder can transition status (Acknowledged > En Route > On Scene > Resolving > Resolved) with large touch targets (44px min); each transition broadcasts to dispatch via WebSocket
+- [x] **RSPDR-04**: Navigation deep-link to Google Maps with incident coordinates; embedded MapLibre mini-map with animated route polyline, unit position, incident pulse ring, and live ETA countdown
 - [ ] **RSPDR-05**: Bi-directional messaging with dispatch; 8 preset quick-reply chips plus free text; message history persists for incident duration
 - [ ] **RSPDR-06**: Contextual arrival checklists per incident type (cardiac, road accident, structure fire, default) with animated checkboxes and progress bar; completion % broadcast to dispatch
 - [ ] **RSPDR-07**: Patient vitals form: blood pressure (mmHg), heart rate (bpm), SpO2 (%), GCS score (3-15) with validation ranges and placeholders
@@ -153,10 +153,10 @@
 | DSPTCH-09 | Phase 4 | Complete |
 | DSPTCH-10 | Phase 4 | Complete |
 | DSPTCH-11 | Phase 4 | Complete |
-| RSPDR-01 | Phase 5 | Pending |
-| RSPDR-02 | Phase 5 | Pending |
-| RSPDR-03 | Phase 5 | Pending |
-| RSPDR-04 | Phase 5 | Pending |
+| RSPDR-01 | Phase 5 | Complete |
+| RSPDR-02 | Phase 5 | Complete |
+| RSPDR-03 | Phase 5 | Complete |
+| RSPDR-04 | Phase 5 | Complete |
 | RSPDR-05 | Phase 5 | Pending |
 | RSPDR-06 | Phase 5 | Pending |
 | RSPDR-07 | Phase 5 | Pending |
