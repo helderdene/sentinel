@@ -1,9 +1,9 @@
 ---
 phase: 8
 slug: implement-operator-role-and-intake-layer-ui
-status: draft
-nyquist_compliant: false
-wave_0_complete: false
+status: approved
+nyquist_compliant: true
+wave_0_complete: true
 created: 2026-03-13
 ---
 
@@ -38,17 +38,17 @@ created: 2026-03-13
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 08-01-01 | 01 | 1 | OP-01 | unit | `php artisan test --compact tests/Unit/Enums/UserRoleTest.php` | W0 (in Task 1) | pending |
-| 08-01-02 | 01 | 1 | OP-02 | unit | `php artisan test --compact tests/Unit/Enums/IncidentStatusTest.php` | W0 (in Task 1) | pending |
-| 08-01-03 | 01 | 1 | OP-03 | feature | `php artisan test --compact tests/Feature/Intake/IntakeGatesTest.php` | W0 (in Task 1) | pending |
-| 08-01-04 | 01 | 1 | OP-04 | feature | `php artisan test --compact tests/Feature/Auth/OperatorRedirectTest.php` | W0 (in Task 2) | pending |
-| 08-01-05 | 01 | 1 | OP-08 | feature | `php artisan test --compact tests/Feature/Intake/TriageIncidentTest.php` | W0 (in Task 2) | pending |
-| 08-02-01 | 02 | 1 | OP-05 | feature | `php artisan test --compact tests/Feature/Intake/IntakeStationTest.php` | W0 (in 01-T2) | pending |
-| 08-02-02 | 02 | 1 | OP-06 | feature | `php artisan test --compact tests/Feature/Intake/IntakeStationTest.php` | W0 (in 01-T2) | pending |
-| 08-03-01 | 03 | 2 | OP-07 | feature | `php artisan test --compact tests/Feature/Intake/TriageIncidentTest.php` | W0 (in 01-T2) | pending |
-| 08-03-02 | 03 | 2 | OP-08 | feature | `php artisan test --compact tests/Feature/Intake/TriageIncidentTest.php` | W0 (in 01-T2) | pending |
-| 08-04-01 | 04 | 3 | OP-11 | feature | `php artisan test --compact tests/Feature/Intake/IntakeGatesTest.php` | W0 (in 01-T1) | pending |
-| 08-04-02 | 04 | 3 | OP-15 | feature | `php artisan test --compact tests/Feature/Broadcasting/ChannelAuthTest.php` | W0 | pending |
+| 08-01-01 | 01 | 1 | OP-01 | unit | `php artisan test --compact tests/Unit/Enums/UserRoleTest.php` | ✅ | ✅ green |
+| 08-01-02 | 01 | 1 | OP-02 | unit | `php artisan test --compact tests/Unit/Enums/IncidentStatusTest.php` | ✅ | ✅ green |
+| 08-01-03 | 01 | 1 | OP-03 | feature | `php artisan test --compact tests/Feature/Intake/IntakeGatesTest.php` | ✅ | ✅ green |
+| 08-01-04 | 01 | 1 | OP-04 | feature | `php artisan test --compact tests/Feature/Auth/OperatorRedirectTest.php` | ✅ | ✅ green |
+| 08-01-05 | 01 | 1 | OP-08 | feature | `php artisan test --compact tests/Feature/Intake/TriageIncidentTest.php` | ✅ | ✅ green |
+| 08-02-01 | 02 | 1 | OP-05 | feature | `php artisan test --compact tests/Feature/Intake/IntakeStationTest.php` | ✅ | ✅ green |
+| 08-02-02 | 02 | 1 | OP-06 | feature | `php artisan test --compact tests/Feature/Intake/IntakeStationTest.php` | ✅ | ✅ green |
+| 08-03-01 | 03 | 2 | OP-07 | feature | `php artisan test --compact tests/Feature/Intake/TriageIncidentTest.php` | ✅ | ✅ green |
+| 08-03-02 | 03 | 2 | OP-08 | feature | `php artisan test --compact tests/Feature/Intake/TriageIncidentTest.php` | ✅ | ✅ green |
+| 08-04-01 | 04 | 3 | OP-11 | feature | `php artisan test --compact tests/Feature/Intake/IntakeGatesTest.php` | ✅ | ✅ green |
+| 08-04-02 | 04 | 3 | OP-15 | feature | `php artisan test --compact tests/Feature/Broadcasting/ChannelAuthTest.php` | ✅ | ✅ green |
 
 *Status: pending / green / red / flaky*
 
@@ -56,14 +56,16 @@ created: 2026-03-13
 
 ## Wave 0 Requirements
 
-- [ ] `tests/Unit/Enums/UserRoleTest.php` — Plan 08-01 Task 1 creates this (OP-01: operator enum)
-- [ ] `tests/Unit/Enums/IncidentStatusTest.php` — Plan 08-01 Task 1 creates this (OP-02: TRIAGED status)
-- [ ] `tests/Feature/Intake/IntakeGatesTest.php` — Plan 08-01 Task 1 creates this (OP-03, OP-11: gate authorization)
-- [ ] `tests/Feature/Auth/OperatorRedirectTest.php` — Plan 08-01 Task 2 creates this (OP-04: operator redirect)
-- [ ] `tests/Feature/Intake/IntakeStationTest.php` — Plan 08-01 Task 2 creates this (OP-05, OP-06: page render/forbidden)
-- [ ] `tests/Feature/Intake/TriageIncidentTest.php` — Plan 08-01 Task 2 creates this (OP-07, OP-08: triage + manual entry)
-- [ ] `tests/Feature/Broadcasting/ChannelAuthTest.php` — stubs for OP-15 (channel auth)
-- [ ] `database/factories/UserFactory.php` needs `operator()` state method
+- [x] `tests/Unit/Enums/UserRoleTest.php` — Plan 08-01 Task 1 creates this (OP-01: operator enum)
+- [x] `tests/Unit/Enums/IncidentStatusTest.php` — Plan 08-01 Task 1 creates this (OP-02: TRIAGED status)
+- [x] `tests/Feature/Intake/IntakeGatesTest.php` — Plan 08-01 Task 1 creates this (OP-03, OP-11: gate authorization)
+- [x] `tests/Feature/Auth/OperatorRedirectTest.php` — Plan 08-01 Task 2 creates this (OP-04: operator redirect)
+- [x] `tests/Feature/Intake/IntakeStationTest.php` — Plan 08-01 Task 2 creates this (OP-05, OP-06: page render/forbidden)
+- [x] `tests/Feature/Intake/TriageIncidentTest.php` — Plan 08-01 Task 2 creates this (OP-07, OP-08: triage + manual entry)
+- [x] `tests/Feature/Broadcasting/ChannelAuthTest.php` — stubs for OP-15 (channel auth)
+- [x] `database/factories/UserFactory.php` needs `operator()` state method
+
+*Existing infrastructure covers all phase requirements.*
 
 ---
 
@@ -80,11 +82,21 @@ created: 2026-03-13
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 15s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references
+- [x] No watch-mode flags
+- [x] Feedback latency < 15s
+- [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** approved 2026-03-14
+
+## Validation Audit 2026-03-14
+
+| Metric | Count |
+|--------|-------|
+| Gaps found | 0 |
+| Resolved | 0 |
+| Escalated | 0 |
+
+All test files pre-exist from phase execution. No new tests needed.
