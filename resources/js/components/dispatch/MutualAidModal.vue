@@ -106,7 +106,7 @@ function handleClose(): void {
 <template>
     <Dialog :open="open" @update:open="emit('update:open', $event)">
         <DialogContent
-            class="border-t-border bg-t-bg sm:max-w-lg dark:bg-[#0f172a]"
+            class="border-t-border bg-t-bg sm:max-w-lg dark:bg-[#05101E]"
             :show-close-button="false"
         >
             <DialogHeader>

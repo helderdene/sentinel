@@ -327,7 +327,7 @@ onDeselect(() => {
     <div class="flex h-full w-full">
         <!-- Left panel: Incident Queue -->
         <div
-            class="z-10 w-80 shrink-0 border-r border-t-border bg-t-bg/95 backdrop-blur-sm dark:border-t-border dark:bg-[#0f172a]/95"
+            class="z-10 w-80 shrink-0 border-r border-t-border bg-t-bg/95 backdrop-blur-sm dark:border-t-border dark:bg-[#05101E]/95"
         >
             <DispatchQueuePanel
                 :incidents="localIncidents"
@@ -345,7 +345,7 @@ onDeselect(() => {
 
         <!-- Right panel -->
         <div
-            class="z-10 w-[360px] shrink-0 border-l border-t-border bg-t-bg/95 backdrop-blur-sm dark:border-t-border dark:bg-[#0f172a]/95"
+            class="z-10 w-[360px] shrink-0 border-l border-t-border bg-t-bg/95 backdrop-blur-sm dark:border-t-border dark:bg-[#05101E]/95"
         >
             <IncidentDetailPanel
                 v-if="rightPanelMode === 'incident-detail' && selectedIncident"

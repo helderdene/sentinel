@@ -5,7 +5,7 @@ import HospitalSelect from '@/components/responder/HospitalSelect.vue';
 import type { Hospital, IncidentOutcome } from '@/types/responder';
 
 const props = defineProps<{
-    incidentId: number;
+    incidentId: string | number;
     isOpen: boolean;
     hospitals: Hospital[];
 }>();
@@ -25,17 +25,17 @@ const OUTCOME_OPTIONS: OutcomeOption[] = [
     {
         type: 'TREATED_ON_SCENE',
         label: 'Treated On Scene',
-        color: '#16a34a',
+        color: '#1D9E75',
     },
     {
         type: 'TRANSPORTED_TO_HOSPITAL',
         label: 'Transported to Hospital',
-        color: '#2563eb',
+        color: '#378ADD',
     },
     {
         type: 'REFUSED_TREATMENT',
         label: 'Patient Refused Treatment',
-        color: '#ca8a04',
+        color: '#EF9F27',
     },
     {
         type: 'DECLARED_DOA',
@@ -45,7 +45,7 @@ const OUTCOME_OPTIONS: OutcomeOption[] = [
     {
         type: 'FALSE_ALARM',
         label: 'False Alarm / Stand Down',
-        color: '#ea580c',
+        color: '#E24B4A',
     },
 ];
 

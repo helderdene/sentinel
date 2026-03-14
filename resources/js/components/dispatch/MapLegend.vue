@@ -1,22 +1,22 @@
 <script setup lang="ts">
 const incidentLegend = [
-    { label: 'P1 Critical', color: '#dc2626' },
-    { label: 'P2 High', color: '#ea580c' },
-    { label: 'P3 Medium', color: '#ca8a04' },
-    { label: 'P4 Low', color: '#16a34a' },
+    { label: 'P1 Critical', color: '#E24B4A' },
+    { label: 'P2 High', color: '#EF9F27' },
+    { label: 'P3 Medium', color: '#1D9E75' },
+    { label: 'P4 Low', color: '#378ADD' },
 ];
 
 const unitLegend = [
-    { label: 'Available', color: '#16a34a' },
-    { label: 'Dispatched / En Route', color: '#2563eb' },
-    { label: 'On Scene', color: '#ca8a04' },
+    { label: 'Available', color: '#1D9E75' },
+    { label: 'Dispatched / En Route', color: '#378ADD' },
+    { label: 'On Scene', color: '#EF9F27' },
     { label: 'Offline', color: '#6b7280' },
 ];
 </script>
 
 <template>
     <div
-        class="absolute bottom-4 left-4 z-10 w-40 rounded-lg border border-t-border bg-t-bg/90 p-3 backdrop-blur-sm dark:border-t-border dark:bg-[#0f172a]/90"
+        class="absolute bottom-4 left-4 z-10 w-40 rounded-lg border border-t-border bg-t-bg/90 p-3 backdrop-blur-sm dark:border-t-border dark:bg-[#05101E]/90"
     >
         <!-- Incidents -->
         <div

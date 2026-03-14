@@ -53,17 +53,17 @@ export const STATUS_SEQUENCE = [
 ] as const;
 
 export const STATUS_COLORS: Record<string, string> = {
-    Received: '#2563eb',
+    Received: '#378ADD',
     Verified: '#7c3aed',
-    Dispatched: '#ea580c',
-    Resolved: '#16a34a',
+    Dispatched: '#EF9F27',
+    Resolved: '#1D9E75',
 };
 
 export const PRIORITY_COLORS: Record<number, string> = {
-    1: '#dc2626',
-    2: '#ea580c',
-    3: '#ca8a04',
-    4: '#16a34a',
+    1: '#E24B4A',
+    2: '#EF9F27',
+    3: '#1D9E75',
+    4: '#378ADD',
 };
 
 export const PRIORITY_LABELS: Record<number, string> = {

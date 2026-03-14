@@ -141,13 +141,13 @@ const currentPriorityNum = computed(
                 v-if="canRecall"
                 class="flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-medium transition-colors"
                 :style="{
-                    backgroundColor: 'rgba(220,38,38,0.06)',
-                    border: '1px solid rgba(220,38,38,0.2)',
-                    color: '#dc2626',
+                    backgroundColor: 'rgba(226,75,74,0.06)',
+                    border: '1px solid rgba(226,75,74,0.2)',
+                    color: '#E24B4A',
                 }"
                 @click="handleRecall"
             >
-                <IntakeIconRecall :size="11" color="#dc2626" />
+                <IntakeIconRecall :size="11" color="#E24B4A" />
                 Recall
             </button>
         </div>

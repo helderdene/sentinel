@@ -29,7 +29,7 @@ const COLORS: Record<string, string> = {
     purple: '#7c3aed',
 };
 
-const lineColor = computed(() => COLORS[props.color] ?? '#2563eb');
+const lineColor = computed(() => COLORS[props.color] ?? '#378ADD');
 
 const chartData = computed(() => ({
     labels: props.sparklineData.map((_, i) => String(i)),

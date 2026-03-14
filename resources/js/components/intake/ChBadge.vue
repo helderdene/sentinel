@@ -58,15 +58,15 @@ const config = computed(() => channels[props.ch]);
 
 <template>
     <span
-        class="inline-flex items-center gap-1 rounded font-mono font-bold whitespace-nowrap"
+        class="inline-flex items-center gap-1 rounded-full font-mono font-bold whitespace-nowrap"
         :class="
             small ? 'px-1.5 py-[1px] text-[9px]' : 'px-2 py-[2px] text-[10px]'
         "
         :style="{
-            backgroundColor: `color-mix(in srgb, ${config.color} 7%, transparent)`,
+            backgroundColor: `color-mix(in srgb, ${config.color} 15%, transparent)`,
             borderWidth: '1px',
             borderStyle: 'solid',
-            borderColor: `color-mix(in srgb, ${config.color} 21%, transparent)`,
+            borderColor: `color-mix(in srgb, ${config.color} 40%, transparent)`,
             color: config.color,
         }"
     >

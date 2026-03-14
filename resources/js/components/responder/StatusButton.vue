@@ -22,22 +22,22 @@ const statusActions: Record<string, StatusAction> = {
     DISPATCHED: {
         label: 'ACKNOWLEDGE',
         nextStatus: 'ACKNOWLEDGED',
-        color: '#2563eb',
+        color: '#378ADD',
     },
     ACKNOWLEDGED: {
         label: 'EN ROUTE',
         nextStatus: 'EN_ROUTE',
-        color: '#4f46e5',
+        color: '#378ADD',
     },
     EN_ROUTE: {
         label: 'ARRIVED ON SCENE',
         nextStatus: 'ON_SCENE',
-        color: '#ca8a04',
+        color: '#EF9F27',
     },
     ON_SCENE: {
         label: 'RESOLVING',
         nextStatus: 'RESOLVING',
-        color: '#ea580c',
+        color: '#E24B4A',
     },
 };
 
@@ -49,7 +49,9 @@ const currentAction = computed(() => {
     return statusActions[props.currentStatus] ?? null;
 });
 
-const isVisible = computed(() => currentAction.value !== null);
+const isVisible = computed(
+    () => currentAction.value !== null && props.currentStatus !== 'DISPATCHED',
+);
 
 const showTimer = computed(
     () => props.currentStatus === 'DISPATCHED' && props.ackTimerRemaining > 0,

@@ -51,7 +51,7 @@ const connectionStatus = computed<ConnectionStatus>(() => {
 
 <template>
     <div
-        class="flex h-screen flex-col overflow-hidden bg-t-bg dark:bg-[#0f172a]"
+        class="flex h-screen flex-col overflow-hidden bg-t-bg dark:bg-[#05101E]"
     >
         <DispatchTopbar :user="user" />
 

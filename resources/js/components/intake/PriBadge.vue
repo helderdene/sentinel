@@ -24,15 +24,18 @@ const isLarge = computed(() => props.size === 'lg');
 
 <template>
     <span
-        class="inline-flex items-center gap-1 rounded font-mono font-bold whitespace-nowrap"
+        class="inline-flex items-center gap-1 rounded-full font-mono font-bold whitespace-nowrap"
         :class="
             isLarge
                 ? 'px-2.5 py-1 text-[11px]'
                 : 'px-[7px] py-[2px] text-[10px]'
         "
         :style="{
-            backgroundColor: `color-mix(in srgb, ${color} 8%, transparent)`,
+            backgroundColor: `color-mix(in srgb, ${color} 15%, transparent)`,
             color: color,
+            borderWidth: '1px',
+            borderStyle: 'solid',
+            borderColor: `color-mix(in srgb, ${color} 40%, transparent)`,
         }"
     >
         <span

@@ -1,42 +1,51 @@
 <script setup lang="ts">
-import maplibregl from 'maplibre-gl';
-import type { GeoJSONSource, Map as MaplibreMap } from 'maplibre-gl';
+import mapboxgl from 'mapbox-gl';
+import type { GeoJSONSource } from 'mapbox-gl';
 import { computed, onMounted, onUnmounted, ref, shallowRef, watch } from 'vue';
+import { useOsrmRoute } from '@/composables/useOsrmRoute';
 import type { ResponderIncident } from '@/types/responder';
 
-const MAP_STYLE: maplibregl.StyleSpecification = {
-    version: 8,
-    name: 'Light',
-    sources: {
-        'carto-light': {
-            type: 'raster',
-            tiles: [
-                'https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png',
-                'https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png',
-                'https://c.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png',
-            ],
-            tileSize: 256,
-            attribution:
-                '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
-        },
-    },
-    layers: [
-        {
-            id: 'background',
-            type: 'background',
-            paint: { 'background-color': '#f2f3f0' },
-        },
-        {
-            id: 'carto-light-layer',
-            type: 'raster',
-            source: 'carto-light',
-            minzoom: 0,
-            maxzoom: 20,
-        },
-    ],
+const MAP_STYLE = 'mapbox://styles/helderdene/cmmq06eqr005j01skbwodfq08';
+
+// --- Icon generation (matches dispatch console) ---
+const ICON_SIZE = 64;
+
+const INCIDENT_ICON_PATH =
+    'M12 5.5c-.38 0-.73.2-.92.53l-4.86 8.4c-.19.33-.19.74 0 1.07.19.34.54.54.92.54h9.72c.38 0 .73-.2.92-.54.19-.33.19-.74 0-1.07l-4.86-8.4A1.06 1.06 0 0 0 12 5.5zm.5 8.5a.75.75 0 1 1-1 0 .75.75 0 0 1 1 0zM12 12a.5.5 0 0 1-.5-.5v-2a.5.5 0 1 1 1 0v2a.5.5 0 0 1-.5.5z';
+
+const UNIT_ICON_PATH =
+    'M18 9.5h-2V7H6.5c-.83 0-1.5.68-1.5 1.5v6.5h1.5c0 1.1.9 2 2 2s2-.9 2-2h3c0 1.1.9 2 2 2s2-.9 2-2H19v-3.5l-1-2zm-9.5 7.5c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm9-6.5 1.36 1.75H16V10.5h1.5zM15.5 17c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z';
+
+const PRIORITY_COLORS: Record<string, string> = {
+    P1: '#E24B4A',
+    P2: '#EF9F27',
+    P3: '#1D9E75',
+    P4: '#378ADD',
 };
 
-const ETA_SPEED_KMH = 30;
+function buildCircleIconSvg(iconPath: string, color: string): string {
+    return [
+        `<svg xmlns="http://www.w3.org/2000/svg" width="${ICON_SIZE}" height="${ICON_SIZE}" viewBox="0 0 24 24">`,
+        `<circle cx="12" cy="12" r="11.5" fill="${color}"/>`,
+        `<circle cx="12" cy="12" r="10" fill="white"/>`,
+        `<path d="${iconPath}" fill="${color}"/>`,
+        '</svg>',
+    ].join('');
+}
+
+function loadSvgAsImage(svg: string): Promise<HTMLImageElement> {
+    const blob = new Blob([svg], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+
+    return new Promise((resolve) => {
+        const img = new Image(ICON_SIZE, ICON_SIZE);
+        img.onload = () => {
+            URL.revokeObjectURL(url);
+            resolve(img);
+        };
+        img.src = url;
+    });
+}
 
 const props = defineProps<{
     incident: ResponderIncident;
@@ -44,9 +53,13 @@ const props = defineProps<{
     unitCallsign: string;
 }>();
 
+const { getRoute } = useOsrmRoute();
+
 const mapContainer = ref<HTMLDivElement | null>(null);
-const map = shallowRef<MaplibreMap | null>(null);
+const map = shallowRef<mapboxgl.Map | null>(null);
 const isMapReady = ref(false);
+const routeDistanceKm = ref<number | null>(null);
+const routeEtaMin = ref<number | null>(null);
 
 const incidentCoords = computed(() => {
     const c = props.incident.coordinates;
@@ -66,34 +79,46 @@ const googleMapsUrl = computed(() => {
     return `https://www.google.com/maps/dir/?api=1&destination=${incidentCoords.value.lat},${incidentCoords.value.lng}&travelmode=driving`;
 });
 
-const distanceKm = computed(() => {
+const distanceKm = computed(() => routeDistanceKm.value);
+
+const etaMinutes = computed(() => routeEtaMin.value);
+
+async function fetchRouteGeometry(): Promise<void> {
     if (!props.gpsPosition || !incidentCoords.value) {
-        return null;
+        return;
     }
 
-    const R = 6371;
-    const dLat = toRad(incidentCoords.value.lat - props.gpsPosition.lat);
-    const dLng = toRad(incidentCoords.value.lng - props.gpsPosition.lng);
-    const a =
-        Math.sin(dLat / 2) ** 2 +
-        Math.cos(toRad(props.gpsPosition.lat)) *
-            Math.cos(toRad(incidentCoords.value.lat)) *
-            Math.sin(dLng / 2) ** 2;
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const from: [number, number] = [
+        props.gpsPosition.lng,
+        props.gpsPosition.lat,
+    ];
+    const to: [number, number] = [
+        incidentCoords.value.lng,
+        incidentCoords.value.lat,
+    ];
+    const route = await getRoute(from, to);
 
-    return R * c;
-});
+    routeDistanceKm.value = route.distanceKm;
+    routeEtaMin.value = route.durationMin;
 
-const etaMinutes = computed(() => {
-    if (distanceKm.value === null) {
-        return null;
+    if (!map.value || !isMapReady.value) {
+        return;
     }
 
-    return Math.max(1, Math.round((distanceKm.value / ETA_SPEED_KMH) * 60));
-});
+    const lineSource = map.value.getSource('route-line') as
+        | GeoJSONSource
+        | undefined;
 
-function toRad(deg: number): number {
-    return (deg * Math.PI) / 180;
+    if (lineSource) {
+        lineSource.setData({
+            type: 'Feature',
+            geometry: {
+                type: 'LineString',
+                coordinates: route.coordinates,
+            },
+            properties: {},
+        });
+    }
 }
 
 function initMap(): void {
@@ -109,23 +134,45 @@ function initMap(): void {
         : [incidentCoords.value.lng, incidentCoords.value.lat];
 
     try {
-        map.value = new maplibregl.Map({
+        map.value = new mapboxgl.Map({
             container: mapContainer.value,
             style: MAP_STYLE,
             center,
             zoom: 13,
-            maxPitch: 0,
-            dragRotate: false,
+            pitch: 0,
         });
 
-        map.value.on('load', () => {
+        map.value.addControl(
+            new mapboxgl.NavigationControl({ visualizePitch: true }),
+            'top-right',
+        );
+
+        map.value.on('load', async () => {
+            map.value?.resize();
+
+            // Load dispatch-style icons
+            const priority = props.incident.priority ?? 'P2';
+            const incidentColor = PRIORITY_COLORS[priority] ?? '#EF9F27';
+            const [incidentImg, unitImg] = await Promise.all([
+                loadSvgAsImage(
+                    buildCircleIconSvg(INCIDENT_ICON_PATH, incidentColor),
+                ),
+                loadSvgAsImage(buildCircleIconSvg(UNIT_ICON_PATH, '#378ADD')),
+            ]);
+            map.value?.addImage('incident-icon', incidentImg);
+            map.value?.addImage('unit-icon', unitImg);
+
             isMapReady.value = true;
             addMapSources();
             addMapLayers();
-            fitBounds();
+
+            if (props.gpsPosition && incidentCoords.value) {
+                fitBounds();
+                fetchRouteGeometry();
+            }
         });
     } catch {
-        // MapLibre init failure — container may not support WebGL
+        // Mapbox init failure — container may not support WebGL
     }
 }
 
@@ -151,36 +198,41 @@ function addMapSources(): void {
 
     map.value.addSource('unit-point', {
         type: 'geojson',
-        data: {
-            type: 'Feature',
-            geometry: {
-                type: 'Point',
-                coordinates: props.gpsPosition
-                    ? [props.gpsPosition.lng, props.gpsPosition.lat]
-                    : [incidentCoords.value.lng, incidentCoords.value.lat],
-            },
-            properties: {},
-        },
+        data: props.gpsPosition
+            ? {
+                  type: 'Feature',
+                  geometry: {
+                      type: 'Point',
+                      coordinates: [
+                          props.gpsPosition.lng,
+                          props.gpsPosition.lat,
+                      ],
+                  },
+                  properties: {},
+              }
+            : { type: 'FeatureCollection', features: [] },
     });
 
-    const lineCoords: [number, number][] = [];
-
-    if (props.gpsPosition) {
-        lineCoords.push([props.gpsPosition.lng, props.gpsPosition.lat]);
-    }
-
-    lineCoords.push([incidentCoords.value.lng, incidentCoords.value.lat]);
+    const lineCoords: [number, number][] = props.gpsPosition
+        ? [
+              [props.gpsPosition.lng, props.gpsPosition.lat],
+              [incidentCoords.value.lng, incidentCoords.value.lat],
+          ]
+        : [];
 
     map.value.addSource('route-line', {
         type: 'geojson',
-        data: {
-            type: 'Feature',
-            geometry: {
-                type: 'LineString',
-                coordinates: lineCoords,
-            },
-            properties: {},
-        },
+        data:
+            lineCoords.length >= 2
+                ? {
+                      type: 'Feature',
+                      geometry: {
+                          type: 'LineString',
+                          coordinates: lineCoords,
+                      },
+                      properties: {},
+                  }
+                : { type: 'FeatureCollection', features: [] },
     });
 }
 
@@ -189,50 +241,80 @@ function addMapLayers(): void {
         return;
     }
 
+    const routeColor =
+        PRIORITY_COLORS[props.incident.priority ?? 'P2'] ?? '#EF9F27';
+
+    map.value.addLayer({
+        id: 'route-glow',
+        type: 'line',
+        source: 'route-line',
+        paint: {
+            'line-color': routeColor,
+            'line-width': 8,
+            'line-opacity': 0.25,
+            'line-blur': 4,
+        },
+    });
+
     map.value.addLayer({
         id: 'route-line-layer',
         type: 'line',
         source: 'route-line',
         paint: {
-            'line-color': '#2563eb',
-            'line-width': 2.5,
-            'line-dasharray': [3, 3],
+            'line-color': routeColor,
+            'line-width': 3,
+            'line-dasharray': [2, 3],
         },
     });
 
     map.value.addLayer({
-        id: 'incident-pulse',
+        id: 'incident-halo',
         type: 'circle',
         source: 'incident-point',
         paint: {
-            'circle-radius': 18,
-            'circle-color': '#dc2626',
-            'circle-opacity': 0.2,
-            'circle-blur': 0.8,
+            'circle-radius': 20,
+            'circle-color':
+                PRIORITY_COLORS[props.incident.priority ?? 'P2'] ?? '#EF9F27',
+            'circle-opacity': 0.15,
+            'circle-blur': 1,
         },
     });
 
     map.value.addLayer({
-        id: 'incident-core',
-        type: 'circle',
+        id: 'incident-icon',
+        type: 'symbol',
         source: 'incident-point',
-        paint: {
-            'circle-radius': 8,
-            'circle-color': '#dc2626',
-            'circle-stroke-width': 2,
-            'circle-stroke-color': '#ffffff',
+        layout: {
+            'icon-image': 'incident-icon',
+            'icon-size': 0.55,
+            'icon-allow-overlap': true,
+            'icon-ignore-placement': true,
+            'icon-anchor': 'center',
         },
     });
 
     map.value.addLayer({
-        id: 'unit-core',
+        id: 'unit-glow',
         type: 'circle',
         source: 'unit-point',
         paint: {
-            'circle-radius': 7,
-            'circle-color': '#3b82f6',
-            'circle-stroke-width': 2,
-            'circle-stroke-color': '#ffffff',
+            'circle-radius': 18,
+            'circle-color': '#378ADD',
+            'circle-opacity': 0.15,
+            'circle-blur': 1,
+        },
+    });
+
+    map.value.addLayer({
+        id: 'unit-icon',
+        type: 'symbol',
+        source: 'unit-point',
+        layout: {
+            'icon-image': 'unit-icon',
+            'icon-size': 0.5,
+            'icon-allow-overlap': true,
+            'icon-ignore-placement': true,
+            'icon-anchor': 'center',
         },
     });
 }
@@ -243,7 +325,7 @@ function fitBounds(): void {
     }
 
     if (props.gpsPosition) {
-        const bounds = new maplibregl.LngLatBounds();
+        const bounds = new mapboxgl.LngLatBounds();
 
         bounds.extend([props.gpsPosition.lng, props.gpsPosition.lat]);
         bounds.extend([incidentCoords.value.lng, incidentCoords.value.lat]);
@@ -283,6 +365,7 @@ function updateUnitPosition(): void {
     }
 
     if (incidentCoords.value) {
+        // Show a straight line immediately while OSRM loads
         const lineSource = map.value.getSource('route-line') as
             | GeoJSONSource
             | undefined;
@@ -300,10 +383,43 @@ function updateUnitPosition(): void {
                 properties: {},
             });
         }
+
+        fitBounds();
+        fetchRouteGeometry();
     }
 }
 
-watch(() => props.gpsPosition, updateUnitPosition, { deep: true });
+let hasFittedBounds = false;
+
+function tryFirstFit(): void {
+    if (
+        !hasFittedBounds &&
+        props.gpsPosition &&
+        incidentCoords.value &&
+        isMapReady.value
+    ) {
+        hasFittedBounds = true;
+        updateUnitPosition();
+    }
+}
+
+watch(
+    () => props.gpsPosition,
+    (newVal) => {
+        if (newVal) {
+            updateUnitPosition();
+            tryFirstFit();
+        }
+    },
+    { deep: true, immediate: true },
+);
+
+// When map becomes ready, apply GPS if it arrived earlier
+watch(isMapReady, (ready) => {
+    if (ready) {
+        tryFirstFit();
+    }
+});
 
 onMounted(() => {
     initMap();
@@ -329,7 +445,7 @@ onUnmounted(() => {
                 target="_blank"
                 rel="noopener noreferrer"
                 class="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-[13px] bg-t-accent font-sans text-[14px] font-bold tracking-wide text-white transition-transform active:scale-[0.98]"
-                style="box-shadow: 0 6px 20px rgba(37, 99, 235, 0.31)"
+                style="box-shadow: 0 6px 20px rgba(55, 138, 221, 0.31)"
             >
                 <svg
                     width="20"
@@ -376,7 +492,7 @@ onUnmounted(() => {
 
             <div
                 v-if="etaMinutes !== null"
-                class="absolute right-3 bottom-3 rounded-[10px] bg-[#0f172a]/85 px-3 py-1.5 shadow-md backdrop-blur-sm"
+                class="absolute right-3 bottom-3 rounded-[10px] bg-[#05101E]/85 px-3 py-1.5 shadow-md backdrop-blur-sm"
             >
                 <p class="font-mono text-[11px] font-bold text-white">
                     ETA: {{ etaMinutes }} min
@@ -385,7 +501,7 @@ onUnmounted(() => {
 
             <div
                 v-if="distanceKm !== null"
-                class="absolute bottom-3 left-3 rounded-[10px] bg-[#0f172a]/85 px-3 py-1.5 shadow-md backdrop-blur-sm"
+                class="absolute bottom-3 left-3 rounded-[10px] bg-[#05101E]/85 px-3 py-1.5 shadow-md backdrop-blur-sm"
             >
                 <p class="font-mono text-[11px] text-t-text-dim">
                     {{ distanceKm.toFixed(1) }} km
