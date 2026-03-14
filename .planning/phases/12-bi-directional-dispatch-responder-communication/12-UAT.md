@@ -1,5 +1,5 @@
 ---
-status: complete
+status: resolved
 phase: 12-bi-directional-dispatch-responder-communication
 source: 12-01-SUMMARY.md, 12-02-SUMMARY.md, 12-03-SUMMARY.md
 started: 2026-03-14T00:00:00Z
@@ -14,9 +14,7 @@ updated: 2026-03-14T06:15:00Z
 
 ### 1. Dispatch sends message to responder
 expected: Open the dispatch console with an active incident that has a unit assigned. Select the incident. Expand the Messages section in the incident detail panel. Type a message and send it. The message should appear immediately in the dispatch Messages section. On the responder Chat tab, the same message should appear.
-result: issue
-reported: "There is no message section in the incident detail panel"
-severity: major
+result: pass (re-test after 12-04 fix)
 
 ### 2. Responder message appears in dispatch
 expected: From a responder's Chat tab, send a message (quick reply or free text) on an active incident. On the dispatch console, the message should appear in the Messages section for that incident. The sender should be identified with unit callsign and name (e.g., "FIRE-01 · J. Cruz").
@@ -44,9 +42,7 @@ result: pass
 
 ### 8. Responder group chat visibility
 expected: On an incident with multiple units assigned (e.g., FIRE-01 and AMB-02), send a message from FIRE-01's Chat tab. The message should appear on AMB-02's Chat tab as well (not just dispatch). All participants (dispatch + all assigned units) see all messages in a single unified thread.
-result: issue
-reported: "there seems to be no place to type in the responder chat box — free text input hidden behind the RESOLVING status button"
-severity: major
+result: pass (re-test after 12-04 fix)
 
 ### 9. Responder sender identification
 expected: In the responder's Chat tab, messages from other units should show "UNIT-CALLSIGN · Name" format (e.g., "FIRE-01 · Juan Cruz"). Messages from dispatch should show the dispatcher's name with a role badge. Own messages should appear on the right side of the chat bubble.
@@ -55,29 +51,41 @@ result: pass
 ## Summary
 
 total: 9
-passed: 7
-issues: 2
+passed: 9
+issues: 0
 pending: 0
 skipped: 0
 
 ## Gaps
 
 - truth: "Dispatch Messages section visible in incident detail panel for sending messages"
-  status: failed
+  status: resolved
   reason: "User reported: There is no message section in the incident detail panel"
   severity: major
   test: 1
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "No code-level bug found. The component is correctly wired (IncidentDetailPanel imports and renders DispatchMessagesSection unconditionally). The section starts collapsed with a very small 9px MESSAGES header label that may be overlooked between Available Units and Timeline sections. Possible stale build assets if npm run build/dev not re-run."
+  artifacts:
+    - path: "resources/js/components/dispatch/IncidentDetailPanel.vue"
+      issue: "DispatchMessagesSection rendered at lines 372-380, collapsed header may be too small to notice"
+    - path: "resources/js/components/dispatch/DispatchMessagesSection.vue"
+      issue: "Header text is text-[9px] — very small, easy to miss"
+  missing:
+    - "Make the Messages header more visually prominent (larger text, icon, or visual separator)"
+  debug_session: ".planning/debug/dispatch-messages-not-visible.md"
 
 - truth: "Responder Chat tab free text input accessible (not hidden behind status button)"
-  status: failed
+  status: resolved
   reason: "User reported: there seems to be no place to type in the responder chat box — free text input hidden behind the RESOLVING status button"
   severity: major
   test: 8
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "StatusButton uses position:fixed with bottom-[80px], overlapping ~96px of the content area. ChatTab places free text input flush at the bottom with no padding. The layout slot wrapper does not reserve space for the fixed overlay."
+  artifacts:
+    - path: "resources/js/components/responder/StatusButton.vue"
+      issue: "Fixed positioning at bottom-[80px] overlaps content area by ~96px"
+    - path: "resources/js/components/responder/ChatTab.vue"
+      issue: "No bottom padding to push content above StatusButton overlay"
+    - path: "resources/js/layouts/ResponderLayout.vue"
+      issue: "Slot wrapper does not reserve space for StatusButton"
+  missing:
+    - "Add bottom padding (~100px) to ChatTab or Station page wrapper when StatusButton is visible"
+  debug_session: ".planning/debug/chat-input-hidden-by-status-btn.md"
