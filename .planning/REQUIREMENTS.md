@@ -137,7 +137,7 @@
 
 ### PWA & Push Notifications
 
-- [ ] **MOBILE-01**: PWA Service Worker with app shell caching (JS, CSS, HTML, fonts, icons) via vite-plugin-pwa injectManifest strategy; web app manifest with CDRRMO branding; installable from browser; "New version available" update prompt
+- [x] **MOBILE-01**: PWA Service Worker with app shell caching (JS, CSS, HTML, fonts, icons) via vite-plugin-pwa injectManifest strategy; web app manifest with CDRRMO branding; installable from browser; "New version available" update prompt
 - [ ] **MOBILE-02**: Web Push notifications via VAPID for background alerts: new assignment pushed to responder, P1 incident alert to dispatchers/operators, ack timeout warning to responder; push subscription management endpoints with custom in-app permission prompt
 
 ## v2 Requirements
@@ -271,7 +271,7 @@
 | COMM-11 | Phase 12 | Complete |
 | COMM-12 | Phase 12 | Complete |
 | COMM-13 | Phase 12 | Complete |
-| MOBILE-01 | Phase 13 | Planned |
+| MOBILE-01 | Phase 13 | Complete |
 | MOBILE-02 | Phase 13 | Planned |
 
 **Coverage:**
