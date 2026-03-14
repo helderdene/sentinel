@@ -25,6 +25,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 11: Implement Units CRUD** - Admin CRUD for managing response units with auto-generated IDs, crew assignment, decommission/recommission (completed 2026-03-13)
 - [x] **Phase 12: Bi-directional Communication** - Incident-level group chat channels, dispatch console messaging UI, responder ChatTab multi-participant awareness (completed 2026-03-14)
 - [x] **Phase 13: PWA Setup** - Installable PWA with service worker caching, web app manifest, and Web Push notifications for assignments, P1 alerts, ack timeouts (completed 2026-03-15)
+- [ ] **Phase 14: Sentinel Rebrand** - Full visual rebrand from IRMS/CDRRMO to Sentinel: navy/blue palette, DM Mono typography, animated shield logo, app rename across all surfaces
 
 ## Phase Details
 
@@ -261,6 +262,24 @@ Plans:
 - [x] 13-02-PLAN.md -- Web Push backend: laravel-notification-channels/webpush, VAPID keys, 3 notification classes, event listeners, ack timeout job, push subscription endpoints
 - [x] 13-03-PLAN.md -- Frontend push subscription composable, permission prompt UI, Pest tests (subscription CRUD, notification dispatch, ack timeout, VAPID config)
 
+### Phase 14: Update design system to Sentinel branding and rename app
+**Goal**: Every surface of the application reflects the Sentinel brand identity -- navy/blue color palette, DM Mono typography replacing Space Mono, animated radar/eye shield logo, "Sentinel" name replacing all IRMS/CDRRMO references, and updated PWA manifest/icons -- with zero functional changes
+**Depends on**: Phase 13
+**Requirements**: REBRAND-01, REBRAND-02, REBRAND-03, REBRAND-04, REBRAND-05, REBRAND-06
+**Success Criteria** (what must be TRUE):
+  1. All --t-* design tokens use Sentinel navy/blue palette values in both light and dark modes; Shadcn components inherit Sentinel colors via cascade
+  2. DM Mono replaces Space Mono as the monospace font everywhere; Bebas Neue is loaded for the auth page display title
+  3. Auth page shows full animated Sentinel shield (radar rings, crosshairs, eye) with "SENTINEL" in Bebas Neue and "Incident Response Management System" subtitle
+  4. Sidebar shows simplified Sentinel shield icon at 26x30px with "SENTINEL" text; favicon uses simplified shield
+  5. All user-facing text says "Sentinel" -- zero remaining "IRMS" or "CDRRMO Butuan City" references in application code
+  6. All hardcoded priority/status hex colors in MapLibre, Chart.js, and responder components use Sentinel palette
+**Plans**: 3 plans
+
+Plans:
+- [ ] 14-01-PLAN.md -- CSS token foundation: Sentinel palette values in --t-* tokens, DM Mono + Bebas Neue fonts, focus ring, p1-flash, report-app tokens sync
+- [ ] 14-02-PLAN.md -- Identity and naming: SVG shields from brand guide, auth page animated shield, sidebar logo, favicon, IRMS/CDRRMO string sweep, PWA manifest
+- [ ] 14-03-PLAN.md -- Hardcoded color sweep: MapLibre priority/status colors, Chart.js analytics colors, responder UI colors, badge style update, NavMain typography
+
 ## Progress
 
 **Execution Order:**
@@ -271,6 +290,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 (Phase 11 depends on Phase 10)
 (Phase 12 depends on Phases 4 and 5)
 (Phase 13 depends on Phase 12)
+(Phase 14 depends on Phase 13)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -287,3 +307,4 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 11. Implement Units CRUD | 2/2 | Complete    | 2026-03-13 |
 | 12. Bi-directional Communication | 4/4 | Complete | 2026-03-14 |
 | 13. PWA Setup | 3/3 | Complete    | 2026-03-14 |
+| 14. Sentinel Rebrand | 0/3 | In Progress | |
