@@ -254,11 +254,12 @@ Plans:
   5. Dispatchers and operators receive a system push notification when a P1 incident is created
   6. Push subscription management (subscribe/unsubscribe) works via authenticated endpoints with VAPID authentication
   7. A custom in-app permission prompt explains the value of push notifications before triggering the browser permission dialog
-**Plans**: 2 plans
+**Plans**: 3 plans
 
 Plans:
 - [ ] 13-01-PLAN.md -- PWA foundation: vite-plugin-pwa with injectManifest, custom service worker (precaching + push handlers), PWA icons, manifest, ReloadPrompt update banner
-- [ ] 13-02-PLAN.md -- Web Push notifications: laravel-notification-channels/webpush, VAPID keys, 3 notification classes, event listeners, ack timeout job, push subscription endpoints, permission prompt UI, tests
+- [ ] 13-02-PLAN.md -- Web Push backend: laravel-notification-channels/webpush, VAPID keys, 3 notification classes, event listeners, ack timeout job, push subscription endpoints
+- [ ] 13-03-PLAN.md -- Frontend push subscription composable, permission prompt UI, Pest tests (subscription CRUD, notification dispatch, ack timeout, VAPID config)
 
 ## Progress
 
@@ -285,4 +286,4 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 10. Design System Alignment | 5/5 | Complete    | 2026-03-13 |
 | 11. Implement Units CRUD | 2/2 | Complete    | 2026-03-13 |
 | 12. Bi-directional Communication | 4/4 | Complete | 2026-03-14 |
-| 13. PWA Setup | 0/2 | Planning | - |
+| 13. PWA Setup | 0/3 | Planning | - |

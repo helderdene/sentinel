@@ -19,7 +19,7 @@ created: 2026-03-15
 |----------|-------|
 | **Framework** | Pest 4 |
 | **Config file** | phpunit.xml |
-| **Quick run command** | `php artisan test --compact --filter=Pwa` |
+| **Quick run command** | `php artisan test --compact --filter=Push` |
 | **Full suite command** | `php artisan test --compact` |
 | **Estimated runtime** | ~15 seconds |
 
@@ -27,7 +27,7 @@ created: 2026-03-15
 
 ## Sampling Rate
 
-- **After every task commit:** Run `php artisan test --compact --filter=Pwa`
+- **After every task commit:** Run `php artisan test --compact --filter=Push`
 - **After every plan wave:** Run `php artisan test --compact`
 - **Before `/gsd:verify-work`:** Full suite must be green
 - **Max feedback latency:** 15 seconds
@@ -38,14 +38,14 @@ created: 2026-03-15
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 13-01-01 | 01 | 1 | MOBILE-01 | smoke (manual) | Manual: browser DevTools Application tab | N/A | ⬜ pending |
-| 13-02-01 | 02 | 1 | MOBILE-02a | feature | `php artisan test --compact tests/Feature/PushSubscriptionTest.php` | ❌ W0 | ⬜ pending |
-| 13-02-02 | 02 | 1 | MOBILE-02b | feature | `php artisan test --compact tests/Feature/PushNotificationTest.php` | ❌ W0 | ⬜ pending |
-| 13-02-03 | 02 | 1 | MOBILE-02c | feature | `php artisan test --compact tests/Feature/PushNotificationTest.php` | ❌ W0 | ⬜ pending |
-| 13-02-04 | 02 | 1 | MOBILE-02d | feature | `php artisan test --compact tests/Feature/AckTimeoutPushTest.php` | ❌ W0 | ⬜ pending |
-| 13-02-05 | 02 | 2 | MOBILE-02e | unit | `php artisan test --compact tests/Unit/WebPushConfigTest.php` | ❌ W0 | ⬜ pending |
+| 13-01-01 | 01 | 1 | MOBILE-01 | smoke (manual) | Manual: browser DevTools Application tab | N/A | pending |
+| 13-03-01 | 03 | 3 | MOBILE-02a | feature | `php artisan test --compact tests/Feature/PushSubscriptionTest.php` | W0 | pending |
+| 13-03-02 | 03 | 3 | MOBILE-02b | feature | `php artisan test --compact tests/Feature/PushNotificationTest.php` | W0 | pending |
+| 13-03-03 | 03 | 3 | MOBILE-02c | feature | `php artisan test --compact tests/Feature/PushNotificationTest.php` | W0 | pending |
+| 13-03-04 | 03 | 3 | MOBILE-02d | feature | `php artisan test --compact tests/Feature/AckTimeoutPushTest.php` | W0 | pending |
+| 13-03-05 | 03 | 3 | MOBILE-02e | unit | `php artisan test --compact tests/Unit/WebPushConfigTest.php` | W0 | pending |
 
-*Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
+*Status: pending / green / red / flaky*
 
 ---
 
@@ -56,15 +56,17 @@ created: 2026-03-15
 - [ ] `tests/Feature/AckTimeoutPushTest.php` — stubs for MOBILE-02d (ack timeout delayed job)
 - [ ] `tests/Unit/WebPushConfigTest.php` — stubs for MOBILE-02e (VAPID config presence)
 
+All test files are created in Plan 03 Task 2 (wave 3), which depends on Plan 02 backend infrastructure (wave 2).
+
 ---
 
 ## Manual-Only Verifications
 
 | Behavior | Requirement | Why Manual | Test Instructions |
 |----------|-------------|------------|-------------------|
-| Service worker registers and manifest served | MOBILE-01 | Browser-only API, no PHP test surface | Open app in Chrome → DevTools → Application tab → verify SW active and manifest loaded |
-| PWA installable | MOBILE-01 | Browser install prompt is UI-only | Chrome → address bar install icon appears → click → app opens standalone |
-| Offline banner shows | MOBILE-01 | Requires network toggle in browser | DevTools → Network → Offline → verify banner appears |
+| Service worker registers and manifest served | MOBILE-01 | Browser-only API, no PHP test surface | Open app in Chrome -> DevTools -> Application tab -> verify SW active and manifest loaded |
+| PWA installable | MOBILE-01 | Browser install prompt is UI-only | Chrome -> address bar install icon appears -> click -> app opens standalone |
+| Offline banner shows | MOBILE-01 | Requires network toggle in browser | DevTools -> Network -> Offline -> verify ConnectionBanner appears in layout |
 
 ---
 
