@@ -1,10 +1,15 @@
 import { createInertiaApp } from '@inertiajs/vue3';
 import { configureEcho } from '@laravel/echo-vue';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import mapboxgl from 'mapbox-gl';
 import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
 import '../css/app.css';
+import ReloadPrompt from '@/components/ReloadPrompt.vue';
 import { initializeTheme } from '@/composables/useAppearance';
+
+mapboxgl.accessToken =
+    'pk.eyJ1IjoiaGVsZGVyZGVuZSIsImEiOiJjbWw5aTJldmwwMzlqM2VzN3dqYjhkcDB3In0.fi2hg9_Q-qoaG4UHihTepw';
 
 configureEcho({
     broadcaster: 'reverb',
@@ -20,7 +25,7 @@ createInertiaApp({
             import.meta.glob<DefineComponent>('./pages/**/*.vue'),
         ),
     setup({ el, App, props, plugin }) {
-        createApp({ render: () => h(App, props) })
+        createApp({ render: () => [h(App, props), h(ReloadPrompt)] })
             .use(plugin)
             .mount(el);
     },

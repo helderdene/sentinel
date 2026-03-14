@@ -86,6 +86,7 @@ export default defineConfigWithVueTs(
             'resources/js/components/ui/*',
             'resources/js/routes/**',
             'resources/js/wayfinder/**',
+            'resources/js/sw.ts',
         ],
     },
     prettier, // Turn off all rules that might conflict with Prettier
