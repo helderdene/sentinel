@@ -24,6 +24,57 @@ Route::prefix('webhooks')->group(function () {
         ->name('webhooks.sms-inbound');
 });
 
+// Serve service worker from root scope with correct headers.
+// In dev: minimal SW with push handlers only (no precaching).
+// In prod: serve full built SW with precache manifest.
+Route::get('sw.js', function () {
+    if (app()->environment('local') && file_exists(base_path('hot'))) {
+        $devSw = <<<'JS'
+self.addEventListener('push', (event) => {
+    const data = event.data?.json() ?? {};
+    event.waitUntil(
+        self.registration.showNotification(data.title ?? 'IRMS', {
+            body: data.body ?? '',
+            icon: '/pwa-192x192.png',
+            badge: '/pwa-192x192.png',
+            tag: data.tag ?? 'irms-notification',
+            data: { url: data.url ?? '/' },
+        })
+    );
+});
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    const url = event.notification.data?.url ?? '/';
+    event.waitUntil(
+        self.clients.matchAll({ type: 'window' }).then((clients) => {
+            const existing = clients.find((c) => c.url.includes(url));
+            return existing ? existing.focus() : self.clients.openWindow(url);
+        })
+    );
+});
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
+});
+JS;
+
+        return response($devSw, 200, [
+            'Content-Type' => 'application/javascript',
+            'Service-Worker-Allowed' => '/',
+        ]);
+    }
+
+    $swPath = public_path('build/sw.js');
+
+    if (! file_exists($swPath)) {
+        abort(404);
+    }
+
+    return response()->file($swPath, [
+        'Content-Type' => 'application/javascript',
+        'Service-Worker-Allowed' => '/',
+    ]);
+})->name('service-worker');
+
 Route::inertia('/', 'Welcome', [
     'canRegister' => Features::enabled(Features::registration()),
 ])->name('home');

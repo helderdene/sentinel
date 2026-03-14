@@ -43,3 +43,9 @@ createInertiaApp({
 
 // This will set light / dark mode on page load...
 initializeTheme();
+
+// Register service worker — manual registration needed because
+// vite-plugin-pwa's HTML injection doesn't apply to Inertia/Laravel apps
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' });
+}

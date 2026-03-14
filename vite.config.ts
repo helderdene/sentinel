@@ -30,6 +30,7 @@ export default defineConfig({
             base: '/',
             registerType: 'prompt',
             injectRegister: false,
+            swUrl: '/sw.js',
             manifest: {
                 name: 'IRMS - Incident Response Management System',
                 short_name: 'IRMS',
@@ -65,7 +66,8 @@ export default defineConfig({
                 globPatterns: ['**/*.{js,css,ico,png,svg,woff,woff2}'],
             },
             devOptions: {
-                enabled: false,
+                enabled: true,
+                type: 'module',
             },
         }),
         wayfinder({
