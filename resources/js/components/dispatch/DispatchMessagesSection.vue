@@ -142,15 +142,29 @@ function senderDisplay(msg: DispatchMessageItem): string {
 </script>
 
 <template>
-    <div class="border-b border-t-border">
+    <div class="border-t border-b border-t-border">
         <!-- Section header -->
         <button
             class="flex w-full items-center justify-between px-3 py-2.5"
             @click="emit('toggle')"
         >
             <span
-                class="font-mono text-[9px] font-bold tracking-[1.5px] text-t-text-faint uppercase"
+                class="flex items-center gap-1.5 font-mono text-[11px] font-bold tracking-[1.5px] text-t-text-dim uppercase"
             >
+                <!-- Chat icon -->
+                <svg
+                    class="size-3"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M1.5 2.5a1 1 0 011-1h7a1 1 0 011 1v5a1 1 0 01-1 1H6.25l-2.25 2v-2H2.5a1 1 0 01-1-1v-5z"
+                    />
+                </svg>
                 MESSAGES
                 <span
                     v-if="unreadCount && unreadCount > 0"
