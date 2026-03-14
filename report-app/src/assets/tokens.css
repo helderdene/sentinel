@@ -1,56 +1,56 @@
-/* Design Tokens - Shared with IRMS main app */
+/* Design Tokens - Shared with Sentinel main app */
 /* System-aware dark mode via prefers-color-scheme (no manual toggle) */
 
 :root {
     /* Surfaces */
-    --t-bg: #f4f6f9;
-    --t-surface: #ffffff;
-    --t-surface-alt: #f8fafc;
+    --t-bg: #EFF3FA;
+    --t-surface: #FFFFFF;
+    --t-surface-alt: #F0F4FA;
 
     /* Text */
-    --t-text: #0f172a;
-    --t-text-mid: #334155;
-    --t-text-dim: #64748b;
-    --t-text-faint: #94a3b8;
+    --t-text: #042C53;
+    --t-text-mid: #185FA5;
+    --t-text-dim: #9AA9BA;
+    --t-text-faint: #8BA3C1;
 
     /* Borders */
-    --t-border: #e2e8f0;
-    --t-border-med: #cbd5e1;
-    --t-border-foc: #2563eb;
+    --t-border: #D3DCE8;
+    --t-border-med: #ABBDCF;
+    --t-border-foc: #185FA5;
 
     /* Brand & Accent */
-    --t-brand: #1e3a6e;
-    --t-accent: #2563eb;
-    --t-accent-lo: rgba(37, 99, 235, 0.08);
+    --t-brand: #042C53;
+    --t-accent: #185FA5;
+    --t-accent-lo: rgba(24, 95, 165, 0.08);
 
     /* Priority */
-    --t-p1: #dc2626;
-    --t-p2: #ea580c;
-    --t-p3: #ca8a04;
-    --t-p4: #16a34a;
+    --t-p1: #A32D2D;
+    --t-p2: #854F0B;
+    --t-p3: #0F6E56;
+    --t-p4: #185FA5;
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
         /* Surfaces */
-        --t-bg: #0f172a;
-        --t-surface: #1e293b;
-        --t-surface-alt: #334155;
+        --t-bg: #05101E;
+        --t-surface: #041E38;
+        --t-surface-alt: #04182D;
 
         /* Text */
-        --t-text: #f8fafc;
-        --t-text-mid: #cbd5e1;
-        --t-text-dim: #94a3b8;
-        --t-text-faint: #64748b;
+        --t-text: #FFFFFF;
+        --t-text-mid: #B5D4F4;
+        --t-text-dim: #5A7B9E;
+        --t-text-faint: #1A4670;
 
         /* Borders */
-        --t-border: #334155;
-        --t-border-med: #475569;
-        --t-border-foc: #3b82f6;
+        --t-border: #0B1A2D;
+        --t-border-med: #102E4E;
+        --t-border-foc: #378ADD;
 
         /* Brand & Accent */
-        --t-brand: #93c5fd;
-        --t-accent: #3b82f6;
-        --t-accent-lo: rgba(59, 130, 246, 0.12);
+        --t-brand: #378ADD;
+        --t-accent: #378ADD;
+        --t-accent-lo: rgba(55, 138, 221, 0.12);
     }
 }
