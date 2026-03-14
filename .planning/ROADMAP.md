@@ -25,7 +25,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 11: Implement Units CRUD** - Admin CRUD for managing response units with auto-generated IDs, crew assignment, decommission/recommission (completed 2026-03-13)
 - [x] **Phase 12: Bi-directional Communication** - Incident-level group chat channels, dispatch console messaging UI, responder ChatTab multi-participant awareness (completed 2026-03-14)
 - [x] **Phase 13: PWA Setup** - Installable PWA with service worker caching, web app manifest, and Web Push notifications for assignments, P1 alerts, ack timeouts (completed 2026-03-15)
-- [ ] **Phase 14: Sentinel Rebrand** - Full visual rebrand from IRMS/CDRRMO to Sentinel: navy/blue palette, DM Mono typography, animated shield logo, app rename across all surfaces
+- [x] **Phase 14: Sentinel Rebrand** - Full visual rebrand from IRMS/CDRRMO to Sentinel: navy/blue palette, DM Mono typography, animated shield logo, app rename across all surfaces (completed 2026-03-14)
 
 ## Phase Details
 
@@ -307,4 +307,4 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 11. Implement Units CRUD | 2/2 | Complete    | 2026-03-13 |
 | 12. Bi-directional Communication | 4/4 | Complete | 2026-03-14 |
 | 13. PWA Setup | 3/3 | Complete    | 2026-03-14 |
-| 14. Sentinel Rebrand | 2/3 | In Progress|  |
+| 14. Sentinel Rebrand | 3/3 | Complete   | 2026-03-14 |
