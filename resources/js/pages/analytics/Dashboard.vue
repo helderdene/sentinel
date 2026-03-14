@@ -158,11 +158,11 @@ function toggleMetric(key: string): void {
 }
 
 const METRIC_COLORS: Record<string, string> = {
-    avg_response_time_min: '#2563eb',
+    avg_response_time_min: '#378ADD',
     avg_scene_arrival_time_min: '#7c3aed',
-    resolution_rate: '#16a34a',
-    unit_utilization: '#d97706',
-    false_alarm_rate: '#dc2626',
+    resolution_rate: '#1D9E75',
+    unit_utilization: '#EF9F27',
+    false_alarm_rate: '#E24B4A',
 };
 </script>
 

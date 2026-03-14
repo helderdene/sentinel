@@ -22,10 +22,10 @@ const props = defineProps<{
 }>();
 
 const COLORS: Record<string, string> = {
-    blue: '#2563eb',
-    green: '#16a34a',
-    amber: '#d97706',
-    red: '#dc2626',
+    blue: '#378ADD',
+    green: '#1D9E75',
+    amber: '#EF9F27',
+    red: '#E24B4A',
     purple: '#7c3aed',
 };
 
@@ -69,7 +69,7 @@ const chartOptions = {
         class="rounded-[var(--radius)] border border-border bg-card p-4 shadow-[var(--shadow-1)]"
     >
         <p
-            class="mb-1 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+            class="mb-1 font-mono text-[10px] font-bold tracking-[2.5px] text-t-text-faint uppercase"
         >
             {{ title }}
         </p>

@@ -1,31 +1,30 @@
-import maplibregl from 'maplibre-gl';
-import type {
-    ExpressionSpecification,
-    GeoJSONSource,
-    Map as MaplibreMap,
-} from 'maplibre-gl';
+import mapboxgl from 'mapbox-gl';
+import type { ExpressionSpecification, GeoJSONSource } from 'mapbox-gl';
 import { onMounted, onUnmounted, ref, shallowRef } from 'vue';
+import {
+    CATEGORY_SVG_PATHS,
+    getIncidentCategoryIcon,
+} from '@/composables/useCategoryIcons';
+import { useOsrmRoute } from '@/composables/useOsrmRoute';
 import type { DispatchIncident, DispatchUnit } from '@/types/dispatch';
 
 const BUTUAN_CENTER: [number, number] = [125.5406, 8.9475];
 const BUTUAN_ZOOM = 13;
 
-const DARK_STYLE =
-    'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
-const LIGHT_STYLE =
-    'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
+const DARK_STYLE = 'mapbox://styles/helderdene/cmmq06eqr005j01skbwodfq08';
+const LIGHT_STYLE = 'mapbox://styles/helderdene/cmmq06eqr005j01skbwodfq08';
 
 const PRIORITY_COLORS: ExpressionSpecification = [
     'match',
     ['get', 'priority'],
     'P1',
-    '#dc2626',
+    '#E24B4A',
     'P2',
-    '#ea580c',
+    '#EF9F27',
     'P3',
-    '#ca8a04',
+    '#1D9E75',
     'P4',
-    '#16a34a',
+    '#378ADD',
     '#888888',
 ];
 
@@ -33,13 +32,13 @@ const STATUS_COLORS: ExpressionSpecification = [
     'match',
     ['get', 'status'],
     'AVAILABLE',
-    '#16a34a',
+    '#1D9E75',
     'DISPATCHED',
-    '#2563eb',
+    '#378ADD',
     'EN_ROUTE',
-    '#2563eb',
+    '#378ADD',
     'ON_SCENE',
-    '#ca8a04',
+    '#EF9F27',
     'OFFLINE',
     '#6b7280',
     '#888888',
@@ -49,20 +48,27 @@ const STATUS_COLORS: ExpressionSpecification = [
 
 const ICON_SIZE = 64;
 
-// Warning triangle path (centered in 24x24 viewBox)
-const INCIDENT_ICON_PATH =
-    'M12 5.5c-.38 0-.73.2-.92.53l-4.86 8.4c-.19.33-.19.74 0 1.07.19.34.54.54.92.54h9.72c.38 0 .73-.2.92-.54.19-.33.19-.74 0-1.07l-4.86-8.4A1.06 1.06 0 0 0 12 5.5zm.5 8.5a.75.75 0 1 1-1 0 .75.75 0 0 1 1 0zM12 12a.5.5 0 0 1-.5-.5v-2a.5.5 0 1 1 1 0v2a.5.5 0 0 1-.5.5z';
-
 // Vehicle/truck path
 const UNIT_ICON_PATH =
     'M18 9.5h-2V7H6.5c-.83 0-1.5.68-1.5 1.5v6.5h1.5c0 1.1.9 2 2 2s2-.9 2-2h3c0 1.1.9 2 2 2s2-.9 2-2H19v-3.5l-1-2zm-9.5 7.5c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm9-6.5 1.36 1.75H16V10.5h1.5zM15.5 17c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z';
 
-function buildCircleIconSvg(iconPath: string, color: string): string {
+// Track which category icons are already loaded in the map
+const loadedCategoryIcons = new Set<string>();
+
+function buildCircleIconSvg(
+    iconPath: string,
+    color: string,
+    useStroke: boolean = false,
+): string {
+    const pathAttrs = useStroke
+        ? `stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"`
+        : `fill="${color}"`;
+
     return [
         `<svg xmlns="http://www.w3.org/2000/svg" width="${ICON_SIZE}" height="${ICON_SIZE}" viewBox="0 0 24 24">`,
         `<circle cx="12" cy="12" r="11.5" fill="${color}"/>`,
         `<circle cx="12" cy="12" r="10" fill="white"/>`,
-        `<path d="${iconPath}" fill="${color}"/>`,
+        `<path d="${iconPath}" ${pathAttrs}/>`,
         '</svg>',
     ].join('');
 }
@@ -84,25 +90,27 @@ function loadSvgAsImage(svg: string): Promise<HTMLImageElement> {
 }
 
 const INCIDENT_COLORS: Record<string, string> = {
-    P1: '#dc2626',
-    P2: '#ea580c',
-    P3: '#ca8a04',
-    P4: '#16a34a',
+    P1: '#E24B4A',
+    P2: '#EF9F27',
+    P3: '#1D9E75',
+    P4: '#378ADD',
 };
 
 const UNIT_COLORS: Record<string, string> = {
-    AVAILABLE: '#16a34a',
-    DISPATCHED: '#2563eb',
-    EN_ROUTE: '#2563eb',
-    ON_SCENE: '#ca8a04',
+    AVAILABLE: '#1D9E75',
+    DISPATCHED: '#378ADD',
+    EN_ROUTE: '#378ADD',
+    ON_SCENE: '#EF9F27',
     OFFLINE: '#6b7280',
 };
 
 type ClickCallback<T> = (id: T) => void;
 
 export function useDispatchMap(containerId: string) {
-    const map = shallowRef<MaplibreMap | null>(null);
+    const map = shallowRef<mapboxgl.Map | null>(null);
     const isLoaded = ref(false);
+
+    const { getRoute } = useOsrmRoute();
 
     const unitPositions = new Map<string, [number, number]>();
     const activeAnimations = new Map<string, number>();
@@ -131,24 +139,7 @@ export function useDispatchMap(containerId: string) {
 
         const promises: Promise<void>[] = [];
 
-        for (const [key, color] of Object.entries(INCIDENT_COLORS)) {
-            const name = `incident-${key}`;
-
-            if (!map.value.hasImage(name)) {
-                const m = map.value;
-
-                promises.push(
-                    loadSvgAsImage(
-                        buildCircleIconSvg(INCIDENT_ICON_PATH, color),
-                    ).then((img) => {
-                        if (!m.hasImage(name)) {
-                            m.addImage(name, img);
-                        }
-                    }),
-                );
-            }
-        }
-
+        // Load unit icons (status-based)
         for (const [key, color] of Object.entries(UNIT_COLORS)) {
             const name = `unit-${key}`;
 
@@ -167,7 +158,88 @@ export function useDispatchMap(containerId: string) {
             }
         }
 
+        // Load category icons for each priority color
+        for (const [iconName, iconPath] of Object.entries(CATEGORY_SVG_PATHS)) {
+            for (const [priority, color] of Object.entries(INCIDENT_COLORS)) {
+                const name = `cat-${iconName}-${priority}`;
+
+                if (
+                    !loadedCategoryIcons.has(name) &&
+                    !map.value.hasImage(name)
+                ) {
+                    const m = map.value;
+                    // Lucide icons use strokes
+                    const useStroke =
+                        iconName !== 'AlertTriangle' &&
+                        iconName !== 'Shield' &&
+                        iconName !== 'Heart' &&
+                        iconName !== 'Flame';
+
+                    promises.push(
+                        loadSvgAsImage(
+                            buildCircleIconSvg(iconPath, color, useStroke),
+                        ).then((img) => {
+                            if (!m.hasImage(name)) {
+                                m.addImage(name, img);
+                            }
+
+                            loadedCategoryIcons.add(name);
+                        }),
+                    );
+                }
+            }
+        }
+
         await Promise.all(promises);
+    }
+
+    async function ensureCategoryIconsLoaded(
+        incidents: DispatchIncident[],
+    ): Promise<void> {
+        if (!map.value) {
+            return;
+        }
+
+        const promises: Promise<void>[] = [];
+
+        for (const inc of incidents) {
+            const iconName = getIncidentCategoryIcon(inc.incident_type);
+            const iconPath =
+                CATEGORY_SVG_PATHS[iconName] ??
+                CATEGORY_SVG_PATHS.AlertTriangle;
+
+            for (const [priority, color] of Object.entries(INCIDENT_COLORS)) {
+                const name = `cat-${iconName}-${priority}`;
+
+                if (
+                    !loadedCategoryIcons.has(name) &&
+                    !map.value.hasImage(name)
+                ) {
+                    const m = map.value;
+                    const useStroke =
+                        iconName !== 'AlertTriangle' &&
+                        iconName !== 'Shield' &&
+                        iconName !== 'Heart' &&
+                        iconName !== 'Flame';
+
+                    promises.push(
+                        loadSvgAsImage(
+                            buildCircleIconSvg(iconPath, color, useStroke),
+                        ).then((img) => {
+                            if (!m.hasImage(name)) {
+                                m.addImage(name, img);
+                            }
+
+                            loadedCategoryIcons.add(name);
+                        }),
+                    );
+                }
+            }
+        }
+
+        if (promises.length > 0) {
+            await Promise.all(promises);
+        }
     }
 
     function addSources(): void {
@@ -198,6 +270,19 @@ export function useDispatchMap(containerId: string) {
             return;
         }
 
+        // --- Connection glow (wide soft line behind the dashed line) ---
+        map.value.addLayer({
+            id: 'connection-glow',
+            type: 'line',
+            source: 'connections',
+            paint: {
+                'line-color': PRIORITY_COLORS,
+                'line-width': 8,
+                'line-opacity': 0.25,
+                'line-blur': 4,
+            },
+        });
+
         // --- Connection lines ---
         map.value.addLayer({
             id: 'connection-lines',
@@ -205,8 +290,8 @@ export function useDispatchMap(containerId: string) {
             source: 'connections',
             paint: {
                 'line-color': PRIORITY_COLORS,
-                'line-width': 2,
-                'line-dasharray': [2, 4],
+                'line-width': 3,
+                'line-dasharray': [2, 3],
             },
         });
 
@@ -223,7 +308,7 @@ export function useDispatchMap(containerId: string) {
             },
         });
 
-        // --- Incident icon layer ---
+        // --- Incident icon layer (category-specific icons) ---
         map.value.addLayer({
             id: 'incident-core',
             type: 'symbol',
@@ -231,7 +316,9 @@ export function useDispatchMap(containerId: string) {
             layout: {
                 'icon-image': [
                     'concat',
-                    'incident-',
+                    'cat-',
+                    ['get', 'category_icon'],
+                    '-',
                     ['get', 'priority'],
                 ] as unknown as ExpressionSpecification,
                 'icon-size': 0.55,
@@ -248,7 +335,7 @@ export function useDispatchMap(containerId: string) {
             source: 'incidents',
             layout: {
                 'text-field': ['get', 'incident_no'],
-                'text-font': ['Open Sans Bold'],
+                'text-font': ['DIN Pro Bold', 'Arial Unicode MS Bold'],
                 'text-size': 9,
                 'text-offset': [0, 1.8],
                 'text-anchor': 'top',
@@ -299,7 +386,7 @@ export function useDispatchMap(containerId: string) {
             source: 'units',
             layout: {
                 'text-field': ['get', 'callsign'],
-                'text-font': ['Open Sans Bold'],
+                'text-font': ['DIN Pro Bold', 'Arial Unicode MS Bold'],
                 'text-size': 9,
                 'text-offset': [0, 1.6],
                 'text-anchor': 'top',
@@ -375,14 +462,18 @@ export function useDispatchMap(containerId: string) {
     }
 
     onMounted(() => {
-        map.value = new maplibregl.Map({
+        map.value = new mapboxgl.Map({
             container: containerId,
             style: DARK_STYLE,
             center: BUTUAN_CENTER,
             zoom: BUTUAN_ZOOM,
-            maxPitch: 0,
-            dragRotate: false,
+            pitch: 0,
         });
+
+        map.value.addControl(
+            new mapboxgl.NavigationControl({ visualizePitch: true }),
+            'top-right',
+        );
 
         map.value.on('load', async () => {
             await loadIcons();
@@ -401,7 +492,12 @@ export function useDispatchMap(containerId: string) {
         map.value?.remove();
     });
 
-    function setIncidentData(incidents: DispatchIncident[]): void {
+    async function setIncidentData(
+        incidents: DispatchIncident[],
+    ): Promise<void> {
+        // Ensure category icons are loaded before updating the data
+        await ensureCategoryIconsLoaded(incidents);
+
         currentIncidentData = {
             type: 'FeatureCollection',
             features: incidents
@@ -421,6 +517,9 @@ export function useDispatchMap(containerId: string) {
                         priority: inc.priority,
                         status: inc.status,
                         incident_no: inc.incident_no,
+                        category_icon: getIncidentCategoryIcon(
+                            inc.incident_type,
+                        ),
                     },
                 })),
         };
@@ -538,43 +637,75 @@ export function useDispatchMap(containerId: string) {
         activeAnimations.set(unitId, frameId);
     }
 
-    function updateConnectionLines(
+    async function updateConnectionLines(
         assignments: Array<{
             incident: DispatchIncident;
             unit: DispatchUnit;
         }>,
-    ): void {
+    ): Promise<void> {
+        const valid = assignments.filter(
+            ({ incident, unit }) =>
+                incident.coordinates !== null && unit.coordinates !== null,
+        );
+
+        // Show straight lines immediately while routes load
         currentConnectionData = {
             type: 'FeatureCollection',
-            features: assignments
-                .filter(
-                    ({ incident, unit }) =>
-                        incident.coordinates !== null &&
-                        unit.coordinates !== null,
-                )
-                .map(({ incident, unit }) => ({
-                    type: 'Feature' as const,
-                    geometry: {
-                        type: 'LineString' as const,
-                        coordinates: [
-                            [unit.coordinates!.lng, unit.coordinates!.lat],
-                            [
-                                incident.coordinates!.lng,
-                                incident.coordinates!.lat,
-                            ],
-                        ],
-                    },
-                    properties: {
-                        priority: incident.priority,
-                        incident_id: incident.id,
-                        unit_id: unit.id,
-                    },
-                })),
+            features: valid.map(({ incident, unit }) => ({
+                type: 'Feature' as const,
+                geometry: {
+                    type: 'LineString' as const,
+                    coordinates: [
+                        [unit.coordinates!.lng, unit.coordinates!.lat],
+                        [incident.coordinates!.lng, incident.coordinates!.lat],
+                    ],
+                },
+                properties: {
+                    priority: incident.priority,
+                    incident_id: incident.id,
+                    unit_id: unit.id,
+                },
+            })),
         };
 
         const source = map.value?.getSource('connections') as
             | GeoJSONSource
             | undefined;
+        source?.setData(currentConnectionData);
+
+        // Fetch road routes and replace lines as they resolve
+        const routePromises = valid.map(async ({ incident, unit }) => {
+            const from: [number, number] = [
+                unit.coordinates!.lng,
+                unit.coordinates!.lat,
+            ];
+            const to: [number, number] = [
+                incident.coordinates!.lng,
+                incident.coordinates!.lat,
+            ];
+            const route = await getRoute(from, to);
+
+            return {
+                type: 'Feature' as const,
+                geometry: {
+                    type: 'LineString' as const,
+                    coordinates: route.coordinates,
+                },
+                properties: {
+                    priority: incident.priority,
+                    incident_id: incident.id,
+                    unit_id: unit.id,
+                },
+            };
+        });
+
+        const features = await Promise.all(routePromises);
+
+        currentConnectionData = {
+            type: 'FeatureCollection',
+            features,
+        };
+
         source?.setData(currentConnectionData);
     }
 

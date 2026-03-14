@@ -1,9 +1,5 @@
-import maplibregl from 'maplibre-gl';
-import type {
-    GeoJSONSource,
-    Map as MaplibreMap,
-    MapGeoJSONFeature,
-} from 'maplibre-gl';
+import mapboxgl from 'mapbox-gl';
+import type { GeoJSONSource, MapboxGeoJSONFeature } from 'mapbox-gl';
 import { onUnmounted, ref, shallowRef } from 'vue';
 import type { Ref } from 'vue';
 
@@ -13,15 +9,14 @@ import type { BarangayDensity, BarangayDetail } from '@/types/analytics';
 const BUTUAN_CENTER: [number, number] = [125.5406, 8.9475];
 const BUTUAN_ZOOM = 12;
 
-const LIGHT_STYLE =
-    'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
+const LIGHT_STYLE = 'mapbox://styles/helderdene/cmmq06eqr005j01skbwodfq08';
 
 const DENSITY_COLORS: Array<[number, string]> = [
-    [0, '#eff6ff'],
-    [5, '#bfdbfe'],
-    [15, '#60a5fa'],
-    [30, '#2563eb'],
-    [50, '#1d4ed8'],
+    [0, '#E8F4FD'],
+    [5, '#A8D4F0'],
+    [15, '#6AB4E3'],
+    [30, '#378ADD'],
+    [50, '#185FA5'],
 ];
 
 export function useAnalyticsMap(
@@ -29,11 +24,11 @@ export function useAnalyticsMap(
     geojson: GeoJSON.FeatureCollection,
     densityData: BarangayDensity[],
 ) {
-    const map = shallowRef<MaplibreMap | null>(null);
+    const map = shallowRef<mapboxgl.Map | null>(null);
     const isLoaded = ref(false);
 
-    let hoverPopup: maplibregl.Popup | null = null;
-    let detailPopup: maplibregl.Popup | null = null;
+    let hoverPopup: mapboxgl.Popup | null = null;
+    let detailPopup: mapboxgl.Popup | null = null;
     let hoveredFeatureId: number | string | null = null;
     let mergedGeojson: GeoJSON.FeatureCollection;
 
@@ -108,7 +103,7 @@ export function useAnalyticsMap(
             return;
         }
 
-        hoverPopup = new maplibregl.Popup({
+        hoverPopup = new mapboxgl.Popup({
             closeButton: false,
             closeOnClick: false,
         });
@@ -121,7 +116,7 @@ export function useAnalyticsMap(
 
             map.value.getCanvas().style.cursor = 'pointer';
 
-            const feature = e.features[0] as MapGeoJSONFeature;
+            const feature = e.features[0] as MapboxGeoJSONFeature;
             const featureId = feature.properties?.id ?? feature.id;
 
             if (hoveredFeatureId !== null && hoveredFeatureId !== featureId) {
@@ -172,7 +167,7 @@ export function useAnalyticsMap(
                 return;
             }
 
-            const feature = e.features[0] as MapGeoJSONFeature;
+            const feature = e.features[0] as MapboxGeoJSONFeature;
             const bgId = feature.properties?.id;
 
             if (!bgId) {
@@ -181,7 +176,7 @@ export function useAnalyticsMap(
 
             detailPopup?.remove();
 
-            detailPopup = new maplibregl.Popup({
+            detailPopup = new mapboxgl.Popup({
                 closeButton: true,
                 closeOnClick: false,
                 maxWidth: '280px',
@@ -235,10 +230,10 @@ export function useAnalyticsMap(
 
     function getPriorityColor(priority: string): string {
         const colors: Record<string, string> = {
-            P1: '#dc2626',
-            P2: '#ea580c',
-            P3: '#ca8a04',
-            P4: '#16a34a',
+            P1: '#E24B4A',
+            P2: '#EF9F27',
+            P3: '#1D9E75',
+            P4: '#378ADD',
         };
 
         return colors[priority] ?? '#6b7280';
@@ -251,17 +246,15 @@ export function useAnalyticsMap(
 
         mergedGeojson = mergeDensityIntoGeojson(geojson, densityData);
 
-        map.value = new maplibregl.Map({
+        map.value = new mapboxgl.Map({
             container: containerRef.value,
             style: LIGHT_STYLE,
             center: BUTUAN_CENTER,
             zoom: BUTUAN_ZOOM,
-            canvasContextAttributes: {
-                preserveDrawingBuffer: true,
-            },
+            preserveDrawingBuffer: true,
         });
 
-        map.value.addControl(new maplibregl.NavigationControl(), 'top-left');
+        map.value.addControl(new mapboxgl.NavigationControl(), 'top-left');
 
         map.value.on('load', () => {
             isLoaded.value = true;
