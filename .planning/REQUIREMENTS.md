@@ -126,12 +126,12 @@
 - [x] **COMM-03**: Dispatch sendMessage endpoint at POST `dispatch/{incident}/message` creates message and dispatches MessageSent event
 - [x] **COMM-04**: Responder sendMessage dispatches updated MessageSent event with sender role and unit callsign in payload
 - [x] **COMM-05**: Unauthorized users (unassigned responders, unauthenticated) cannot subscribe to incident message channels
-- [ ] **COMM-06**: Dispatch console shows collapsible Messages section in incident detail panel (above Timeline, collapsed by default, ~200px max height)
-- [ ] **COMM-07**: Messages section auto-expands when selecting incident with unread messages; clears unread count on expand
-- [ ] **COMM-08**: 7 dispatcher quick-reply chips ("Copy", "Stand by", "Proceed", "Return to station", "Backup en route", "Update status", "Acknowledged") plus free text input
-- [ ] **COMM-09**: Queue card shows unread message dot/count badge; topbar shows global MSGS count stat
-- [ ] **COMM-10**: Subtle audio cue (distinct from priority tones) plays for incoming messages on non-selected incidents; own messages do not trigger audio or increment unread
-- [ ] **COMM-11**: Incoming messages appear in dispatch Messages section in real-time via WebSocket with sender name + unit callsign identification
+- [x] **COMM-06**: Dispatch console shows collapsible Messages section in incident detail panel (above Timeline, collapsed by default, ~200px max height)
+- [x] **COMM-07**: Messages section auto-expands when selecting incident with unread messages; clears unread count on expand
+- [x] **COMM-08**: 7 dispatcher quick-reply chips ("Copy", "Stand by", "Proceed", "Return to station", "Backup en route", "Update status", "Acknowledged") plus free text input
+- [x] **COMM-09**: Queue card shows unread message dot/count badge; topbar shows global MSGS count stat
+- [x] **COMM-10**: Subtle audio cue (distinct from priority tones) plays for incoming messages on non-selected incidents; own messages do not trigger audio or increment unread
+- [x] **COMM-11**: Incoming messages appear in dispatch Messages section in real-time via WebSocket with sender name + unit callsign identification
 - [x] **COMM-12**: Responder ChatTab subscribes to `incident.{id}.messages` for true group chat (all participants see all messages)
 - [x] **COMM-13**: Responder ChatTab displays unit callsign + name for sender identification in multi-unit incidents (e.g., "FIRE-01 . J. Cruz")
 
@@ -253,19 +253,19 @@
 | UNIT-07 | Phase 11 | Complete |
 | UNIT-08 | Phase 11 | Complete |
 | UNIT-09 | Phase 11 | Complete |
-| COMM-01 | Phase 12 | Planned |
-| COMM-02 | Phase 12 | Planned |
-| COMM-03 | Phase 12 | Planned |
-| COMM-04 | Phase 12 | Planned |
-| COMM-05 | Phase 12 | Planned |
-| COMM-06 | Phase 12 | Planned |
-| COMM-07 | Phase 12 | Planned |
-| COMM-08 | Phase 12 | Planned |
-| COMM-09 | Phase 12 | Planned |
-| COMM-10 | Phase 12 | Planned |
-| COMM-11 | Phase 12 | Planned |
-| COMM-12 | Phase 12 | Planned |
-| COMM-13 | Phase 12 | Planned |
+| COMM-01 | Phase 12 | Complete |
+| COMM-02 | Phase 12 | Complete |
+| COMM-03 | Phase 12 | Complete |
+| COMM-04 | Phase 12 | Complete |
+| COMM-05 | Phase 12 | Complete |
+| COMM-06 | Phase 12 | Complete |
+| COMM-07 | Phase 12 | Complete |
+| COMM-08 | Phase 12 | Complete |
+| COMM-09 | Phase 12 | Complete |
+| COMM-10 | Phase 12 | Complete |
+| COMM-11 | Phase 12 | Complete |
+| COMM-12 | Phase 12 | Complete |
+| COMM-13 | Phase 12 | Complete |
 
 **Coverage:**
 - v1 requirements: 100 total

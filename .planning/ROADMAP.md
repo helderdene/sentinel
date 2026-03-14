@@ -23,7 +23,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 9: Public Citizen Reporting App** - Mobile-first Vue SPA for citizens to report emergencies, track status via token, integrated with existing intake pipeline (completed 2026-03-13)
 - [x] **Phase 10: Design System Alignment** - Restyle all pages to match IRMS Intake Design System: CSS variable remapping, auth branding, sidebar restyling, data tables, token alignment (completed 2026-03-13)
 - [x] **Phase 11: Implement Units CRUD** - Admin CRUD for managing response units with auto-generated IDs, crew assignment, decommission/recommission (completed 2026-03-13)
-- [ ] **Phase 12: Bi-directional Communication** - Incident-level group chat channels, dispatch console messaging UI, responder ChatTab multi-participant awareness (UAT gap closure in progress)
+- [x] **Phase 12: Bi-directional Communication** - Incident-level group chat channels, dispatch console messaging UI, responder ChatTab multi-participant awareness (completed 2026-03-14)
 
 ## Phase Details
 
@@ -239,7 +239,7 @@ Plans:
 - [x] 12-01-PLAN.md -- Backend: refactor MessageSent event to dual-channel broadcasting, incident channel auth, dispatch sendMessage endpoint, update responder sendMessage, tests
 - [x] 12-02-PLAN.md -- Dispatch frontend: DispatchMessagesSection component, unread tracking in useDispatchFeed, message notification audio, topbar MSGS count, QueueCard badge, Console.vue wiring
 - [x] 12-03-PLAN.md -- Responder frontend: migrate useResponderSession channel subscription to incident.{id}.messages, update ChatTab for group chat display with unit callsign
-- [ ] 12-04-PLAN.md -- UAT gap closure: make dispatch Messages header visually prominent, fix responder ChatTab input hidden by StatusButton
+- [x] 12-04-PLAN.md -- UAT gap closure: make dispatch Messages header visually prominent, fix responder ChatTab input hidden by StatusButton
 
 ## Progress
 
@@ -264,4 +264,4 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 9. Public Citizen Reporting App | 3/3 | Complete   | 2026-03-13 |
 | 10. Design System Alignment | 5/5 | Complete    | 2026-03-13 |
 | 11. Implement Units CRUD | 2/2 | Complete    | 2026-03-13 |
-| 12. Bi-directional Communication | 3/4 | UAT Gap Closure | |
+| 12. Bi-directional Communication | 4/4 | Complete | 2026-03-14 |
