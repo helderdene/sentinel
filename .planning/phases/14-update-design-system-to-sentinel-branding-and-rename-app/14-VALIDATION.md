@@ -42,14 +42,10 @@ This phase has no formal requirement IDs (rebrand phase). Validation is primaril
 |---------|------|------|----------|-----------|-------------------|--------|
 | 14-01-01 | 01 | 1 | CSS tokens remap to Sentinel palette | regression | `php artisan test --compact` | ⬜ pending |
 | 14-01-02 | 01 | 1 | Font loading (Bebas Neue, DM Mono) | build | `npm run build` | ⬜ pending |
-| 14-02-01 | 02 | 1 | APP_NAME = "Sentinel" | regression | `php artisan test --compact` | ⬜ pending |
-| 14-02-02 | 02 | 1 | Auth page renders with new shield | smoke | `php artisan test --compact tests/Feature/Auth/` | ⬜ pending |
-| 14-02-03 | 02 | 1 | Sidebar logo updated | build | `npm run build` | ⬜ pending |
-| 14-03-01 | 03 | 2 | Hardcoded priority colors updated | regression | `php artisan test --compact` | ⬜ pending |
-| 14-03-02 | 03 | 2 | Badge style updated | build | `npm run build` | ⬜ pending |
-| 14-04-01 | 04 | 2 | Report app rebranded | build | `cd report-app && npm run build` | ⬜ pending |
-| 14-04-02 | 04 | 2 | PWA manifest updated | build | `npm run build` | ⬜ pending |
-| 14-04-03 | 04 | 2 | TypeScript compiles | type-check | `npm run types:check` | ⬜ pending |
+| 14-02-01 | 02 | 2 | Auth page shield + sidebar logo + favicon + PWA icons | smoke | `php artisan test --compact tests/Feature/Auth/` | ⬜ pending |
+| 14-02-02 | 02 | 2 | APP_NAME = "Sentinel", string sweep, PWA manifest | regression | `php artisan test --compact` | ⬜ pending |
+| 14-03-01 | 03 | 2 | Hardcoded MapLibre/Chart.js priority colors | build | `npm run build && npm run types:check` | ⬜ pending |
+| 14-03-02 | 03 | 2 | Badge style + responder colors + nav typography | build | `npm run build && npm run lint` | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
