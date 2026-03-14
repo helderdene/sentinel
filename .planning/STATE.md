@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 14-01-PLAN.md
-last_updated: "2026-03-14T20:37:35.210Z"
-last_activity: "2026-03-15 — Completed 14-01: CSS token migration to Sentinel palette"
+stopped_at: Completed 14-03-PLAN.md
+last_updated: "2026-03-14T20:46:00.000Z"
+last_activity: "2026-03-15 — Completed 14-03: Hardcoded color sweep to Sentinel palette"
 progress:
   total_phases: 14
   completed_phases: 13
   total_plans: 46
-  completed_plans: 44
-  percent: 96
+  completed_plans: 45
+  percent: 98
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 ## Current Position
 
 Phase: 14 of 14 (Sentinel Rebrand)
-Plan: 1 of 3 in current phase
-Status: 44 of 46 plans complete
-Last activity: 2026-03-15 — Completed 14-01: CSS token migration to Sentinel palette
+Plan: 3 of 3 in current phase
+Status: 45 of 46 plans complete
+Last activity: 2026-03-15 — Completed 14-03: Hardcoded color sweep to Sentinel palette
 
-Progress: [██████████] 96%
+Progress: [██████████] 98%
 
 ## Performance Metrics
 
@@ -90,6 +90,7 @@ Progress: [██████████] 96%
 | Phase 13 P02 | 6min | 2 tasks | 18 files |
 | Phase 13 P03 | 6min | 2 tasks | 8 files |
 | Phase 14 P01 | 3min | 2 tasks | 5 files |
+| Phase 14 P03 | 7min | 2 tasks | 21 files |
 
 ## Accumulated Context
 
@@ -256,6 +257,9 @@ Recent decisions affecting current work:
 - [13-03]: applicationServerKey uses .buffer as ArrayBuffer cast for TypeScript strict mode compatibility
 - [Phase 14]: [14-01]: Channel tokens (--t-ch-sms, voice, iot) kept unchanged; --t-ch-app and --t-ch-walkin updated to Sentinel equivalents
 - [Phase 14]: [14-01]: Report-app dark brand uses #378ADD (Signal Blue) matching pattern where dark brand is lighter for visibility
+- [Phase 14]: [14-03]: Sentinel dark bg #05101E replaces #0f172a in all hardcoded dark mode overrides
+- [Phase 14]: [14-03]: Badge style unification: PriBadge and ChBadge both use 15% bg / 40% border color-mix pattern
+- [Phase 14]: [14-03]: StatusButton ACKNOWLEDGED uses same blue (#378ADD) as DISPATCHED for visual flow continuity
 
 ### Roadmap Evolution
 
@@ -280,6 +284,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-14T20:37:35.202Z
-Stopped at: Completed 14-01-PLAN.md
+Last session: 2026-03-14T20:46:00Z
+Stopped at: Completed 14-03-PLAN.md
 Resume file: None
