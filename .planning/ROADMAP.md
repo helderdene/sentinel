@@ -24,6 +24,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 10: Design System Alignment** - Restyle all pages to match IRMS Intake Design System: CSS variable remapping, auth branding, sidebar restyling, data tables, token alignment (completed 2026-03-13)
 - [x] **Phase 11: Implement Units CRUD** - Admin CRUD for managing response units with auto-generated IDs, crew assignment, decommission/recommission (completed 2026-03-13)
 - [x] **Phase 12: Bi-directional Communication** - Incident-level group chat channels, dispatch console messaging UI, responder ChatTab multi-participant awareness (completed 2026-03-14)
+- [ ] **Phase 13: PWA Setup** - Installable PWA with service worker caching, web app manifest, and Web Push notifications for assignments, P1 alerts, ack timeouts
 
 ## Phase Details
 
@@ -241,6 +242,24 @@ Plans:
 - [x] 12-03-PLAN.md -- Responder frontend: migrate useResponderSession channel subscription to incident.{id}.messages, update ChatTab for group chat display with unit callsign
 - [x] 12-04-PLAN.md -- UAT gap closure: make dispatch Messages header visually prominent, fix responder ChatTab input hidden by StatusButton
 
+### Phase 13: PWA Setup
+**Goal**: The main IRMS application is installable as a Progressive Web App with service worker app shell caching for instant loading, a web app manifest for install-to-home-screen, and Web Push notifications (VAPID) that alert responders of new assignments and ack timeouts, and dispatchers of P1 incidents -- even when the app is backgrounded or closed
+**Depends on**: Phase 12
+**Requirements**: MOBILE-01, MOBILE-02
+**Success Criteria** (what must be TRUE):
+  1. The IRMS app is installable from the browser's "Add to Home Screen" / install prompt with CDRRMO branding (name, icon, theme color)
+  2. The app shell (JS, CSS, fonts, icons) is cached by the service worker; subsequent loads are instant even on slow networks
+  3. When a service worker update is detected, a "New version available -- Reload" banner appears; user controls when to reload
+  4. A responder receives a system push notification for new assignments and ack timeout warnings when the app is backgrounded
+  5. Dispatchers and operators receive a system push notification when a P1 incident is created
+  6. Push subscription management (subscribe/unsubscribe) works via authenticated endpoints with VAPID authentication
+  7. A custom in-app permission prompt explains the value of push notifications before triggering the browser permission dialog
+**Plans**: 2 plans
+
+Plans:
+- [ ] 13-01-PLAN.md -- PWA foundation: vite-plugin-pwa with injectManifest, custom service worker (precaching + push handlers), PWA icons, manifest, ReloadPrompt update banner
+- [ ] 13-02-PLAN.md -- Web Push notifications: laravel-notification-channels/webpush, VAPID keys, 3 notification classes, event listeners, ack timeout job, push subscription endpoints, permission prompt UI, tests
+
 ## Progress
 
 **Execution Order:**
@@ -250,6 +269,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 (Phase 10 depends on Phase 9)
 (Phase 11 depends on Phase 10)
 (Phase 12 depends on Phases 4 and 5)
+(Phase 13 depends on Phase 12)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -265,3 +285,4 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 10. Design System Alignment | 5/5 | Complete    | 2026-03-13 |
 | 11. Implement Units CRUD | 2/2 | Complete    | 2026-03-13 |
 | 12. Bi-directional Communication | 4/4 | Complete | 2026-03-14 |
+| 13. PWA Setup | 0/2 | Planning | - |

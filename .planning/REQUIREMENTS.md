@@ -135,12 +135,17 @@
 - [x] **COMM-12**: Responder ChatTab subscribes to `incident.{id}.messages` for true group chat (all participants see all messages)
 - [x] **COMM-13**: Responder ChatTab displays unit callsign + name for sender identification in multi-unit incidents (e.g., "FIRE-01 . J. Cruz")
 
+### PWA & Push Notifications
+
+- [ ] **MOBILE-01**: PWA Service Worker with app shell caching (JS, CSS, HTML, fonts, icons) via vite-plugin-pwa injectManifest strategy; web app manifest with CDRRMO branding; installable from browser; "New version available" update prompt
+- [ ] **MOBILE-02**: Web Push notifications via VAPID for background alerts: new assignment pushed to responder, P1 incident alert to dispatchers/operators, ack timeout warning to responder; push subscription management endpoints with custom in-app permission prompt
+
 ## v2 Requirements
 
 ### Mobile Enhancement
 
-- **MOBILE-01**: PWA Service Worker with offline caching for responder app
-- **MOBILE-02**: Web Push notifications (VAPID) for background assignment alerts
+- ~~**MOBILE-01**: PWA Service Worker with offline caching for responder app~~ (Promoted to v1 as Phase 13 MOBILE-01)
+- ~~**MOBILE-02**: Web Push notifications (VAPID) for background assignment alerts~~ (Promoted to v1 as Phase 13 MOBILE-02)
 - **MOBILE-03**: Capacitor.js APK wrapper for Android distribution
 
 ### Advanced Features
@@ -266,12 +271,14 @@
 | COMM-11 | Phase 12 | Complete |
 | COMM-12 | Phase 12 | Complete |
 | COMM-13 | Phase 12 | Complete |
+| MOBILE-01 | Phase 13 | Planned |
+| MOBILE-02 | Phase 13 | Planned |
 
 **Coverage:**
-- v1 requirements: 100 total
-- Mapped to phases: 100
+- v1 requirements: 102 total
+- Mapped to phases: 102
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-12*
-*Last updated: 2026-03-14 after Phase 12 planning*
+*Last updated: 2026-03-15 after Phase 13 planning*
