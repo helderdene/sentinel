@@ -105,11 +105,13 @@ it('AssignmentPushed broadcasts on private-user.{userId} channel', function () {
     expect($channels[0]->name)->toBe('private-user.42');
 });
 
-it('MessageSent broadcasts on private-user.{recipientId} channel', function () {
-    $event = new MessageSent(99, 'some-uuid', 1, 'Admin', 'Proceed to location');
+it('MessageSent broadcasts on incident and dispatch channels', function () {
+    $event = new MessageSent('INC-2026-00001', 1, 'Admin', 'dispatcher', null, 'Proceed to location', false, 1);
     $channels = $event->broadcastOn();
 
-    expect($channels[0]->name)->toBe('private-user.99');
+    expect($channels)->toHaveCount(2);
+    expect($channels[0]->name)->toBe('private-incident.INC-2026-00001.messages');
+    expect($channels[1]->name)->toBe('private-dispatch.incidents');
 });
 
 it('all events implement ShouldBroadcast and ShouldDispatchAfterCommit', function (string $eventClass) {
