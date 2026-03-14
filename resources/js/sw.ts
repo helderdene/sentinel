@@ -12,11 +12,11 @@ precacheAndRoute(self.__WB_MANIFEST);
 self.addEventListener('push', (event) => {
     const data = event.data?.json() ?? {};
     event.waitUntil(
-        self.registration.showNotification(data.title ?? 'IRMS', {
+        self.registration.showNotification(data.title ?? 'Sentinel', {
             body: data.body ?? '',
             icon: '/pwa-192x192.png',
             badge: '/pwa-192x192.png',
-            tag: data.tag ?? 'irms-notification',
+            tag: data.tag ?? 'sentinel-notification',
             data: { url: data.url ?? '/' },
         }),
     );

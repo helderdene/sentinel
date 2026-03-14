@@ -36,7 +36,7 @@ return [
 
     'semaphore' => [
         'api_key' => env('SEMAPHORE_API_KEY', ''),
-        'sender_name' => env('SEMAPHORE_SENDER', 'CDRRMO'),
+        'sender_name' => env('SEMAPHORE_SENDER', 'Sentinel'),
         'endpoint' => env('SEMAPHORE_API_URL', 'https://api.semaphore.co/api/v4/messages'),
         'simulate_errors' => false,
     ],

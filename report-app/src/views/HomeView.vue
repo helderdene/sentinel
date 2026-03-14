@@ -97,7 +97,7 @@ const hasReports = computed(() => recentReports.value.length > 0);
                     <div
                         class="text-[15px] font-bold tracking-wide text-white"
                     >
-                        CDRRMO Butuan City
+                        Sentinel
                     </div>
                     <div
                         class="font-mono text-[11px] tracking-widest"
@@ -117,7 +117,7 @@ const hasReports = computed(() => recentReports.value.length > 0);
                 class="text-[13px] leading-relaxed"
                 style="color: rgba(255, 255, 255, 0.6)"
             >
-                Fast, direct reporting to<br />CDRRMO response teams.
+                Fast, direct reporting to<br />Sentinel response teams.
             </div>
         </div>
 

@@ -79,7 +79,7 @@ const roleLabel = computed(() => {
         <span
             class="font-mono text-[9px] tracking-[2px] text-t-text-faint uppercase"
         >
-            CDRRMO BUTUAN CITY &mdash; DISPATCH CONSOLE
+            SENTINEL &mdash; DISPATCH CONSOLE
         </span>
 
         <!-- Right: dispatcher info -->

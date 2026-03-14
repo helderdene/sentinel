@@ -283,12 +283,7 @@ defineProps<{
                         />
 
                         <!-- Eye ambient glow halo -->
-                        <circle
-                            cx="300"
-                            cy="390"
-                            r="54"
-                            fill="url(#eyeGlow)"
-                        />
+                        <circle cx="300" cy="390" r="54" fill="url(#eyeGlow)" />
 
                         <!-- Eye iris -->
                         <circle
@@ -301,12 +296,7 @@ defineProps<{
                         />
 
                         <!-- Eye pupil core -->
-                        <circle
-                            cx="300"
-                            cy="390"
-                            r="7"
-                            fill="url(#coreGlow)"
-                        />
+                        <circle cx="300" cy="390" r="7" fill="url(#coreGlow)" />
 
                         <!-- Pupil highlight -->
                         <circle
@@ -326,8 +316,7 @@ defineProps<{
                             stroke-width="1.2"
                             style="
                                 transform-origin: 300px 390px;
-                                animation: pulseRing 2.4s ease-out
-                                    infinite;
+                                animation: pulseRing 2.4s ease-out infinite;
                             "
                         />
                         <circle
@@ -339,8 +328,7 @@ defineProps<{
                             stroke-width="1"
                             style="
                                 transform-origin: 300px 390px;
-                                animation: pulseRing 2.4s ease-out
-                                    infinite 0.8s;
+                                animation: pulseRing 2.4s ease-out infinite 0.8s;
                             "
                         />
 

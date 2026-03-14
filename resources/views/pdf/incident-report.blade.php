@@ -89,8 +89,8 @@
 </head>
 <body>
     <div class="header">
-        <h1>CDRRMO - City of Butuan</h1>
-        <h2>City Disaster Risk Reduction and Management Office</h2>
+        <h1>Sentinel</h1>
+        <h2>Incident Response Management System</h2>
         <div class="incident-no">Incident Report: {{ $incident->incident_no }}</div>
     </div>
 
@@ -232,7 +232,7 @@
     @endif
 
     <div class="footer">
-        Generated on {{ now()->format('Y-m-d H:i:s') }} | CDRRMO Butuan City IRMS
+        Generated on {{ now()->format('Y-m-d H:i:s') }} | Sentinel
     </div>
 </body>
 </html>

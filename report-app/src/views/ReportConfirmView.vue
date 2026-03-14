@@ -125,8 +125,8 @@ function goHome(): void {
                 <div
                     class="max-w-[260px] text-[14px] leading-relaxed text-t-text-dim"
                 >
-                    Your report has been received by CDRRMO
-                    Butuan City and is being reviewed.
+                    Your report has been received by Sentinel
+                    and is being reviewed.
                 </div>
             </div>
 
@@ -333,7 +333,7 @@ function goHome(): void {
                     v-for="(step, i) in [
                         {
                             n: '1',
-                            t: 'Report is reviewed by CDRRMO operators',
+                            t: 'Report is reviewed by Sentinel operators',
                         },
                         {
                             n: '2',

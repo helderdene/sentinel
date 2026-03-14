@@ -118,7 +118,7 @@ onUnmounted(() => {
     >
         <!-- Brand -->
         <div class="flex items-baseline gap-1 font-mono text-sm font-bold">
-            <span class="text-t-brand">IRMS</span>
+            <span class="text-t-brand">SENTINEL</span>
             <span class="text-t-accent">DISPATCH</span>
         </div>
 

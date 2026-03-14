@@ -165,7 +165,7 @@
     </div>
 
     <div class="footer">
-        Reference ID: {{ $referenceId }} | Submitted via IRMS on {{ now()->format('Y-m-d H:i:s') }}
+        Reference ID: {{ $referenceId }} | Submitted via Sentinel on {{ now()->format('Y-m-d H:i:s') }}
     </div>
 </body>
 </html>

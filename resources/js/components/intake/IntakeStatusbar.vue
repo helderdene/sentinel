@@ -82,7 +82,7 @@ const roleLabel = computed(() => {
             <span class="uppercase">{{ roleLabel }}</span>
             <span class="text-t-text-dim">{{ user.name }}</span>
             <span class="text-t-border-med">|</span>
-            <span>CDRRMO - BUTUAN CITY</span>
+            <span>SENTINEL</span>
             <span
                 class="rounded bg-t-bg px-1.5 py-[1px] text-[8px] font-bold dark:bg-white/5"
             >

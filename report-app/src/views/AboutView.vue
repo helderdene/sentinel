@@ -49,14 +49,13 @@ const currentYear = new Date().getFullYear();
                 <div
                     class="mb-1 text-[18px] font-extrabold text-white"
                 >
-                    CDRRMO Butuan City
+                    Sentinel
                 </div>
                 <div
                     class="text-[12px] leading-relaxed"
                     style="color: rgba(255, 255, 255, 0.6)"
                 >
-                    City Disaster Risk Reduction and Management
-                    Office
+                    Incident Response Management System
                 </div>
             </div>
 
@@ -65,7 +64,7 @@ const currentYear = new Date().getFullYear();
                 v-for="section in [
                     {
                         t: 'About This App',
-                        d: 'The IRMS Citizen Reporting App allows residents of Butuan City to report emergencies directly to CDRRMO. Reports are routed to trained operators for immediate response.',
+                        d: 'The Sentinel Citizen Reporting App allows residents to report emergencies directly to response teams. Reports are routed to trained operators for immediate response.',
                     },
                     {
                         t: 'How It Works',
@@ -85,7 +84,7 @@ const currentYear = new Date().getFullYear();
                         d: null,
                         contacts: [
                             {
-                                label: 'CDRRMO Hotline',
+                                label: 'Sentinel Hotline',
                                 number: '0917-123-4567',
                             },
                             {
@@ -160,7 +159,7 @@ const currentYear = new Date().getFullYear();
             <div
                 class="py-4 text-center font-mono text-[11px] text-t-text-faint"
             >
-                IRMS Citizen App v1.0 &middot; {{ currentYear }}
+                Sentinel Citizen App v1.0 &middot; {{ currentYear }}
             </div>
         </div>
     </div>

@@ -32,12 +32,12 @@ export default defineConfig({
             injectRegister: false,
             swUrl: '/sw.js',
             manifest: {
-                name: 'IRMS - Incident Response Management System',
-                short_name: 'IRMS',
+                name: 'Sentinel - Incident Response Management System',
+                short_name: 'Sentinel',
                 description:
-                    'CDRRMO Butuan City Incident Response Management System',
-                theme_color: '#0B1120',
-                background_color: '#0B1120',
+                    'Sentinel Incident Response Management System',
+                theme_color: '#042C53',
+                background_color: '#042C53',
                 display: 'standalone',
                 scope: '/',
                 start_url: '/',

@@ -11,7 +11,6 @@ use App\Http\Controllers\SmsWebhookController;
 use App\Http\Controllers\StateSyncController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
-use Laravel\Fortify\Features;
 
 Route::prefix('webhooks')->group(function () {
     Route::post('iot-sensor', IoTWebhookController::class)
@@ -28,16 +27,16 @@ Route::prefix('webhooks')->group(function () {
 // In dev: minimal SW with push handlers only (no precaching).
 // In prod: serve full built SW with precache manifest.
 Route::get('sw.js', function () {
-    if (app()->environment('local') && file_exists(base_path('hot'))) {
+    if (app()->environment('local') && file_exists(public_path('hot'))) {
         $devSw = <<<'JS'
 self.addEventListener('push', (event) => {
     const data = event.data?.json() ?? {};
     event.waitUntil(
-        self.registration.showNotification(data.title ?? 'IRMS', {
+        self.registration.showNotification(data.title ?? 'Sentinel', {
             body: data.body ?? '',
             icon: '/pwa-192x192.png',
             badge: '/pwa-192x192.png',
-            tag: data.tag ?? 'irms-notification',
+            tag: data.tag ?? 'sentinel-notification',
             data: { url: data.url ?? '/' },
         })
     );
@@ -75,9 +74,9 @@ JS;
     ]);
 })->name('service-worker');
 
-Route::inertia('/', 'Welcome', [
-    'canRegister' => Features::enabled(Features::registration()),
-])->name('home');
+Route::get('/', function () {
+    return redirect()->route('login');
+})->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');

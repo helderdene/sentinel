@@ -43,21 +43,23 @@ const explanationText = computed(() => {
     const role = user.value?.role;
 
     if (role === 'responder') {
-        return 'Get notified of new assignments even when IRMS is closed';
+        return 'Get notified of new assignments even when Sentinel is closed';
     }
 
     if (role === 'dispatcher') {
-        return 'Get notified of critical P1 incidents even when IRMS is closed';
+        return 'Get notified of critical P1 incidents even when Sentinel is closed';
     }
 
-    return 'Get notified of critical events even when IRMS is closed';
+    return 'Get notified of critical events even when Sentinel is closed';
 });
 
 async function handleEnable() {
     try {
         await subscribe();
     } catch {
-        // Browser permission denied or other error
+        // Browser permission denied or subscription error — dismiss anyway
+    } finally {
+        dismissed.value = true;
     }
 }
 
