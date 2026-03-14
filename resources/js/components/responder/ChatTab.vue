@@ -111,7 +111,7 @@ function isOwnMessage(msg: IncidentMessageItem): boolean {
 </script>
 
 <template>
-    <div class="flex flex-1 flex-col overflow-hidden">
+    <div class="flex flex-1 flex-col overflow-hidden pb-[100px]">
         <!-- Message history -->
         <div
             ref="messagesContainer"
