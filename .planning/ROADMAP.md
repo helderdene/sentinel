@@ -24,7 +24,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 10: Design System Alignment** - Restyle all pages to match IRMS Intake Design System: CSS variable remapping, auth branding, sidebar restyling, data tables, token alignment (completed 2026-03-13)
 - [x] **Phase 11: Implement Units CRUD** - Admin CRUD for managing response units with auto-generated IDs, crew assignment, decommission/recommission (completed 2026-03-13)
 - [x] **Phase 12: Bi-directional Communication** - Incident-level group chat channels, dispatch console messaging UI, responder ChatTab multi-participant awareness (completed 2026-03-14)
-- [ ] **Phase 13: PWA Setup** - Installable PWA with service worker caching, web app manifest, and Web Push notifications for assignments, P1 alerts, ack timeouts
+- [x] **Phase 13: PWA Setup** - Installable PWA with service worker caching, web app manifest, and Web Push notifications for assignments, P1 alerts, ack timeouts (completed 2026-03-15)
 
 ## Phase Details
 
@@ -257,9 +257,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 13-01-PLAN.md -- PWA foundation: vite-plugin-pwa with injectManifest, custom service worker (precaching + push handlers), PWA icons, manifest, ReloadPrompt update banner
-- [ ] 13-02-PLAN.md -- Web Push backend: laravel-notification-channels/webpush, VAPID keys, 3 notification classes, event listeners, ack timeout job, push subscription endpoints
-- [ ] 13-03-PLAN.md -- Frontend push subscription composable, permission prompt UI, Pest tests (subscription CRUD, notification dispatch, ack timeout, VAPID config)
+- [x] 13-01-PLAN.md -- PWA foundation: vite-plugin-pwa with injectManifest, custom service worker (precaching + push handlers), PWA icons, manifest, ReloadPrompt update banner
+- [x] 13-02-PLAN.md -- Web Push backend: laravel-notification-channels/webpush, VAPID keys, 3 notification classes, event listeners, ack timeout job, push subscription endpoints
+- [x] 13-03-PLAN.md -- Frontend push subscription composable, permission prompt UI, Pest tests (subscription CRUD, notification dispatch, ack timeout, VAPID config)
 
 ## Progress
 
@@ -286,4 +286,4 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 10. Design System Alignment | 5/5 | Complete    | 2026-03-13 |
 | 11. Implement Units CRUD | 2/2 | Complete    | 2026-03-13 |
 | 12. Bi-directional Communication | 4/4 | Complete | 2026-03-14 |
-| 13. PWA Setup | 2/3 | In Progress|  |
+| 13. PWA Setup | 3/3 | Complete | 2026-03-15 |

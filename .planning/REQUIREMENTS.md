@@ -272,7 +272,7 @@
 | COMM-12 | Phase 12 | Complete |
 | COMM-13 | Phase 12 | Complete |
 | MOBILE-01 | Phase 13 | Complete |
-| MOBILE-02 | Phase 13 | Planned |
+| MOBILE-02 | Phase 13 | Complete |
 
 **Coverage:**
 - v1 requirements: 102 total
