@@ -5,6 +5,7 @@ import mapboxgl from 'mapbox-gl';
 import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
 import '../css/app.css';
+import PushPermissionPrompt from '@/components/PushPermissionPrompt.vue';
 import ReloadPrompt from '@/components/ReloadPrompt.vue';
 import { initializeTheme } from '@/composables/useAppearance';
 
@@ -25,7 +26,13 @@ createInertiaApp({
             import.meta.glob<DefineComponent>('./pages/**/*.vue'),
         ),
     setup({ el, App, props, plugin }) {
-        createApp({ render: () => [h(App, props), h(ReloadPrompt)] })
+        createApp({
+            render: () => [
+                h(App, props),
+                h(ReloadPrompt),
+                h(PushPermissionPrompt),
+            ],
+        })
             .use(plugin)
             .mount(el);
     },
