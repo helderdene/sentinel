@@ -14,6 +14,10 @@ use App\Contracts\SmsParserServiceInterface;
 use App\Contracts\SmsServiceInterface;
 use App\Contracts\WeatherServiceInterface;
 use App\Enums\UserRole;
+use App\Events\AssignmentPushed;
+use App\Events\IncidentCreated;
+use App\Listeners\SendAssignmentPushNotification;
+use App\Listeners\SendP1PushNotification;
 use App\Models\User;
 use App\Services\AnalyticsService;
 use App\Services\ProximityRankingService;
@@ -31,6 +35,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
@@ -64,6 +69,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaults();
         $this->configureGates();
         $this->configureRateLimiters();
+        $this->configureEventListeners();
     }
 
     /**
@@ -163,5 +169,21 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('citizen-reads', function (Request $request) {
             return Limit::perMinute(60)->by($request->ip());
         });
+    }
+
+    /**
+     * Configure event listeners for push notifications.
+     */
+    protected function configureEventListeners(): void
+    {
+        Event::listen(
+            AssignmentPushed::class,
+            SendAssignmentPushNotification::class,
+        );
+
+        Event::listen(
+            IncidentCreated::class,
+            SendP1PushNotification::class,
+        );
     }
 }

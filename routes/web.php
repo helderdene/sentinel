@@ -5,6 +5,7 @@ use App\Http\Controllers\DispatchConsoleController;
 use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\IntakeStationController;
 use App\Http\Controllers\IoTWebhookController;
+use App\Http\Controllers\PushSubscriptionController;
 use App\Http\Controllers\ResponderController;
 use App\Http\Controllers\SmsWebhookController;
 use App\Http\Controllers\StateSyncController;
@@ -29,6 +30,10 @@ Route::inertia('/', 'Welcome', [
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+
+    // Push subscription management
+    Route::post('/push-subscriptions', [PushSubscriptionController::class, 'store'])->name('push-subscriptions.store');
+    Route::delete('/push-subscriptions', [PushSubscriptionController::class, 'destroy'])->name('push-subscriptions.destroy');
 
     // Operator + Supervisor + Admin intake routes
     Route::middleware(['role:operator,supervisor,admin'])->group(function () {
