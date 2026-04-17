@@ -103,7 +103,22 @@ const rightPanelMode = computed<RightPanelMode>(() => {
     return 'unit-status';
 });
 
-const mapComposable = useDispatchMap('dispatch-map');
+const sharedCity = (
+    usePage().props as {
+        city?: {
+            center_latitude: number | string;
+            center_longitude: number | string;
+            default_zoom: number;
+        };
+    }
+).city;
+
+const mapComposable = useDispatchMap('dispatch-map', {
+    center: sharedCity
+        ? [Number(sharedCity.center_longitude), Number(sharedCity.center_latitude)]
+        : undefined,
+    zoom: sharedCity?.default_zoom,
+});
 
 const {
     isLoaded,
@@ -265,6 +280,30 @@ watch(isLoaded, (loaded) => {
         buildConnectionLines();
     }
 });
+
+watch(
+    () => props.incidents,
+    () => {
+        if (!isLoaded.value) {
+            return;
+        }
+
+        setIncidentData(localIncidents.value);
+        buildConnectionLines();
+    },
+);
+
+watch(
+    () => props.units,
+    () => {
+        if (!isLoaded.value) {
+            return;
+        }
+
+        setUnitData(localUnits.value);
+        buildConnectionLines();
+    },
+);
 
 function handleIncidentSelect(id: string): void {
     selectedIncidentId.value = id;

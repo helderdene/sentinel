@@ -54,12 +54,13 @@ const explanationText = computed(() => {
 });
 
 async function handleEnable() {
+    dismissed.value = true;
+
     try {
         await subscribe();
-    } catch {
-        // Browser permission denied or subscription error — dismiss anyway
-    } finally {
-        dismissed.value = true;
+    } catch (error) {
+        console.error('Push subscription failed:', error);
+        localStorage.setItem('push-prompt-dismissed', 'true');
     }
 }
 

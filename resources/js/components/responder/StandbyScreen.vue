@@ -76,6 +76,7 @@ function initMap(): void {
             zoom: 14,
             pitch: 0,
             interactive: true,
+            projection: 'mercator',
         });
 
         map.value.addControl(

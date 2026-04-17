@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>IRMS — End-to-End Flowchart</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Barlow+Condensed:wght@300;400;600;700;900&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;background:#f0f4f9;color:#1a2740;font-family:'Barlow Condensed',sans-serif;overflow:hidden}
+
+/* ── Canvas/Viewport ─────────────────────────────────────────────────────── */
+#viewport{width:100%;height:100%;overflow:hidden;position:relative;cursor:grab;user-select:none}
+#viewport.dragging{cursor:grabbing}
+#canvas{position:absolute;transform-origin:0 0;will-change:transform}
+
+/* ── Top Bar ──────────────────────────────────────────────────────────────── */
+#topbar{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(255,255,255,.97);border-bottom:1px solid rgba(0,0,0,.1);display:flex;align-items:center;padding:0 20px;gap:16px;z-index:100;backdrop-filter:blur(12px);box-shadow:0 1px 12px rgba(0,0,0,.08)}
+.tb-title{font-size:15px;font-weight:700;font-family:'Space Mono',monospace;letter-spacing:.5px;color:#1a2740}
+.tb-sub{font-size:11px;color:#6b8aaa;font-family:'Space Mono',monospace}
+.tb-divider{width:1px;height:20px;background:rgba(0,0,0,.1)}
+.zoom-btn{background:#f0f4f9;border:1px solid rgba(0,0,0,.12);color:#1a2740;padding:5px 12px;border-radius:7px;cursor:pointer;font-family:'Space Mono',monospace;font-size:12px;transition:background .15s}
+.zoom-btn:hover{background:#e2eaf4}
+#zoom-label{font-family:'Space Mono',monospace;font-size:11px;color:#6b8aaa;min-width:44px;text-align:center}
+.fit-btn{background:rgba(74,158,255,.15);border:1px solid rgba(74,158,255,.3);color:#4a9eff;padding:5px 14px;border-radius:7px;cursor:pointer;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.5px;transition:all .15s}
+.fit-btn:hover{background:rgba(74,158,255,.25)}
+
+/* ── Legend ───────────────────────────────────────────────────────────────── */
+#legend{position:fixed;bottom:20px;right:20px;background:rgba(255,255,255,.97);border:1px solid rgba(0,0,0,.1);border-radius:12px;padding:14px 16px;backdrop-filter:blur(12px);z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.1)}
+.leg-row{display:flex;align-items:center;gap:9px;margin-bottom:7px;font-size:12px;color:#3d5470}
+.leg-row:last-child{margin-bottom:0}
+.leg-swatch{width:16px;height:16px;border-radius:4px;flex-shrink:0}
+.leg-line{width:28px;height:2px;flex-shrink:0;border-radius:1px}
+.leg-dash{width:28px;height:0;flex-shrink:0;border-top:2px dashed}
+.leg-dot-line{width:28px;height:2px;border-top:2px dotted;flex-shrink:0}
+
+/* ── Tooltip ──────────────────────────────────────────────────────────────── */
+#tooltip{position:fixed;display:none;background:rgba(255,255,255,.99);border:1px solid rgba(0,0,0,.1);border-radius:10px;padding:12px 16px;max-width:240px;z-index:200;pointer-events:none;box-shadow:0 8px 32px rgba(0,0,0,.15)}
+#tooltip .tt-title{font-size:12px;font-weight:700;font-family:'Space Mono',monospace;margin-bottom:5px;color:#2271d4}
+#tooltip .tt-body{font-size:13px;color:#4a6080;line-height:1.5}
+
+/* ── Minimap ──────────────────────────────────────────────────────────────── */
+#minimap{position:fixed;bottom:20px;left:20px;width:160px;height:110px;background:rgba(6,12,24,.9);border:1px solid rgba(255,255,255,.1);border-radius:8px;overflow:hidden;z-index:100}
+#minimap canvas{width:100%;height:100%}
+
+@keyframes flowDash{to{stroke-dashoffset:-20}}
+@keyframes pulseNode{0%,100%{opacity:1}50%{opacity:.7}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div>
+    <div class="tb-title">IRMS — End-to-End Process Flowchart</div>
+    <div class="tb-sub">Incident Response Management System · CDRRMO Butuan City</div>
+  </div>
+  <div class="tb-divider"></div>
+  <button class="zoom-btn" onclick="zoom(-0.1)">−</button>
+  <span id="zoom-label">100%</span>
+  <button class="zoom-btn" onclick="zoom(0.1)">+</button>
+  <button class="fit-btn" onclick="fitView()">⊞ FIT VIEW</button>
+  <div style="flex:1"></div>
+  <div style="display:flex;gap:20px;align-items:center">
+    <div style="font-size:11px;color:#8aA6c4;font-family:'Space Mono',monospace">Drag to pan · Scroll to zoom · Hover nodes for detail</div>
+  </div>
+</div>
+
+<div id="viewport">
+  <canvas id="mainCanvas"></canvas>
+</div>
+
+<div id="legend">
+  <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:#9ab0c8;margin-bottom:10px">LEGEND</div>
+  <div class="leg-row"><div class="leg-swatch" style="background:#2271d418;border:1.5px solid #2271d460"></div>Process / Action</div>
+  <div class="leg-row"><div class="leg-swatch" style="background:#c4920018;border:1.5px solid #c4920060"></div>Decision</div>
+  <div class="leg-row"><div class="leg-swatch" style="background:#13806018;border:1.5px solid #13806060"></div>Terminal / End State</div>
+  <div class="leg-row"><div class="leg-swatch" style="background:#c85a0018;border:1.5px solid #c85a0060"></div>Alert / Notification</div>
+  <div class="leg-row"><div class="leg-swatch" style="background:#7c3cc818;border:1.5px solid #7c3cc860"></div>Data / Record</div>
+  <div class="leg-divider" style="height:1px;background:rgba(0,0,0,.08);margin:8px 0"></div>
+  <div class="leg-row"><div class="leg-line" style="background:#2271d4"></div>Primary flow</div>
+  <div class="leg-row"><div class="leg-dash" style="border-color:#c49200"></div>Conditional path</div>
+  <div class="leg-row"><div class="leg-dot-line" style="border-color:#7c3cc8"></div>Data / notification</div>
+</div>
+
+<div id="tooltip">
+  <div class="tt-title" id="tt-title"></div>
+  <div class="tt-body" id="tt-body"></div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════════════
+   IRMS Flowchart — Canvas-based renderer
+   ══════════════════════════════════════════════════════════════════════════ */
+
+const canvas = document.getElementById('mainCanvas');
+const ctx = canvas.getContext('2d');
+
+/* ── Colour palette ───────────────────────────────────────────────────────── */
+const C = {
+  bg:       '#f0f4f9',
+  lane:     'rgba(0,20,60,.018)',
+  laneBdr:  'rgba(0,20,60,.08)',
+  text:     '#1a2740',
+  dim:      '#6b8aaa',
+  process:  { fill:'rgba(34,113,212,.13)',  stroke:'#2271d4', text:'#1a4d8f' },
+  decision: { fill:'rgba(180,130,0,.13)',   stroke:'#c49200', text:'#7a5800' },
+  terminal: { fill:'rgba(22,140,100,.15)',  stroke:'#138060', text:'#0a5540' },
+  alert:    { fill:'rgba(200,90,0,.13)',    stroke:'#c85a00', text:'#7a3400' },
+  data:     { fill:'rgba(120,60,200,.13)',  stroke:'#7c3cc8', text:'#4a1a90' },
+  start:    { fill:'rgba(22,140,100,.2)',   stroke:'#138060', text:'#1a2740' },
+  p1:       '#ff3b3b', p2:'#ff8c00', p3:'#f5c518', p4:'#3bba8c',
+};
+
+/* ── DPI / resize ─────────────────────────────────────────────────────────── */
+const CANVAS_W = 2600;
+const CANVAS_H = 3400;
+let scale = 1, panX = 0, panY = 60;
+let dpr = window.devicePixelRatio || 1;
+
+function resizeCanvas(){
+  canvas.width  = CANVAS_W * dpr;
+  canvas.height = CANVAS_H * dpr;
+  canvas.style.width  = CANVAS_W + 'px';
+  canvas.style.height = CANVAS_H + 'px';
+  ctx.scale(dpr, dpr);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   LAYOUT DATA
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Swimlane definitions */
+const LANES = [
+  { id:'reporter',  label:'REPORTER / PUBLIC',  color:'#7c3cc8', y:80,   h:220 },
+  { id:'intake',    label:'INTAKE LAYER',        color:'#2271d4', y:300,  h:480 },
+  { id:'dispatch',  label:'DISPATCH LAYER',      color:'#c49200', y:780,  h:580 },
+  { id:'responder', label:'RESPONDER LAYER',     color:'#c85a00', y:1360, h:900 },
+  { id:'system',    label:'SYSTEM / DATABASE',   color:'#7c3cc8', y:2260, h:300 },
+  { id:'post',      label:'POST-INCIDENT',       color:'#138060', y:2560, h:560 },
+];
+
+/* Node definitions (x, y = CENTER of node in canvas coords) */
+const NODES = [
+  /* ── Reporter ──────────────────────────────────────────────────── */
+  { id:'report_sms',    x:280,  y:190, w:130, h:50, type:'process', label:'SMS\nReport',          icon:'📱', detail:'Public texts incident to CDRRMO SMS hotline (0917 xxx xxxx). Message parsed for keywords, auto-logged to intake queue.' },
+  { id:'report_app',    x:450,  y:190, w:130, h:50, type:'process', label:'Mobile App\nReport',   icon:'📲', detail:'Citizen submits incident via IRMS public app. Includes GPS coordinates, photo upload, and structured form.' },
+  { id:'report_voice',  x:620,  y:190, w:130, h:50, type:'process', label:'Voice / 911\nCall',    icon:'📞', detail:'Caller dials emergency hotline. Dispatcher manually logs incident while caller is still on line.' },
+  { id:'report_iot',    x:790,  y:190, w:130, h:50, type:'process', label:'IoT Sensor\nAlert',    icon:'📡', detail:'Automated alert from connected sensors: flood gauges, fire alarms, CCTV motion detectors, weather stations.' },
+  { id:'report_walkin', x:960,  y:190, w:130, h:50, type:'process', label:'Walk-in /\nRadio',     icon:'🚶', detail:'Physical walk-in at CDRRMO office or report via radio from barangay tanod or other responders.' },
+
+  /* ── Intake ────────────────────────────────────────────────────── */
+  { id:'intake_receive',x:620,  y:370, w:200, h:56, type:'process', label:'Receive & Log Incident Report', icon:'📋',
+    detail:'All channels feed into the Intake Layer. System timestamps the report, assigns a unique incident ID, and captures channel source, caller info, and raw message.' },
+  { id:'intake_verify', x:620,  y:460, w:200, h:50, type:'decision',label:'Verify &\nValidate?', icon:'🔍',
+    detail:'Dispatcher reviews incoming report. Checks for: duplicate incidents, false alarms, sufficient location data, and credibility of source. Auto-classifier pre-screens obvious false alarms.' },
+  { id:'intake_discard',x:930,  y:460, w:140, h:50, type:'terminal',label:'Discard /\nArchive', icon:'🗑️',
+    detail:'False alarms, duplicates, and invalid reports are archived with reason code. Caller receives automated acknowledgement.' },
+  { id:'intake_classify',x:620, y:555, w:200, h:50, type:'process', label:'Classify Incident Type', icon:'🏷️',
+    detail:'Dispatcher selects incident type from taxonomy: Medical Emergency, Fire, Flood, Road Accident, Search & Rescue, Public Disturbance, etc.' },
+  { id:'intake_priority',x:620, y:648, w:200, h:50, type:'decision',label:'Assign Priority\nP1 – P4', icon:'⚡',
+    detail:'P1 Critical: Life-threatening (cardiac, structure fire, drowning).\nP2 High: Serious injury risk.\nP3 Medium: Urgent but stable.\nP4 Low: Non-emergency / informational.' },
+  { id:'intake_geo',    x:620, y:738, w:200, h:50, type:'process',  label:'Geocode & Map Incident', icon:'📍',
+    detail:'Incident pinned on 3D dispatch map (MapLibre GL JS). Address geocoded, nearest units calculated, barangay boundary detected, flood/hazard zone overlay checked.' },
+
+  /* ── Dispatch ───────────────────────────────────────────────────── */
+  { id:'disp_queue',    x:620, y:860, w:200, h:56, type:'process',  label:'Add to Dispatch Queue', icon:'📥',
+    detail:'Incident placed in prioritised queue on dispatch console. P1 incidents auto-surface with audio alert. Queue visible to all active dispatchers.' },
+  { id:'disp_avail',   x:620, y:955, w:200, h:50, type:'decision', label:'Units\nAvailable?', icon:'🔎',
+    detail:'System checks real-time unit status: Available, En Route, On Scene, Offline. Filters by: proximity to incident, unit type match, agency jurisdiction.' },
+  { id:'disp_mutual',  x:930, y:955, w:150, h:50, type:'alert',    label:'Mutual Aid\nRequest', icon:'📣',
+    detail:'No suitable units available. Dispatcher triggers mutual aid protocol: contacts BFP, PNP, DSWD, adjacent LGU CDRRMO, or DOH depending on incident type.' },
+  { id:'disp_select',  x:620, y:1048,w:200, h:50, type:'process',  label:'Select & Assign Unit(s)', icon:'🎯',
+    detail:'Dispatcher selects unit(s) from map. Multiple units can be assigned to a single incident. System calculates ETA using road network.' },
+  { id:'disp_notify',  x:620, y:1140,w:200, h:50, type:'alert',    label:'Push Assignment\nto Responder', icon:'📲',
+    detail:'Assignment pushed to responder\'s mobile device via push notification. Includes: incident ID, type, priority, address, caller info, hazards, and special instructions.' },
+  { id:'disp_ack',     x:620, y:1230,w:200, h:50, type:'decision', label:'Responder\nAcknowledged?', icon:'✓',
+    detail:'System waits for acknowledgement from assigned unit. If no response within 90 seconds, dispatcher is alerted to reassign or call unit directly.' },
+  { id:'disp_reassign',x:930, y:1230,w:140, h:50, type:'alert',    label:'Reassign /\nEscalate', icon:'⚠️',
+    detail:'Dispatcher manually contacts unit or reassigns to next available unit. Escalation log created.' },
+
+  /* ── Responder ──────────────────────────────────────────────────── */
+  { id:'resp_ack',     x:620, y:1440,w:200, h:56, type:'process',  label:'Acknowledge Assignment', icon:'✅',
+    detail:'Responder taps "ACKNOWLEDGE" in field app. Status updates to Acknowledged. Dispatch console updates in real-time. Timeline entry created.' },
+  { id:'resp_enroute', x:620, y:1538,w:200, h:50, type:'process',  label:'En Route\n(Live Navigation)', icon:'🚀',
+    detail:'Unit taps GO EN ROUTE. Live ETA countdown begins. GPS location streamed to dispatch map every 10 seconds. Navigation guidance active in app.' },
+  { id:'resp_arrive',  x:620, y:1628,w:200, h:50, type:'process',  label:'Arrive On Scene', icon:'📍',
+    detail:'Unit arrives and taps ARRIVED ON SCENE. Scene timer starts. Dispatch console updates marker color to On Scene (amber). Caller notified if on line.' },
+  { id:'resp_scene',   x:620, y:1720,w:200, h:50, type:'process',  label:'Scene Assessment\n& Checklist', icon:'📋',
+    detail:'Responder completes contextual arrival checklist (AED, O2, extrication tools, etc.). Assesses patient: vitals (BP, HR, SpO₂, GCS), assessment tags, field notes.' },
+  { id:'resp_resource',x:900, y:1720,w:160, h:50, type:'decision', label:'Additional\nResources\nNeeded?', icon:'🔎',
+    detail:'Based on scene assessment, responder may request: additional ambulance, BFP fire unit, PNP, rescue boat, medical officer, or medevac helicopter.' },
+  { id:'resp_request', x:1100,y:1720,w:140, h:50, type:'alert',    label:'Request\nResource', icon:'📡',
+    detail:'Resource request sent to dispatch via comms channel. Dispatch receives notification and dispatches additional units.' },
+  { id:'resp_treat',   x:620, y:1820,w:200, h:50, type:'process',  label:'Provide Treatment\n/ Intervention', icon:'⚕️',
+    detail:'Medical intervention, fire suppression support, search and rescue, or other response actions performed on scene. Actions logged in field notes.' },
+  { id:'resp_outcome', x:620, y:1912,w:200, h:50, type:'decision', label:'Determine\nOutcome', icon:'📝',
+    detail:'Responder selects patient/scene outcome:\n• Treated On Scene\n• Transported to Hospital\n• Patient Refused Treatment\n• Declared DOA\n• Stand Down / False Alarm' },
+  { id:'resp_transport',x:370,y:2000,w:160, h:50, type:'process',  label:'Transport to\nHospital', icon:'🏥',
+    detail:'Patient transported. Responder selects destination hospital (Caraga Regional, Butuan Medical Center, Polymedic, etc.). ETA communicated to receiving facility.' },
+  { id:'resp_treated',  x:560,y:2000,w:140, h:50, type:'process',  label:'Treated\nOn Scene', icon:'✅',
+    detail:'Patient treated and stabilised on scene. No transport required. Responder documents treatment administered.' },
+  { id:'resp_doa',     x:720, y:2000,w:130, h:50, type:'process',  label:'DOA /\nStand Down', icon:'📋',
+    detail:'Patient declared DOA or incident is a false alarm / stand down. Proper documentation required. BFP or PNP coordination for legal cases.' },
+  { id:'resp_close',   x:620, y:2100,w:200, h:56, type:'process',  label:'Close Incident\n(Tap: MARK RESOLVED)', icon:'🔒',
+    detail:'Responder completes closure form: outcome selected, hospital chosen if applicable, closure notes entered. Taps CLOSE INCIDENT. Status set to RESOLVED.' },
+
+  /* ── System ─────────────────────────────────────────────────────── */
+  { id:'sys_save',     x:620, y:2360,w:200, h:56, type:'data',     label:'Save Incident Record\nto Database', icon:'💾',
+    detail:'Full incident record saved: ID, type, priority, coordinates, timeline, unit assigned, vitals, checklist completion, outcome, scene time, all field notes.' },
+  { id:'sys_notify_disp',x:370,y:2360,w:160,h:50, type:'alert',   label:'Notify Dispatch:\nUnit Available', icon:'📢',
+    detail:'Dispatch console notified that unit is now available. Unit status set back to Available on map. Ready for next assignment.' },
+  { id:'sys_report',   x:880, y:2360,w:160, h:50, type:'data',     label:'Auto-generate\nIncident Report', icon:'📄',
+    detail:'PDF incident report auto-generated with all captured data. Sent to: CDRRMO Chief, OCD, DILG, and attached agencies as required.' },
+
+  /* ── Post-incident ──────────────────────────────────────────────── */
+  { id:'post_review',  x:620, y:2650,w:200, h:56, type:'process',  label:'After-Action Review\n(AAR)', icon:'🔄',
+    detail:'Within 24 hours: team reviews incident response. Identifies gaps in response time, resource availability, protocol adherence. Documents lessons learned.' },
+  { id:'post_metrics', x:380, y:2750,w:160, h:50, type:'data',     label:'Update Metrics\n& KPIs', icon:'📊',
+    detail:'Response time, scene time, outcomes, resource utilisation updated in analytics dashboard. Compared against NDRRMC benchmarks.' },
+  { id:'post_feedback',x:620, y:2750,w:200, h:50, type:'process',  label:'Caller Feedback\nSurvey', icon:'💬',
+    detail:'Automated SMS/app survey sent to reporting caller 24 hours after incident closure. Rating: response time, professionalism, outcome satisfaction.' },
+  { id:'post_archive', x:880, y:2750,w:160, h:50, type:'data',     label:'Archive &\nIndex', icon:'🗄️',
+    detail:'Incident archived and indexed for future reference. Searchable by: date, type, barangay, priority, unit, outcome. Retention: 10 years per NDRRMC policy.' },
+  { id:'post_done',    x:620, y:2880,w:200, h:56, type:'terminal', label:'INCIDENT CLOSED\nCycle Complete', icon:'🏁',
+    detail:'End of incident lifecycle. Data available for reporting, analytics, budget planning, and future resource allocation decisions.' },
+];
+
+/* Arrow definitions */
+const ARROWS = [
+  // Reporters → Intake receive
+  { from:'report_sms',    to:'intake_receive', type:'primary' },
+  { from:'report_app',    to:'intake_receive', type:'primary' },
+  { from:'report_voice',  to:'intake_receive', type:'primary' },
+  { from:'report_iot',    to:'intake_receive', type:'primary' },
+  { from:'report_walkin', to:'intake_receive', type:'primary' },
+  // Intake flow
+  { from:'intake_receive', to:'intake_verify',  type:'primary' },
+  { from:'intake_verify',  to:'intake_discard', type:'cond',   label:'Invalid / Duplicate' },
+  { from:'intake_verify',  to:'intake_classify',type:'primary',label:'Valid' },
+  { from:'intake_classify',to:'intake_priority',type:'primary' },
+  { from:'intake_priority',to:'intake_geo',     type:'primary' },
+  // Intake → Dispatch
+  { from:'intake_geo',   to:'disp_queue',     type:'primary' },
+  // Dispatch flow
+  { from:'disp_queue',   to:'disp_avail',     type:'primary' },
+  { from:'disp_avail',   to:'disp_mutual',    type:'cond',   label:'None Available' },
+  { from:'disp_avail',   to:'disp_select',    type:'primary',label:'Available' },
+  { from:'disp_mutual',  to:'disp_select',    type:'cond',   label:'Aid Arranged' },
+  { from:'disp_select',  to:'disp_notify',    type:'primary' },
+  { from:'disp_notify',  to:'disp_ack',       type:'primary' },
+  { from:'disp_ack',     to:'disp_reassign',  type:'cond',   label:'No Response (90s)' },
+  { from:'disp_reassign',to:'disp_select',    type:'cond' },
+  { from:'disp_ack',     to:'resp_ack',       type:'primary',label:'Acknowledged' },
+  // Responder flow
+  { from:'resp_ack',     to:'resp_enroute',   type:'primary' },
+  { from:'resp_enroute', to:'resp_arrive',    type:'primary' },
+  { from:'resp_arrive',  to:'resp_scene',     type:'primary' },
+  { from:'resp_scene',   to:'resp_resource',  type:'primary' },
+  { from:'resp_resource',to:'resp_request',   type:'cond',   label:'Yes' },
+  { from:'resp_request', to:'disp_queue',     type:'notify',  label:'Dispatch notified' },
+  { from:'resp_resource',to:'resp_treat',     type:'primary',label:'No / Proceed' },
+  { from:'resp_treat',   to:'resp_outcome',   type:'primary' },
+  { from:'resp_outcome', to:'resp_transport', type:'cond',   label:'Transport' },
+  { from:'resp_outcome', to:'resp_treated',   type:'cond',   label:'Treated' },
+  { from:'resp_outcome', to:'resp_doa',       type:'cond',   label:'DOA/Standdown' },
+  { from:'resp_transport',to:'resp_close',    type:'primary' },
+  { from:'resp_treated',  to:'resp_close',    type:'primary' },
+  { from:'resp_doa',      to:'resp_close',    type:'primary' },
+  // Close → System
+  { from:'resp_close',   to:'sys_save',       type:'primary' },
+  { from:'sys_save',     to:'sys_notify_disp',type:'notify' },
+  { from:'sys_save',     to:'sys_report',     type:'notify' },
+  // System → Post
+  { from:'sys_save',       to:'post_review',  type:'primary' },
+  { from:'post_review',    to:'post_metrics', type:'primary' },
+  { from:'post_review',    to:'post_feedback',type:'primary' },
+  { from:'post_review',    to:'post_archive', type:'primary' },
+  { from:'post_metrics',   to:'post_done',    type:'primary' },
+  { from:'post_feedback',  to:'post_done',    type:'primary' },
+  { from:'post_archive',   to:'post_done',    type:'primary' },
+];
+
+/* ══════════════════════════════════════════════════════════════════════════
+   DRAWING UTILITIES
+   ══════════════════════════════════════════════════════════════════════════ */
+
+function roundRect(ctx, x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+
+function diamond(ctx, cx, cy, w, h){
+  const hw=w/2, hh=h/2;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy-hh);
+  ctx.lineTo(cx+hw, cy);
+  ctx.lineTo(cx, cy+hh);
+  ctx.lineTo(cx-hw, cy);
+  ctx.closePath();
+}
+
+function wrapText(ctx, text, x, y, maxW, lineH, maxLines=3){
+  const lines = text.split('\n');
+  let drawn = 0;
+  for(const raw of lines){
+    if(drawn>=maxLines) break;
+    const words = raw.split(' ');
+    let line = '';
+    for(const word of words){
+      const test = line ? line+' '+word : word;
+      if(ctx.measureText(test).width > maxW && line){
+        ctx.fillText(line, x, y + drawn*lineH);
+        line = word; drawn++;
+        if(drawn>=maxLines) break;
+      } else line = test;
+    }
+    if(drawn<maxLines){ ctx.fillText(line, x, y + drawn*lineH); drawn++; }
+  }
+}
+
+/* ── Draw a node ──────────────────────────────────────────────────────────── */
+function drawNode(node, hovered){
+  const { x, y, w, h, type, label, icon } = node;
+  const style = C[type] || C.process;
+  const lx = x - w/2, ly = y - h/2;
+  const r = type==='decision' ? 0 : 10;
+  const glow = hovered ? 8 : 0;
+
+  ctx.save();
+
+  // Glow on hover
+  if(hovered){
+    ctx.shadowColor = style.stroke;
+    ctx.shadowBlur = 14;
+  }
+
+  // Shape
+  if(type === 'decision'){
+    diamond(ctx, x, y, w*1.15, h*1.3);
+  } else {
+    roundRect(ctx, lx, ly, w, h, r);
+  }
+  if(!hovered){ctx.shadowColor='rgba(0,0,0,.12)';ctx.shadowBlur=8;ctx.shadowOffsetY=2;}
+  ctx.fillStyle = style.fill;
+  ctx.fill();
+  ctx.shadowBlur=0;ctx.shadowOffsetY=0;
+  ctx.strokeStyle = hovered ? style.stroke : style.stroke + 'bb';
+  ctx.lineWidth = hovered ? 2 : 1.5;
+  ctx.stroke();
+
+  ctx.shadowBlur = 0;
+
+  // Icon
+  const ICON_SIZE = 16;
+  ctx.font = `${ICON_SIZE}px serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  if(type !== 'decision'){
+    ctx.fillText(icon, lx + 22, y);
+  } else {
+    ctx.fillText(icon, x, y - h*0.55);
+  }
+
+  // Label
+  ctx.fillStyle = hovered ? '#04080f' : style.text;
+  ctx.font = `600 11px 'Barlow Condensed', sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  const textX = type!=='decision' ? x + 8 : x;
+  const textY = type!=='decision' ? y : y + 2;
+  const maxW  = type!=='decision' ? w - 40 : w * 0.9;
+  const lines = label.split('\n');
+  const lineH = 14;
+  const totalH = lines.length * lineH;
+  lines.forEach((line, i) => {
+    ctx.fillText(line, textX, textY - totalH/2 + lineH*0.5 + i*lineH);
+  });
+
+  ctx.restore();
+}
+
+/* ── Arrowhead ──────────────────────────────────────────────────────────── */
+function arrowHead(x, y, angle, color){
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(-9, -4);
+  ctx.lineTo(-9, 4);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+/* ── Get node edge point ─────────────────────────────────────────────────── */
+function getNodePoint(node, toX, toY, bias=0){
+  const { x, y, w, h, type } = node;
+  const dx = toX - x, dy = toY - y;
+  if(type === 'decision'){
+    const hw = w*1.15/2, hh = h*1.3/2;
+    const t = Math.abs(dx/hw) > Math.abs(dy/hh)
+      ? hw / Math.abs(dx) : hh / Math.abs(dy);
+    return { x: x + dx*t, y: y + dy*t };
+  }
+  const hw = w/2, hh = h/2;
+  if(Math.abs(dy) * hw > Math.abs(dx) * hh){
+    return { x: x + dx*(hh/Math.abs(dy)), y: dy>0 ? y+hh : y-hh };
+  } else {
+    return { x: dx>0 ? x+hw : x-hw, y: y + dy*(hw/Math.abs(dx)) };
+  }
+}
+
+/* ── Draw an arrow ───────────────────────────────────────────────────────── */
+function drawArrow(arrow, animOffset){
+  const from = NODES.find(n=>n.id===arrow.from);
+  const to   = NODES.find(n=>n.id===arrow.to);
+  if(!from||!to) return;
+
+  const colors = {
+    primary: '#2271d4',
+    cond:    '#c49200',
+    notify:  '#7c3cc8',
+  };
+  const color = colors[arrow.type] || '#4a9eff';
+
+  const mx = (from.x + to.x)/2, my = (from.y + to.y)/2;
+  const sp = getNodePoint(from, to.x, to.y);
+  const ep = getNodePoint(to, from.x, from.y);
+  const dx = ep.x - sp.x, dy = ep.y - sp.y;
+  const angle = Math.atan2(dy, dx);
+
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = arrow.type==='primary' ? 2 : 1.5;
+  ctx.globalAlpha = arrow.type==='primary' ? 0.75 : 0.55;
+
+  if(arrow.type === 'notify'){
+    ctx.setLineDash([4, 5]);
+    ctx.lineDashOffset = -animOffset * 0.3;
+  } else if(arrow.type === 'cond'){
+    ctx.setLineDash([8, 5]);
+  } else {
+    // Animated flowing dash for primary
+    ctx.setLineDash([10, 8]);
+    ctx.lineDashOffset = -animOffset * 0.5;
+  }
+
+  ctx.beginPath();
+  // Bezier for curved paths
+  const dist = Math.hypot(dx, dy);
+  const cx1 = sp.x, cy1 = sp.y + (dy > 0 ? dist*0.2 : -dist*0.2);
+  const cx2 = ep.x, cy2 = ep.y - (dy > 0 ? dist*0.2 : -dist*0.2);
+  if(Math.abs(dx) < 20 && Math.abs(dy) > 60){
+    ctx.moveTo(sp.x, sp.y);
+    ctx.lineTo(ep.x, ep.y);
+  } else {
+    ctx.moveTo(sp.x, sp.y);
+    ctx.bezierCurveTo(cx1, cy1, cx2, cy2, ep.x, ep.y);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.globalAlpha = 0.9;
+  arrowHead(ep.x, ep.y, angle, color);
+
+  // Label
+  if(arrow.label){
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 0.8;
+    ctx.fillStyle = color;
+    ctx.font = `500 10px 'Barlow Condensed', sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const lx = (sp.x + ep.x)/2, ly = (sp.y + ep.y)/2;
+    // Background pill
+    const tw = ctx.measureText(arrow.label).width;
+    roundRect(ctx, lx-tw/2-6, ly-9, tw+12, 16, 4);
+    ctx.fillStyle = '#f0f4f9';
+    ctx.fill();
+    ctx.fillStyle = color;
+    ctx.fillText(arrow.label, lx, ly);
+  }
+  ctx.restore();
+}
+
+/* ── Draw swimlanes ──────────────────────────────────────────────────────── */
+function drawLanes(){
+  LANES.forEach(lane => {
+    const lw = CANVAS_W - 40;
+    ctx.save();
+    // Fill
+    ctx.fillStyle = lane.color + '0b';
+    roundRect(ctx, 20, lane.y, lw, lane.h, 8);
+    ctx.fill();
+    // Border
+    ctx.strokeStyle = lane.color + '45';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    // Label strip
+    const stripW = 130;
+    roundRect(ctx, 20, lane.y, stripW, lane.h, 8);
+    ctx.fillStyle = lane.color + '50';
+    ctx.fill();
+    // Vertical label
+    ctx.save();
+    ctx.translate(20 + stripW/2, lane.y + lane.h/2);
+    ctx.rotate(-Math.PI/2);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = `700 11px 'Space Mono', monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.letterSpacing = '2px';
+    ctx.fillText(lane.label, 0, 0);
+    ctx.restore();
+    // Divider line
+    ctx.beginPath();
+    ctx.moveTo(20+stripW, lane.y);
+    ctx.lineTo(20+stripW, lane.y+lane.h);
+    ctx.strokeStyle = lane.color + '40';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.restore();
+  });
+}
+
+/* ── Main render ──────────────────────────────────────────────────────────── */
+let animOffset = 0;
+let hoveredNode = null;
+let raf;
+
+function render(){
+  ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+
+  // Background
+  ctx.fillStyle = '#f0f4f9';
+  ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+
+  // Grid dots
+  ctx.fillStyle = 'rgba(0,30,80,.04)';
+  for(let gx=0; gx<CANVAS_W; gx+=40){
+    for(let gy=0; gy<CANVAS_H; gy+=40){
+      ctx.beginPath();
+      ctx.arc(gx, gy, 1, 0, Math.PI*2);
+      ctx.fill();
+    }
+  }
+
+  drawLanes();
+
+  // Arrows first (behind nodes)
+  ARROWS.forEach(a => drawArrow(a, animOffset));
+
+  // Nodes
+  NODES.forEach(node => drawNode(node, node === hoveredNode));
+
+  // Title blocks for each layer
+  const labelY = { reporter:100, intake:315, dispatch:795, responder:1376, system:2275, post:2576 };
+
+  animOffset += 1;
+  raf = requestAnimationFrame(render);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   INTERACTION
+   ══════════════════════════════════════════════════════════════════════════ */
+
+const viewport = document.getElementById('viewport');
+let curScale = 0.38, curPanX = 20, curPanY = 70;
+let isDragging = false, dragStartX, dragStartY, panStartX, panStartY;
+
+function applyTransform(){
+  canvas.style.transform = `translate(${curPanX}px,${curPanY}px) scale(${curScale})`;
+  canvas.style.transformOrigin = '0 0';
+  document.getElementById('zoom-label').textContent = Math.round(curScale*100)+'%';
+}
+
+function zoom(delta, cx, cy){
+  const vw = viewport.clientWidth, vh = viewport.clientHeight;
+  const ox = cx !== undefined ? cx : vw/2;
+  const oy = cy !== undefined ? cy : vh/2;
+  const prev = curScale;
+  curScale = Math.min(2, Math.max(0.15, curScale + delta));
+  const ratio = curScale / prev;
+  curPanX = ox - (ox - curPanX) * ratio;
+  curPanY = oy - (oy - curPanY) * ratio;
+  applyTransform();
+}
+window.zoom = zoom;
+
+function fitView(){
+  const vw = viewport.clientWidth - 40;
+  const vh = viewport.clientHeight - 80;
+  curScale = Math.min(vw / CANVAS_W, vh / CANVAS_H);
+  curPanX = (viewport.clientWidth  - CANVAS_W * curScale) / 2;
+  curPanY = 60 + (viewport.clientHeight - 60 - CANVAS_H * curScale) / 2;
+  applyTransform();
+}
+window.fitView = fitView;
+
+// Pan
+viewport.addEventListener('mousedown', e => {
+  isDragging = true;
+  dragStartX = e.clientX; dragStartY = e.clientY;
+  panStartX  = curPanX;   panStartY  = curPanY;
+  viewport.classList.add('dragging');
+});
+window.addEventListener('mousemove', e => {
+  if(isDragging){
+    curPanX = panStartX + (e.clientX - dragStartX);
+    curPanY = panStartY + (e.clientY - dragStartY);
+    applyTransform();
+  }
+  // Hover
+  const cx = (e.clientX - curPanX) / curScale;
+  const cy = (e.clientY - curPanY) / curScale;
+  const found = NODES.find(n => {
+    const hw = (n.type==='decision'?n.w*1.15:n.w)/2;
+    const hh = (n.type==='decision'?n.h*1.3:n.h)/2;
+    return Math.abs(cx-n.x) < hw && Math.abs(cy-n.y) < hh;
+  });
+  if(found !== hoveredNode){
+    hoveredNode = found;
+    const tt = document.getElementById('tooltip');
+    if(found){
+      document.getElementById('tt-title').textContent = found.label.replace('\n',' ');
+      document.getElementById('tt-body').textContent  = found.detail;
+      tt.style.display = 'block';
+      tt.style.animation = 'fadeIn .15s ease';
+    } else {
+      tt.style.display = 'none';
+    }
+  }
+  if(found){
+    const tt = document.getElementById('tooltip');
+    const margin = 16;
+    let tx = e.clientX + 18, ty = e.clientY + 12;
+    if(tx + 260 > window.innerWidth)  tx = e.clientX - 260 - margin;
+    if(ty + 150 > window.innerHeight) ty = e.clientY - 150 - margin;
+    tt.style.left = tx + 'px';
+    tt.style.top  = ty + 'px';
+  }
+});
+window.addEventListener('mouseup', ()=>{ isDragging=false; viewport.classList.remove('dragging'); });
+
+// Scroll to zoom
+viewport.addEventListener('wheel', e => {
+  e.preventDefault();
+  zoom(e.deltaY < 0 ? 0.08 : -0.08, e.clientX, e.clientY);
+}, { passive: false });
+
+// Touch pan/zoom
+let lastTouchDist = null, lastTouchMidX, lastTouchMidY;
+viewport.addEventListener('touchstart', e => {
+  if(e.touches.length===2){
+    lastTouchDist = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
+    lastTouchMidX = (e.touches[0].clientX+e.touches[1].clientX)/2;
+    lastTouchMidY = (e.touches[0].clientY+e.touches[1].clientY)/2;
+  } else if(e.touches.length===1){
+    isDragging = true;
+    dragStartX = e.touches[0].clientX; dragStartY = e.touches[0].clientY;
+    panStartX = curPanX; panStartY = curPanY;
+  }
+  e.preventDefault();
+},{ passive: false });
+viewport.addEventListener('touchmove', e => {
+  if(e.touches.length===2){
+    const d = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
+    const mx = (e.touches[0].clientX+e.touches[1].clientX)/2;
+    const my = (e.touches[0].clientY+e.touches[1].clientY)/2;
+    zoom((d-lastTouchDist)*0.005, mx, my);
+    lastTouchDist=d; lastTouchMidX=mx; lastTouchMidY=my;
+  } else if(e.touches.length===1 && isDragging){
+    curPanX = panStartX + (e.touches[0].clientX - dragStartX);
+    curPanY = panStartY + (e.touches[0].clientY - dragStartY);
+    applyTransform();
+  }
+  e.preventDefault();
+},{ passive: false });
+viewport.addEventListener('touchend', () => { isDragging = false; lastTouchDist = null; });
+
+/* ── Boot ──────────────────────────────────────────────────────────────────── */
+resizeCanvas();
+fitView();
+render();
+</script>
+</body>
+</html>

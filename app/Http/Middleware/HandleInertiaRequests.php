@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Enums\IncidentStatus;
+use App\Models\City;
 use App\Models\Incident;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -68,6 +69,17 @@ class HandleInertiaRequests extends Middleware
                 ) : null,
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'city' => fn () => City::current()->only([
+                'name',
+                'province',
+                'country',
+                'center_latitude',
+                'center_longitude',
+                'default_zoom',
+                'timezone',
+                'contact_number',
+                'emergency_hotline',
+            ]),
             'channelCounts' => function () use ($user) {
                 if (! $user || ! in_array($user->role->value, ['operator', 'dispatcher', 'supervisor', 'admin'])) {
                     return null;

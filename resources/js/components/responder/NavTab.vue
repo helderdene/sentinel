@@ -140,6 +140,7 @@ function initMap(): void {
             center,
             zoom: 13,
             pitch: 0,
+            projection: 'mercator',
         });
 
         map.value.addControl(

@@ -47,7 +47,13 @@ export function usePushSubscription() {
 
     async function subscribe(): Promise<void> {
         if (!isSupported.value) {
-            return;
+            throw new Error('Push notifications are not supported in this browser');
+        }
+
+        const permission = await Notification.requestPermission();
+
+        if (permission !== 'granted') {
+            throw new Error(`Notification permission ${permission}`);
         }
 
         const registration = await navigator.serviceWorker.ready;

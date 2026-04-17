@@ -1,0 +1,2217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HD Sentinel — Brand Identity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:     #042C53;
+    --blue:     #185FA5;
+    --blue-mid: #378ADD;
+    --blue-lt:  #E6F1FB;
+    --blue-100: #B5D4F4;
+    --teal:     #0F6E56;
+    --teal-lt:  #E1F5EE;
+    --teal-mid: #1D9E75;
+    --amber:    #854F0B;
+    --amber-lt: #FAEEDA;
+    --amber-mid:#EF9F27;
+    --red:      #A32D2D;
+    --red-lt:   #FCEBEB;
+    --gray-lt:  #F1EFE8;
+    --gray-mid: #888780;
+    --gray-dark:#2C2C2A;
+    --white:    #FFFFFF;
+
+    --font-display: 'Bebas Neue', sans-serif;
+    --font-body:    'DM Sans', sans-serif;
+    --font-mono:    'DM Mono', monospace;
+  }
+
+  /* ── THEME TOKENS ── */
+  :root {
+    --bg-page:       #05101E;
+    --bg-surface:    rgba(4,44,83,0.5);
+    --bg-surface2:   rgba(4,44,83,0.3);
+    --bg-input:      rgba(4,44,83,0.6);
+    --text-primary:  #FFFFFF;
+    --text-secondary:#B5D4F4;
+    --text-muted:    rgba(181,212,244,0.5);
+    --border-soft:   rgba(55,138,221,0.12);
+    --border-mid:    rgba(55,138,221,0.25);
+    --border-focus:  #378ADD;
+    --nav-bg:        rgba(4,44,83,0.7);
+    --divider-color: rgba(55,138,221,0.08);
+    --grid-line:     rgba(24,95,165,0.04);
+  }
+
+  body.light {
+    --bg-page:       #EFF3FA;
+    --bg-surface:    #FFFFFF;
+    --bg-surface2:   #F0F4FA;
+    --bg-input:      #FFFFFF;
+    --text-primary:  #042C53;
+    --text-secondary:#185FA5;
+    --text-muted:    rgba(4,44,83,0.4);
+    --border-soft:   rgba(24,95,165,0.14);
+    --border-mid:    rgba(24,95,165,0.3);
+    --border-focus:  #185FA5;
+    --nav-bg:        rgba(255,255,255,0.88);
+    --divider-color: rgba(24,95,165,0.1);
+    --grid-line:     rgba(24,95,165,0.045);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg-page);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    line-height: 1.6;
+    transition: background 0.35s ease, color 0.35s ease;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.02;
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* ── GRID BACKGROUND ── */
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+    transition: background-image 0.35s;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    padding: 0 48px;
+    height: 60px;
+    background: var(--nav-bg);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-soft);
+    transition: background 0.35s, border-color 0.35s;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav-wordmark {
+    font-family: var(--font-display);
+    font-size: 22px;
+    letter-spacing: 2px;
+    color: var(--white);
+  }
+
+  .nav-wordmark span { color: var(--blue-mid); }
+
+  .nav-links {
+    margin-left: auto;
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--blue-100);
+    text-decoration: none;
+    letter-spacing: 1px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+
+  .nav-links a:hover { opacity: 1; }
+
+  /* ── THEME TOGGLE ── */
+  .theme-toggle {
+    margin-left: 32px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--border-soft);
+    border: 1px solid var(--border-mid);
+    border-radius: 99px;
+    padding: 3px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .theme-toggle:hover { border-color: var(--border-focus); }
+
+  .theme-toggle-thumb {
+    width: 52px;
+    height: 26px;
+    border-radius: 99px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-mid);
+    position: relative;
+    transition: background 0.3s;
+    flex-shrink: 0;
+  }
+
+  .theme-toggle-knob {
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--blue-mid);
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+  }
+
+  body.light .theme-toggle-knob {
+    transform: translateX(26px);
+    background: var(--navy);
+  }
+
+  .theme-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    transition: color 0.35s;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 120px 48px 80px;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--blue-mid);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.2s;
+  }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(72px, 12vw, 160px);
+    line-height: 0.92;
+    letter-spacing: 4px;
+    color: var(--text-primary);
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 0.4s;
+  }
+
+  .hero-title span {
+    color: var(--blue-mid);
+    display: block;
+  }
+
+  .hero-sub {
+    margin-top: 32px;
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--text-secondary);
+    max-width: 480px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 0.6s;
+    line-height: 1.7;
+  }
+
+  .hero-tagline {
+    margin-top: 48px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 4px;
+    color: var(--blue-mid);
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 0.8s;
+  }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 40px;
+    left: 48px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--blue-mid);
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 1.2s;
+  }
+
+  .hero-scroll-line {
+    width: 48px;
+    height: 1px;
+    background: var(--blue-mid);
+    animation: scrollPulse 2s ease infinite;
+  }
+
+  .hero-shield-bg {
+    position: absolute;
+    right: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 68vw;
+    max-width: 920px;
+    opacity: 0;
+    animation: fadeIn 1.4s ease forwards 0.4s;
+    pointer-events: none;
+  }
+
+  /* ── SECTION WRAPPER ── */
+  section {
+    position: relative;
+    z-index: 1;
+    padding: 100px 48px;
+  }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--blue-mid);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-soft);
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 5vw, 64px);
+    letter-spacing: 3px;
+    line-height: 1;
+    margin-bottom: 60px;
+    color: var(--text-primary);
+  }
+
+  /* ── LOGO SECTION ── */
+  .logo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-bottom: 2px;
+  }
+
+  .logo-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-soft);
+    padding: 60px 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    transition: border-color 0.3s, background 0.35s;
+  }
+
+  .logo-card:hover { border-color: var(--border-mid); }
+
+  .logo-card-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--blue-mid);
+    margin-top: 8px;
+  }
+
+  .logo-card-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    opacity: 0.6;
+    text-align: center;
+    max-width: 240px;
+    line-height: 1.5;
+  }
+
+  .logo-card.light {
+    background: var(--blue-lt);
+    border-color: rgba(24,95,165,0.2);
+  }
+
+  .logo-wordmark-full {
+    font-family: var(--font-display);
+    font-size: 42px;
+    letter-spacing: 4px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-wordmark-full .hd { color: var(--blue-mid); }
+  .logo-wordmark-full .sentinel { color: var(--text-primary); }
+
+  .logo-card.light .logo-wordmark-full .hd { color: var(--blue); }
+  .logo-card.light .logo-wordmark-full .sentinel { color: var(--navy); }
+
+  /* ── COLORS ── */
+  .color-section {
+    background: var(--bg-surface2);
+    border-top: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border-soft);
+    transition: background 0.35s;
+  }
+
+  .color-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  .color-swatch {
+    aspect-ratio: 1;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .color-swatch:hover { transform: scaleY(1.05); z-index: 2; }
+
+  .swatch-label {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 10px 12px;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(4px);
+  }
+
+  .swatch-name {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 1px;
+    display: block;
+  }
+
+  .swatch-hex {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    opacity: 0.6;
+    display: block;
+  }
+
+  .tint-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 2px;
+  }
+
+  .tint-swatch {
+    height: 40px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.5px;
+    transition: transform 0.2s;
+    cursor: pointer;
+  }
+
+  .tint-swatch:hover { transform: scaleY(1.1); }
+
+  /* ── TYPOGRAPHY ── */
+  .type-section { background: transparent; }
+
+  .type-specimen {
+    border-left: 3px solid var(--blue-mid);
+    padding-left: 32px;
+    margin-bottom: 48px;
+  }
+
+  .type-display {
+    font-family: var(--font-display);
+    font-size: 80px;
+    letter-spacing: 6px;
+    line-height: 1;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .type-meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--blue-mid);
+    letter-spacing: 1.5px;
+  }
+
+  .type-heading {
+    font-family: var(--font-body);
+    font-size: 36px;
+    font-weight: 500;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .type-body-sample {
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--blue-100);
+    max-width: 600px;
+    line-height: 1.75;
+    margin-bottom: 8px;
+  }
+
+  .type-mono-sample {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--teal-mid);
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .type-tagline-sample {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 5px;
+    color: var(--blue-mid);
+    margin-bottom: 8px;
+  }
+
+  /* ── UI COMPONENTS ── */
+  .components-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+
+  .comp-panel {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-soft);
+    padding: 40px 36px;
+    transition: background 0.35s, border-color 0.35s;
+  }
+
+  .comp-panel-title {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--blue-mid);
+    margin-bottom: 28px;
+  }
+
+  /* Badges */
+  .badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 99px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  .badge-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  .b-p1 { background: rgba(163,45,45,0.15); color: #F09595; border: 1px solid rgba(163,45,45,0.4); }
+  .b-p1 .badge-dot { background: #E24B4A; }
+  .b-p2 { background: rgba(133,79,11,0.15); color: #FAC775; border: 1px solid rgba(133,79,11,0.4); }
+  .b-p2 .badge-dot { background: #EF9F27; }
+  .b-p3 { background: rgba(15,110,86,0.15); color: #5DCAA5; border: 1px solid rgba(15,110,86,0.4); }
+  .b-p3 .badge-dot { background: #1D9E75; }
+  .b-p4 { background: rgba(24,95,165,0.15); color: #85B7EB; border: 1px solid rgba(24,95,165,0.4); }
+  .b-p4 .badge-dot { background: #378ADD; }
+  .b-res { background: rgba(44,44,42,0.5); color: #888780; border: 1px solid rgba(88,87,80,0.4); }
+  .b-res .badge-dot { background: #5F5E5A; }
+
+  /* Buttons */
+  .btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+
+  .btn {
+    padding: 9px 20px;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--blue);
+    color: var(--white);
+  }
+  .btn-primary:hover { background: var(--blue-mid); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--blue-100);
+    border: 1px solid rgba(55,138,221,0.3);
+  }
+  .btn-outline:hover { border-color: var(--blue-mid); color: var(--white); }
+
+  .btn-danger {
+    background: rgba(163,45,45,0.15);
+    color: #F09595;
+    border: 1px solid rgba(163,45,45,0.35);
+  }
+  .btn-danger:hover { background: rgba(163,45,45,0.3); }
+
+  .btn-teal {
+    background: var(--teal);
+    color: var(--white);
+  }
+  .btn-teal:hover { background: var(--teal-mid); }
+
+  /* Input */
+  .input-sample {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border-soft);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-primary);
+    outline: none;
+    margin-bottom: 10px;
+    transition: border-color 0.2s, background 0.35s;
+  }
+
+  .input-sample:focus { border-color: var(--border-focus); }
+  .input-sample::placeholder { color: var(--text-muted); }
+
+  .inc-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: border-color 0.2s, background 0.35s;
+    cursor: pointer;
+  }
+
+  .inc-card:hover { border-color: var(--border-mid); }
+
+  .inc-card-accent {
+    width: 3px;
+    height: 36px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .inc-code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--blue-mid);
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .inc-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .inc-loc {
+    font-size: 11px;
+    color: var(--text-secondary);
+    opacity: 0.6;
+  }
+
+  .inc-time {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+    opacity: 0.5;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  /* Notification toasts */
+  .toast {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border-left: 3px solid;
+    margin-bottom: 8px;
+    font-size: 12px;
+  }
+
+  .toast-p1 { background: rgba(163,45,45,0.12); border-color: #E24B4A; }
+  .toast-p2 { background: rgba(133,79,11,0.12); border-color: #EF9F27; }
+  .toast-info { background: rgba(24,95,165,0.12); border-color: #378ADD; }
+
+  .toast-icon {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700;
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+  }
+
+  .ti-p1 { background: #A32D2D; color: #FCEBEB; }
+  .ti-p2 { background: #854F0B; color: #FAEEDA; }
+  .ti-info { background: #185FA5; color: #E6F1FB; }
+
+  .toast-title { font-weight: 500; color: var(--white); margin-bottom: 2px; }
+  .toast-sub { color: var(--blue-100); opacity: 0.6; font-family: var(--font-mono); font-size: 10px; }
+
+  /* ── DIVIDERS ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--divider-color);
+    margin: 0 48px;
+    transition: border-color 0.35s;
+  }
+
+  /* ── VOICE & TONE ── */
+  .voice-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-bottom: 40px;
+  }
+
+  .voice-card {
+    padding: 36px 32px;
+    border: 1px solid var(--border-soft);
+    background: var(--bg-surface);
+    position: relative;
+    overflow: hidden;
+    transition: background 0.35s, border-color 0.35s;
+  }
+
+  .voice-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 3px;
+  }
+
+  .voice-card.authority::before { background: var(--blue); }
+  .voice-card.precision::before { background: var(--teal); }
+  .voice-card.urgency::before { background: var(--amber-mid); }
+
+  .voice-card-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+
+  .voice-card.authority .voice-card-title { color: var(--blue-mid); }
+  .voice-card.precision .voice-card-title { color: var(--teal-mid); }
+  .voice-card.urgency .voice-card-title { color: var(--amber-mid); }
+
+  .voice-card-body {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--blue-100);
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+
+  .voice-examples { list-style: none; }
+  .voice-examples li {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--blue-mid);
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(55,138,221,0.1);
+  }
+  .voice-examples li::before { content: '→  '; opacity: 0.5; }
+
+  /* ── TAGLINE VARIANTS ── */
+  .tagline-variants {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .tagline-row {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-soft);
+    padding: 28px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    transition: border-color 0.3s, background 0.35s;
+  }
+
+  .tagline-row:hover { border-color: var(--border-mid); }
+  .tagline-row.primary { border-color: var(--border-mid); }
+
+  .tagline-text {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 4px;
+    color: var(--text-primary);
+  }
+
+  .tagline-row.primary .tagline-text { color: var(--blue-mid); font-size: 16px; }
+
+  .tagline-use {
+    font-size: 11px;
+    color: var(--text-secondary);
+    opacity: 0.5;
+    font-family: var(--font-mono);
+    flex-shrink: 0;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    background: var(--navy);
+    border-top: 1px solid rgba(55,138,221,0.15);
+    padding: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-logo {
+    font-family: var(--font-display);
+    font-size: 24px;
+    letter-spacing: 3px;
+    color: var(--white);
+  }
+
+  .footer-logo span { color: var(--blue-mid); }
+
+  .footer-meta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--blue-mid);
+    text-align: right;
+    line-height: 1.8;
+    opacity: 0.6;
+  }
+
+  /* ── FORM COMPONENTS ── */
+  .form-group { margin-bottom: 14px; }
+
+  .form-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 1.2px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  .form-label-value {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--blue-mid);
+  }
+
+  .form-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 5px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.3px;
+  }
+
+  .form-hint-error { color: #F09595; }
+  .form-hint-success { color: #5DCAA5; }
+
+  /* Input variants */
+  .input-wrap { position: relative; }
+  .input-icon-wrap .input-icon {
+    position: absolute;
+    left: 12px; top: 50%; transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+    width: 14px; height: 14px;
+  }
+  .input-with-icon { padding-left: 34px !important; }
+
+  .input-focused {
+    border-color: var(--border-focus) !important;
+    box-shadow: 0 0 0 3px rgba(55,138,221,0.12);
+  }
+
+  .input-error {
+    border-color: #E24B4A !important;
+    box-shadow: 0 0 0 3px rgba(226,75,74,0.1);
+  }
+
+  .input-success {
+    border-color: #1D9E75 !important;
+  }
+
+  .input-disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    background: var(--bg-surface2) !important;
+  }
+
+  /* Search kbd hint */
+  .input-search-wrap { position: relative; }
+  .input-kbd {
+    position: absolute;
+    right: 10px; top: 50%; transform: translateY(-50%);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    background: var(--bg-surface2);
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+    padding: 2px 6px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Select */
+  .select-wrap { position: relative; }
+  .form-select {
+    width: 100%;
+    appearance: none;
+    background: var(--bg-input);
+    border: 1px solid var(--border-soft);
+    border-radius: 6px;
+    padding: 9px 34px 9px 12px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-primary);
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.35s;
+  }
+  .form-select:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(55,138,221,0.1); }
+  .form-select-sm { font-size: 11px; padding: 7px 30px 7px 10px; }
+  .form-select-p1 { border-color: rgba(226,75,74,0.4); color: #F09595; background: rgba(163,45,45,0.08); }
+  .select-arrow {
+    position: absolute;
+    right: 11px; top: 50%; transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--text-muted);
+  }
+
+  /* Checkboxes */
+  .check-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+  .check-label.check-disabled { opacity: 0.4; cursor: not-allowed; }
+  .check-input { display: none; }
+  .check-box {
+    width: 16px; height: 16px;
+    border-radius: 4px;
+    border: 1.5px solid var(--border-mid);
+    background: var(--bg-input);
+    flex-shrink: 0;
+    position: relative;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .check-input:checked + .check-box {
+    background: var(--blue);
+    border-color: var(--blue);
+  }
+  .check-input:checked + .check-box::after {
+    content: '';
+    position: absolute;
+    left: 4px; top: 2px;
+    width: 5px; height: 8px;
+    border: 1.5px solid #fff;
+    border-top: none; border-left: none;
+    transform: rotate(40deg);
+  }
+  .check-text {
+    font-size: 12px;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    line-height: 1.4;
+  }
+
+  /* Radio */
+  .radio-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+  .radio-input { display: none; }
+  .radio-dot {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border-mid);
+    background: var(--bg-input);
+    flex-shrink: 0;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+  .radio-input:checked + .radio-dot {
+    border-color: var(--blue);
+  }
+  .radio-input:checked + .radio-dot::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--blue);
+  }
+
+  /* Toggle switch */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .toggle-row:last-child { border-bottom: none; }
+  .toggle-title { font-size: 12px; font-weight: 500; color: var(--text-primary); margin-bottom: 2px; }
+  .toggle-desc { font-size: 11px; color: var(--text-muted); }
+  .toggle-switch { flex-shrink: 0; cursor: pointer; }
+  .toggle-switch input { display: none; }
+  .toggle-track {
+    display: block;
+    width: 40px; height: 22px;
+    border-radius: 99px;
+    background: var(--border-soft);
+    border: 1px solid var(--border-mid);
+    position: relative;
+    transition: background 0.25s, border-color 0.25s;
+  }
+  .toggle-track.on { background: var(--blue); border-color: var(--blue); }
+  .toggle-knob {
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .toggle-track.on .toggle-knob { transform: translateX(18px); }
+
+  /* Range */
+  .form-range {
+    width: 100%;
+    appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border-soft);
+    outline: none;
+    cursor: pointer;
+    margin: 10px 0 4px;
+    accent-color: var(--blue);
+  }
+  .form-range::-webkit-slider-thumb {
+    appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--blue);
+    border: 2px solid #fff;
+    cursor: pointer;
+    box-shadow: 0 0 0 2px rgba(55,138,221,0.3);
+  }
+
+  /* Progress */
+  .progress-track {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--border-soft);
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+
+  /* File upload */
+  .file-drop-zone {
+    border: 1.5px dashed var(--border-mid);
+    border-radius: 8px;
+    padding: 28px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    color: var(--text-muted);
+  }
+  .file-drop-zone:hover {
+    border-color: var(--border-focus);
+    background: rgba(55,138,221,0.04);
+  }
+  .file-drop-title { font-size: 13px; color: var(--text-primary); }
+  .file-browse { color: var(--blue-mid); text-decoration: underline; cursor: pointer; }
+  .file-drop-hint { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.3px; }
+
+  .file-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: var(--bg-surface2);
+    border: 1px solid var(--border-soft);
+    border-radius: 6px;
+    font-size: 11px;
+  }
+  .file-item svg { color: var(--blue-mid); flex-shrink: 0; }
+  .file-name { flex: 1; font-family: var(--font-mono); color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .file-size { color: var(--text-muted); font-family: var(--font-mono); flex-shrink: 0; }
+  .file-status { flex-shrink: 0; }
+  .file-status-ok { color: #1D9E75; font-weight: 700; }
+  .file-progress-bar { width: 60px; height: 4px; background: var(--border-soft); border-radius: 2px; overflow: hidden; flex-shrink: 0; }
+
+  /* Intake form card */
+  .intake-form {
+    background: var(--bg-surface2);
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .intake-form-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes pulseRing {
+    0%   { transform: scale(1);   opacity: 0.7; }
+    100% { transform: scale(2.2); opacity: 0; }
+  }
+
+  @keyframes sweep {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.4; transform: scaleX(1); }
+    50%       { opacity: 1;   transform: scaleX(1.3); transform-origin: left; }
+  }
+
+  @keyframes scanline {
+    0%   { transform: translateY(-100%); }
+    100% { transform: translateY(500%); }
+  }
+
+  @keyframes pulse-ring {
+    0%   { transform: scale(1);   opacity: 0.6; }
+    100% { transform: scale(1.8); opacity: 0; }
+  }
+
+  /* Scroll-reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 0 24px; }
+    .nav-links { display: none; }
+    section { padding: 60px 24px; }
+    .hero { padding: 100px 24px 60px; }
+    .hero-shield-bg { display: none; }
+    .logo-grid, .components-grid, .voice-grid { grid-template-columns: 1fr; }
+    .color-row, .tint-row { grid-template-columns: repeat(3, 1fr); }
+    .type-display { font-size: 48px; }
+    footer { flex-direction: column; gap: 20px; text-align: center; }
+    .footer-meta { text-align: center; }
+    .divider { margin: 0 24px; }
+    .tagline-row { flex-direction: column; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <svg width="26" height="30" viewBox="0 0 26 30" fill="none">
+      <path d="M13 1L25 6.5V16C25 22.5 13 29 13 29C13 29 1 22.5 1 16V6.5L13 1Z"
+        fill="#0C447C" stroke="#378ADD" stroke-width="1.2"/>
+      <path d="M13 3L23 7.5V15.5C23 21 13 27 13 27C13 27 3 21 3 15.5V7.5L13 3Z"
+        fill="none" stroke="rgba(55,138,221,0.25)" stroke-width="0.5"/>
+      <circle cx="13" cy="17" r="5.5" fill="none" stroke="#378ADD" stroke-width="0.8" opacity="0.4"/>
+      <circle cx="13" cy="17" r="3.2" fill="#378ADD" opacity="0.9"/>
+      <circle cx="13" cy="17" r="1.3" fill="#E6F1FB"/>
+      <line x1="9" y1="9" x2="17" y2="9" stroke="#378ADD" stroke-width="0.7" opacity="0.5"/>
+      <line x1="7.5" y1="11.5" x2="18.5" y2="11.5" stroke="#378ADD" stroke-width="0.5" opacity="0.3"/>
+    </svg>
+    <div class="nav-wordmark"><span>HD</span> Sentinel</div>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#logo">LOGO</a></li>
+    <li><a href="#colors">COLORS</a></li>
+    <li><a href="#type">TYPE</a></li>
+    <li><a href="#components">COMPONENTS</a></li>
+    <li><a href="#forms">FORMS</a></li>
+    <li><a href="#voice">VOICE</a></li>
+  </ul>
+  <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">
+    <div class="theme-toggle-thumb">
+      <div class="theme-toggle-knob" id="themeKnob">☀</div>
+    </div>
+    <span class="theme-label" id="themeLabel">DARK</span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+
+  <!-- Background shield -->
+  <svg class="hero-shield-bg" viewBox="0 0 600 680" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="shieldGlow" cx="50%" cy="58%" r="50%">
+        <stop offset="0%"   stop-color="#185FA5" stop-opacity="0.18"/>
+        <stop offset="60%"  stop-color="#042C53" stop-opacity="0.10"/>
+        <stop offset="100%" stop-color="#042C53" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="eyeGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%"   stop-color="#378ADD" stop-opacity="0.6"/>
+        <stop offset="100%" stop-color="#185FA5" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%"   stop-color="#85B7EB" stop-opacity="1"/>
+        <stop offset="100%" stop-color="#378ADD" stop-opacity="0.8"/>
+      </radialGradient>
+    </defs>
+
+    <!-- Shield fill glow -->
+    <path d="M300 20L580 120V340C580 480 300 660 300 660C300 660 20 480 20 340V120L300 20Z"
+      fill="url(#shieldGlow)"/>
+
+    <!-- Outer shield edge — bold -->
+    <path d="M300 20L580 120V340C580 480 300 660 300 660C300 660 20 480 20 340V120L300 20Z"
+      fill="none" stroke="rgba(55,138,221,0.28)" stroke-width="1.5"/>
+
+    <!-- Inner shield inset -->
+    <path d="M300 58L548 148V336C548 462 300 630 300 630C300 630 52 462 52 336V148L300 58Z"
+      fill="none" stroke="rgba(55,138,221,0.14)" stroke-width="1"/>
+
+    <!-- Second inset -->
+    <path d="M300 100L516 178V332C516 444 300 600 300 600C300 600 84 444 84 332V178L300 100Z"
+      fill="none" stroke="rgba(55,138,221,0.08)" stroke-width="0.8"/>
+
+    <!-- Radar rings — 6 concentric, increasing opacity towards centre -->
+    <circle cx="300" cy="390" r="230" fill="none" stroke="rgba(55,138,221,0.06)" stroke-width="0.8"/>
+    <circle cx="300" cy="390" r="185" fill="none" stroke="rgba(55,138,221,0.09)" stroke-width="0.8"/>
+    <circle cx="300" cy="390" r="140" fill="none" stroke="rgba(55,138,221,0.12)" stroke-width="1"/>
+    <circle cx="300" cy="390" r="100" fill="none" stroke="rgba(55,138,221,0.17)" stroke-width="1"/>
+    <circle cx="300" cy="390" r="64"  fill="none" stroke="rgba(55,138,221,0.25)" stroke-width="1.2"/>
+    <circle cx="300" cy="390" r="34"  fill="rgba(24,95,165,0.12)" stroke="rgba(55,138,221,0.38)" stroke-width="1.5"/>
+
+    <!-- Crosshair lines — full span -->
+    <line x1="80"  y1="390" x2="262" y2="390" stroke="rgba(55,138,221,0.22)" stroke-width="1"/>
+    <line x1="338" y1="390" x2="520" y2="390" stroke="rgba(55,138,221,0.22)" stroke-width="1"/>
+    <line x1="300" y1="220" x2="300" y2="352" stroke="rgba(55,138,221,0.22)" stroke-width="1"/>
+    <line x1="300" y1="428" x2="300" y2="580" stroke="rgba(55,138,221,0.22)" stroke-width="1"/>
+
+    <!-- Crosshair tick marks -->
+    <line x1="256" y1="386" x2="256" y2="394" stroke="rgba(55,138,221,0.35)" stroke-width="1"/>
+    <line x1="344" y1="386" x2="344" y2="394" stroke="rgba(55,138,221,0.35)" stroke-width="1"/>
+    <line x1="296" y1="346" x2="304" y2="346" stroke="rgba(55,138,221,0.35)" stroke-width="1"/>
+    <line x1="296" y1="434" x2="304" y2="434" stroke="rgba(55,138,221,0.35)" stroke-width="1"/>
+
+    <!-- Diagonal corner marks on outer ring -->
+    <line x1="218" y1="318" x2="226" y2="326" stroke="rgba(55,138,221,0.25)" stroke-width="1"/>
+    <line x1="382" y1="318" x2="374" y2="326" stroke="rgba(55,138,221,0.25)" stroke-width="1"/>
+    <line x1="218" y1="462" x2="226" y2="454" stroke="rgba(55,138,221,0.25)" stroke-width="1"/>
+    <line x1="382" y1="462" x2="374" y2="454" stroke="rgba(55,138,221,0.25)" stroke-width="1"/>
+
+    <!-- Signal arcs at shield top -->
+    <path d="M190 178 Q300 128 410 178" fill="none" stroke="rgba(55,138,221,0.20)" stroke-width="1.2"/>
+    <path d="M152 158 Q300 98  448 158" fill="none" stroke="rgba(55,138,221,0.13)" stroke-width="1"/>
+    <path d="M118 142 Q300 72  482 142" fill="none" stroke="rgba(55,138,221,0.08)" stroke-width="0.8"/>
+
+    <!-- Eye ambient glow halo -->
+    <circle cx="300" cy="390" r="54" fill="url(#eyeGlow)"/>
+
+    <!-- Eye iris -->
+    <circle cx="300" cy="390" r="16" fill="rgba(55,138,221,0.55)" stroke="rgba(181,212,244,0.4)" stroke-width="1"/>
+
+    <!-- Eye pupil core -->
+    <circle cx="300" cy="390" r="7" fill="url(#coreGlow)"/>
+
+    <!-- Pupil highlight -->
+    <circle cx="303" cy="387" r="2.5" fill="rgba(255,255,255,0.55)"/>
+
+    <!-- Animated pulse ring (CSS) -->
+    <circle cx="300" cy="390" r="26" fill="none" stroke="rgba(55,138,221,0.5)" stroke-width="1.2"
+      style="transform-origin:300px 390px;animation:pulseRing 2.4s ease-out infinite"/>
+    <circle cx="300" cy="390" r="26" fill="none" stroke="rgba(55,138,221,0.25)" stroke-width="1"
+      style="transform-origin:300px 390px;animation:pulseRing 2.4s ease-out infinite 0.8s"/>
+
+    <!-- Scanning sweep line (subtle) -->
+    <line x1="300" y1="390" x2="300" y2="294" stroke="rgba(55,138,221,0.18)" stroke-width="1"
+      style="transform-origin:300px 390px;animation:sweep 4s linear infinite"/>
+  </svg>
+
+  <p class="hero-eyebrow">BRAND IDENTITY GUIDELINES — V1.0</p>
+  <h1 class="hero-title">
+    HD
+    <span>SENTINEL</span>
+  </h1>
+  <p class="hero-sub">
+    Incident Response Management System for CDRRMO Butuan City.
+    A brand built for authority, precision, and life-critical operations.
+  </p>
+  <p class="hero-tagline">ALWAYS READY. ALWAYS WATCHING.</p>
+
+  <div class="hero-scroll">
+    <div class="hero-scroll-line"></div>
+    SCROLL TO EXPLORE
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- LOGO SECTION -->
+<section id="logo">
+  <p class="section-label reveal">01 — LOGO SYSTEM</p>
+  <h2 class="section-title reveal">The Shield Mark</h2>
+
+  <div class="logo-grid reveal">
+    <!-- Primary dark -->
+    <div class="logo-card">
+      <svg width="80" height="91" viewBox="0 0 80 91" fill="none">
+        <path d="M40 4L76 18V44C76 66 40 87 40 87C40 87 4 66 4 44V18L40 4Z"
+          fill="#0C447C" stroke="#378ADD" stroke-width="1.5"/>
+        <path d="M40 10L70 23V44C70 63 40 82 40 82C40 82 10 63 10 44V23L40 10Z"
+          fill="none" stroke="rgba(55,138,221,0.2)" stroke-width="0.7"/>
+        <circle cx="40" cy="52" r="14" fill="none" stroke="#378ADD" stroke-width="1" opacity="0.4"/>
+        <circle cx="40" cy="52" r="9.5" fill="none" stroke="#378ADD" stroke-width="1" opacity="0.6"/>
+        <circle cx="40" cy="52" r="5.5" fill="#378ADD" opacity="0.9"/>
+        <circle cx="40" cy="52" r="2.2" fill="#E6F1FB"/>
+        <line x1="26" y1="52" x2="31" y2="52" stroke="#378ADD" stroke-width="1.2" opacity="0.6"/>
+        <line x1="49" y1="52" x2="54" y2="52" stroke="#378ADD" stroke-width="1.2" opacity="0.6"/>
+        <line x1="40" y1="38" x2="40" y2="43" stroke="#378ADD" stroke-width="1.2" opacity="0.6"/>
+        <line x1="40" y1="61" x2="40" y2="66" stroke="#378ADD" stroke-width="1.2" opacity="0.6"/>
+        <path d="M27 25 Q40 20 53 25" fill="none" stroke="#378ADD" stroke-width="1" opacity="0.5"/>
+        <path d="M21 29 Q40 23 59 29" fill="none" stroke="#378ADD" stroke-width="0.7" opacity="0.3"/>
+      </svg>
+      <div class="logo-wordmark-full">
+        <span class="hd">HD</span>
+        <span class="sentinel">Sentinel</span>
+      </div>
+      <p class="logo-card-label">PRIMARY — ON DARK</p>
+      <p class="logo-card-desc">Use on navy, dark, or photographic backgrounds. Default application.</p>
+    </div>
+
+    <!-- Primary light -->
+    <div class="logo-card light">
+      <svg width="80" height="91" viewBox="0 0 80 91" fill="none">
+        <path d="M40 4L76 18V44C76 66 40 87 40 87C40 87 4 66 4 44V18L40 4Z"
+          fill="#FFFFFF" stroke="#185FA5" stroke-width="1.5"/>
+        <path d="M40 10L70 23V44C70 63 40 82 40 82C40 82 10 63 10 44V23L40 10Z"
+          fill="none" stroke="rgba(24,95,165,0.15)" stroke-width="0.7"/>
+        <circle cx="40" cy="52" r="14" fill="none" stroke="#185FA5" stroke-width="1" opacity="0.3"/>
+        <circle cx="40" cy="52" r="9.5" fill="none" stroke="#185FA5" stroke-width="1" opacity="0.5"/>
+        <circle cx="40" cy="52" r="5.5" fill="#185FA5" opacity="0.9"/>
+        <circle cx="40" cy="52" r="2.2" fill="#042C53"/>
+        <line x1="26" y1="52" x2="31" y2="52" stroke="#185FA5" stroke-width="1.2" opacity="0.5"/>
+        <line x1="49" y1="52" x2="54" y2="52" stroke="#185FA5" stroke-width="1.2" opacity="0.5"/>
+        <line x1="40" y1="38" x2="40" y2="43" stroke="#185FA5" stroke-width="1.2" opacity="0.5"/>
+        <line x1="40" y1="61" x2="40" y2="66" stroke="#185FA5" stroke-width="1.2" opacity="0.5"/>
+        <path d="M27 25 Q40 20 53 25" fill="none" stroke="#185FA5" stroke-width="1" opacity="0.4"/>
+        <path d="M21 29 Q40 23 59 29" fill="none" stroke="#185FA5" stroke-width="0.7" opacity="0.25"/>
+      </svg>
+      <div class="logo-wordmark-full">
+        <span class="hd">HD</span>
+        <span class="sentinel">Sentinel</span>
+      </div>
+      <p class="logo-card-label" style="color:var(--blue)">PRIMARY — ON LIGHT</p>
+      <p class="logo-card-desc" style="color:var(--navy);opacity:0.7">Use on white, light gray, or document backgrounds.</p>
+    </div>
+  </div>
+
+  <!-- Icon only -->
+  <div class="logo-grid reveal" style="grid-template-columns:1fr 1fr 1fr; margin-top:2px">
+    <div class="logo-card" style="padding:40px">
+      <svg width="56" height="64" viewBox="0 0 56 64" fill="none">
+        <path d="M28 3L53 13V30C53 46 28 61 28 61C28 61 3 46 3 30V13L28 3Z"
+          fill="#0C447C" stroke="#378ADD" stroke-width="1.2"/>
+        <circle cx="28" cy="36" r="9" fill="none" stroke="#378ADD" stroke-width="0.8" opacity="0.4"/>
+        <circle cx="28" cy="36" r="6" fill="#378ADD" opacity="0.9"/>
+        <circle cx="28" cy="36" r="2.4" fill="#E6F1FB"/>
+      </svg>
+      <p class="logo-card-label">ICON ONLY</p>
+      <p class="logo-card-desc">App icon, favicon, 32×32 minimum</p>
+    </div>
+    <div class="logo-card" style="padding:40px; background:var(--white)">
+      <svg width="56" height="64" viewBox="0 0 56 64" fill="none">
+        <path d="M28 3L53 13V30C53 46 28 61 28 61C28 61 3 46 3 30V13L28 3Z"
+          fill="#E6F1FB" stroke="#185FA5" stroke-width="1.2"/>
+        <circle cx="28" cy="36" r="9" fill="none" stroke="#185FA5" stroke-width="0.8" opacity="0.4"/>
+        <circle cx="28" cy="36" r="6" fill="#185FA5" opacity="0.9"/>
+        <circle cx="28" cy="36" r="2.4" fill="#042C53"/>
+      </svg>
+      <p class="logo-card-label" style="color:var(--blue)">ICON — LIGHT BG</p>
+      <p class="logo-card-desc" style="color:var(--navy);opacity:0.6">Document headers, letterhead</p>
+    </div>
+    <div class="logo-card" style="padding:40px; background:#A32D2D22; border-color:rgba(163,45,45,0.2)">
+      <p style="font-family:var(--font-mono);font-size:11px;color:#F09595;letter-spacing:1px;margin-bottom:16px">DO NOT</p>
+      <div style="display:flex;flex-direction:column;gap:8px;font-family:var(--font-mono);font-size:11px;color:#F09595;opacity:0.7">
+        <span>✕ Stretch or distort</span>
+        <span>✕ Recolor the shield</span>
+        <span>✕ Use on busy backgrounds</span>
+        <span>✕ Remove the eye element</span>
+        <span>✕ Use below 32px</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- COLORS -->
+<section id="colors" class="color-section">
+  <p class="section-label reveal">02 — COLOR SYSTEM</p>
+  <h2 class="section-title reveal">Brand Palette</h2>
+
+  <div class="color-row reveal">
+    <div class="color-swatch" style="background:#042C53">
+      <div class="swatch-label">
+        <span class="swatch-name" style="color:#B5D4F4">Command Blue</span>
+        <span class="swatch-hex" style="color:#85B7EB">#042C53</span>
+      </div>
+    </div>
+    <div class="color-swatch" style="background:#185FA5">
+      <div class="swatch-label">
+        <span class="swatch-name" style="color:#E6F1FB">Signal Blue</span>
+        <span class="swatch-hex" style="color:#B5D4F4">#185FA5</span>
+      </div>
+    </div>
+    <div class="color-swatch" style="background:#0F6E56">
+      <div class="swatch-label">
+        <span class="swatch-name" style="color:#9FE1CB">Response Teal</span>
+        <span class="swatch-hex" style="color:#5DCAA5">#0F6E56</span>
+      </div>
+    </div>
+    <div class="color-swatch" style="background:#854F0B">
+      <div class="swatch-label">
+        <span class="swatch-name" style="color:#FAC775">Dispatch Amber</span>
+        <span class="swatch-hex" style="color:#EF9F27">#854F0B</span>
+      </div>
+    </div>
+    <div class="color-swatch" style="background:#A32D2D">
+      <div class="swatch-label">
+        <span class="swatch-name" style="color:#F7C1C1">Critical Red</span>
+        <span class="swatch-hex" style="color:#F09595">#A32D2D</span>
+      </div>
+    </div>
+    <div class="color-swatch" style="background:#2C2C2A">
+      <div class="swatch-label">
+        <span class="swatch-name" style="color:#D3D1C7">Ops Gray</span>
+        <span class="swatch-hex" style="color:#888780">#2C2C2A</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tint-row reveal">
+    <div class="tint-swatch" style="background:#E6F1FB;color:#0C447C">#E6F1FB</div>
+    <div class="tint-swatch" style="background:#E1F5EE;color:#085041">#E1F5EE</div>
+    <div class="tint-swatch" style="background:#FAEEDA;color:#633806">#FAEEDA</div>
+    <div class="tint-swatch" style="background:#FCEBEB;color:#791F1F">#FCEBEB</div>
+    <div class="tint-swatch" style="background:#F1EFE8;color:#444441">#F1EFE8</div>
+    <div class="tint-swatch" style="background:#B5D4F4;color:#042C53">#B5D4F4</div>
+  </div>
+
+  <!-- Priority color usage -->
+  <div style="margin-top:48px" class="reveal">
+    <p style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--blue-mid);margin-bottom:20px">PRIORITY COLOR ENCODING</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px">
+      <div style="background:rgba(163,45,45,0.12);border:1px solid rgba(163,45,45,0.25);border-top:3px solid #E24B4A;padding:20px 24px;border-radius:0 0 4px 4px">
+        <p style="font-family:var(--font-mono);font-size:18px;font-weight:500;color:#E24B4A;margin-bottom:4px">P1</p>
+        <p style="font-size:13px;font-weight:500;color:#FCEBEB;margin-bottom:6px">Critical</p>
+        <p style="font-family:var(--font-mono);font-size:10px;color:#F09595;opacity:0.7">#A32D2D · #E24B4A</p>
+        <p style="font-size:11px;color:#F7C1C1;opacity:0.6;margin-top:8px">Life-threatening, structural fire, mass casualty</p>
+      </div>
+      <div style="background:rgba(133,79,11,0.12);border:1px solid rgba(133,79,11,0.25);border-top:3px solid #EF9F27;padding:20px 24px;border-radius:0 0 4px 4px">
+        <p style="font-family:var(--font-mono);font-size:18px;font-weight:500;color:#EF9F27;margin-bottom:4px">P2</p>
+        <p style="font-size:13px;font-weight:500;color:#FAEEDA;margin-bottom:6px">High</p>
+        <p style="font-family:var(--font-mono);font-size:10px;color:#FAC775;opacity:0.7">#854F0B · #EF9F27</p>
+        <p style="font-size:11px;color:#FAC775;opacity:0.6;margin-top:8px">Significant injury risk, flooding, major accident</p>
+      </div>
+      <div style="background:rgba(15,110,86,0.12);border:1px solid rgba(15,110,86,0.25);border-top:3px solid #1D9E75;padding:20px 24px;border-radius:0 0 4px 4px">
+        <p style="font-family:var(--font-mono);font-size:18px;font-weight:500;color:#1D9E75;margin-bottom:4px">P3</p>
+        <p style="font-size:13px;font-weight:500;color:#E1F5EE;margin-bottom:6px">Medium</p>
+        <p style="font-family:var(--font-mono);font-size:10px;color:#9FE1CB;opacity:0.7">#0F6E56 · #1D9E75</p>
+        <p style="font-size:11px;color:#9FE1CB;opacity:0.6;margin-top:8px">Non-critical medical, minor accident, utility</p>
+      </div>
+      <div style="background:rgba(24,95,165,0.12);border:1px solid rgba(24,95,165,0.25);border-top:3px solid #378ADD;padding:20px 24px;border-radius:0 0 4px 4px">
+        <p style="font-family:var(--font-mono);font-size:18px;font-weight:500;color:#378ADD;margin-bottom:4px">P4</p>
+        <p style="font-size:13px;font-weight:500;color:#E6F1FB;margin-bottom:6px">Low</p>
+        <p style="font-family:var(--font-mono);font-size:10px;color:#85B7EB;opacity:0.7">#185FA5 · #378ADD</p>
+        <p style="font-size:11px;color:#B5D4F4;opacity:0.6;margin-top:8px">Informational, minor hazard, advisory</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- TYPOGRAPHY -->
+<section id="type" class="type-section">
+  <p class="section-label reveal">03 — TYPOGRAPHY</p>
+  <h2 class="section-title reveal">Type System</h2>
+
+  <div class="type-specimen reveal">
+    <div class="type-display">HD SENTINEL</div>
+    <p class="type-meta">BEBAS NEUE — DISPLAY / HEADLINES / PRODUCT NAME — TRACKING 4–6PX</p>
+  </div>
+
+  <div class="type-specimen reveal">
+    <div class="type-heading">Incident Response Management</div>
+    <p class="type-meta">DM SANS 500 — SECTION HEADINGS / UI LABELS — 16–36PX</p>
+  </div>
+
+  <div class="type-specimen reveal">
+    <p class="type-body-sample">HD Sentinel provides CDRRMO Butuan City with a centralized command platform for real-time incident tracking, multi-channel dispatch, and field unit coordination across all 86 barangays.</p>
+    <p class="type-meta">DM SANS 300 — BODY COPY / DESCRIPTIONS — 14–16PX · LINE HEIGHT 1.7</p>
+  </div>
+
+  <div class="type-specimen reveal">
+    <p class="type-mono-sample">INC-2024-00142 · P1 · DISPATCHED · 08:42:31</p>
+    <p class="type-meta">DM MONO — INCIDENT CODES / TIMESTAMPS / DATA LABELS — 11–14PX</p>
+  </div>
+
+  <div class="type-specimen reveal">
+    <p class="type-tagline-sample">ALWAYS READY. ALWAYS WATCHING.</p>
+    <p class="type-meta">DM MONO — TAGLINE / SYSTEM STATUS — 10–13PX · TRACKING 4–5PX</p>
+  </div>
+
+  <!-- Tagline variants -->
+  <div style="margin-top:60px" class="reveal">
+    <p style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--blue-mid);margin-bottom:16px">TAGLINE VARIANTS</p>
+    <div class="tagline-variants">
+      <div class="tagline-row primary">
+        <span class="tagline-text">ALWAYS READY. ALWAYS WATCHING.</span>
+        <span class="tagline-use">PRIMARY — All applications</span>
+      </div>
+      <div class="tagline-row">
+        <span class="tagline-text">READY TO RESPOND.</span>
+        <span class="tagline-use">CONDENSED — Space-limited UI</span>
+      </div>
+      <div class="tagline-row">
+        <span class="tagline-text">PROTECTING BUTUAN CITY.</span>
+        <span class="tagline-use">LOCALIZED — City-specific campaigns</span>
+      </div>
+      <div class="tagline-row">
+        <span class="tagline-text">COMMAND. DISPATCH. RESOLVE.</span>
+        <span class="tagline-use">OPERATIONAL — Training materials</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- COMPONENTS -->
+<section id="components">
+  <p class="section-label reveal">04 — UI COMPONENTS</p>
+  <h2 class="section-title reveal">Design Components</h2>
+
+  <div class="components-grid reveal">
+    <!-- Left: Badges + Buttons + Inputs -->
+    <div class="comp-panel">
+      <p class="comp-panel-title">PRIORITY BADGES</p>
+      <div class="badge-row">
+        <span class="badge b-p1"><span class="badge-dot"></span>P1 — Critical</span>
+        <span class="badge b-p2"><span class="badge-dot"></span>P2 — High</span>
+        <span class="badge b-p3"><span class="badge-dot"></span>P3 — Medium</span>
+        <span class="badge b-p4"><span class="badge-dot"></span>P4 — Low</span>
+        <span class="badge b-res"><span class="badge-dot"></span>Resolved</span>
+      </div>
+
+      <p class="comp-panel-title" style="margin-top:32px">BUTTONS</p>
+      <div class="btn-row">
+        <button class="btn btn-primary">Dispatch unit</button>
+        <button class="btn btn-teal">Resolve</button>
+        <button class="btn btn-outline">View map</button>
+        <button class="btn btn-danger">Escalate</button>
+      </div>
+
+      <p class="comp-panel-title" style="margin-top:32px">FORM INPUTS</p>
+      <input class="input-sample" type="text" placeholder="Incident type (e.g. Structure fire)">
+      <input class="input-sample" type="text" placeholder="Barangay location">
+      <input class="input-sample" type="text" placeholder="Reporter contact — +63 9XX XXX XXXX">
+    </div>
+
+    <!-- Right: Incident cards + Toasts -->
+    <div class="comp-panel">
+      <p class="comp-panel-title">INCIDENT CARDS</p>
+      <div class="inc-card">
+        <div class="inc-card-accent" style="background:#E24B4A"></div>
+        <div style="flex:1">
+          <span class="inc-code">INC-2024-00142</span>
+          <span class="inc-title">Structure fire — residential</span>
+          <span class="inc-loc">Brgy. Ambago, Butuan City</span>
+        </div>
+        <div>
+          <span class="badge b-p1" style="margin-bottom:4px;display:inline-flex"><span class="badge-dot"></span>P1</span>
+          <span class="inc-time">08:42</span>
+        </div>
+      </div>
+      <div class="inc-card">
+        <div class="inc-card-accent" style="background:#EF9F27"></div>
+        <div style="flex:1">
+          <span class="inc-code">INC-2024-00141</span>
+          <span class="inc-title">Flooding — barangay road</span>
+          <span class="inc-loc">Brgy. Dagohoy, Butuan City</span>
+        </div>
+        <div>
+          <span class="badge b-p2" style="margin-bottom:4px;display:inline-flex"><span class="badge-dot"></span>P2</span>
+          <span class="inc-time">08:15</span>
+        </div>
+      </div>
+      <div class="inc-card">
+        <div class="inc-card-accent" style="background:#1D9E75"></div>
+        <div style="flex:1">
+          <span class="inc-code">INC-2024-00140</span>
+          <span class="inc-title">Search & rescue — missing person</span>
+          <span class="inc-loc">Brgy. Tungao, Butuan City</span>
+        </div>
+        <div>
+          <span class="badge b-p3" style="margin-bottom:4px;display:inline-flex"><span class="badge-dot"></span>P3</span>
+          <span class="inc-time">07:58</span>
+        </div>
+      </div>
+
+      <p class="comp-panel-title" style="margin-top:32px">NOTIFICATIONS</p>
+      <div class="toast toast-p1">
+        <div class="toast-icon ti-p1">!</div>
+        <div>
+          <div class="toast-title">P1 incident — structure fire reported</div>
+          <div class="toast-sub">Brgy. Ambago · INC-2024-00142 · BFP-01 dispatched</div>
+        </div>
+      </div>
+      <div class="toast toast-p2">
+        <div class="toast-icon ti-p2">!</div>
+        <div>
+          <div class="toast-title">CDRRMO-Alpha now en route</div>
+          <div class="toast-sub">ETA 3 min · INC-2024-00142 · Updated 08:43 AM</div>
+        </div>
+      </div>
+      <div class="toast toast-info">
+        <div class="toast-icon ti-info">i</div>
+        <div>
+          <div class="toast-title">INC-2024-00135 resolved</div>
+          <div class="toast-sub">Closed by Dispatcher Cruz · Duration: 47 min</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- FORM COMPONENTS -->
+<section id="forms">
+  <p class="section-label reveal">05 — FORM COMPONENTS</p>
+  <h2 class="section-title reveal">Form System</h2>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px" class="reveal">
+
+    <!-- LEFT: Input variants -->
+    <div class="comp-panel">
+      <p class="comp-panel-title">TEXT INPUTS</p>
+
+      <div class="form-group">
+        <label class="form-label">Default input</label>
+        <div class="input-wrap">
+          <input class="input-sample" type="text" placeholder="e.g. Structure fire">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">With icon prefix</label>
+        <div class="input-wrap input-icon-wrap">
+          <svg class="input-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1"/><path d="M7 4V7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="7" cy="9.5" r=".8" fill="currentColor"/></svg>
+          <input class="input-sample input-with-icon" type="text" placeholder="Incident description">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Focused / active state</label>
+        <div class="input-wrap">
+          <input class="input-sample input-focused" type="text" value="Cardiac arrest — Brgy. Libertad">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Error state</label>
+        <div class="input-wrap">
+          <input class="input-sample input-error" type="text" value="Brgy. Unknown">
+        </div>
+        <p class="form-hint form-hint-error">Barangay not found in the system. Please verify.</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Success state</label>
+        <div class="input-wrap">
+          <input class="input-sample input-success" type="text" value="Brgy. Ambago">
+        </div>
+        <p class="form-hint form-hint-success">Location verified and geocoded.</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Disabled</label>
+        <div class="input-wrap">
+          <input class="input-sample input-disabled" type="text" value="Auto-assigned: INC-2024-00143" disabled>
+        </div>
+      </div>
+
+      <p class="comp-panel-title" style="margin-top:32px">TEXTAREA</p>
+      <div class="form-group">
+        <label class="form-label">Incident notes</label>
+        <textarea class="input-sample" rows="4" placeholder="Enter detailed description of incident, caller report, visible hazards…" style="resize:vertical;line-height:1.6;font-family:var(--font-mono)"></textarea>
+        <p class="form-hint">Max 1000 characters. This note will be logged and timestamped.</p>
+      </div>
+
+      <p class="comp-panel-title" style="margin-top:32px">SEARCH INPUT</p>
+      <div class="form-group">
+        <div class="input-wrap input-icon-wrap input-search-wrap">
+          <svg class="input-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.2"/><path d="M9.5 9.5L12 12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <input class="input-sample input-with-icon" type="search" placeholder="Search incidents, units, barangays…">
+          <span class="input-kbd">⌘K</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Selects, checkboxes, radios, toggles, date -->
+    <div class="comp-panel">
+      <p class="comp-panel-title">SELECT & DROPDOWN</p>
+
+      <div class="form-group">
+        <label class="form-label">Incident type</label>
+        <div class="select-wrap">
+          <select class="form-select">
+            <option value="">Select incident type…</option>
+            <option selected>Structure fire</option>
+            <option>Medical emergency</option>
+            <option>Flooding</option>
+            <option>Vehicular accident</option>
+            <option>Search &amp; rescue</option>
+            <option>Landslide</option>
+            <option>Utility hazard</option>
+          </select>
+          <svg class="select-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Priority level</label>
+        <div class="select-wrap">
+          <select class="form-select form-select-p1">
+            <option>P1 — Critical</option>
+            <option>P2 — High</option>
+            <option>P3 — Medium</option>
+            <option>P4 — Low</option>
+          </select>
+          <svg class="select-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Assign unit</label>
+        <div class="select-wrap">
+          <select class="form-select">
+            <option>BFP Rescue Unit 01</option>
+            <option>CDRRMO Alpha</option>
+            <option>Ambulance 02</option>
+            <option>Rescue Boat 01</option>
+          </select>
+          <svg class="select-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+
+      <p class="comp-panel-title" style="margin-top:32px">DATE & TIME</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="form-group">
+          <label class="form-label">Date reported</label>
+          <div class="input-wrap input-icon-wrap">
+            <svg class="input-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="2" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M1 6h12" stroke="currentColor" stroke-width="1"/><path d="M4 1v2M10 1v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            <input class="input-sample input-with-icon" type="date" value="2026-03-14">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Time reported</label>
+          <div class="input-wrap input-icon-wrap">
+            <svg class="input-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1"/><path d="M7 4v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <input class="input-sample input-with-icon" type="time" value="08:42">
+          </div>
+        </div>
+      </div>
+
+      <p class="comp-panel-title" style="margin-top:32px">CHECKBOXES</p>
+      <div class="form-group" style="display:flex;flex-direction:column;gap:10px">
+        <label class="check-label">
+          <input type="checkbox" class="check-input" checked>
+          <span class="check-box"></span>
+          <span class="check-text">Dispatch nearest unit automatically</span>
+        </label>
+        <label class="check-label">
+          <input type="checkbox" class="check-input" checked>
+          <span class="check-box"></span>
+          <span class="check-text">Notify CDRRMO command center</span>
+        </label>
+        <label class="check-label">
+          <input type="checkbox" class="check-input">
+          <span class="check-box"></span>
+          <span class="check-text">Escalate to NDRRMC</span>
+        </label>
+        <label class="check-label check-disabled">
+          <input type="checkbox" class="check-input" disabled>
+          <span class="check-box"></span>
+          <span class="check-text">Activate city-wide alert (restricted)</span>
+        </label>
+      </div>
+
+      <p class="comp-panel-title" style="margin-top:32px">RADIO BUTTONS</p>
+      <div class="form-group" style="display:flex;flex-direction:column;gap:10px">
+        <label class="radio-label">
+          <input type="radio" name="urgency" class="radio-input" checked>
+          <span class="radio-dot"></span>
+          <span class="check-text">Immediate response required</span>
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="urgency" class="radio-input">
+          <span class="radio-dot"></span>
+          <span class="check-text">Scheduled response</span>
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="urgency" class="radio-input">
+          <span class="radio-dot"></span>
+          <span class="check-text">Monitor only — no dispatch</span>
+        </label>
+      </div>
+
+      <p class="comp-panel-title" style="margin-top:32px">TOGGLE SWITCHES</p>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="toggle-row">
+          <div>
+            <p class="toggle-title">Live dispatch mode</p>
+            <p class="toggle-desc">Auto-assign units to incoming P1/P2 incidents</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" checked onchange="this.parentElement.classList.toggle('on',this.checked)">
+            <span class="toggle-track on"><span class="toggle-knob"></span></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div>
+            <p class="toggle-title">SMS notifications</p>
+            <p class="toggle-desc">Send alerts to responder mobile numbers</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" checked onchange="this.parentElement.classList.toggle('on',this.checked)">
+            <span class="toggle-track on"><span class="toggle-knob"></span></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div>
+            <p class="toggle-title">Maintenance mode</p>
+            <p class="toggle-desc">Pause all incoming incident intake</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" onchange="this.parentElement.classList.toggle('on',this.checked)">
+            <span class="toggle-track"><span class="toggle-knob"></span></span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom: Range slider + file upload + full form mockup -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:2px" class="reveal">
+
+    <!-- Range + Progress -->
+    <div class="comp-panel">
+      <p class="comp-panel-title">RANGE SLIDER</p>
+      <div class="form-group">
+        <label class="form-label" style="display:flex;justify-content:space-between">
+          <span>Response priority threshold</span>
+          <span class="form-label-value" id="rangeVal">P2</span>
+        </label>
+        <input type="range" class="form-range" min="1" max="4" value="2" step="1"
+          oninput="document.getElementById('rangeVal').textContent=['P1','P2','P3','P4'][this.value-1]">
+        <div style="display:flex;justify-content:space-between;margin-top:6px;font-family:var(--font-mono);font-size:10px;color:var(--text-muted)">
+          <span style="color:#E24B4A">P1</span>
+          <span style="color:#EF9F27">P2</span>
+          <span style="color:#1D9E75">P3</span>
+          <span style="color:#378ADD">P4</span>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-top:24px">
+        <label class="form-label" style="display:flex;justify-content:space-between">
+          <span>Max units per dispatch</span>
+          <span class="form-label-value" id="unitVal">3</span>
+        </label>
+        <input type="range" class="form-range" min="1" max="10" value="3" step="1"
+          oninput="document.getElementById('unitVal').textContent=this.value">
+      </div>
+
+      <p class="comp-panel-title" style="margin-top:32px">PROGRESS BARS</p>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <span class="form-label" style="margin:0">Units deployed</span>
+            <span style="font-family:var(--font-mono);font-size:11px;color:var(--blue-mid)">12 / 18</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:66%;background:var(--blue)"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <span class="form-label" style="margin:0">P1 capacity</span>
+            <span style="font-family:var(--font-mono);font-size:11px;color:#E24B4A">3 / 4</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:75%;background:#A32D2D"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <span class="form-label" style="margin:0">Resolved today</span>
+            <span style="font-family:var(--font-mono);font-size:11px;color:#1D9E75">24 / 30</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:80%;background:var(--teal)"></div></div>
+        </div>
+      </div>
+
+      <p class="comp-panel-title" style="margin-top:32px">FILE / PHOTO UPLOAD</p>
+      <div class="file-drop-zone" id="dropZone">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 4v14M8 10l6-6 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 20v2a2 2 0 002 2h16a2 2 0 002-2v-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <p class="file-drop-title">Drop photos here or <span class="file-browse">browse</span></p>
+        <p class="file-drop-hint">JPG, PNG, PDF · Max 10MB per file · Scene photos, reports</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-top:10px">
+        <div class="file-item">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="1" width="10" height="12" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M4 5h6M4 7.5h6M4 10h3" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+          <span class="file-name">incident_photo_001.jpg</span>
+          <span class="file-size">2.4 MB</span>
+          <span class="file-status file-status-ok">✓</span>
+        </div>
+        <div class="file-item">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="1" width="10" height="12" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M4 5h6M4 7.5h6M4 10h3" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+          <span class="file-name">scene_report.pdf</span>
+          <span class="file-size">0.8 MB</span>
+          <div class="file-progress-bar"><div style="width:60%;height:100%;background:var(--blue);border-radius:2px;transition:width 0.3s"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Full Intake Form Mockup -->
+    <div class="comp-panel">
+      <p class="comp-panel-title">INCIDENT INTAKE FORM — FULL MOCKUP</p>
+      <div class="intake-form">
+        <div class="intake-form-header">
+          <div>
+            <p style="font-family:var(--font-mono);font-size:10px;color:var(--blue-mid);letter-spacing:1px">NEW INCIDENT REPORT</p>
+            <p style="font-family:var(--font-mono);font-size:12px;color:var(--text-muted);margin-top:2px">INC-2026-00143 · Auto-assigned</p>
+          </div>
+          <span class="badge b-p1"><span class="badge-dot"></span>P1</span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group">
+            <label class="form-label">Incident type *</label>
+            <div class="select-wrap">
+              <select class="form-select form-select-sm">
+                <option selected>Structure fire</option>
+                <option>Medical emergency</option>
+                <option>Flooding</option>
+              </select>
+              <svg class="select-arrow" width="10" height="7" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Priority *</label>
+            <div class="select-wrap">
+              <select class="form-select form-select-sm form-select-p1">
+                <option selected>P1 — Critical</option>
+                <option>P2 — High</option>
+                <option>P3 — Medium</option>
+                <option>P4 — Low</option>
+              </select>
+              <svg class="select-arrow" width="10" height="7" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Location / Barangay *</label>
+          <div class="input-wrap input-icon-wrap">
+            <svg class="input-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="6" r="3" stroke="currentColor" stroke-width="1"/><path d="M7 1v1M7 11v1M1 6h1M11 6h1" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><path d="M4 9.5C3 11 3 13 7 13c4 0 4-2 3-3.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+            <input class="input-sample input-with-icon input-success" type="text" value="Brgy. Ambago, Butuan City">
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group">
+            <label class="form-label">Caller name</label>
+            <input class="input-sample" type="text" value="Maria Santos">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contact number *</label>
+            <input class="input-sample input-success" type="tel" value="+63 917 123 4567">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Incident description *</label>
+          <textarea class="input-sample" rows="3" style="resize:none;font-family:var(--font-mono);font-size:11px;line-height:1.6">Two-storey residential building on fire. Fire spreading to adjacent structure. Occupants evacuating. 1 person reported trapped on 2nd floor.</textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Assign unit</label>
+          <div class="select-wrap">
+            <select class="form-select form-select-sm">
+              <option selected>BFP Rescue Unit 01 — Available</option>
+              <option>CDRRMO Alpha — Standby</option>
+              <option>Ambulance 02 — On scene (INC-142)</option>
+            </select>
+            <svg class="select-arrow" width="10" height="7" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+          <label class="check-label">
+            <input type="checkbox" class="check-input" checked>
+            <span class="check-box"></span>
+            <span class="check-text">Dispatch unit immediately</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" class="check-input" checked>
+            <span class="check-box"></span>
+            <span class="check-text">Send SMS to responders</span>
+          </label>
+        </div>
+
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" style="flex:1;font-size:11px;padding:10px 16px">Log &amp; dispatch incident</button>
+          <button class="btn btn-outline" style="font-size:11px;padding:10px 16px">Save draft</button>
+          <button class="btn btn-danger" style="font-size:11px;padding:10px 12px">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+<section id="voice">
+  <p class="section-label reveal">06 — VOICE & TONE</p>
+  <h2 class="section-title reveal">Brand Character</h2>
+
+  <div class="voice-grid reveal">
+    <div class="voice-card authority">
+      <div class="voice-card-title">Authority</div>
+      <p class="voice-card-body">HD Sentinel speaks with institutional confidence. Every word earns its place. No filler, no hedging — the system is decisive because lives depend on it.</p>
+      <ul class="voice-examples">
+        <li>Unit dispatched. ETA 4 minutes.</li>
+        <li>Incident escalated to P1.</li>
+        <li>Command console active.</li>
+      </ul>
+    </div>
+    <div class="voice-card precision">
+      <div class="voice-card-title">Precision</div>
+      <p class="voice-card-body">Data is exact. Timestamps, incident codes, and coordinates are never approximate. The interface communicates with the clarity of a well-run operations center.</p>
+      <ul class="voice-examples">
+        <li>08:42:31 — Incident logged</li>
+        <li>INC-2024-00142 · P1 · Active</li>
+        <li>8.948°N 125.543°E · Verified</li>
+      </ul>
+    </div>
+    <div class="voice-card urgency">
+      <div class="voice-card-title">Urgency</div>
+      <p class="voice-card-body">When priority demands it, the system communicates urgency without panic. Alerts are direct, actionable, and time-stamped — never alarmist without cause.</p>
+      <ul class="voice-examples">
+        <li>P1 active — respond immediately</li>
+        <li>Unit unreachable — reassign</li>
+        <li>3 units remaining — request backup</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Spacing & clear space -->
+  <div style="margin-top:60px;padding:40px;background:rgba(4,44,83,0.3);border:1px solid rgba(55,138,221,0.1)" class="reveal">
+    <p style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--blue-mid);margin-bottom:24px">CLEAR SPACE RULE</p>
+    <div style="display:inline-block;position:relative;padding:24px;border:1px dashed rgba(55,138,221,0.25)">
+      <div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);font-family:var(--font-mono);font-size:9px;color:var(--blue-mid);background:#05101E;padding:0 8px">1× shield height</div>
+      <div style="position:absolute;left:-8px;top:50%;transform:translateY(-50%);font-family:var(--font-mono);font-size:9px;color:var(--blue-mid);background:#05101E;padding:0 4px;writing-mode:vertical-rl">1× shield height</div>
+      <div style="display:flex;align-items:center;gap:12px;padding:16px;border:1px solid rgba(55,138,221,0.2);background:rgba(4,44,83,0.4)">
+        <svg width="32" height="37" viewBox="0 0 32 37" fill="none">
+          <path d="M16 2L30 8V18C30 27 16 35 16 35C16 35 2 27 2 18V8L16 2Z" fill="#0C447C" stroke="#378ADD" stroke-width="1.2"/>
+          <circle cx="16" cy="22" r="5" fill="#378ADD" opacity="0.9"/>
+          <circle cx="16" cy="22" r="2" fill="#E6F1FB"/>
+        </svg>
+        <span style="font-family:var(--font-display);font-size:22px;letter-spacing:3px;color:var(--white)"><span style="color:var(--blue-mid)">HD</span> Sentinel</span>
+      </div>
+    </div>
+    <p style="margin-top:20px;font-size:13px;color:var(--blue-100);opacity:0.7;max-width:500px;line-height:1.7">Maintain a minimum clear space equal to one shield height on all sides of the logo. Never crowd the mark with competing visual elements.</p>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo"><span>HD</span> Sentinel</div>
+    <p style="font-family:var(--font-mono);font-size:10px;color:var(--blue-mid);opacity:0.5;margin-top:6px;letter-spacing:1px">CDRRMO BUTUAN CITY · CARAGA REGION</p>
+  </div>
+  <div class="footer-meta">
+    <p>BRAND IDENTITY GUIDELINES</p>
+    <p>VERSION 1.0 · MARCH 2026</p>
+    <p style="margin-top:4px">POWERED BY HDSYSTEM.IO</p>
+  </div>
+</footer>
+
+<script>
+  // ── THEME TOGGLE ──────────────────────────────────────────
+  let isDark = true;
+
+  function toggleTheme() {
+    isDark = !isDark;
+    document.body.classList.toggle('light', !isDark);
+    document.getElementById('themeLabel').textContent = isDark ? 'DARK' : 'LIGHT';
+    document.getElementById('themeKnob').textContent  = isDark ? '☀'  : '☾';
+  }
+
+  // ── SCROLL REVEAL ─────────────────────────────────────────
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  reveals.forEach(el => obs.observe(el));
+
+  // ── COPY HEX ON SWATCH CLICK ─────────────────────────────
+  document.querySelectorAll('.color-swatch, .tint-swatch').forEach(s => {
+    s.style.cursor = 'pointer';
+    s.addEventListener('click', () => {
+      const hex = s.querySelector('.swatch-hex')?.textContent?.trim()
+                  || s.textContent.trim().split('\n')[0].trim();
+      navigator.clipboard?.writeText(hex).catch(() => {});
+      const prev = s.style.outline;
+      s.style.outline = '2px solid #378ADD';
+      setTimeout(() => s.style.outline = prev, 900);
+    });
+  });
+
+  // ── TOGGLE SWITCH WIRING ─────────────────────────────────
+  document.querySelectorAll('.toggle-switch input[type="checkbox"]').forEach(input => {
+    const track = input.nextElementSibling;
+    // Sync initial state
+    if (input.checked) track.classList.add('on');
+    input.addEventListener('change', () => {
+      track.classList.toggle('on', input.checked);
+    });
+  });
+
+  // ── CUSTOM CHECKBOX STYLING ──────────────────────────────
+  document.querySelectorAll('.check-input').forEach(input => {
+    input.addEventListener('change', () => {
+      const box = input.nextElementSibling;
+      if (box && box.classList.contains('check-box')) {
+        box.style.background = input.checked ? 'var(--blue)' : '';
+        box.style.borderColor = input.checked ? 'var(--blue)' : '';
+      }
+    });
+  });
+
+  // ── FILE DROP ZONE ───────────────────────────────────────
+  const dz = document.getElementById('dropZone');
+  if (dz) {
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.style.borderColor='var(--blue-mid)'; });
+    dz.addEventListener('dragleave', () => { dz.style.borderColor=''; });
+    dz.addEventListener('drop', e => { e.preventDefault(); dz.style.borderColor=''; });
+  }
+</script>
+</body>
+</html>

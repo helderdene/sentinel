@@ -252,6 +252,7 @@ export function useAnalyticsMap(
             center: BUTUAN_CENTER,
             zoom: BUTUAN_ZOOM,
             preserveDrawingBuffer: true,
+            projection: 'mercator',
         });
 
         map.value.addControl(new mapboxgl.NavigationControl(), 'top-left');

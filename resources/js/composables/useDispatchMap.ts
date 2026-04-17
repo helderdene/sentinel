@@ -106,9 +106,19 @@ const UNIT_COLORS: Record<string, string> = {
 
 type ClickCallback<T> = (id: T) => void;
 
-export function useDispatchMap(containerId: string) {
+type DispatchMapOptions = {
+    center?: [number, number];
+    zoom?: number;
+};
+
+export function useDispatchMap(
+    containerId: string,
+    options: DispatchMapOptions = {},
+) {
     const map = shallowRef<mapboxgl.Map | null>(null);
     const isLoaded = ref(false);
+    const initialCenter = options.center ?? BUTUAN_CENTER;
+    const initialZoom = options.zoom ?? BUTUAN_ZOOM;
 
     const { getRoute } = useOsrmRoute();
 
@@ -465,9 +475,10 @@ export function useDispatchMap(containerId: string) {
         map.value = new mapboxgl.Map({
             container: containerId,
             style: DARK_STYLE,
-            center: BUTUAN_CENTER,
-            zoom: BUTUAN_ZOOM,
+            center: initialCenter,
+            zoom: initialZoom,
             pitch: 0,
+            projection: 'mercator',
         });
 
         map.value.addControl(

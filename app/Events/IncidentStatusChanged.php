@@ -27,6 +27,7 @@ class IncidentStatusChanged implements ShouldBroadcast, ShouldDispatchAfterCommi
     {
         return [
             new PrivateChannel('dispatch.incidents'),
+            new PrivateChannel('incident.'.$this->incident->id),
         ];
     }
 
@@ -41,6 +42,11 @@ class IncidentStatusChanged implements ShouldBroadcast, ShouldDispatchAfterCommi
             'old_status' => $this->oldStatus->value,
             'new_status' => $this->incident->status->value,
             'priority' => $this->incident->priority->value,
+            'acknowledged_at' => $this->incident->acknowledged_at?->toIso8601String(),
+            'en_route_at' => $this->incident->en_route_at?->toIso8601String(),
+            'on_scene_at' => $this->incident->on_scene_at?->toIso8601String(),
+            'resolving_at' => $this->incident->resolving_at?->toIso8601String(),
+            'resolved_at' => $this->incident->resolved_at?->toIso8601String(),
         ];
     }
 }

@@ -3,6 +3,7 @@ import { Link, usePage } from '@inertiajs/vue3';
 import {
     AlertTriangle,
     BarChart3,
+    Building2,
     ClipboardList,
     FolderTree,
     LayoutGrid,
@@ -100,6 +101,11 @@ const mainNavItems = computed<NavItem[]>(() => {
                         title: 'Units',
                         href: '/admin/units',
                         icon: Truck,
+                    },
+                    {
+                        title: 'City',
+                        href: '/admin/city',
+                        icon: Building2,
                     },
                 ],
             },

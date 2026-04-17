@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminBarangayController;
+use App\Http\Controllers\Admin\AdminCityController;
 use App\Http\Controllers\Admin\AdminIncidentCategoryController;
 use App\Http\Controllers\Admin\AdminIncidentTypeController;
 use App\Http\Controllers\Admin\AdminUnitController;
@@ -13,3 +14,6 @@ Route::resource('incident-types', AdminIncidentTypeController::class);
 Route::resource('barangays', AdminBarangayController::class)->only(['index', 'edit', 'update']);
 Route::resource('units', AdminUnitController::class);
 Route::post('units/{unit}/recommission', [AdminUnitController::class, 'recommission'])->name('units.recommission');
+
+Route::get('city', [AdminCityController::class, 'edit'])->name('city.edit');
+Route::put('city', [AdminCityController::class, 'update'])->name('city.update');

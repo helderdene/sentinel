@@ -1,3 +1,4 @@
+import { router } from '@inertiajs/vue3';
 import { useEcho } from '@laravel/echo-vue';
 import type { Ref } from 'vue';
 import { computed, ref } from 'vue';
@@ -216,10 +217,42 @@ export function useDispatchFeed(
             );
 
             if (index === -1) {
+                const dispatchStatuses = [
+                    'TRIAGED',
+                    'DISPATCHED',
+                    'ACKNOWLEDGED',
+                    'EN_ROUTE',
+                    'ON_SCENE',
+                    'RESOLVING',
+                ];
+
+                if (dispatchStatuses.includes(e.new_status)) {
+                    router.reload({ only: ['incidents', 'metrics'] });
+
+                    addTickerEvent({
+                        incident_no: e.incident_no,
+                        priority: e.priority,
+                        channel: 'radio',
+                        incident_type: null,
+                        location_text: `Status: ${e.old_status} -> ${e.new_status}`,
+                        created_at: new Date().toISOString(),
+                    });
+
+                    if (e.new_status === 'TRIAGED') {
+                        alertSystem.playPriorityTone(e.priority);
+
+                        if (e.priority === 'P1') {
+                            alertSystem.triggerP1Flash();
+                        }
+                    }
+                }
+
                 return;
             }
 
-            if (e.new_status === 'RESOLVED') {
+            const exitStatuses = ['RESOLVED', 'PENDING'];
+
+            if (exitStatuses.includes(e.new_status)) {
                 localIncidents.value.splice(index, 1);
 
                 const updatedUnread = new Map(unreadByIncident.value);

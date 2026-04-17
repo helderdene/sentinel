@@ -11,6 +11,19 @@ import type {
     ResponderUnit,
 } from '@/types/responder';
 
+interface IncidentStatusChangedPayload {
+    id: number;
+    incident_no: string;
+    old_status: IncidentStatus;
+    new_status: IncidentStatus;
+    priority: string;
+    acknowledged_at: string | null;
+    en_route_at: string | null;
+    on_scene_at: string | null;
+    resolving_at: string | null;
+    resolved_at: string | null;
+}
+
 export function useResponderSession(
     initialIncident: ResponderIncident | null,
     initialUnit: ResponderUnit,
@@ -84,13 +97,40 @@ export function useResponderSession(
     });
 
     let currentMessageChannelName: string | null = null;
+    let currentIncidentChannelName: string | null = null;
 
-    function subscribeToIncidentMessages(incidentId: number): void {
-        const channelName = `incident.${incidentId}.messages`;
-        currentMessageChannelName = channelName;
+    function applyStatusPayload(payload: IncidentStatusChangedPayload): void {
+        if (!activeIncident.value || activeIncident.value.id !== payload.id) {
+            return;
+        }
+
+        activeIncident.value = {
+            ...activeIncident.value,
+            status: payload.new_status,
+            acknowledged_at:
+                payload.acknowledged_at ??
+                activeIncident.value.acknowledged_at,
+            en_route_at:
+                payload.en_route_at ?? activeIncident.value.en_route_at,
+            on_scene_at:
+                payload.on_scene_at ?? activeIncident.value.on_scene_at,
+            resolving_at:
+                payload.resolving_at ?? activeIncident.value.resolving_at,
+            resolved_at:
+                payload.resolved_at ?? activeIncident.value.resolved_at,
+        };
+
+        if (payload.new_status === 'RESOLVED') {
+            showClosureSummary.value = true;
+        }
+    }
+
+    function subscribeToIncidentChannels(incidentId: number): void {
+        const messagesChannel = `incident.${incidentId}.messages`;
+        currentMessageChannelName = messagesChannel;
 
         echo()
-            .private(channelName)
+            .private(messagesChannel)
             .listen('MessageSent', (m: MessagePayload) => {
                 messages.value.push({
                     id: m.id,
@@ -111,34 +151,51 @@ export function useResponderSession(
                     unreadCount.value++;
                 }
             });
+
+        const incidentChannel = `incident.${incidentId}`;
+        currentIncidentChannelName = incidentChannel;
+
+        echo()
+            .private(incidentChannel)
+            .listen(
+                'IncidentStatusChanged',
+                (payload: IncidentStatusChangedPayload) => {
+                    applyStatusPayload(payload);
+                },
+            );
     }
 
-    function unsubscribeFromIncidentMessages(): void {
+    function unsubscribeFromIncidentChannels(): void {
         if (currentMessageChannelName) {
             echo().leaveChannel(`private-${currentMessageChannelName}`);
             currentMessageChannelName = null;
         }
+
+        if (currentIncidentChannelName) {
+            echo().leaveChannel(`private-${currentIncidentChannelName}`);
+            currentIncidentChannelName = null;
+        }
     }
 
     if (activeIncident.value) {
-        subscribeToIncidentMessages(activeIncident.value.id);
+        subscribeToIncidentChannels(activeIncident.value.id);
     }
 
     watch(
         () => activeIncident.value?.id,
         (newId, oldId) => {
             if (oldId !== undefined && oldId !== null) {
-                unsubscribeFromIncidentMessages();
+                unsubscribeFromIncidentChannels();
             }
 
             if (newId !== undefined && newId !== null) {
-                subscribeToIncidentMessages(newId);
+                subscribeToIncidentChannels(newId);
             }
         },
     );
 
     onUnmounted(() => {
-        unsubscribeFromIncidentMessages();
+        unsubscribeFromIncidentChannels();
     });
 
     function acknowledgeAssignment(): void {

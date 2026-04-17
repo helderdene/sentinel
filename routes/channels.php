@@ -30,6 +30,18 @@ Broadcast::channel('incident.{incidentId}.messages', function (User $user, strin
     return false;
 });
 
+Broadcast::channel('incident.{incidentId}', function (User $user, string $incidentId) use ($dispatchRoles): bool {
+    if (in_array($user->role, $dispatchRoles)) {
+        return true;
+    }
+
+    if ($user->role === UserRole::Responder && $user->unit) {
+        return $user->unit->activeIncidents()->where('incidents.id', $incidentId)->exists();
+    }
+
+    return false;
+});
+
 Broadcast::channel('dispatch', function (User $user) use ($dispatchRoles): array|false {
     if (! in_array($user->role, $dispatchRoles)) {
         return false;
