@@ -62,7 +62,7 @@ function formatTimelineDate(dateStr: string): string {
 </script>
 
 <template>
-    <div class="hide-scrollbar flex flex-1 flex-col overflow-y-auto p-4">
+    <div class="hide-scrollbar flex flex-1 flex-col overflow-y-auto p-4 pb-[220px]">
         <div
             class="rounded-xl border border-t-border bg-t-surface shadow-[0_1px_4px_rgba(0,0,0,.04)]"
         >
