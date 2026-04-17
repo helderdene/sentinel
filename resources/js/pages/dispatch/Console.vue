@@ -20,7 +20,7 @@ import type {
     DispatchMetrics,
     DispatchUnit,
 } from '@/types/dispatch';
-import type { TickerEvent } from '@/types/incident';
+import type { ResourceRequest, TickerEvent } from '@/types/incident';
 
 defineOptions({
     layout: DispatchLayout,
@@ -127,6 +127,7 @@ const {
     totalUnreadMessages,
     clearUnread,
     getMessages,
+    getResourceRequests,
     addLocalMessage,
 } = useDispatchFeed(
     localIncidents,
@@ -173,6 +174,34 @@ const selectedIncidentMessages = computed<DispatchMessageItem[]>(() => {
     }
 
     return getMessages(selectedIncidentId.value);
+});
+
+const selectedIncidentResourceRequests = computed<ResourceRequest[]>(() => {
+    if (!selectedIncidentId.value) {
+        return [];
+    }
+
+    const selected = localIncidents.value.find(
+        (inc) => inc.id === selectedIncidentId.value,
+    );
+    const fromServer: ResourceRequest[] = selected?.resource_requests ?? [];
+    const fromSession: ResourceRequest[] = getResourceRequests(
+        selectedIncidentId.value,
+    );
+
+    const combined = [...fromSession, ...fromServer];
+    const seen = new Set<string>();
+    const deduped = combined.filter((req) => {
+        if (seen.has(req.timestamp)) {
+            return false;
+        }
+
+        seen.add(req.timestamp);
+
+        return true;
+    });
+
+    return deduped.sort((a, b) => (a.timestamp < b.timestamp ? 1 : -1));
 });
 
 const selectedIncidentUnread = computed(() => {
@@ -352,6 +381,7 @@ onDeselect(() => {
                 :incident="selectedIncident"
                 :agencies="props.agencies"
                 :messages="selectedIncidentMessages"
+                :resource-requests="selectedIncidentResourceRequests"
                 :messages-expanded="messagesExpanded"
                 :current-user-id="currentUserId"
                 :unread-count="selectedIncidentUnread"
