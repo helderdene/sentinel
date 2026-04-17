@@ -108,3 +108,57 @@ it('responders cannot access state-sync', function () {
         ->getJson(route('state-sync'))
         ->assertForbidden();
 });
+
+it('hydrates resource_requests for ON_SCENE incidents', function () {
+    $dispatcher = User::factory()->dispatcher()->create();
+    $responder = User::factory()->responder()->create();
+
+    $incident = Incident::factory()->for($dispatcher, 'createdBy')->create([
+        'priority' => 'P2',
+        'status' => IncidentStatus::OnScene,
+    ]);
+
+    $incident->timeline()->create([
+        'event_type' => 'resource_requested',
+        'event_data' => [
+            'type' => 'MEDEVAC',
+            'label' => 'Medevac',
+            'notes' => 'Patient requires air transport.',
+        ],
+        'actor_type' => User::class,
+        'actor_id' => $responder->id,
+    ]);
+
+    $response = $this->actingAs($dispatcher)
+        ->getJson(route('state-sync'))
+        ->assertSuccessful();
+
+    $payload = collect($response->json('incidents'))->firstWhere('id', $incident->id);
+    expect($payload)->not->toBeNull();
+    expect($payload['resource_requests'])->toBeArray();
+    expect($payload['resource_requests'])->toHaveCount(1);
+
+    $req = $payload['resource_requests'][0];
+    expect($req)->toHaveKeys(['resource_type', 'resource_label', 'notes', 'requested_by', 'timestamp']);
+    expect($req['resource_type'])->toBe('MEDEVAC');
+    expect($req['resource_label'])->toBe('Medevac');
+    expect($req['notes'])->toBe('Patient requires air transport.');
+    expect($req['requested_by'])->toBe($responder->name);
+    expect($req['timestamp'])->toMatch('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/');
+});
+
+it('returns empty resource_requests array when incident has no requests', function () {
+    $dispatcher = User::factory()->dispatcher()->create();
+
+    $incident = Incident::factory()->for($dispatcher, 'createdBy')->create([
+        'status' => IncidentStatus::OnScene,
+    ]);
+
+    $response = $this->actingAs($dispatcher)
+        ->getJson(route('state-sync'))
+        ->assertSuccessful();
+
+    $payload = collect($response->json('incidents'))->firstWhere('id', $incident->id);
+    expect($payload)->not->toBeNull();
+    expect($payload['resource_requests'])->toBe([]);
+});
