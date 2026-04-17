@@ -2,6 +2,10 @@
 import { router } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
+import {
+    overridePriority,
+    recall,
+} from '@/actions/App/Http/Controllers/IntakeStationController';
 import IntakeIconOverride from '@/components/intake/icons/IntakeIconOverride.vue';
 import IntakeIconPin from '@/components/intake/icons/IntakeIconPin.vue';
 import IntakeIconRecall from '@/components/intake/icons/IntakeIconRecall.vue';
@@ -54,7 +58,7 @@ function handleOverride(priority: IncidentPriority): void {
     showPriorityPicker.value = false;
 
     router.post(
-        `/intake/${props.incident.id}/override-priority`,
+        overridePriority(props.incident.id).url,
         { priority },
         {
             preserveScroll: true,
@@ -67,7 +71,7 @@ function handleOverride(priority: IncidentPriority): void {
 
 function handleRecall(): void {
     router.post(
-        `/intake/${props.incident.id}/recall`,
+        recall(props.incident.id).url,
         {},
         {
             preserveScroll: true,
