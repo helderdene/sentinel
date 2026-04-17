@@ -74,6 +74,7 @@ export interface Incident {
     messages?: unknown[];
     created_at: string;
     updated_at: string;
+    resource_requests?: ResourceRequest[];
 }
 
 export interface IncidentTimelineEntry {
@@ -87,6 +88,14 @@ export interface IncidentTimelineEntry {
     notes: string | null;
     created_at: string;
     updated_at: string;
+}
+
+export interface ResourceRequest {
+    resource_type: string;
+    resource_label: string;
+    notes: string | null;
+    requested_by: string;
+    timestamp: string;
 }
 
 export interface IncidentForQueue {
@@ -146,4 +155,20 @@ export interface StateSyncResponse {
         status: string;
         coordinates: { lat: number; lng: number } | null;
     }>;
+}
+
+export interface ChecklistUpdatedPayload {
+    incident_id: string;
+    incident_no: string;
+    checklist_pct: number;
+}
+
+export interface ResourceRequestedPayload {
+    incident_id: string;
+    incident_no: string;
+    resource_type: string;
+    resource_label: string;
+    notes: string | null;
+    requested_by: string;
+    timestamp: string;
 }
