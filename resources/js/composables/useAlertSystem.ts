@@ -146,24 +146,39 @@ export function useAlertSystem() {
             return;
         }
 
-        const notes = [523, 659, 784];
-        const duration = 0.15;
-        const offset = 0.15;
+        const arpeggio = [523, 659, 784, 1046];
+        const noteDuration = 0.18;
+        const noteOffset = 0.14;
+        const repeatGap = 0.12;
+        const repeats = 2;
 
-        for (let i = 0; i < notes.length; i++) {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.type = 'triangle';
-            osc.frequency.value = notes[i];
-            gain.gain.value = 0.22;
-            osc.start(ctx.currentTime + i * offset);
-            gain.gain.exponentialRampToValueAtTime(
-                0.01,
-                ctx.currentTime + i * offset + duration,
-            );
-            osc.stop(ctx.currentTime + i * offset + duration);
+        for (let r = 0; r < repeats; r++) {
+            const phaseStart =
+                r * (arpeggio.length * noteOffset + repeatGap);
+
+            for (let i = 0; i < arpeggio.length; i++) {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'triangle';
+                osc.frequency.value = arpeggio[i];
+                gain.gain.value = 0.38;
+                osc.start(ctx.currentTime + phaseStart + i * noteOffset);
+                gain.gain.exponentialRampToValueAtTime(
+                    0.01,
+                    ctx.currentTime +
+                        phaseStart +
+                        i * noteOffset +
+                        noteDuration,
+                );
+                osc.stop(
+                    ctx.currentTime +
+                        phaseStart +
+                        i * noteOffset +
+                        noteDuration,
+                );
+            }
         }
     }
 
