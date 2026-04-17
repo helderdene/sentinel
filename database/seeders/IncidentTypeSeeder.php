@@ -31,6 +31,7 @@ class IncidentTypeSeeder extends Seeder
             ['name' => 'Hazmat', 'icon' => 'Biohazard', 'sort_order' => 5],
             ['name' => 'Water Rescue', 'icon' => 'Waves', 'sort_order' => 6],
             ['name' => 'Public Disturbance', 'icon' => 'Megaphone', 'sort_order' => 7],
+            ['name' => 'Other', 'icon' => 'HelpCircle', 'sort_order' => 8],
         ];
 
         foreach ($categories as $category) {
@@ -64,6 +65,7 @@ class IncidentTypeSeeder extends Seeder
                     'default_priority' => $type['priority'],
                     'description' => $type['description'] ?? null,
                     'is_active' => true,
+                    'show_in_public_app' => $type['show_in_public_app'] ?? true,
                     'sort_order' => $sortOrder++,
                 ]
             );
@@ -110,8 +112,8 @@ class IncidentTypeSeeder extends Seeder
             ['category' => 'Vehicular', 'name' => 'Minor Fender Bender', 'code' => 'VEH-005', 'priority' => 'P3'],
             ['category' => 'Vehicular', 'name' => 'Vehicle Breakdown on Highway', 'code' => 'VEH-006', 'priority' => 'P4'],
 
-            ['category' => 'Crime / Security', 'name' => 'Active Shooter', 'code' => 'CRM-001', 'priority' => 'P1'],
-            ['category' => 'Crime / Security', 'name' => 'Bomb Threat', 'code' => 'CRM-002', 'priority' => 'P1'],
+            ['category' => 'Crime / Security', 'name' => 'Active Shooter', 'code' => 'CRM-001', 'priority' => 'P1', 'show_in_public_app' => false],
+            ['category' => 'Crime / Security', 'name' => 'Bomb Threat', 'code' => 'CRM-002', 'priority' => 'P1', 'show_in_public_app' => false],
             ['category' => 'Crime / Security', 'name' => 'Assault', 'code' => 'CRM-003', 'priority' => 'P2'],
             ['category' => 'Crime / Security', 'name' => 'Robbery / Hold-up', 'code' => 'CRM-004', 'priority' => 'P2'],
             ['category' => 'Crime / Security', 'name' => 'Domestic Violence', 'code' => 'CRM-005', 'priority' => 'P2'],
@@ -120,7 +122,7 @@ class IncidentTypeSeeder extends Seeder
 
             ['category' => 'Hazmat', 'name' => 'Chemical Spill', 'code' => 'HAZ-001', 'priority' => 'P1'],
             ['category' => 'Hazmat', 'name' => 'Gas Leak', 'code' => 'HAZ-002', 'priority' => 'P1'],
-            ['category' => 'Hazmat', 'name' => 'Radioactive Material', 'code' => 'HAZ-003', 'priority' => 'P1'],
+            ['category' => 'Hazmat', 'name' => 'Radioactive Material', 'code' => 'HAZ-003', 'priority' => 'P1', 'show_in_public_app' => false],
             ['category' => 'Hazmat', 'name' => 'Fuel Spill', 'code' => 'HAZ-004', 'priority' => 'P2'],
             ['category' => 'Hazmat', 'name' => 'Minor Hazmat Release', 'code' => 'HAZ-005', 'priority' => 'P3'],
 
@@ -134,6 +136,8 @@ class IncidentTypeSeeder extends Seeder
             ['category' => 'Public Disturbance', 'name' => 'Large Gathering', 'code' => 'PUB-002', 'priority' => 'P3'],
             ['category' => 'Public Disturbance', 'name' => 'Noise Complaint', 'code' => 'PUB-003', 'priority' => 'P4'],
             ['category' => 'Public Disturbance', 'name' => 'Illegal Dumping', 'code' => 'PUB-004', 'priority' => 'P4'],
+
+            ['category' => 'Other', 'name' => 'Other Emergency', 'code' => 'OTHER_EMERGENCY', 'priority' => 'P3', 'description' => 'Anything not covered by the other categories.'],
         ];
     }
 }
