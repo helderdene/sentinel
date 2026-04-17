@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
+import IntakeIconDashboard from '@/components/intake/icons/IntakeIconDashboard.vue';
 import IntakeIconLogout from '@/components/intake/icons/IntakeIconLogout.vue';
 import RoleBadge from '@/components/intake/RoleBadge.vue';
-import { logout } from '@/routes';
+import { dashboard, logout } from '@/routes';
 import type { User } from '@/types/auth';
 
 type Props = {
@@ -135,7 +136,15 @@ function closeDropdown() {
                     </div>
                 </div>
 
-                <div class="p-2">
+                <div class="space-y-0.5 p-2">
+                    <Link
+                        :href="dashboard()"
+                        class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-xs text-t-text-dim transition-colors hover:bg-t-bg"
+                        @click="closeDropdown"
+                    >
+                        <IntakeIconDashboard :size="14" color="currentColor" />
+                        Dashboard
+                    </Link>
                     <Link
                         :href="logout()"
                         method="post"

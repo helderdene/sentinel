@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\IncidentCategory;
 use App\Models\IncidentType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -20,6 +21,7 @@ class IncidentTypeFactory extends Factory
     public function definition(): array
     {
         return [
+            'incident_category_id' => IncidentCategory::factory(),
             'category' => fake()->randomElement(['Medical', 'Fire', 'Natural Disaster', 'Vehicular']),
             'name' => fake()->unique()->words(3, true),
             'code' => strtoupper(fake()->unique()->lexify('???-###')),

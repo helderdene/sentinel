@@ -222,7 +222,7 @@ const hasVitals = computed(() => props.incident.vitals !== null);
                 </template>
 
                 <div
-                    v-if="incident.assessment_tags.length > 0"
+                    v-if="incident.assessment_tags?.length"
                     class="border-t border-t-border pt-2"
                 >
                     <p

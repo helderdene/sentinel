@@ -68,6 +68,10 @@ class FortifyServiceProvider extends ServiceProvider
                         return redirect()->intended(route('intake.station'));
                     }
 
+                    if ($user && $user->role === UserRole::Responder) {
+                        return redirect()->intended(route('responder.station'));
+                    }
+
                     return redirect()->intended(Fortify::redirects('login'));
                 }
             };

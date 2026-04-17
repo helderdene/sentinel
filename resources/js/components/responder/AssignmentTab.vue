@@ -156,7 +156,7 @@ function formatTimelineDate(dateStr: string): string {
                     </p>
                 </div>
 
-                <div v-if="incident.assigned_units.length > 0">
+                <div v-if="incident.assigned_units?.length > 0">
                     <p
                         class="font-mono text-[10px] tracking-[1.5px] text-t-text-faint uppercase"
                     >

@@ -12,7 +12,7 @@ const emit = defineEmits<{
 
 const { isExpired, isAcknowledged, colorClass, displayTime } = useAckTimer(
     props.assignedAt,
-    props.acknowledgedAt,
+    () => props.acknowledgedAt,
     () => emit('expired'),
 );
 </script>

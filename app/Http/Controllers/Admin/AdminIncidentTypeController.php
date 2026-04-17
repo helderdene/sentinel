@@ -6,6 +6,7 @@ use App\Enums\IncidentPriority;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreIncidentTypeRequest;
 use App\Http\Requests\Admin\UpdateIncidentTypeRequest;
+use App\Models\IncidentCategory;
 use App\Models\IncidentType;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
@@ -19,16 +20,16 @@ class AdminIncidentTypeController extends Controller
     public function index(): Response
     {
         $types = IncidentType::query()
+            ->with('incidentCategory')
             ->orderBy('category')
             ->orderBy('sort_order')
             ->orderBy('name')
             ->get();
 
-        $categories = IncidentType::query()
-            ->select('category')
-            ->distinct()
-            ->orderBy('category')
-            ->pluck('category');
+        $categories = IncidentCategory::query()
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get(['id', 'name', 'icon']);
 
         return Inertia::render('admin/IncidentTypes', [
             'types' => $types,
@@ -41,11 +42,11 @@ class AdminIncidentTypeController extends Controller
      */
     public function create(): Response
     {
-        $categories = IncidentType::query()
-            ->select('category')
-            ->distinct()
-            ->orderBy('category')
-            ->pluck('category');
+        $categories = IncidentCategory::query()
+            ->active()
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get(['id', 'name', 'icon']);
 
         return Inertia::render('admin/IncidentTypeForm', [
             'priorities' => IncidentPriority::cases(),
@@ -58,7 +59,18 @@ class AdminIncidentTypeController extends Controller
      */
     public function store(StoreIncidentTypeRequest $request): RedirectResponse
     {
-        IncidentType::query()->create($request->validated());
+        $data = $request->validated();
+
+        // Sync the string category field from the selected category model
+        if (isset($data['incident_category_id'])) {
+            $category = IncidentCategory::find($data['incident_category_id']);
+
+            if ($category) {
+                $data['category'] = $category->name;
+            }
+        }
+
+        IncidentType::query()->create($data);
 
         return redirect()->route('admin.incident-types.index')
             ->with('success', 'Incident type created successfully.');
@@ -69,11 +81,11 @@ class AdminIncidentTypeController extends Controller
      */
     public function edit(IncidentType $incidentType): Response
     {
-        $categories = IncidentType::query()
-            ->select('category')
-            ->distinct()
-            ->orderBy('category')
-            ->pluck('category');
+        $categories = IncidentCategory::query()
+            ->active()
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get(['id', 'name', 'icon']);
 
         return Inertia::render('admin/IncidentTypeForm', [
             'type' => $incidentType,
@@ -87,7 +99,18 @@ class AdminIncidentTypeController extends Controller
      */
     public function update(UpdateIncidentTypeRequest $request, IncidentType $incidentType): RedirectResponse
     {
-        $incidentType->update($request->validated());
+        $data = $request->validated();
+
+        // Sync the string category field from the selected category model
+        if (isset($data['incident_category_id'])) {
+            $category = IncidentCategory::find($data['incident_category_id']);
+
+            if ($category) {
+                $data['category'] = $category->name;
+            }
+        }
+
+        $incidentType->update($data);
 
         return redirect()->route('admin.incident-types.index')
             ->with('success', 'Incident type updated successfully.');

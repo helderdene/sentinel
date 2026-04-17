@@ -25,7 +25,8 @@ class UpdateIncidentTypeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'category' => ['required', 'string', 'max:50'],
+            'incident_category_id' => ['required', 'exists:incident_categories,id'],
+            'category' => ['nullable', 'string', 'max:50'],
             'name' => ['required', 'string', 'max:100'],
             'code' => ['required', 'string', 'max:20', Rule::unique('incident_types', 'code')->ignore($this->route('incident_type'))],
             'default_priority' => ['required', Rule::in(array_column(IncidentPriority::cases(), 'value'))],

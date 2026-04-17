@@ -1,7 +1,9 @@
 import type { Ref } from 'vue';
 import { onUnmounted, ref, watch } from 'vue';
+import { updateLocation } from '@/actions/App/Http/Controllers/ResponderController';
 import type { IncidentStatus } from '@/types/responder';
 
+const STANDBY_INTERVAL_MS = 30_000;
 const EN_ROUTE_INTERVAL_MS = 10_000;
 const ON_SCENE_INTERVAL_MS = 60_000;
 
@@ -14,7 +16,7 @@ function getBroadcastInterval(status: IncidentStatus | null): number {
         case 'RESOLVING':
             return ON_SCENE_INTERVAL_MS;
         default:
-            return EN_ROUTE_INTERVAL_MS;
+            return STANDBY_INTERVAL_MS;
     }
 }
 
@@ -48,7 +50,7 @@ export function useGpsTracking(
 
         lastBroadcastTime = now;
 
-        fetch('/responder/update-location', {
+        fetch(updateLocation.url(), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -57,7 +59,6 @@ export function useGpsTracking(
                 'X-XSRF-TOKEN': getXsrfToken(),
             },
             body: JSON.stringify({
-                unit_id: unitId,
                 latitude: lat,
                 longitude: lng,
             }),
@@ -91,6 +92,20 @@ export function useGpsTracking(
         }
 
         isTracking.value = true;
+
+        // Get an immediate position fix
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                if (!position.value) {
+                    position.value = {
+                        lat: pos.coords.latitude,
+                        lng: pos.coords.longitude,
+                    };
+                }
+            },
+            () => {},
+            { enableHighAccuracy: true, maximumAge: 30000, timeout: 10000 },
+        );
 
         watchId = navigator.geolocation.watchPosition(
             (pos) => {

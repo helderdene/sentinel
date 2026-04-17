@@ -2,12 +2,10 @@
 
 namespace App\Http\Requests\Admin;
 
-use App\Enums\IncidentPriority;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class StoreIncidentTypeRequest extends FormRequest
+class StoreIncidentCategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,14 +23,10 @@ class StoreIncidentTypeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'incident_category_id' => ['required', 'exists:incident_categories,id'],
-            'category' => ['nullable', 'string', 'max:50'],
-            'name' => ['required', 'string', 'max:100'],
-            'code' => ['required', 'string', 'max:20', 'unique:incident_types,code'],
-            'default_priority' => ['required', Rule::in(array_column(IncidentPriority::cases(), 'value'))],
+            'name' => ['required', 'string', 'max:50', 'unique:incident_categories,name'],
+            'icon' => ['required', 'string', 'max:50'],
             'description' => ['nullable', 'string'],
             'is_active' => ['boolean'],
-            'show_in_public_app' => ['nullable', 'boolean'],
             'sort_order' => ['nullable', 'integer'],
         ];
     }

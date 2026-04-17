@@ -4,14 +4,15 @@ import {
     AlertTriangle,
     BarChart3,
     ClipboardList,
+    FolderTree,
     LayoutGrid,
-    ListOrdered,
+    Landmark,
     Map,
-    MessageSquare,
-    Plus,
     RadioTower,
     Shield,
+    Tags,
     Truck,
+    Users,
 } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
@@ -27,11 +28,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import {
-    create as incidentsCreate,
-    index as incidentsIndex,
-    queue as incidentsQueue,
-} from '@/routes/incidents';
+import { index as incidentsIndex } from '@/routes/incidents';
 import type { NavItem } from '@/types';
 import type { UserRole } from '@/types/auth';
 
@@ -60,29 +57,9 @@ const mainNavItems = computed<NavItem[]>(() => {
                 icon: Map,
             },
             {
-                title: 'Incident Queue',
-                href: incidentsQueue(),
-                icon: ListOrdered,
-            },
-            {
                 title: 'Incidents',
                 href: incidentsIndex(),
                 icon: AlertTriangle,
-            },
-            {
-                title: '+ New Incident',
-                href: incidentsCreate(),
-                icon: Plus,
-            },
-            {
-                title: 'Units',
-                href: '/admin/units',
-                icon: Truck,
-            },
-            {
-                title: 'Messages',
-                href: '/messages',
-                icon: MessageSquare,
             },
             {
                 title: 'Intake Station',
@@ -95,9 +72,36 @@ const mainNavItems = computed<NavItem[]>(() => {
                 icon: BarChart3,
             },
             {
-                title: 'Admin Panel',
+                title: 'Admin',
                 href: '/admin/users',
                 icon: Shield,
+                children: [
+                    {
+                        title: 'Users',
+                        href: '/admin/users',
+                        icon: Users,
+                    },
+                    {
+                        title: 'Barangays',
+                        href: '/admin/barangays',
+                        icon: Landmark,
+                    },
+                    {
+                        title: 'Incident Categories',
+                        href: '/admin/incident-categories',
+                        icon: FolderTree,
+                    },
+                    {
+                        title: 'Incident Types',
+                        href: '/admin/incident-types',
+                        icon: Tags,
+                    },
+                    {
+                        title: 'Units',
+                        href: '/admin/units',
+                        icon: Truck,
+                    },
+                ],
             },
         ],
         operator: [
@@ -105,16 +109,6 @@ const mainNavItems = computed<NavItem[]>(() => {
                 title: 'Intake Station',
                 href: '/intake',
                 icon: ClipboardList,
-            },
-            {
-                title: 'Incident Queue',
-                href: incidentsQueue(),
-                icon: ListOrdered,
-            },
-            {
-                title: 'Messages',
-                href: '/messages',
-                icon: MessageSquare,
             },
         ],
         dispatcher: [
@@ -129,24 +123,9 @@ const mainNavItems = computed<NavItem[]>(() => {
                 icon: Map,
             },
             {
-                title: 'Incident Queue',
-                href: incidentsQueue(),
-                icon: ListOrdered,
-            },
-            {
                 title: 'Incidents',
                 href: incidentsIndex(),
                 icon: AlertTriangle,
-            },
-            {
-                title: '+ New Incident',
-                href: incidentsCreate(),
-                icon: Plus,
-            },
-            {
-                title: 'Messages',
-                href: '/messages',
-                icon: MessageSquare,
             },
         ],
         responder: [
@@ -159,11 +138,6 @@ const mainNavItems = computed<NavItem[]>(() => {
                 title: 'My Incidents',
                 href: '/my-incidents',
                 icon: ClipboardList,
-            },
-            {
-                title: 'Messages',
-                href: '/messages',
-                icon: MessageSquare,
             },
         ],
         supervisor: [
@@ -183,29 +157,14 @@ const mainNavItems = computed<NavItem[]>(() => {
                 icon: Map,
             },
             {
-                title: 'Incident Queue',
-                href: incidentsQueue(),
-                icon: ListOrdered,
-            },
-            {
                 title: 'All Incidents',
                 href: incidentsIndex(),
                 icon: AlertTriangle,
             },
             {
-                title: '+ New Incident',
-                href: incidentsCreate(),
-                icon: Plus,
-            },
-            {
                 title: 'Units',
                 href: '/admin/units',
                 icon: Truck,
-            },
-            {
-                title: 'Messages',
-                href: '/messages',
-                icon: MessageSquare,
             },
             {
                 title: 'Analytics',

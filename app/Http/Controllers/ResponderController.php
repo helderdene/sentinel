@@ -28,6 +28,7 @@ use App\Models\Incident;
 use App\Models\User;
 use Clickbar\Magellan\Data\Geometries\Point;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -87,6 +88,16 @@ class ResponderController extends Controller
         }
 
         $oldStatus = $incident->status;
+
+        // Update unit GPS position if provided
+        $latitude = $request->validated('latitude');
+        $longitude = $request->validated('longitude');
+
+        if ($latitude !== null && $longitude !== null) {
+            $unit->update([
+                'coordinates' => DB::raw("ST_SetSRID(ST_MakePoint({$longitude}, {$latitude}), 4326)::geography"),
+            ]);
+        }
 
         $incident->assignedUnits()->updateExistingPivot($unit->id, [
             'acknowledged_at' => now(),

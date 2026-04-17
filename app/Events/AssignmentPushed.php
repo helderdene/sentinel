@@ -44,8 +44,8 @@ class AssignmentPushed implements ShouldBroadcast, ShouldDispatchAfterCommit
             'location_text' => $this->incident->location_text,
             'barangay' => $this->incident->barangay?->name,
             'coordinates' => $this->incident->coordinates ? [
-                'latitude' => $this->incident->coordinates->getLatitude(),
-                'longitude' => $this->incident->coordinates->getLongitude(),
+                'lat' => $this->incident->coordinates->getLatitude(),
+                'lng' => $this->incident->coordinates->getLongitude(),
             ] : null,
             'notes' => $this->incident->notes,
             'unit_id' => $this->unitId,

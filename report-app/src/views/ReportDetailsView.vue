@@ -552,7 +552,7 @@ async function handleSubmit(): Promise<void> {
 
         <!-- Fixed submit button -->
         <div
-            class="absolute inset-x-0 bottom-0 z-10 px-4 pb-6 pt-3"
+            class="fixed inset-x-0 bottom-0 z-10 px-4 pb-6 pt-3"
             style="
                 background: linear-gradient(
                     transparent,

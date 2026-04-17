@@ -21,11 +21,17 @@ export interface AssignedUnitPivot {
 export interface DispatchIncident extends Incident {
     incident_type: {
         id: number;
+        incident_category_id: number | null;
         category: string;
         name: string;
         code: string;
         default_priority: IncidentPriority;
         is_active: boolean;
+        incident_category: {
+            id: number;
+            name: string;
+            icon: string;
+        } | null;
     };
     barangay: { id: number; name: string } | null;
     assigned_units: AssignedUnitPivot[];

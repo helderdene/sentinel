@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\IncidentCategory;
 use App\Models\IncidentType;
 use Illuminate\Database\Seeder;
 
@@ -12,6 +13,44 @@ class IncidentTypeSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->seedCategories();
+        $this->seedTypes();
+    }
+
+    /**
+     * Seed the incident categories with icons.
+     */
+    private function seedCategories(): void
+    {
+        $categories = [
+            ['name' => 'Medical', 'icon' => 'Heart', 'sort_order' => 0],
+            ['name' => 'Fire', 'icon' => 'Flame', 'sort_order' => 1],
+            ['name' => 'Natural Disaster', 'icon' => 'CloudLightning', 'sort_order' => 2],
+            ['name' => 'Vehicular', 'icon' => 'Car', 'sort_order' => 3],
+            ['name' => 'Crime / Security', 'icon' => 'Shield', 'sort_order' => 4],
+            ['name' => 'Hazmat', 'icon' => 'Biohazard', 'sort_order' => 5],
+            ['name' => 'Water Rescue', 'icon' => 'Waves', 'sort_order' => 6],
+            ['name' => 'Public Disturbance', 'icon' => 'Megaphone', 'sort_order' => 7],
+        ];
+
+        foreach ($categories as $category) {
+            IncidentCategory::updateOrCreate(
+                ['name' => $category['name']],
+                [
+                    'icon' => $category['icon'],
+                    'is_active' => true,
+                    'sort_order' => $category['sort_order'],
+                ]
+            );
+        }
+    }
+
+    /**
+     * Seed the incident types.
+     */
+    private function seedTypes(): void
+    {
+        $categoryMap = IncidentCategory::pluck('id', 'name');
         $types = $this->getIncidentTypes();
         $sortOrder = 0;
 
@@ -19,6 +58,7 @@ class IncidentTypeSeeder extends Seeder
             IncidentType::updateOrCreate(
                 ['code' => $type['code']],
                 [
+                    'incident_category_id' => $categoryMap[$type['category']] ?? null,
                     'category' => $type['category'],
                     'name' => $type['name'],
                     'default_priority' => $type['priority'],

@@ -133,36 +133,36 @@
 
 :root {
     /* Sentinel Design System Tokens — Light (authoritative hex values) */
-    --t-bg: #EFF3FA;
-    --t-surface: #FFFFFF;
-    --t-surface-alt: #F0F4FA;
-    --t-text: #042C53;
-    --t-text-mid: #185FA5;
-    --t-text-dim: #9AA9BA;
-    --t-text-faint: #8BA3C1;
-    --t-border: #D3DCE8;
-    --t-border-med: #ABBDCF;
-    --t-border-foc: #185FA5;
-    --t-brand: #042C53;
-    --t-accent: #185FA5;
-    --t-online: #1D9E75;
-    --t-queued: #185FA5;
-    --t-p1: #A32D2D;
-    --t-p2: #854F0B;
-    --t-p3: #0F6E56;
-    --t-p4: #185FA5;
+    --t-bg: #eff3fa;
+    --t-surface: #ffffff;
+    --t-surface-alt: #f0f4fa;
+    --t-text: #042c53;
+    --t-text-mid: #185fa5;
+    --t-text-dim: #9aa9ba;
+    --t-text-faint: #8ba3c1;
+    --t-border: #d3dce8;
+    --t-border-med: #abbdcf;
+    --t-border-foc: #185fa5;
+    --t-brand: #042c53;
+    --t-accent: #185fa5;
+    --t-online: #1d9e75;
+    --t-queued: #185fa5;
+    --t-p1: #a32d2d;
+    --t-p2: #854f0b;
+    --t-p3: #0f6e56;
+    --t-p4: #185fa5;
     --t-ch-sms: #059669;
-    --t-ch-app: #185FA5;
+    --t-ch-app: #185fa5;
     --t-ch-voice: #d97706;
     --t-ch-iot: #7c3aed;
-    --t-ch-walkin: #A32D2D;
-    --t-role-operator: #185FA5;
+    --t-ch-walkin: #a32d2d;
+    --t-role-operator: #185fa5;
     --t-role-supervisor: #7c3aed;
-    --t-role-admin: #0F6E56;
-    --t-unit-available: #1D9E75;
-    --t-unit-dispatched: #185FA5;
-    --t-unit-enroute: #185FA5;
-    --t-unit-onscene: #EF9F27;
+    --t-role-admin: #0f6e56;
+    --t-unit-available: #1d9e75;
+    --t-unit-dispatched: #185fa5;
+    --t-unit-enroute: #185fa5;
+    --t-unit-onscene: #ef9f27;
     --t-unit-offline: #6b7280;
 
     /* Shadcn variables — remapped to design system tokens */
@@ -215,16 +215,16 @@
 
 .dark {
     /* Sentinel Design System Tokens — Dark (authoritative hex values) */
-    --t-bg: #05101E;
-    --t-surface: #041E38;
-    --t-surface-alt: #04182D;
-    --t-text: #FFFFFF;
-    --t-text-mid: #B5D4F4;
-    --t-text-dim: #5A7B9E;
-    --t-text-faint: #1A4670;
-    --t-border: #0B1A2D;
-    --t-border-med: #102E4E;
-    --t-border-foc: #378ADD;
+    --t-bg: #05101e;
+    --t-surface: #041e38;
+    --t-surface-alt: #04182d;
+    --t-text: #ffffff;
+    --t-text-mid: #b5d4f4;
+    --t-text-dim: #5a7b9e;
+    --t-text-faint: #1a4670;
+    --t-border: #0b1a2d;
+    --t-border-med: #102e4e;
+    --t-border-foc: #378add;
 
     /* Shadcn variables — remapped to design system dark tokens */
     --background: var(--t-bg);
@@ -233,7 +233,7 @@
     --card-foreground: var(--t-text);
     --popover: var(--t-surface);
     --popover-foreground: var(--t-text);
-    --primary: #B5D4F4;
+    --primary: #b5d4f4;
     --primary-foreground: var(--t-bg);
     --secondary: var(--t-surface-alt);
     --secondary-foreground: var(--t-text-mid);
@@ -248,16 +248,16 @@
     --ring: var(--t-accent);
 
     /* Chart variables — dark */
-    --chart-1: #378ADD;
-    --chart-2: #1D9E75;
-    --chart-3: #EF9F27;
+    --chart-1: #378add;
+    --chart-2: #1d9e75;
+    --chart-3: #ef9f27;
     --chart-4: #a855f7;
-    --chart-5: #E24B4A;
+    --chart-5: #e24b4a;
 
     /* Sidebar variables — dark */
     --sidebar-background: var(--t-surface);
     --sidebar-foreground: var(--t-text-mid);
-    --sidebar-primary: #B5D4F4;
+    --sidebar-primary: #b5d4f4;
     --sidebar-primary-foreground: var(--t-bg);
     --sidebar-accent: color-mix(in srgb, var(--t-accent) 12%, transparent);
     --sidebar-accent-foreground: var(--t-accent);
@@ -278,6 +278,15 @@
 
 .p1-flash-active {
     animation: p1-flash 0.7s ease-in-out 3;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes fadeUp {
@@ -324,7 +333,7 @@
        border-color + box-shadow pattern from CONTEXT.md */
     [data-slot]:focus-visible {
         outline: none;
-        border-color: #378ADD;
+        border-color: #378add;
         box-shadow: 0 0 0 3px rgba(55, 138, 221, 0.1);
     }
 }

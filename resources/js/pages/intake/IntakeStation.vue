@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { usePage } from '@inertiajs/vue3';
 import { useEcho } from '@laravel/echo-vue';
-import { computed, provide, ref, watch } from 'vue';
+import type { Ref } from 'vue';
+import { computed, inject, ref, watch, watchEffect } from 'vue';
 
 import ChannelFeed from '@/components/intake/ChannelFeed.vue';
 import DispatchQueuePanel from '@/components/intake/DispatchQueuePanel.vue';
@@ -17,6 +18,7 @@ import type {
     IncidentCreatedPayload,
     IncidentPriority,
     IncidentType,
+    TickerEvent,
 } from '@/types/incident';
 
 defineOptions({ layout: IntakeLayout });
@@ -53,7 +55,8 @@ const {
     selectIncident,
 } = useIntakeFeed(props.pendingIncidents, props.triagedIncidents);
 
-const initialTotal = props.pendingIncidents.length + props.triagedIncidents.length;
+const initialTotal =
+    props.pendingIncidents.length + props.triagedIncidents.length;
 const session = useIntakeSession(initialTotal, props.triagedIncidents.length);
 
 const isManualEntry = ref(false);
@@ -143,16 +146,24 @@ function onRecalled(incidentId: string): void {
     }
 }
 
-const tickerEvents = ref<string[]>([]);
+const tickerEvents = inject<Ref<TickerEvent[]>>(
+    'tickerEvents',
+    ref<TickerEvent[]>([]),
+);
 
 useEcho<IncidentCreatedPayload>(
     'dispatch.incidents',
     'IncidentCreated',
     (e) => {
         session.recordReceived();
-        tickerEvents.value.unshift(
-            `${e.incident_no} -- ${e.incident_type ?? 'New incident'} (${e.channel})`,
-        );
+        tickerEvents.value.unshift({
+            incident_no: e.incident_no,
+            priority: e.priority,
+            channel: e.channel,
+            incident_type: e.incident_type,
+            location_text: e.location_text,
+            created_at: e.created_at,
+        });
 
         if (tickerEvents.value.length > 20) {
             tickerEvents.value.pop();
@@ -174,13 +185,21 @@ const avgRespLabel = computed(() => {
     return `${Math.floor(seconds / 60)}m`;
 });
 
-provide('topbarStats', {
-    incoming: session.received,
-    pending: pendingCount,
-    triaged: session.triaged,
-    avgResp: avgRespLabel,
+const topbarStats = inject<{
+    incoming: Ref<number>;
+    pending: Ref<number>;
+    triaged: Ref<number>;
+    avgResp: Ref<string>;
+}>('topbarStats');
+
+watchEffect(() => {
+    if (topbarStats) {
+        topbarStats.incoming.value = session.received.value;
+        topbarStats.pending.value = pendingCount.value;
+        topbarStats.triaged.value = session.triaged.value;
+        topbarStats.avgResp.value = avgRespLabel.value;
+    }
 });
-provide('tickerEvents', tickerEvents);
 </script>
 
 <template>

@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import PriBadge from '@/components/intake/PriBadge.vue';
+import {
+    getCategoryComponent,
+    getIncidentCategoryIcon,
+} from '@/composables/useCategoryIcons';
 import type { DispatchIncident } from '@/types/dispatch';
 
 const props = defineProps<{
@@ -71,6 +75,10 @@ onUnmounted(() => {
     }
 });
 
+const categoryIconComponent = computed(() =>
+    getCategoryComponent(getIncidentCategoryIcon(props.incident.incident_type)),
+);
+
 const firstAssignedCallsign = computed(() => {
     if (
         props.incident.assigned_units &&
@@ -109,8 +117,14 @@ const firstAssignedCallsign = computed(() => {
                     {{ elapsed }}
                 </span>
             </div>
-            <div class="mt-1 truncate text-xs font-semibold text-t-text">
-                {{ incident.incident_type?.name ?? 'Unclassified' }}
+            <div class="mt-1 flex items-center gap-1.5 truncate">
+                <component
+                    :is="categoryIconComponent"
+                    class="size-3 shrink-0 text-t-text-dim"
+                />
+                <span class="truncate text-xs font-semibold text-t-text">
+                    {{ incident.incident_type?.name ?? 'Unclassified' }}
+                </span>
             </div>
             <div class="mt-0.5 truncate text-[10px] text-t-text-dim">
                 {{ incident.location_text }}

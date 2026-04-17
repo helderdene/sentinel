@@ -48,18 +48,11 @@ const session = useResponderSession(
     props.userId,
 );
 
-const gps = useGpsTracking(props.unit.id, session.currentStatus);
+const gps = useGpsTracking(props.unit?.id, session.currentStatus);
+gps.start();
 
-watch(
-    session.hasActiveIncident,
-    (hasIncident) => {
-        if (hasIncident) {
-            gps.start();
-        } else {
-            gps.stop();
-        }
-    },
-    { immediate: true },
+const effectiveGpsPosition = computed(
+    () => gps.position.value ?? session.unit.value.coordinates,
 );
 
 const ACK_TIMEOUT_SECONDS = 90;
@@ -269,11 +262,12 @@ async function handleAcknowledgeFromButton(): Promise<void> {
             },
             body: JSON.stringify({
                 unit_id: props.unit.id,
+                latitude: gps.position.value?.lat ?? null,
+                longitude: gps.position.value?.lng ?? null,
             }),
         });
 
         session.acknowledgeAssignment();
-        gps.start();
     } catch {
         // Silent fail
     }
@@ -314,7 +308,6 @@ const assignmentPayload = computed<AssignmentPayload | null>(() => {
 
 function handleAcknowledged(): void {
     session.acknowledgeAssignment();
-    gps.start();
 }
 
 function handleOutcomeResolved(): void {
@@ -325,7 +318,6 @@ function handleOutcomeResolved(): void {
 
 function handleClosureDone(): void {
     session.resetAfterClosure();
-    gps.stop();
 }
 
 const showResourceModal = ref(false);
@@ -385,6 +377,7 @@ function handleMessagesRead(): void {
             "
             :unit="session.unit.value"
             :connection-status="connectionStatusValue"
+            :gps-position="effectiveGpsPosition"
         />
 
         <!-- Full-screen assignment notification -->
@@ -394,6 +387,7 @@ function handleMessagesRead(): void {
             "
             :incident="assignmentPayload"
             :user-id="props.userId"
+            :gps-position="effectiveGpsPosition"
             @acknowledged="handleAcknowledged"
         />
 
@@ -422,7 +416,7 @@ function handleMessagesRead(): void {
                     session.activeIncident.value
                 "
                 :incident="session.activeIncident.value"
-                :gps-position="gps.position.value"
+                :gps-position="effectiveGpsPosition"
                 :unit-callsign="session.unit.value.callsign"
             />
 

@@ -35,6 +35,7 @@ const unit = ref<ResponderUnit>({
     callsign: '',
     type: '',
     status: '',
+    coordinates: null,
 });
 const incident = ref<ResponderIncident | null>(null);
 const currentStatus = ref<IncidentStatus | null>(null);
@@ -64,7 +65,7 @@ function handleShowOutcomeSheet(): void {
 </script>
 
 <template>
-    <div class="flex min-h-dvh flex-col overflow-hidden bg-t-bg">
+    <div class="flex h-dvh flex-col overflow-hidden bg-t-bg">
         <ResponderTopbar
             :unit="unit"
             :incident="incident"

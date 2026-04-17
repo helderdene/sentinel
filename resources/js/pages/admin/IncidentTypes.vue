@@ -1,5 +1,19 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
+import {
+    AlertTriangle,
+    Anchor,
+    Biohazard,
+    Car,
+    CloudLightning,
+    Flame,
+    Heart,
+    Megaphone,
+    Shield,
+    Siren,
+    Waves,
+} from 'lucide-vue-next';
+import type { Component } from 'vue';
 import { computed, ref } from 'vue';
 import AdminIncidentTypeController from '@/actions/App/Http/Controllers/Admin/AdminIncidentTypeController';
 import Heading from '@/components/Heading.vue';
@@ -14,8 +28,15 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { index as typesIndex } from '@/routes/admin/incident-types';
 import type { BreadcrumbItem } from '@/types';
 
+type CategoryInfo = {
+    id: number;
+    name: string;
+    icon: string;
+};
+
 type IncidentTypeItem = {
     id: number;
+    incident_category_id: number | null;
     category: string;
     name: string;
     code: string;
@@ -23,11 +44,12 @@ type IncidentTypeItem = {
     description: string | null;
     is_active: boolean;
     sort_order: number | null;
+    incident_category: CategoryInfo | null;
 };
 
 type Props = {
     types: IncidentTypeItem[];
-    categories: string[];
+    categories: CategoryInfo[];
 };
 
 const props = defineProps<Props>();
@@ -37,17 +59,35 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Incident Types', href: typesIndex.url() },
 ];
 
-const openCategories = ref<Set<string>>(new Set(props.categories));
+const iconMap: Record<string, Component> = {
+    Heart,
+    Flame,
+    CloudLightning,
+    Car,
+    Shield,
+    Biohazard,
+    Waves,
+    Megaphone,
+    AlertTriangle,
+    Siren,
+    Anchor,
+};
+
+const categoryNames = computed(() => props.categories.map((c) => c.name));
+
+const openCategories = ref<Set<string>>(new Set(categoryNames.value));
 
 const groupedTypes = computed(() => {
     const groups: Record<string, IncidentTypeItem[]> = {};
 
     for (const type of props.types) {
-        if (!groups[type.category]) {
-            groups[type.category] = [];
+        const catName = type.incident_category?.name ?? type.category;
+
+        if (!groups[catName]) {
+            groups[catName] = [];
         }
 
-        groups[type.category].push(type);
+        groups[catName].push(type);
     }
 
     return groups;
@@ -59,6 +99,12 @@ const priorityColors: Record<string, string> = {
     P3: 'bg-[color-mix(in_srgb,var(--t-p3)_12%,transparent)] text-t-p3',
     P4: 'bg-[color-mix(in_srgb,var(--t-p4)_12%,transparent)] text-t-p4',
 };
+
+function getCategoryIcon(categoryName: string): Component {
+    const cat = props.categories.find((c) => c.name === categoryName);
+
+    return iconMap[cat?.icon ?? ''] ?? AlertTriangle;
+}
 
 function toggleCategory(category: string): void {
     if (openCategories.value.has(category)) {
@@ -72,6 +118,7 @@ function disableType(type: IncidentTypeItem): void {
     router.put(
         AdminIncidentTypeController.update(type.id).url,
         {
+            incident_category_id: type.incident_category_id,
             category: type.category,
             name: type.name,
             code: type.code,
@@ -86,6 +133,7 @@ function enableType(type: IncidentTypeItem): void {
     router.put(
         AdminIncidentTypeController.update(type.id).url,
         {
+            incident_category_id: type.incident_category_id,
             category: type.category,
             name: type.name,
             code: type.code,
@@ -124,9 +172,9 @@ function categoryStats(category: string): { active: number; total: number } {
             <div class="space-y-4">
                 <Collapsible
                     v-for="category in categories"
-                    :key="category"
-                    :open="openCategories.has(category)"
-                    @update:open="toggleCategory(category)"
+                    :key="category.id"
+                    :open="openCategories.has(category.name)"
+                    @update:open="toggleCategory(category.name)"
                 >
                     <div
                         class="overflow-hidden rounded-[7px] border border-border bg-card shadow-[var(--shadow-1)]"
@@ -136,12 +184,22 @@ function categoryStats(category: string): { active: number; total: number } {
                                 class="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-accent"
                             >
                                 <div class="flex items-center gap-3">
+                                    <div
+                                        class="flex size-6 items-center justify-center rounded bg-accent"
+                                    >
+                                        <component
+                                            :is="getCategoryIcon(category.name)"
+                                            class="size-3.5 text-foreground"
+                                        />
+                                    </div>
                                     <h3 class="text-sm font-semibold">
-                                        {{ category }}
+                                        {{ category.name }}
                                     </h3>
                                     <Badge variant="secondary">
-                                        {{ categoryStats(category).active }}/{{
-                                            categoryStats(category).total
+                                        {{
+                                            categoryStats(category.name).active
+                                        }}/{{
+                                            categoryStats(category.name).total
                                         }}
                                         active
                                     </Badge>
@@ -149,8 +207,9 @@ function categoryStats(category: string): { active: number; total: number } {
                                 <svg
                                     class="size-4 shrink-0 transition-transform"
                                     :class="{
-                                        'rotate-180':
-                                            openCategories.has(category),
+                                        'rotate-180': openCategories.has(
+                                            category.name,
+                                        ),
                                     }"
                                     xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 24 24"
@@ -198,7 +257,9 @@ function categoryStats(category: string): { active: number; total: number } {
                                 </thead>
                                 <tbody>
                                     <tr
-                                        v-for="type in groupedTypes[category]"
+                                        v-for="type in groupedTypes[
+                                            category.name
+                                        ]"
                                         :key="type.id"
                                         class="border-b border-border transition-colors hover:bg-accent"
                                         :class="{

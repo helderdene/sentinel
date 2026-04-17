@@ -25,11 +25,17 @@ export interface GeocodingResult {
 
 export interface IncidentType {
     id: number;
+    incident_category_id: number | null;
     category: string;
     name: string;
     code: string;
     default_priority: IncidentPriority;
     is_active: boolean;
+    incident_category: {
+        id: number;
+        name: string;
+        icon: string;
+    } | null;
 }
 
 export interface Incident {

@@ -8,6 +8,10 @@ import MutualAidModal from '@/components/dispatch/MutualAidModal.vue';
 import SlaProgressBar from '@/components/dispatch/SlaProgressBar.vue';
 import StatusPipeline from '@/components/dispatch/StatusPipeline.vue';
 import PriBadge from '@/components/intake/PriBadge.vue';
+import {
+    getCategoryComponent,
+    getIncidentCategoryIcon,
+} from '@/composables/useCategoryIcons';
 import type {
     DispatchAgency,
     DispatchIncident,
@@ -42,6 +46,17 @@ const priorityNumber = computed(() => {
 });
 
 const statusLabel = computed(() => props.incident.status.replace(/_/g, ' '));
+
+const categoryIconComponent = computed(() =>
+    getCategoryComponent(getIncidentCategoryIcon(props.incident.incident_type)),
+);
+
+const categoryName = computed(
+    () =>
+        props.incident.incident_type?.incident_category?.name ??
+        props.incident.incident_type?.category ??
+        '',
+);
 
 const statusColorMap: Record<string, string> = {
     TRIAGED: 'var(--t-queued)',
@@ -136,8 +151,20 @@ function handleUnassign(unitId: string): void {
                         {{ statusLabel }}
                     </span>
                 </div>
-                <div class="mt-1 truncate text-xs font-semibold text-t-text">
-                    {{ incident.incident_type?.name ?? 'Unclassified' }}
+                <div class="mt-1 flex items-center gap-1.5 truncate">
+                    <component
+                        :is="categoryIconComponent"
+                        class="size-3.5 shrink-0 text-t-text-dim"
+                    />
+                    <span class="truncate text-xs font-semibold text-t-text">
+                        {{ incident.incident_type?.name ?? 'Unclassified' }}
+                    </span>
+                    <span
+                        v-if="categoryName"
+                        class="shrink-0 font-mono text-[9px] text-t-text-faint"
+                    >
+                        {{ categoryName }}
+                    </span>
                 </div>
             </div>
             <button

@@ -5,7 +5,7 @@ withDefaults(
         color?: string;
     }>(),
     {
-        size: 12,
+        size: 16,
         color: 'currentColor',
     },
 );
@@ -15,16 +15,16 @@ withDefaults(
     <svg
         :width="size"
         :height="size"
-        :viewBox="`0 0 12 12`"
+        :viewBox="`0 0 16 16`"
         fill="none"
         :stroke="color"
         stroke-width="1.3"
         stroke-linecap="round"
         stroke-linejoin="round"
     >
-        <path
-            d="M6 1L1.5 3v3.5c0 3 2 4.5 4.5 5.5 2.5-1 4.5-2.5 4.5-5.5V3L6 1z"
-        />
-        <polyline points="4,6 5.5,7.5 8,4.5" />
+        <rect x="2" y="2" width="5" height="5" rx="0.5" />
+        <rect x="9" y="2" width="5" height="3" rx="0.5" />
+        <rect x="2" y="9" width="5" height="3" rx="0.5" />
+        <rect x="9" y="7" width="5" height="5" rx="0.5" />
     </svg>
 </template>

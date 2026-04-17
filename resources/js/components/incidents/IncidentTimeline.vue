@@ -96,9 +96,7 @@ function formatTimestamp(dateStr: string): string {
             <!-- Content -->
             <div class="-mt-0.5 min-w-0 flex-1">
                 <div class="flex items-baseline gap-2">
-                    <span
-                        class="text-sm font-medium text-foreground"
-                    >
+                    <span class="text-sm font-medium text-foreground">
                         {{ getEventLabel(entry.event_type) }}
                     </span>
                     <span class="text-xs text-muted-foreground">

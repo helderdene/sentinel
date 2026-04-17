@@ -182,7 +182,7 @@ watch(query, () => {
         <!-- Open state: search input -->
         <div
             v-if="open"
-            class="rounded-[10px] border-[1.5px] border-t-accent bg-t-surface shadow-lg"
+            class="relative z-20 rounded-[10px] border-[1.5px] border-t-accent bg-t-surface shadow-lg"
         >
             <div class="flex items-center gap-2 px-3.5 py-[11px]">
                 <svg

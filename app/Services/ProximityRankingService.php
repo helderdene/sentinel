@@ -31,6 +31,7 @@ class ProximityRankingService implements ProximityServiceInterface
                 ) as distance_meters
             FROM units
             WHERE status = ?
+              AND decommissioned_at IS NULL
               AND coordinates IS NOT NULL
               AND ST_DWithin(
                     coordinates,

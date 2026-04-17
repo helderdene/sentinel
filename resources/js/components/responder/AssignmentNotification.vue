@@ -11,6 +11,7 @@ const ACK_TIMEOUT_SECONDS = 90;
 const props = defineProps<{
     incident: AssignmentPayload;
     userId: number;
+    gpsPosition: { lat: number; lng: number } | null;
 }>();
 
 const emit = defineEmits<{
@@ -34,7 +35,7 @@ const { pause: pauseTimer } = useIntervalFn(
         }
     },
     1000,
-    { immediate: false },
+    { immediate: true },
 );
 
 const formattedTime = computed(() => {
@@ -120,6 +121,8 @@ async function handleAcknowledge(): Promise<void> {
             },
             body: JSON.stringify({
                 unit_id: props.incident.unit_id,
+                latitude: props.gpsPosition?.lat ?? null,
+                longitude: props.gpsPosition?.lng ?? null,
             }),
         });
 

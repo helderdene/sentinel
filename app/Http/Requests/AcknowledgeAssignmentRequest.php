@@ -21,6 +21,9 @@ class AcknowledgeAssignmentRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [];
+        return [
+            'latitude' => ['nullable', 'numeric', 'between:-90,90'],
+            'longitude' => ['nullable', 'numeric', 'between:-180,180'],
+        ];
     }
 }

@@ -4,7 +4,7 @@ import { requestResource } from '@/actions/App/Http/Controllers/ResponderControl
 import type { ResourceType } from '@/types/responder';
 
 const props = defineProps<{
-    incidentId: number;
+    incidentId: string | number;
     isOpen: boolean;
 }>();
 

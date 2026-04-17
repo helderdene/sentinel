@@ -88,11 +88,13 @@ export function useIntakeFeed(
                 incident_type_id: e.incident_type_id,
                 incident_type: {
                     id: 0,
+                    incident_category_id: null,
                     category: '',
                     name: e.incident_type ?? '',
                     code: '',
                     default_priority: e.priority,
                     is_active: true,
+                    incident_category: null,
                 },
                 priority: e.priority,
                 status: e.status,

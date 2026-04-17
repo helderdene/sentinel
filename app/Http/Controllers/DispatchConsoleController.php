@@ -46,7 +46,7 @@ class DispatchConsoleController extends Controller
 
         $incidents = Incident::query()
             ->whereIn('status', $dispatchStatuses)
-            ->with(['incidentType', 'barangay', 'assignedUnits'])
+            ->with(['incidentType.incidentCategory', 'barangay', 'assignedUnits'])
             ->orderByDesc('created_at')
             ->get()
             ->map(function (Incident $incident) {

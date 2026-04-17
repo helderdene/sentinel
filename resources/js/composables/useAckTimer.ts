@@ -1,12 +1,13 @@
 import { useIntervalFn } from '@vueuse/core';
-import { computed, ref, watch } from 'vue';
+import type { MaybeRefOrGetter } from 'vue';
+import { computed, ref, toValue, watch } from 'vue';
 
 const ACK_TIMEOUT_SECONDS = 90;
 const WARNING_THRESHOLD_SECONDS = 30;
 
 export function useAckTimer(
     assignedAt: string,
-    acknowledgedAt: string | null,
+    acknowledgedAt: MaybeRefOrGetter<string | null>,
     onExpired?: () => void,
 ) {
     const remainingSeconds = ref(0);
@@ -22,7 +23,7 @@ export function useAckTimer(
 
     remainingSeconds.value = calculate();
 
-    const isAcknowledged = computed(() => acknowledgedAt !== null);
+    const isAcknowledged = computed(() => toValue(acknowledgedAt) !== null);
     const isExpired = computed(
         () => !isAcknowledged.value && remainingSeconds.value <= 0,
     );

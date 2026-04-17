@@ -127,11 +127,13 @@ export function useDispatchFeed(
                 incident_type_id: 0,
                 incident_type: {
                     id: 0,
+                    incident_category_id: null,
                     category: '',
                     name: e.incident_type ?? 'Unclassified',
                     code: '',
                     default_priority: e.priority,
                     is_active: true,
+                    incident_category: null,
                 },
                 priority: e.priority,
                 status: e.status,
@@ -219,6 +221,21 @@ export function useDispatchFeed(
                 messagesByIncident.value = updatedMessages;
             } else {
                 localIncidents.value[index].status = e.new_status;
+
+                // When acknowledged, set acknowledged_at on assigned units
+                if (
+                    e.new_status === 'ACKNOWLEDGED' &&
+                    localIncidents.value[index].assigned_units
+                ) {
+                    const now = new Date().toISOString();
+
+                    for (const au of localIncidents.value[index]
+                        .assigned_units) {
+                        if (!au.acknowledged_at) {
+                            au.acknowledged_at = now;
+                        }
+                    }
+                }
             }
 
             refreshMapIncidents();
@@ -327,11 +344,13 @@ export function useDispatchFeed(
                 incident_type_id: inc.incident_type?.id ?? 0,
                 incident_type: inc.incident_type ?? {
                     id: 0,
+                    incident_category_id: null,
                     category: '',
                     name: 'Unclassified',
                     code: '',
                     default_priority: inc.priority,
                     is_active: true,
+                    incident_category: null,
                 },
                 priority: inc.priority,
                 status: inc.status,

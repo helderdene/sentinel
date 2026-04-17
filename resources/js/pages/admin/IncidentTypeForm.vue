@@ -22,8 +22,15 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { index as typesIndex } from '@/routes/admin/incident-types';
 import type { BreadcrumbItem } from '@/types';
 
+type CategoryInfo = {
+    id: number;
+    name: string;
+    icon: string;
+};
+
 type IncidentTypeItem = {
     id: number;
+    incident_category_id: number | null;
     category: string;
     name: string;
     code: string;
@@ -37,7 +44,7 @@ type IncidentTypeItem = {
 type Props = {
     type?: IncidentTypeItem;
     priorities: Array<{ value: string }>;
-    categories: string[];
+    categories: CategoryInfo[];
 };
 
 const props = defineProps<Props>();
@@ -51,7 +58,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const form = useForm({
-    category: props.type?.category ?? '',
+    incident_category_id: props.type?.incident_category_id
+        ? String(props.type.incident_category_id)
+        : '',
     name: props.type?.name ?? '',
     code: props.type?.code ?? '',
     default_priority: props.type?.default_priority ?? '',
@@ -62,6 +71,13 @@ const form = useForm({
 });
 
 function submit(): void {
+    form.transform((data) => ({
+        ...data,
+        incident_category_id: data.incident_category_id
+            ? Number(data.incident_category_id)
+            : null,
+    }));
+
     if (isEditing.value && props.type) {
         form.submit(update(props.type.id));
     } else {
@@ -91,35 +107,22 @@ function submit(): void {
                 @submit.prevent="submit"
             >
                 <div class="grid gap-2">
-                    <Label for="category">Category</Label>
-                    <div class="flex gap-2">
-                        <Select v-model="form.category">
-                            <SelectTrigger class="w-full">
-                                <SelectValue
-                                    placeholder="Select or type a category"
-                                />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem
-                                    v-for="cat in categories"
-                                    :key="cat"
-                                    :value="cat"
-                                >
-                                    {{ cat }}
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <Input
-                        v-if="
-                            !categories.includes(form.category) ||
-                            form.category === ''
-                        "
-                        v-model="form.category"
-                        placeholder="Or type a new category"
-                        class="mt-1"
-                    />
-                    <InputError :message="form.errors.category" />
+                    <Label for="incident_category_id">Category</Label>
+                    <Select v-model="form.incident_category_id">
+                        <SelectTrigger class="w-full">
+                            <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem
+                                v-for="cat in categories"
+                                :key="cat.id"
+                                :value="String(cat.id)"
+                            >
+                                {{ cat.name }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <InputError :message="form.errors.incident_category_id" />
                 </div>
 
                 <div class="grid gap-4 sm:grid-cols-2">

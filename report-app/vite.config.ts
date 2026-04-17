@@ -11,10 +11,11 @@ export default defineConfig({
         },
     },
     server: {
+        host: '0.0.0.0',
         port: 5174,
         proxy: {
             '/api': {
-                target: 'https://irms.test',
+                target: 'http://irms.test',
                 changeOrigin: true,
                 secure: false,
             },

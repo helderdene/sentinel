@@ -6,6 +6,7 @@ use Database\Factories\IncidentTypeFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class IncidentType extends Model
@@ -19,6 +20,7 @@ class IncidentType extends Model
      * @var list<string>
      */
     protected $fillable = [
+        'incident_category_id',
         'category',
         'name',
         'code',
@@ -41,6 +43,14 @@ class IncidentType extends Model
             'show_in_public_app' => 'boolean',
             'sort_order' => 'integer',
         ];
+    }
+
+    /**
+     * Get the category this type belongs to.
+     */
+    public function incidentCategory(): BelongsTo
+    {
+        return $this->belongsTo(IncidentCategory::class);
     }
 
     /**

@@ -49,7 +49,6 @@ const props = withDefaults(defineProps<Props>(), {
     priorityConfig: undefined,
 });
 
-
 const channelLabels: Record<IncidentChannel, string> = {
     phone: 'Voice',
     sms: 'SMS',
