@@ -272,9 +272,11 @@ export function useDispatchFeed(
         'dispatch.incidents',
         'MutualAidRequested',
         (e) => {
+            const inc = localIncidents.value.find((i) => i.id === e.incident_id);
+
             addTickerEvent({
                 incident_no: e.incident_no,
-                priority: 'P1',
+                priority: inc?.priority ?? 'P3',
                 channel: 'radio',
                 incident_type: `Mutual Aid: ${e.agency.name}`,
                 location_text: e.notes ?? '',
@@ -305,9 +307,11 @@ export function useDispatchFeed(
         (e) => {
             alertSystem.playResourceRequestTone();
 
+            const inc = localIncidents.value.find((i) => i.id === e.incident_id);
+
             addTickerEvent({
                 incident_no: e.incident_no,
-                priority: 'P1',
+                priority: inc?.priority ?? 'P3',
                 channel: 'radio',
                 incident_type: `Resource: ${e.resource_label}`,
                 location_text: [e.requested_by, e.notes]
