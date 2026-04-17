@@ -1,0 +1,15 @@
+; /etc/supervisor/conf.d/irms-reverb.conf
+; Reverb WebSocket server. Single process; scale horizontally with
+; REVERB_SCALING_ENABLED=true and Redis pub/sub if you need >1 node.
+
+[program:irms-reverb]
+process_name=%(program_name)s
+command=php /var/www/irms/current/artisan reverb:start --host=127.0.0.1 --port=8080
+autostart=true
+autorestart=true
+user=www-data
+redirect_stderr=true
+stdout_logfile=/var/log/irms/reverb.log
+stdout_logfile_maxbytes=10MB
+stdout_logfile_backups=5
+stopwaitsecs=10

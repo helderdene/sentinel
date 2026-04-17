@@ -1,0 +1,7 @@
+# Install as www-data:
+#   sudo crontab -u www-data -e
+# Laravel scheduler — executes app/Console schedules (NDRRMC monthly report, etc.).
+* * * * * cd /var/www/irms/current && php artisan schedule:run >> /dev/null 2>&1
+
+# Horizon snapshot every 5 minutes — required for dashboard metrics to populate.
+*/5 * * * * cd /var/www/irms/current && php artisan horizon:snapshot >> /dev/null 2>&1

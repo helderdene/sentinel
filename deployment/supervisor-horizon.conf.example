@@ -1,0 +1,16 @@
+; /etc/supervisor/conf.d/irms-horizon.conf
+; Horizon runs queue workers. Horizon itself handles per-supervisor scaling
+; (see config/horizon.php environments.production). Only one Horizon
+; master process should run per server.
+
+[program:irms-horizon]
+process_name=%(program_name)s
+command=php /var/www/irms/current/artisan horizon
+autostart=true
+autorestart=true
+user=www-data
+redirect_stderr=true
+stdout_logfile=/var/log/irms/horizon.log
+stdout_logfile_maxbytes=10MB
+stdout_logfile_backups=5
+stopwaitsecs=3600
