@@ -1,5 +1,10 @@
 import { onMounted, ref } from 'vue';
 
+import {
+    destroy,
+    store,
+} from '@/actions/App/Http/Controllers/PushSubscriptionController';
+
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY as string;
 
 function getXsrfToken(): string {
@@ -55,7 +60,7 @@ export function usePushSubscription() {
         const key = subscription.getKey('p256dh');
         const auth = subscription.getKey('auth');
 
-        await fetch('/push-subscriptions', {
+        await fetch(store.url(), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -93,7 +98,7 @@ export function usePushSubscription() {
 
         await subscription.unsubscribe();
 
-        await fetch('/push-subscriptions', {
+        await fetch(destroy.url(), {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
