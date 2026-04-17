@@ -14,8 +14,11 @@ import type {
     UnitStatusChangedPayload,
 } from '@/types/dispatch';
 import type {
+    ChecklistUpdatedPayload,
     IncidentCreatedPayload,
     IncidentStatusChangedPayload,
+    ResourceRequest,
+    ResourceRequestedPayload,
     TickerEvent,
 } from '@/types/incident';
 
@@ -39,6 +42,9 @@ export function useDispatchFeed(
     const tickerEvents = ref<TickerEvent[]>([]);
     const unreadByIncident = ref(new Map<string, number>());
     const messagesByIncident = ref(new Map<string, DispatchMessageItem[]>());
+    const resourceRequestsByIncident = ref(
+        new Map<string, ResourceRequest[]>(),
+    );
 
     const totalUnreadMessages = computed(() => {
         let total = 0;
@@ -99,6 +105,10 @@ export function useDispatchFeed(
 
     function getMessages(incidentId: string): DispatchMessageItem[] {
         return messagesByIncident.value.get(incidentId) ?? [];
+    }
+
+    function getResourceRequests(incidentId: string): ResourceRequest[] {
+        return resourceRequestsByIncident.value.get(incidentId) ?? [];
     }
 
     function addLocalMessage(
@@ -219,6 +229,12 @@ export function useDispatchFeed(
                 const updatedMessages = new Map(messagesByIncident.value);
                 updatedMessages.delete(e.id);
                 messagesByIncident.value = updatedMessages;
+
+                const updatedResources = new Map(
+                    resourceRequestsByIncident.value,
+                );
+                updatedResources.delete(e.id);
+                resourceRequestsByIncident.value = updatedResources;
             } else {
                 localIncidents.value[index].status = e.new_status;
 
@@ -264,6 +280,55 @@ export function useDispatchFeed(
                 location_text: e.notes ?? '',
                 created_at: e.timestamp,
             });
+        },
+    );
+
+    useEcho<ChecklistUpdatedPayload>(
+        'dispatch.incidents',
+        'ChecklistUpdated',
+        (e) => {
+            const index = localIncidents.value.findIndex(
+                (inc) => inc.id === e.incident_id,
+            );
+
+            if (index === -1) {
+                return;
+            }
+
+            localIncidents.value[index].checklist_pct = e.checklist_pct;
+        },
+    );
+
+    useEcho<ResourceRequestedPayload>(
+        'dispatch.incidents',
+        'ResourceRequested',
+        (e) => {
+            alertSystem.playResourceRequestTone();
+
+            addTickerEvent({
+                incident_no: e.incident_no,
+                priority: 'P1',
+                channel: 'radio',
+                incident_type: `Resource: ${e.resource_label}`,
+                location_text: [e.requested_by, e.notes]
+                    .filter((s): s is string => Boolean(s))
+                    .join(' — '),
+                created_at: e.timestamp,
+            });
+
+            const updated = new Map(resourceRequestsByIncident.value);
+            const existing = updated.get(e.incident_id) ?? [];
+            updated.set(e.incident_id, [
+                {
+                    resource_type: e.resource_type,
+                    resource_label: e.resource_label,
+                    notes: e.notes,
+                    requested_by: e.requested_by,
+                    timestamp: e.timestamp,
+                },
+                ...existing,
+            ]);
+            resourceRequestsByIncident.value = updated;
         },
     );
 
@@ -405,6 +470,7 @@ export function useDispatchFeed(
 
         unreadByIncident.value = new Map();
         messagesByIncident.value = new Map();
+        resourceRequestsByIncident.value = new Map();
 
         refreshMapIncidents();
         refreshMapUnits();
@@ -416,8 +482,10 @@ export function useDispatchFeed(
         unreadByIncident,
         totalUnreadMessages,
         messagesByIncident,
+        resourceRequestsByIncident,
         clearUnread,
         getMessages,
+        getResourceRequests,
         addLocalMessage,
     };
 }
