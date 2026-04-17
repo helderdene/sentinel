@@ -9,8 +9,7 @@ import PushPermissionPrompt from '@/components/PushPermissionPrompt.vue';
 import ReloadPrompt from '@/components/ReloadPrompt.vue';
 import { initializeTheme } from '@/composables/useAppearance';
 
-mapboxgl.accessToken =
-    'pk.eyJ1IjoiaGVsZGVyZGVuZSIsImEiOiJjbWw5aTJldmwwMzlqM2VzN3dqYjhkcDB3In0.fi2hg9_Q-qoaG4UHihTepw';
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN ?? '';
 
 configureEcho({
     broadcaster: 'reverb',
