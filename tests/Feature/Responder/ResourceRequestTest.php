@@ -7,6 +7,7 @@ use App\Models\Incident;
 use App\Models\IncidentType;
 use App\Models\Unit;
 use App\Models\User;
+use Illuminate\Broadcasting\PrivateChannel;
 
 beforeEach(function () {
     Event::fake([
@@ -39,7 +40,29 @@ it('requests an additional resource', function () {
 
     expect($incident->timeline()->where('event_type', 'resource_requested')->count())->toBe(1);
 
-    Event::assertDispatched(ResourceRequested::class);
+    Event::assertDispatched(ResourceRequested::class, function (ResourceRequested $event) use ($incident) {
+        $channels = $event->broadcastOn();
+        expect($channels)->toHaveCount(1);
+        expect($channels[0])->toBeInstanceOf(PrivateChannel::class);
+        expect($channels[0]->name)->toBe('private-dispatch.incidents');
+
+        $payload = $event->broadcastWith();
+        expect($payload)->toHaveKeys([
+            'incident_id',
+            'incident_no',
+            'resource_type',
+            'resource_label',
+            'notes',
+            'requested_by',
+            'timestamp',
+        ]);
+        expect($payload['incident_id'])->toBe($incident->id);
+        expect($payload['resource_type'])->toBe('ADDITIONAL_AMBULANCE');
+        expect($payload['resource_label'])->toBe('Additional Ambulance');
+        expect($payload['notes'])->toBe('Multiple casualties, need additional transport.');
+
+        return true;
+    });
 });
 
 it('validates resource type is required and valid', function () {
