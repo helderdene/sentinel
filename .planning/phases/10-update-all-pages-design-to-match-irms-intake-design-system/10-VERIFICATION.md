@@ -1,7 +1,7 @@
 ---
 phase: 10-update-all-pages-design-to-match-irms-intake-design-system
 verified: 2026-03-14T00:00:00Z
-status: human_needed
+status: passed
 score: 12/12 must-haves verified
 re_verification:
   previous_status: gaps_found
@@ -161,8 +161,8 @@ The overall design system architecture (CSS cascade, shadow scale, CDRRMO brandi
 
 ### Human Verification Checklist (Phase 16 follow-up)
 
-**Verified by:** [user — fill in name]
-**Verified date:** [YYYY-MM-DD — fill in when all 3 checks pass]
+**Verified by:** Helder Dene
+**Verified date:** 2026-04-17
 **Context:** These 3 human-only visual checks closed the Phase 10 `status: human_needed` gap identified in the v1.0 Milestone Audit (line 211). Source: `.planning/v1.0-MILESTONE-AUDIT.md` and `.planning/phases/16-.../16-CONTEXT.md` D-16.
 
 Screenshots live under `./10-verification-screenshots/` (relative to this file). Filename scheme: `{check-slug}-{light|dark}.png`.
@@ -171,7 +171,7 @@ Screenshots live under `./10-verification-screenshots/` (relative to this file).
 
 #### Check 1 — Focus ring rendering (DS-03)
 
-- [ ] **Tested**
+- [x] **Tested**
 - **Test:** Tab through all input fields on the Login page (`/login`) and the Profile settings page (`/settings/profile`) using the Tab key.
 - **Expected:** Each focused input shows `border-color: #2563eb` + `box-shadow: 0 0 0 3px rgba(37,99,235,0.1)` — NOT the default Tailwind `outline-ring/50` ring.
 - **Source rule:** `resources/css/app.css:304` — `[data-slot]:focus-visible { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }`
@@ -187,7 +187,7 @@ Screenshots live under `./10-verification-screenshots/` (relative to this file).
 
 #### Check 2 — color-mix() opacity tinting (PrioritySelector inactive buttons)
 
-- [ ] **Tested**
+- [x] **Tested**
 - **Test:** Navigate to `/incidents/create`. Observe the P1/P2/P3/P4 priority selector. The ACTIVE priority button uses `bg-t-p1..t-p4` (solid color). The INACTIVE buttons must show:
   - Border at 40% opacity tint of their token (via `color-mix(in srgb, var(--t-pN) 40%, transparent)`)
   - Hover state at 8% opacity background tint (via `color-mix(in srgb, var(--t-pN) 8%, transparent)`)
@@ -205,7 +205,7 @@ Screenshots live under `./10-verification-screenshots/` (relative to this file).
 
 #### Check 3 — Dark-mode contrast (ReportRow badges)
 
-- [ ] **Tested**
+- [x] **Tested**
 - **Test:** Toggle appearance to dark mode. Navigate to `/analytics/reports`. Observe the TYPE_BADGES and STATUS_BADGES on each report row.
 - **Expected:** All badges remain legible — the `color-mix()` applied to `--t-accent` (quarterly), `--t-role-supervisor` (annual), `--t-online` (dilg), `--t-p2` (ndrrmc), `--t-p3` (generating), `--t-online` (ready), `--t-p1` (failed) must produce text that contrasts sufficiently with the tinted background AND the surrounding dark surface.
 - **Source component:** `resources/js/components/analytics/ReportRow.vue`
