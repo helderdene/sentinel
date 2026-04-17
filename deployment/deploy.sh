@@ -47,6 +47,18 @@ echo "==> Installing Node dependencies & building assets"
 npm ci
 npm run build
 
+echo "==> Building citizen reporting app"
+if [[ -d report-app ]]; then
+    pushd report-app >/dev/null
+    npm ci
+    npm run build
+    popd >/dev/null
+    rm -rf public/citizen
+    ln -sfn ../report-app/dist public/citizen
+else
+    echo "(skipping — report-app/ not found)"
+fi
+
 echo "==> Running database migrations"
 php artisan migrate --force
 

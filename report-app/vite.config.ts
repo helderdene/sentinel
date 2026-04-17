@@ -4,6 +4,7 @@ import { resolve } from 'path';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+    base: '/citizen/',
     plugins: [vue(), tailwindcss()],
     resolve: {
         alias: {
