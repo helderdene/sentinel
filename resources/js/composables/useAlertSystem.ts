@@ -139,10 +139,39 @@ export function useAlertSystem() {
         }
     }
 
+    function playResourceRequestTone(): void {
+        const ctx = ensureAudioContext();
+
+        if (!ctx || ctx.state !== 'running') {
+            return;
+        }
+
+        const notes = [523, 659, 784];
+        const duration = 0.15;
+        const offset = 0.15;
+
+        for (let i = 0; i < notes.length; i++) {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'triangle';
+            osc.frequency.value = notes[i];
+            gain.gain.value = 0.22;
+            osc.start(ctx.currentTime + i * offset);
+            gain.gain.exponentialRampToValueAtTime(
+                0.01,
+                ctx.currentTime + i * offset + duration,
+            );
+            osc.stop(ctx.currentTime + i * offset + duration);
+        }
+    }
+
     return {
         playPriorityTone,
         playAckExpiredTone,
         triggerP1Flash,
         playMessageTone,
+        playResourceRequestTone,
     };
 }
