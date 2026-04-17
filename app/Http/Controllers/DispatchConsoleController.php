@@ -46,7 +46,16 @@ class DispatchConsoleController extends Controller
 
         $incidents = Incident::query()
             ->whereIn('status', $dispatchStatuses)
-            ->with(['incidentType.incidentCategory', 'barangay', 'assignedUnits'])
+            ->with([
+                'incidentType.incidentCategory',
+                'barangay',
+                'assignedUnits',
+                'timeline' => function ($query) {
+                    $query->where('event_type', 'resource_requested')
+                        ->orderByDesc('created_at');
+                },
+                'timeline.actor',
+            ])
             ->orderByDesc('created_at')
             ->get()
             ->map(function (Incident $incident) {
@@ -57,6 +66,17 @@ class DispatchConsoleController extends Controller
                     'assigned_at' => $unit->pivot->assigned_at,
                     'acknowledged_at' => $unit->pivot->acknowledged_at,
                 ]);
+                $data['resource_requests'] = $incident->timeline
+                    ->map(fn ($t) => [
+                        'resource_type' => $t->event_data['type'] ?? null,
+                        'resource_label' => $t->event_data['label'] ?? null,
+                        'notes' => $t->event_data['notes'] ?? null,
+                        'requested_by' => $t->actor?->name ?? 'Unknown',
+                        'timestamp' => $t->created_at->toISOString(),
+                    ])
+                    ->values()
+                    ->all();
+                unset($data['timeline']);
 
                 return $data;
             });
@@ -260,6 +280,28 @@ class DispatchConsoleController extends Controller
             'actor_type' => get_class($request->user()),
             'actor_id' => $request->user()->id,
         ]);
+
+        if ($newStatus === IncidentStatus::Resolved) {
+            $assignedUnits = $incident->assignedUnits()->get();
+
+            $incident->assignedUnits()->wherePivotNull('unassigned_at')
+                ->updateExistingPivot($assignedUnits->pluck('id')->all(), [
+                    'unassigned_at' => now(),
+                ]);
+
+            foreach ($assignedUnits as $assignedUnit) {
+                $oldUnitStatus = $assignedUnit->status;
+
+                $hasOtherActive = $assignedUnit->activeIncidents()
+                    ->where('incidents.id', '!=', $incident->id)
+                    ->exists();
+
+                if (! $hasOtherActive && $assignedUnit->status !== UnitStatus::Available) {
+                    $assignedUnit->update(['status' => UnitStatus::Available]);
+                    UnitStatusChanged::dispatch($assignedUnit->fresh(), $oldUnitStatus);
+                }
+            }
+        }
 
         IncidentStatusChanged::dispatch($incident->fresh(), $oldStatus);
 
