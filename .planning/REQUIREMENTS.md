@@ -158,6 +158,15 @@
 - [x] **MOBILE-01**: PWA Service Worker with app shell caching (JS, CSS, HTML, fonts, icons) via vite-plugin-pwa injectManifest strategy; web app manifest with CDRRMO branding; installable from browser; "New version available" update prompt
 - [x] **MOBILE-02**: Web Push notifications via VAPID for background alerts: new assignment pushed to responder, P1 incident alert to dispatchers/operators, ack timeout warning to responder; push subscription management endpoints with custom in-app permission prompt
 
+### Sentinel Rebrand
+
+- [x] **REBRAND-01**: CSS token migration — Sentinel navy/blue palette in `--t-*` tokens (`--t-bg: #eff3fa` light, `#05101e` dark), both `:root` and `.dark` blocks; Shadcn components inherit via cascade (`--background: var(--t-bg)`)
+- [x] **REBRAND-02**: Font migration — DM Mono replaces Space Mono as `--font-mono`; Bebas Neue added as `--font-display` for auth page title; Google Fonts URL loads all three (DM Sans + DM Mono + Bebas Neue)
+- [x] **REBRAND-03**: SVG shield identity — full animated Sentinel shield on auth page (radar rings, crosshairs, eye, pulseRing + sweep animations); simplified 26x30 shield in sidebar (`AppLogo.vue`) and favicon (`public/favicon.svg`)
+- [x] **REBRAND-04**: User-facing string rename — all "IRMS" / "CDRRMO Butuan City" application-code references replaced with "Sentinel"; `APP_NAME="Sentinel"` in `.env`; documented non-user-facing residuals (FHIR URNs, BFP API identifiers, CDRRMO agency name in UnitForm, `irms.test` Herd hostname, PHPDoc comments) retained as INFO-severity
+- [x] **REBRAND-05**: PWA and push rebrand — `vite.config.ts` manifest `name: 'Sentinel - Incident Response Management System'`, `theme_color: '#042C53'`; 4 PNG icons regenerated on `#042C53` background (192, 512, maskable-512, apple-touch-180); `sw.ts` push notifications default to `'Sentinel'` title and tag
+- [x] **REBRAND-06**: Hardcoded priority/status hex color sweep — MapLibre `useDispatchMap.ts` and `useAnalyticsMap.ts`, Chart.js `Dashboard.vue`, responder and intake components (`PriBadge`, `ChBadge`) all use Sentinel palette values (P1 `#E24B4A`, P2 `#EF9F27`, P3 `#1D9E75`, P4 `#378ADD`); zero instances of old palette (`#dc2626`, `#ea580c`, `#ca8a04`, `#16a34a`, `#2563eb`) in `resources/js/`
+
 ## v2 Requirements
 
 ### Mobile Enhancement
@@ -291,12 +300,33 @@
 | COMM-13 | Phase 12 | Complete |
 | MOBILE-01 | Phase 13 | Complete |
 | MOBILE-02 | Phase 13 | Complete |
+| OP-01 | Phase 8 | Complete |
+| OP-02 | Phase 8 | Complete |
+| OP-03 | Phase 8 | Complete |
+| OP-04 | Phase 8 | Complete |
+| OP-05 | Phase 8 | Complete |
+| OP-06 | Phase 8 | Complete |
+| OP-07 | Phase 8 | Complete |
+| OP-08 | Phase 8 | Complete |
+| OP-09 | Phase 8 | Complete |
+| OP-10 | Phase 8 | Complete |
+| OP-11 | Phase 8 | Complete |
+| OP-12 | Phase 8 | Complete |
+| OP-13 | Phase 8 | Complete |
+| OP-14 | Phase 8 | Complete |
+| OP-15 | Phase 8 | Complete |
+| REBRAND-01 | Phase 14 | Complete |
+| REBRAND-02 | Phase 14 | Complete |
+| REBRAND-03 | Phase 14 | Complete |
+| REBRAND-04 | Phase 14 | Complete |
+| REBRAND-05 | Phase 14 | Complete |
+| REBRAND-06 | Phase 14 | Complete |
 
 **Coverage:**
-- v1 requirements: 102 total
-- Mapped to phases: 102 (RSPDR-06 and RSPDR-10 reassigned to Phase 15 gap closure)
+- v1 requirements: 123 total (102 + 15 OP + 6 REBRAND backfilled in Phase 16)
+- Mapped to phases: 123 (RSPDR-06 and RSPDR-10 reassigned to Phase 15 gap closure)
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-12*
-*Last updated: 2026-04-17 after v1.0 milestone audit — RSPDR-06 and RSPDR-10 reopened for Phase 15 gap closure*
+*Last updated: 2026-04-17 after Phase 16 traceability backfill — OP-01..15 and REBRAND-01..06 added to registry and coverage table (Phase 15 gap closure for RSPDR-06 and RSPDR-10 tracked separately in Phase 15 artifacts)*
