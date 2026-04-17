@@ -313,7 +313,7 @@ Plans:
 
 Plans:
 - [x] 16-01-PLAN.md -- Wayfinder URL swaps (QueueRow.vue + usePushSubscription.ts + Pest guard)
-- [ ] 16-02-PLAN.md -- REQUIREMENTS.md traceability backfill (OP-01..15 + REBRAND-01..06)
+- [x] 16-02-PLAN.md -- REQUIREMENTS.md traceability backfill (OP-01..15 + REBRAND-01..06)
 - [ ] 16-03-PLAN.md -- Validation & verification updates (Phase 14 approval + Phase 10 human verification)
 
 ## Progress
@@ -347,4 +347,4 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 13. PWA Setup | 3/3 | Complete    | 2015-03-14 |
 | 14. Sentinel Rebrand | 3/3 | Complete    | 2015-03-14 |
 | 15. Close RSPDR Real-Time Dispatch Visibility | 2/2 | Complete    | 2026-04-17 |
-| 16. v1.0 Hygiene & Traceability Cleanup | 1/3 | In Progress|  |
+| 16. v1.0 Hygiene & Traceability Cleanup | 2/3 | In Progress|  |
