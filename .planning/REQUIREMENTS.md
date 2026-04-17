@@ -30,6 +30,24 @@
 - [x] **INTK-08**: SMS inbound webhook parses incoming messages with keyword classifier for incident type suggestion; auto-reply on creation (stubbed Semaphore integration)
 - [x] **INTK-09**: Channel monitor panel shows live feed from all 5 channels with unacknowledged message highlighting and pending count badges
 
+### Operator Role
+
+- [x] **OP-01**: Operator case exists in `UserRole` enum with value `'operator'` as the 5th role (alongside dispatcher, responder, supervisor, admin)
+- [x] **OP-02**: Triaged case exists in `IncidentStatus` enum with value `'TRIAGED'` at position 2, between `PENDING` and `DISPATCHED`
+- [x] **OP-03**: 6 intake gates defined (`access-intake-station`, `create-incident-intake`, `triage-incident`, `override-priority`, `recall-incident`, `view-session-log`) with correct role matrix (operator/supervisor/admin access where appropriate)
+- [x] **OP-04**: Operator login redirects to `/intake` (not `/dashboard`) via custom Fortify `LoginResponse` singleton bound in `FortifyServiceProvider`
+- [x] **OP-05**: Design system tokens adopted as Tailwind utilities — DM Sans + Space Mono fonts, 27 `--color-t-*` tokens with `:root` light values and `.dark` overrides, used across intake components
+- [x] **OP-06**: Intake station route (`intake.station`) accessible to operator/supervisor/admin; forbidden to dispatcher/responder via `role:operator,supervisor,admin` middleware
+- [x] **OP-07**: Three-column intake station with live WebSocket feed (left channel feed at 296px, center triage form, right 304px dispatch queue) and filter tabs (All/Pending/Triaged) via `useIntakeFeed` composable subscribing to `dispatch.incidents`
+- [x] **OP-08**: Triage action transitions incidents from `PENDING` to `TRIAGED` via `IntakeStationController::triage`; manual entry (`intake.store-and-triage`) creates TRIAGED incidents directly with dual timeline entries (created + triaged)
+- [x] **OP-09**: Dispatch queue right panel renders priority-ordered TRIAGED incidents with per-row priority border and session metrics (SessionMetrics, PriorityBreakdown)
+- [x] **OP-10**: Topbar stat pills (Incoming, Pending, Triaged, Avg Resp) update in real-time via WebSocket through `inject('topbarStats')` + `inject('tickerEvents')` chain from `IntakeStation.vue` to `IntakeTopbar.vue`
+- [x] **OP-11**: Override Priority and Recall actions available to supervisor/admin only (via `v-if="canOverride"` / `v-if="canRecall"`); both write timeline entries and broadcast WebSocket events
+- [x] **OP-12**: `IntakeLayout.vue` full-screen shell with 56px topbar (`IntakeTopbar`) and statusbar (`IntakeStatusbar`) wrapping the intake station body
+- [x] **OP-13**: 14 custom SVG icon components under `resources/js/components/intake/icons/` (Sms, App, Voice, Iot, Walkin, Pin, User, Check, Intake, Logout, Shield, Recall, Override, Activity)
+- [x] **OP-14**: Intake badge components (`PriBadge` P1–P4, `ChBadge` channel, `RoleBadge`, `UserChip` with avatar and dropdown) styled with design system tokens and used across intake surfaces
+- [x] **OP-15**: Operator role included in `dispatch.incidents` channel authorization (`routes/channels.php` `$dispatchRoles`) so operators receive real-time incident events
+
 ### Dispatch
 
 - [x] **DSPTCH-01**: 2D dispatch map rendered with MapLibre GL JS, zoom 13, centered on Butuan City, with custom dark/light vector tile styles
