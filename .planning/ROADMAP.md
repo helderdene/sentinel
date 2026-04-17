@@ -309,10 +309,12 @@ Plans:
   3. `REQUIREMENTS.md` traceability table includes OP-01..15 (Phase 8) and REBRAND-01..06 (Phase 14); coverage count reflects new total
   4. Phase 14 `14-VALIDATION.md` frontmatter status is `approved` (run `/gsd-validate-phase 14`)
   5. Phase 10 `human_needed` items (focus ring, color-mix opacity, dark mode contrast) browser-verified and `10-VERIFICATION.md` status updated
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 16-01-PLAN.md -- TBD (populate via `/gsd-plan-phase 16`)
+- [x] 16-01-PLAN.md -- Wayfinder URL swaps (QueueRow.vue + usePushSubscription.ts + Pest guard)
+- [ ] 16-02-PLAN.md -- REQUIREMENTS.md traceability backfill (OP-01..15 + REBRAND-01..06)
+- [ ] 16-03-PLAN.md -- Validation & verification updates (Phase 14 approval + Phase 10 human verification)
 
 ## Progress
 
@@ -345,4 +347,4 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 13. PWA Setup | 3/3 | Complete    | 2015-03-14 |
 | 14. Sentinel Rebrand | 3/3 | Complete    | 2015-03-14 |
 | 15. Close RSPDR Real-Time Dispatch Visibility | 2/2 | Complete    | 2026-04-17 |
-| 16. v1.0 Hygiene & Traceability Cleanup | 0/1 | Pending | — |
+| 16. v1.0 Hygiene & Traceability Cleanup | 1/3 | In Progress|  |
