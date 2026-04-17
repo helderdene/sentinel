@@ -27,7 +27,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 13: PWA Setup** - Installable PWA with service worker caching, web app manifest, and Web Push notifications for assignments, P1 alerts, ack timeouts (completed 2015-03-15)
 - [x] **Phase 14: Sentinel Rebrand** - Full visual rebrand from IRMS/CDRRMO to Sentinel: navy/blue palette, DM Mono typography, animated shield logo, app rename across all surfaces (completed 2015-03-14)
 - [x] **Phase 15: Close RSPDR Real-Time Dispatch Visibility** - Gap closure: wire `ChecklistUpdated` and `ResourceRequested` broadcast events to dispatch console so checklist progress and resource requests appear in real time (closes RSPDR-06, RSPDR-10) (completed 2026-04-17)
-- [ ] **Phase 16: v1.0 Hygiene & Traceability Cleanup** - Gap closure: convert hardcoded URLs to Wayfinder actions, backfill REQUIREMENTS.md traceability for OP-/REBRAND- groups, approve Phase 14 VALIDATION, browser-verify Phase 10 visual fidelity
+- [x] **Phase 16: v1.0 Hygiene & Traceability Cleanup** - Gap closure: convert hardcoded URLs to Wayfinder actions, backfill REQUIREMENTS.md traceability for OP-/REBRAND- groups, approve Phase 14 VALIDATION, browser-verify Phase 10 visual fidelity (completed 2026-04-17)
 
 ## Phase Details
 
@@ -314,7 +314,7 @@ Plans:
 Plans:
 - [x] 16-01-PLAN.md -- Wayfinder URL swaps (QueueRow.vue + usePushSubscription.ts + Pest guard)
 - [x] 16-02-PLAN.md -- REQUIREMENTS.md traceability backfill (OP-01..15 + REBRAND-01..06)
-- [ ] 16-03-PLAN.md -- Validation & verification updates (Phase 14 approval + Phase 10 human verification)
+- [x] 16-03-PLAN.md -- Validation & verification updates (Phase 14 approval + Phase 10 human verification)
 
 ## Progress
 
@@ -347,4 +347,4 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 13. PWA Setup | 3/3 | Complete    | 2015-03-14 |
 | 14. Sentinel Rebrand | 3/3 | Complete    | 2015-03-14 |
 | 15. Close RSPDR Real-Time Dispatch Visibility | 2/2 | Complete    | 2026-04-17 |
-| 16. v1.0 Hygiene & Traceability Cleanup | 2/3 | In Progress|  |
+| 16. v1.0 Hygiene & Traceability Cleanup | 3/3 | Complete   | 2026-04-17 |
