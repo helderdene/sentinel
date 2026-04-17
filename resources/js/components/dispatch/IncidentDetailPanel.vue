@@ -18,7 +18,10 @@ import type {
     DispatchMessageItem,
     NearbyUnit,
 } from '@/types/dispatch';
-import type { IncidentTimelineEntry } from '@/types/incident';
+import type {
+    IncidentTimelineEntry,
+    ResourceRequest,
+} from '@/types/incident';
 
 const props = defineProps<{
     incident: DispatchIncident;
@@ -27,6 +30,7 @@ const props = defineProps<{
     messagesExpanded: boolean;
     currentUserId: number;
     unreadCount: number;
+    resourceRequests: ResourceRequest[];
 }>();
 
 const emit = defineEmits<{
@@ -46,6 +50,23 @@ const priorityNumber = computed(() => {
 });
 
 const statusLabel = computed(() => props.incident.status.replace(/_/g, ' '));
+
+const showChecklistProgress = computed(() => {
+    const gated: ReadonlyArray<string> = ['ON_SCENE', 'RESOLVING', 'RESOLVED'];
+
+    return gated.includes(props.incident.status);
+});
+
+function formatTime(iso: string): string {
+    try {
+        return new Date(iso).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+    } catch {
+        return iso;
+    }
+}
 
 const categoryIconComponent = computed(() =>
     getCategoryComponent(getIncidentCategoryIcon(props.incident.incident_type)),
@@ -324,6 +345,31 @@ function handleUnassign(unitId: string): void {
             />
         </div>
 
+        <!-- Scene Progress -->
+        <div
+            v-if="showChecklistProgress"
+            class="border-b border-t-border px-3 py-2.5"
+        >
+            <div class="mb-1.5 flex items-center justify-between">
+                <span
+                    class="font-mono text-[9px] font-bold tracking-[1.5px] text-t-text-faint uppercase"
+                >
+                    SCENE PROGRESS
+                </span>
+                <span class="font-mono text-[11px] font-bold text-t-text">
+                    {{ incident.checklist_pct ?? 0 }}%
+                </span>
+            </div>
+            <div
+                class="h-1.5 w-full overflow-hidden rounded-full bg-t-surface-alt"
+            >
+                <div
+                    class="h-full rounded-full bg-t-accent transition-[width] duration-300 ease-out"
+                    :style="{ width: `${incident.checklist_pct ?? 0}%` }"
+                />
+            </div>
+        </div>
+
         <!-- Assignees -->
         <div class="border-b border-t-border px-3 py-2.5">
             <span
@@ -369,6 +415,48 @@ function handleUnassign(unitId: string): void {
             <p v-else class="text-[10px] text-t-text-faint">
                 No units assigned
             </p>
+        </div>
+
+        <!-- Resource Requests -->
+        <div
+            v-if="resourceRequests.length > 0"
+            class="border-b border-t-border px-3 py-2.5"
+        >
+            <span
+                class="mb-2 block font-mono text-[9px] font-bold tracking-[1.5px] text-t-text-faint uppercase"
+            >
+                RESOURCE REQUESTS
+                <span class="ml-1 text-t-accent">
+                    ({{ resourceRequests.length }})
+                </span>
+            </span>
+            <div class="space-y-1.5">
+                <div
+                    v-for="(req, i) in resourceRequests"
+                    :key="`${req.timestamp}-${i}`"
+                    class="rounded border border-t-border bg-t-surface px-2.5 py-1.5"
+                >
+                    <div class="flex items-center justify-between">
+                        <span
+                            class="font-mono text-[11px] font-bold text-t-text"
+                        >
+                            {{ req.resource_label }}
+                        </span>
+                        <span class="font-mono text-[9px] text-t-text-faint">
+                            {{ formatTime(req.timestamp) }}
+                        </span>
+                    </div>
+                    <div class="text-[10px] text-t-text-dim">
+                        {{ req.requested_by }}
+                    </div>
+                    <div
+                        v-if="req.notes"
+                        class="mt-1 text-[10px] text-t-text-faint"
+                    >
+                        {{ req.notes }}
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Dispatch: Available Units -->
