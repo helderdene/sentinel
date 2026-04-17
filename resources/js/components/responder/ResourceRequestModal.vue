@@ -61,7 +61,7 @@ async function handleRequest(type: ResourceType): Promise<void> {
                 'X-XSRF-TOKEN': getXsrfToken(),
             },
             body: JSON.stringify({
-                resource_type: type,
+                type,
                 notes: notes.value.trim() || null,
             }),
         });
