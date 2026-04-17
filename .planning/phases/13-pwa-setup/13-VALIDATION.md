@@ -1,10 +1,11 @@
 ---
 phase: 13
 slug: pwa-setup
-status: draft
-nyquist_compliant: false
-wave_0_complete: false
+status: approved
+nyquist_compliant: true
+wave_0_complete: true
 created: 2026-03-15
+audited: 2026-04-17
 ---
 
 # Phase 13 — Validation Strategy
@@ -38,25 +39,25 @@ created: 2026-03-15
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 13-01-01 | 01 | 1 | MOBILE-01 | smoke (manual) | Manual: browser DevTools Application tab | N/A | pending |
-| 13-03-01 | 03 | 3 | MOBILE-02a | feature | `php artisan test --compact tests/Feature/PushSubscriptionTest.php` | W0 | pending |
-| 13-03-02 | 03 | 3 | MOBILE-02b | feature | `php artisan test --compact tests/Feature/PushNotificationTest.php` | W0 | pending |
-| 13-03-03 | 03 | 3 | MOBILE-02c | feature | `php artisan test --compact tests/Feature/PushNotificationTest.php` | W0 | pending |
-| 13-03-04 | 03 | 3 | MOBILE-02d | feature | `php artisan test --compact tests/Feature/AckTimeoutPushTest.php` | W0 | pending |
-| 13-03-05 | 03 | 3 | MOBILE-02e | unit | `php artisan test --compact tests/Unit/WebPushConfigTest.php` | W0 | pending |
+| 13-01-01 | 01 | 1 | MOBILE-01 | smoke (manual) | Manual: browser DevTools Application tab | N/A | manual-only |
+| 13-03-01 | 03 | 3 | MOBILE-02a | feature | `php artisan test --compact tests/Feature/PushSubscriptionTest.php` | exists | green |
+| 13-03-02 | 03 | 3 | MOBILE-02b | feature | `php artisan test --compact tests/Feature/PushNotificationTest.php` | exists | green |
+| 13-03-03 | 03 | 3 | MOBILE-02c | feature | `php artisan test --compact tests/Feature/PushNotificationTest.php` | exists | green |
+| 13-03-04 | 03 | 3 | MOBILE-02d | feature | `php artisan test --compact tests/Feature/AckTimeoutPushTest.php` | exists | green |
+| 13-03-05 | 03 | 3 | MOBILE-02e | unit | `php artisan test --compact tests/Unit/WebPushConfigTest.php` | exists | green |
 
-*Status: pending / green / red / flaky*
+*Status: pending / green / red / flaky / manual-only*
 
 ---
 
 ## Wave 0 Requirements
 
-- [ ] `tests/Feature/PushSubscriptionTest.php` — stubs for MOBILE-02a (subscription CRUD)
-- [ ] `tests/Feature/PushNotificationTest.php` — stubs for MOBILE-02b, MOBILE-02c (push on events)
-- [ ] `tests/Feature/AckTimeoutPushTest.php` — stubs for MOBILE-02d (ack timeout delayed job)
-- [ ] `tests/Unit/WebPushConfigTest.php` — stubs for MOBILE-02e (VAPID config presence)
+- [x] `tests/Feature/PushSubscriptionTest.php` — 5 tests covering MOBILE-02a (subscription CRUD)
+- [x] `tests/Feature/PushNotificationTest.php` — 5 tests covering MOBILE-02b, MOBILE-02c (push on events)
+- [x] `tests/Feature/AckTimeoutPushTest.php` — 3 tests covering MOBILE-02d (ack timeout delayed job)
+- [x] `tests/Unit/WebPushConfigTest.php` — 3 tests covering MOBILE-02e (VAPID config presence)
 
-All test files are created in Plan 03 Task 2 (wave 3), which depends on Plan 02 backend infrastructure (wave 2).
+All 16 tests pass (27 assertions, 1.18s). Created in Plan 03 Task 2 (wave 3, commit 71f59f3).
 
 ---
 
@@ -72,11 +73,23 @@ All test files are created in Plan 03 Task 2 (wave 3), which depends on Plan 02 
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 15s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references
+- [x] No watch-mode flags
+- [x] Feedback latency < 15s (actual: 1.18s)
+- [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** approved (2026-04-17)
+
+---
+
+## Validation Audit 2026-04-17
+
+| Metric | Count |
+|--------|-------|
+| Gaps found | 0 |
+| Resolved | 0 |
+| Escalated | 0 |
+
+**Audit outcome:** All MOBILE-02 sub-requirements covered by 16 automated Pest tests (5 PushSubscription + 5 PushNotification + 3 AckTimeoutPush + 3 WebPushConfig). MOBILE-01 remains manual-only by design — browser-level PWA install, service worker update banner, and offline-ready toast require real browser environment and are not automatable without headless Chrome harness. Phase 13 is Nyquist-compliant.
