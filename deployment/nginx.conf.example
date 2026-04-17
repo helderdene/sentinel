@@ -51,6 +51,20 @@ server {
     gzip_vary on;
     gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript image/svg+xml;
 
+    # Citizen reporting SPA (Vue) mounted at /citizen/ — assets are content-hashed.
+    location ^~ /citizen/assets/ {
+        expires 1y;
+        access_log off;
+        add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
+
+    # Citizen SPA history-mode fallback to its index.html.
+    location ^~ /citizen/ {
+        index index.html;
+        try_files $uri /citizen/index.html;
+    }
+
     # Reverb WebSocket passthrough. Reverb default path is /app (config: REVERB_SERVER_PATH).
     location ^~ /app/ {
         proxy_pass http://irms_reverb;
