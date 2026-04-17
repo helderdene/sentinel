@@ -295,7 +295,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 15-01-PLAN.md -- Backend gap closure: tighten Pest event assertions (ChecklistUpdated + ResourceRequested) with channel + payload closures; widen StateSyncController filter to dispatch-active statuses and hydrate `incident.resource_requests[]` from timeline; add Pest test for state-sync hydration
+- [x] 15-01-PLAN.md -- Backend gap closure: tighten Pest event assertions (ChecklistUpdated + ResourceRequested) with channel + payload closures; widen StateSyncController filter to dispatch-active statuses and hydrate `incident.resource_requests[]` from timeline; add Pest test for state-sync hydration
 - [ ] 15-02-PLAN.md -- Frontend wiring (Wave 2, depends on 15-01): add `ChecklistUpdatedPayload` / `ResourceRequestedPayload` / `ResourceRequest` types; add `playResourceRequestTone`; add two `useEcho` subscribers + `resourceRequestsByIncident` Map + cleanup in `useDispatchFeed.ts`; render Scene Progress + Resource Requests sections in `IncidentDetailPanel.vue`; wire prop through `Console.vue`; manual D-16 verification checkpoint
 
 ### Phase 16: v1.0 Hygiene & Traceability Cleanup
@@ -344,5 +344,5 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 12. Bi-directional Communication | 4/4 | Complete | 2015-03-14 |
 | 13. PWA Setup | 3/3 | Complete    | 2015-03-14 |
 | 14. Sentinel Rebrand | 3/3 | Complete    | 2015-03-14 |
-| 15. Close RSPDR Real-Time Dispatch Visibility | 0/2 | Pending | — |
+| 15. Close RSPDR Real-Time Dispatch Visibility | 1/2 | In Progress|  |
 | 16. v1.0 Hygiene & Traceability Cleanup | 0/1 | Pending | — |
