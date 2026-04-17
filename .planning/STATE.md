@@ -4,7 +4,7 @@ milestone: v1.0
 milestone_name: Hygiene & Traceability Cleanup
 status: verifying
 stopped_at: Completed 16-03-PLAN.md (Phase 16 complete — 3/3 plans)
-last_updated: "2026-04-17T12:37:50.062Z"
+last_updated: "2026-04-17T12:41:26.653Z"
 last_activity: 2026-04-17
 progress:
   total_phases: 16
@@ -299,6 +299,20 @@ None yet.
 - [Phase 4]: MapLibre v5 updateData() validated -- using direct maplibre-gl (no vue-maplibre-gl wrapper) for maximum control
 - [Phase 6]: Semaphore SMS API docs need verification when phase begins — no maintained Laravel package
 - [Phase 7]: NDRRMC SitRep XML schema and DILG monthly report format not publicly documented — need agency contact
+
+## Deferred Items
+
+Items acknowledged and deferred at v1.0 milestone close on 2026-04-17:
+
+| Category | Item | Status |
+|----------|------|--------|
+| verification | 15-close-rspdr-real-time-dispatch-visibility | human_needed — 4/4 automated passed; 6-step D-16 two-browser checklist pending (live WebSocket + audio + XSS checks require dual-browser session) |
+| human_uat | 15-HUMAN-UAT.md | partial — 6 pending human-test items (Scene Progress gate, live checklist update, resource request audio/ticker, state-sync reload, XSS) |
+| validation | 15-VALIDATION.md | draft — nyquist_compliant false, wave_0_complete false (phase never ran Nyquist validator) |
+| debug | chat-input-hidden-by-status-btn | diagnosed — hypothesis recorded (StatusButton position: fixed overlaps ChatTab slot content); fix never confirmed in browser |
+| debug | dispatch-messages-not-visible | resolved — file still in .planning/debug/ (housekeeping only; not moved to resolved/) |
+
+All 5 items carry over to v2 milestone intake for decision (verify / fix / close-out).
 
 ## Session Continuity
 
