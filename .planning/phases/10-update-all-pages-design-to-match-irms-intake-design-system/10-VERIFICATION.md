@@ -159,6 +159,74 @@ The overall design system architecture (CSS cascade, shadow scale, CDRRMO brandi
 
 ---
 
+### Human Verification Checklist (Phase 16 follow-up)
+
+**Verified by:** [user — fill in name]
+**Verified date:** [YYYY-MM-DD — fill in when all 3 checks pass]
+**Context:** These 3 human-only visual checks closed the Phase 10 `status: human_needed` gap identified in the v1.0 Milestone Audit (line 211). Source: `.planning/v1.0-MILESTONE-AUDIT.md` and `.planning/phases/16-.../16-CONTEXT.md` D-16.
+
+Screenshots live under `./10-verification-screenshots/` (relative to this file). Filename scheme: `{check-slug}-{light|dark}.png`.
+
+---
+
+#### Check 1 — Focus ring rendering (DS-03)
+
+- [ ] **Tested**
+- **Test:** Tab through all input fields on the Login page (`/login`) and the Profile settings page (`/settings/profile`) using the Tab key.
+- **Expected:** Each focused input shows `border-color: #2563eb` + `box-shadow: 0 0 0 3px rgba(37,99,235,0.1)` — NOT the default Tailwind `outline-ring/50` ring.
+- **Source rule:** `resources/css/app.css:304` — `[data-slot]:focus-visible { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }`
+- **Screenshots (required):**
+  - Chrome light: `./10-verification-screenshots/focus-ring-light.png`
+  - Chrome dark: `./10-verification-screenshots/focus-ring-dark.png`
+- **Pass criteria:** Both screenshots show the blue border + soft box-shadow combo on a focused input.
+
+![Focus ring (light)](./10-verification-screenshots/focus-ring-light.png)
+![Focus ring (dark)](./10-verification-screenshots/focus-ring-dark.png)
+
+---
+
+#### Check 2 — color-mix() opacity tinting (PrioritySelector inactive buttons)
+
+- [ ] **Tested**
+- **Test:** Navigate to `/incidents/create`. Observe the P1/P2/P3/P4 priority selector. The ACTIVE priority button uses `bg-t-p1..t-p4` (solid color). The INACTIVE buttons must show:
+  - Border at 40% opacity tint of their token (via `color-mix(in srgb, var(--t-pN) 40%, transparent)`)
+  - Hover state at 8% opacity background tint (via `color-mix(in srgb, var(--t-pN) 8%, transparent)`)
+- **Expected:** Inactive buttons render as visibly tinted variants of the `--t-p1`, `--t-p2`, `--t-p3`, `--t-p4` tokens — NOT hardcoded `red-500`/`orange-500`/`amber-500`/`green-500`.
+- **Source component:** `resources/js/components/incidents/PrioritySelector.vue`
+- **Screenshots (required):**
+  - Chrome light: `./10-verification-screenshots/priority-selector-light.png`
+  - Chrome dark: `./10-verification-screenshots/priority-selector-dark.png`
+- **Pass criteria:** Screenshots show 4 inactive buttons with tinted borders that match their priority color family at reduced opacity (not pure red/orange/amber/green).
+
+![Priority selector (light)](./10-verification-screenshots/priority-selector-light.png)
+![Priority selector (dark)](./10-verification-screenshots/priority-selector-dark.png)
+
+---
+
+#### Check 3 — Dark-mode contrast (ReportRow badges)
+
+- [ ] **Tested**
+- **Test:** Toggle appearance to dark mode. Navigate to `/analytics/reports`. Observe the TYPE_BADGES and STATUS_BADGES on each report row.
+- **Expected:** All badges remain legible — the `color-mix()` applied to `--t-accent` (quarterly), `--t-role-supervisor` (annual), `--t-online` (dilg), `--t-p2` (ndrrmc), `--t-p3` (generating), `--t-online` (ready), `--t-p1` (failed) must produce text that contrasts sufficiently with the tinted background AND the surrounding dark surface.
+- **Source component:** `resources/js/components/analytics/ReportRow.vue`
+- **Screenshots (required):**
+  - Chrome light: `./10-verification-screenshots/report-row-light.png`
+  - Chrome dark: `./10-verification-screenshots/report-row-dark.png`
+- **Pass criteria:** Screenshots show all badge types readable in BOTH modes (no washed-out / low-contrast failures in dark mode).
+
+![Report row badges (light)](./10-verification-screenshots/report-row-light.png)
+![Report row badges (dark)](./10-verification-screenshots/report-row-dark.png)
+
+---
+
+**Completion flow:**
+1. User captures the 6 screenshots (3 checks × light/dark)
+2. User places them at the relative paths above
+3. User ticks the 3 `[ ] Tested` checkboxes → `[x] Tested`
+4. User fills in the `Verified by:` and `Verified date:` fields
+5. **Task 3 of this plan** flips the frontmatter `status: human_needed` → `status: passed`
+6. User commits: `docs(phase-10): human verification complete` (or equivalent)
+
 _Verified: 2026-03-14T00:00:00Z_
 _Verifier: Claude (gsd-verifier)_
 _Re-verification after plan 10-05 gap closure_
