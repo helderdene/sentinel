@@ -288,14 +288,15 @@ Plans:
 **Requirements**: RSPDR-06, RSPDR-10
 **Gap Closure**: Closes partial requirements RSPDR-06 and RSPDR-10 from v1.0 audit (integration gaps: backend events dispatch but no frontend subscriber exists)
 **Success Criteria** (what must be TRUE):
-  1. `useDispatchFeed.ts` subscribes to `ChecklistUpdated` on `dispatch.incidents` and mutates `localIncidents[id].checklist_data` so incident detail panel shows live checklist progress percentage
+  1. `useDispatchFeed.ts` subscribes to `ChecklistUpdated` on `dispatch.incidents` and mutates `localIncidents[id].checklist_pct` so incident detail panel shows live checklist progress percentage
   2. `useDispatchFeed.ts` subscribes to `ResourceRequested` on `dispatch.incidents` and surfaces requests in the live ticker plus dispatch notification for the assigned operator
   3. Dispatch console incident detail panel renders the updated checklist % and resource request count reactively (no page reload required)
   4. Pest feature tests assert both events broadcast on the correct channel with the expected payload; frontend integration tests assert the subscribers mutate state correctly
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 15-01-PLAN.md -- TBD (populate via `/gsd-plan-phase 15`)
+- [ ] 15-01-PLAN.md -- Backend gap closure: tighten Pest event assertions (ChecklistUpdated + ResourceRequested) with channel + payload closures; widen StateSyncController filter to dispatch-active statuses and hydrate `incident.resource_requests[]` from timeline; add Pest test for state-sync hydration
+- [ ] 15-02-PLAN.md -- Frontend wiring (Wave 2, depends on 15-01): add `ChecklistUpdatedPayload` / `ResourceRequestedPayload` / `ResourceRequest` types; add `playResourceRequestTone`; add two `useEcho` subscribers + `resourceRequestsByIncident` Map + cleanup in `useDispatchFeed.ts`; render Scene Progress + Resource Requests sections in `IncidentDetailPanel.vue`; wire prop through `Console.vue`; manual D-16 verification checkpoint
 
 ### Phase 16: v1.0 Hygiene & Traceability Cleanup
 **Goal**: Close v1.0 hygiene debt surfaced by the milestone audit: hardcoded URLs swapped for Wayfinder actions, REQUIREMENTS.md traceability table complete for all requirement groups, Phase 14 VALIDATION.md approved, and Phase 10 visual fidelity browser-verified
@@ -343,5 +344,5 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 12. Bi-directional Communication | 4/4 | Complete | 2015-03-14 |
 | 13. PWA Setup | 3/3 | Complete    | 2015-03-14 |
 | 14. Sentinel Rebrand | 3/3 | Complete    | 2015-03-14 |
-| 15. Close RSPDR Real-Time Dispatch Visibility | 0/1 | Pending | — |
+| 15. Close RSPDR Real-Time Dispatch Visibility | 0/2 | Pending | — |
 | 16. v1.0 Hygiene & Traceability Cleanup | 0/1 | Pending | — |
