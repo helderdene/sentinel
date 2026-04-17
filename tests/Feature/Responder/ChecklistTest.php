@@ -7,6 +7,7 @@ use App\Models\Incident;
 use App\Models\IncidentType;
 use App\Models\Unit;
 use App\Models\User;
+use Illuminate\Broadcasting\PrivateChannel;
 
 beforeEach(function () {
     Event::fake([
@@ -44,7 +45,19 @@ it('updates checklist items and computes percentage', function () {
     $fresh = $incident->fresh();
     expect($fresh->checklist_pct)->toBe(50);
 
-    Event::assertDispatched(ChecklistUpdated::class);
+    Event::assertDispatched(ChecklistUpdated::class, function (ChecklistUpdated $event) use ($incident) {
+        $channels = $event->broadcastOn();
+        expect($channels)->toHaveCount(1);
+        expect($channels[0])->toBeInstanceOf(PrivateChannel::class);
+        expect($channels[0]->name)->toBe('private-dispatch.incidents');
+
+        $payload = $event->broadcastWith();
+        expect($payload)->toHaveKeys(['incident_id', 'incident_no', 'checklist_pct']);
+        expect($payload['incident_id'])->toBe($incident->id);
+        expect($payload['checklist_pct'])->toBe(50);
+
+        return true;
+    });
 });
 
 it('computes 100% when all items complete', function () {
