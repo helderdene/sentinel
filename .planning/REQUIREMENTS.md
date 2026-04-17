@@ -51,11 +51,11 @@
 - [x] **RSPDR-03**: Responder can transition status (Acknowledged > En Route > On Scene > Resolving > Resolved) with large touch targets (44px min); each transition broadcasts to dispatch via WebSocket
 - [x] **RSPDR-04**: Navigation deep-link to Google Maps with incident coordinates; embedded MapLibre mini-map with animated route polyline, unit position, incident pulse ring, and live ETA countdown
 - [x] **RSPDR-05**: Bi-directional messaging with dispatch; 8 preset quick-reply chips plus free text; message history persists for incident duration
-- [x] **RSPDR-06**: Contextual arrival checklists per incident type (cardiac, road accident, structure fire, default) with animated checkboxes and progress bar; completion % broadcast to dispatch
+- [ ] **RSPDR-06**: Contextual arrival checklists per incident type (cardiac, road accident, structure fire, default) with animated checkboxes and progress bar; completion % broadcast to dispatch
 - [x] **RSPDR-07**: Patient vitals form: blood pressure (mmHg), heart rate (bpm), SpO2 (%), GCS score (3-15) with validation ranges and placeholders
 - [x] **RSPDR-08**: Quick assessment tags as toggle chips: Conscious, Breathing, Bleeding, Unresponsive, Fracture, Burns, Shock, Chest Pain, Head Trauma, Airway Compromised, Anaphylaxis
 - [x] **RSPDR-09**: Outcome selection required before closure: Treated On Scene, Transported to Hospital (with hospital picker), Patient Refused Treatment, Declared DOA, Stand Down/False Alarm
-- [x] **RSPDR-10**: Resource request from field: 6 types (additional ambulance, fire unit, police backup, rescue boat, medical officer, medevac); request creates timeline entry and dispatch notification
+- [ ] **RSPDR-10**: Resource request from field: 6 types (additional ambulance, fire unit, police backup, rescue boat, medical officer, medevac); request creates timeline entry and dispatch notification
 - [x] **RSPDR-11**: Auto-generated incident report PDF on closure: ID, type, priority, scene time, checklist %, vitals, tags, outcome, hospital, notes
 
 ### Integration
@@ -206,11 +206,11 @@
 | RSPDR-03 | Phase 5 | Complete |
 | RSPDR-04 | Phase 5 | Complete |
 | RSPDR-05 | Phase 5 | Complete |
-| RSPDR-06 | Phase 5 | Complete |
+| RSPDR-06 | Phase 5 → Phase 15 (gap closure) | Pending |
 | RSPDR-07 | Phase 5 | Complete |
 | RSPDR-08 | Phase 5 | Complete |
 | RSPDR-09 | Phase 5 | Complete |
-| RSPDR-10 | Phase 5 | Complete |
+| RSPDR-10 | Phase 5 → Phase 15 (gap closure) | Pending |
 | RSPDR-11 | Phase 5 | Complete |
 | INTGR-01 | Phase 6 | Complete |
 | INTGR-02 | Phase 6 | Complete |
@@ -276,9 +276,9 @@
 
 **Coverage:**
 - v1 requirements: 102 total
-- Mapped to phases: 102
+- Mapped to phases: 102 (RSPDR-06 and RSPDR-10 reassigned to Phase 15 gap closure)
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-12*
-*Last updated: 2026-03-15 after Phase 13 planning*
+*Last updated: 2026-04-17 after v1.0 milestone audit — RSPDR-06 and RSPDR-10 reopened for Phase 15 gap closure*

@@ -26,6 +26,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 12: Bi-directional Communication** - Incident-level group chat channels, dispatch console messaging UI, responder ChatTab multi-participant awareness (completed 2015-03-14)
 - [x] **Phase 13: PWA Setup** - Installable PWA with service worker caching, web app manifest, and Web Push notifications for assignments, P1 alerts, ack timeouts (completed 2015-03-15)
 - [x] **Phase 14: Sentinel Rebrand** - Full visual rebrand from IRMS/CDRRMO to Sentinel: navy/blue palette, DM Mono typography, animated shield logo, app rename across all surfaces (completed 2015-03-14)
+- [ ] **Phase 15: Close RSPDR Real-Time Dispatch Visibility** - Gap closure: wire `ChecklistUpdated` and `ResourceRequested` broadcast events to dispatch console so checklist progress and resource requests appear in real time (closes RSPDR-06, RSPDR-10)
+- [ ] **Phase 16: v1.0 Hygiene & Traceability Cleanup** - Gap closure: convert hardcoded URLs to Wayfinder actions, backfill REQUIREMENTS.md traceability for OP-/REBRAND- groups, approve Phase 14 VALIDATION, browser-verify Phase 10 visual fidelity
 
 ## Phase Details
 
@@ -280,6 +282,37 @@ Plans:
 - [ ] 14-02-PLAN.md -- Identity and naming: SVG shields from brand guide, auth page animated shield, sidebar logo, favicon, IRMS/CDRRMO string sweep, PWA manifest
 - [ ] 14-03-PLAN.md -- Hardcoded color sweep: MapLibre priority/status colors, Chart.js analytics colors, responder UI colors, badge style update, NavMain typography
 
+### Phase 15: Close RSPDR Real-Time Dispatch Visibility
+**Goal**: `ChecklistUpdated` and `ResourceRequested` broadcast events surface in the dispatch console in real time so dispatchers see scene checklist progress and field resource requests without a page reload
+**Depends on**: Phase 5, Phase 4
+**Requirements**: RSPDR-06, RSPDR-10
+**Gap Closure**: Closes partial requirements RSPDR-06 and RSPDR-10 from v1.0 audit (integration gaps: backend events dispatch but no frontend subscriber exists)
+**Success Criteria** (what must be TRUE):
+  1. `useDispatchFeed.ts` subscribes to `ChecklistUpdated` on `dispatch.incidents` and mutates `localIncidents[id].checklist_data` so incident detail panel shows live checklist progress percentage
+  2. `useDispatchFeed.ts` subscribes to `ResourceRequested` on `dispatch.incidents` and surfaces requests in the live ticker plus dispatch notification for the assigned operator
+  3. Dispatch console incident detail panel renders the updated checklist % and resource request count reactively (no page reload required)
+  4. Pest feature tests assert both events broadcast on the correct channel with the expected payload; frontend integration tests assert the subscribers mutate state correctly
+**Plans**: TBD
+
+Plans:
+- [ ] 15-01-PLAN.md -- TBD (populate via `/gsd-plan-phase 15`)
+
+### Phase 16: v1.0 Hygiene & Traceability Cleanup
+**Goal**: Close v1.0 hygiene debt surfaced by the milestone audit: hardcoded URLs swapped for Wayfinder actions, REQUIREMENTS.md traceability table complete for all requirement groups, Phase 14 VALIDATION.md approved, and Phase 10 visual fidelity browser-verified
+**Depends on**: Phase 15
+**Requirements**: (no new REQ-IDs — traceability backfill + convention fixes)
+**Gap Closure**: Closes tech debt items from v1.0 audit
+**Success Criteria** (what must be TRUE):
+  1. `QueueRow.vue` uses Wayfinder `overridePriority()` and `recall()` actions instead of hardcoded `/intake/{id}/override-priority` and `/intake/{id}/recall` URLs
+  2. `usePushSubscription.ts` uses Wayfinder `PushSubscriptionController` actions instead of hardcoded `/push-subscriptions` URLs
+  3. `REQUIREMENTS.md` traceability table includes OP-01..15 (Phase 8) and REBRAND-01..06 (Phase 14); coverage count reflects new total
+  4. Phase 14 `14-VALIDATION.md` frontmatter status is `approved` (run `/gsd-validate-phase 14`)
+  5. Phase 10 `human_needed` items (focus ring, color-mix opacity, dark mode contrast) browser-verified and `10-VERIFICATION.md` status updated
+**Plans**: TBD
+
+Plans:
+- [ ] 16-01-PLAN.md -- TBD (populate via `/gsd-plan-phase 16`)
+
 ## Progress
 
 **Execution Order:**
@@ -291,6 +324,8 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 (Phase 12 depends on Phases 4 and 5)
 (Phase 13 depends on Phase 12)
 (Phase 14 depends on Phase 13)
+(Phase 15 depends on Phases 4 and 5 — gap closure)
+(Phase 16 depends on Phase 15 — gap closure)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -308,3 +343,5 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6 > 7 > 8
 | 12. Bi-directional Communication | 4/4 | Complete | 2015-03-14 |
 | 13. PWA Setup | 3/3 | Complete    | 2015-03-14 |
 | 14. Sentinel Rebrand | 3/3 | Complete    | 2015-03-14 |
+| 15. Close RSPDR Real-Time Dispatch Visibility | 0/1 | Pending | — |
+| 16. v1.0 Hygiene & Traceability Cleanup | 0/1 | Pending | — |
