@@ -191,12 +191,16 @@ const selectedIncidentResourceRequests = computed<ResourceRequest[]>(() => {
 
     const combined = [...fromSession, ...fromServer];
     const seen = new Set<string>();
+    // Dedup by composite (timestamp, resource_type, requested_by) tuple so
+    // multiple requests in the same wall-clock second are not collapsed.
     const deduped = combined.filter((req) => {
-        if (seen.has(req.timestamp)) {
+        const key = `${req.timestamp}|${req.resource_type}|${req.requested_by}`;
+
+        if (seen.has(key)) {
             return false;
         }
 
-        seen.add(req.timestamp);
+        seen.add(key);
 
         return true;
     });
