@@ -109,6 +109,7 @@ export interface IncidentForQueue {
     barangay: { id: number; name: string } | null;
     caller_name: string | null;
     created_at: string;
+    resource_requests?: ResourceRequest[];
 }
 
 export interface IncidentCreatedPayload {

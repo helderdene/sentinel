@@ -445,6 +445,7 @@ export function useDispatchFeed(
                 created_by: null,
                 created_at: inc.created_at,
                 updated_at: inc.created_at,
+                resource_requests: inc.resource_requests ?? [],
                 assigned_units: [],
             }),
         );
