@@ -1,7 +1,14 @@
+import mapboxgl from 'mapbox-gl';
 import type { Ref } from 'vue';
 import { ref, watch } from 'vue';
-import { geocodingSearch } from '@/actions/App/Http/Controllers/IncidentController';
 import type { GeocodingResult } from '@/types/incident';
+
+// Bias results toward Butuan City, Agusan del Norte so local searches
+// ("Robinsons", "JC Aquino Ave") resolve to the correct Mindanao city
+// instead of a higher-population match elsewhere in the Philippines.
+const PROXIMITY_LNG = 125.5406;
+const PROXIMITY_LAT = 8.9475;
+const COUNTRY = 'ph';
 
 function useDebounce(fn: () => void, delay: number): () => void {
     let timeout: ReturnType<typeof setTimeout> | null = null;
@@ -18,6 +25,15 @@ function useDebounce(fn: () => void, delay: number): () => void {
     };
 }
 
+type MapboxFeature = {
+    center: [number, number];
+    place_name: string;
+};
+
+type MapboxForwardResponse = {
+    features?: MapboxFeature[];
+};
+
 export function useGeocodingSearch(query: Ref<string>) {
     const results = ref<GeocodingResult[]>([]);
     const isLoading = ref(false);
@@ -32,6 +48,14 @@ export function useGeocodingSearch(query: Ref<string>) {
             return;
         }
 
+        const token = mapboxgl.accessToken;
+
+        if (!token) {
+            results.value = [];
+
+            return;
+        }
+
         if (abortController) {
             abortController.abort();
         }
@@ -40,21 +64,27 @@ export function useGeocodingSearch(query: Ref<string>) {
         isLoading.value = true;
 
         try {
-            const url = geocodingSearch.url({
-                query: { query: q },
+            const params = new URLSearchParams({
+                access_token: token,
+                country: COUNTRY,
+                proximity: `${PROXIMITY_LNG},${PROXIMITY_LAT}`,
+                limit: '5',
+                autocomplete: 'true',
             });
+            const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(q)}.json?${params.toString()}`;
 
             const response = await fetch(url, {
                 signal: abortController.signal,
-                headers: {
-                    Accept: 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                credentials: 'same-origin',
             });
 
             if (response.ok) {
-                results.value = await response.json();
+                const data = (await response.json()) as MapboxForwardResponse;
+
+                results.value = (data.features ?? []).map((feature) => ({
+                    lat: feature.center[1],
+                    lng: feature.center[0],
+                    display_name: feature.place_name,
+                }));
             }
         } catch (error) {
             if (error instanceof DOMException && error.name === 'AbortError') {

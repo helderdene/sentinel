@@ -9,6 +9,7 @@ import ChBadge from '@/components/intake/ChBadge.vue';
 import { channelDisplayMap } from '@/components/intake/ChBadge.vue';
 import IntakeIconPin from '@/components/intake/icons/IntakeIconPin.vue';
 import IntakePriorityPicker from '@/components/intake/IntakePriorityPicker.vue';
+import LocationMapPicker from '@/components/intake/LocationMapPicker.vue';
 import {
     Combobox,
     ComboboxContent,
@@ -198,6 +199,16 @@ function selectGeocodingResult(result: GeocodingResult): void {
     form.longitude = result.lng;
     locationQuery.value = result.display_name;
     showGeocodingDropdown.value = false;
+}
+
+function onMapCoordinatesChange(lat: number, lng: number): void {
+    form.latitude = lat;
+    form.longitude = lng;
+}
+
+function onMapAddressChange(address: string): void {
+    form.location_text = address;
+    locationQuery.value = address;
 }
 
 function onLocationInput(event: Event): void {
@@ -453,6 +464,12 @@ const sourceChannelKey = computed(() => {
             <p v-if="form.errors.location_text" class="text-[11px] text-t-p1">
                 {{ form.errors.location_text }}
             </p>
+            <LocationMapPicker
+                :latitude="form.latitude"
+                :longitude="form.longitude"
+                @update:coordinates="onMapCoordinatesChange"
+                @update:address="onMapAddressChange"
+            />
         </div>
 
         <!-- Caller Name + Contact -->
