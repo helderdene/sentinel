@@ -74,11 +74,14 @@ export function useIntakeFeed(
         'dispatch.incidents',
         'IncidentCreated',
         (e) => {
-            if (e.status !== 'PENDING') {
+            if (e.status !== 'PENDING' && e.status !== 'TRIAGED') {
                 return;
             }
 
-            if (pendingIncidents.value.some((inc) => inc.id === e.id)) {
+            const target =
+                e.status === 'PENDING' ? pendingIncidents : triagedIncidents;
+
+            if (target.value.some((inc) => inc.id === e.id)) {
                 return;
             }
 
@@ -126,10 +129,10 @@ export function useIntakeFeed(
                 updated_at: e.created_at,
             };
 
-            pendingIncidents.value.unshift(newIncident);
+            target.value.unshift(newIncident);
 
-            if (pendingIncidents.value.length > MAX_FEED_SIZE) {
-                pendingIncidents.value.pop();
+            if (target.value.length > MAX_FEED_SIZE) {
+                target.value.pop();
             }
         },
     );
