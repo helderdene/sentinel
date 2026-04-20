@@ -38,6 +38,16 @@ it('parses Mapbox Directions API response into canonical shape', function () {
                                         'modifier' => 'right',
                                         'location' => [125.5400, 8.9490],
                                     ],
+                                    'voiceInstructions' => [
+                                        [
+                                            'distanceAlongGeometry' => 400.0,
+                                            'announcement' => 'In 400 meters, turn right onto Taguibo-Masao Road',
+                                        ],
+                                        [
+                                            'distanceAlongGeometry' => 50.0,
+                                            'announcement' => 'Turn right',
+                                        ],
+                                    ],
                                 ],
                             ],
                         ],
@@ -61,7 +71,31 @@ it('parses Mapbox Directions API response into canonical shape', function () {
         ->and($result['steps'])->toHaveCount(2)
         ->and($result['steps'][0]['instruction'])->toBe('Head north on Magallanes Street')
         ->and($result['steps'][1]['modifier'])->toBe('right')
-        ->and($result['steps'][0]['location'])->toBe([125.5406, 8.9475]);
+        ->and($result['steps'][0]['location'])->toBe([125.5406, 8.9475])
+        ->and($result['steps'][1]['voice_instructions'])->toHaveCount(2)
+        ->and($result['steps'][1]['voice_instructions'][0]['distance_along_geometry'])->toBe(400.0)
+        ->and($result['steps'][1]['voice_instructions'][0]['announcement'])->toBe('In 400 meters, turn right onto Taguibo-Masao Road');
+});
+
+it('sends voice_instructions=true and voice_units=metric', function () {
+    Http::fake([
+        'api.mapbox.com/*' => Http::response([
+            'code' => 'Ok',
+            'routes' => [[
+                'distance' => 100,
+                'duration' => 10,
+                'geometry' => ['type' => 'LineString', 'coordinates' => [[0, 0], [1, 1]]],
+            ]],
+        ]),
+    ]);
+
+    (new MapboxDirectionsService(
+        'https://api.mapbox.com/directions/v5/mapbox/driving-traffic',
+        'test-key',
+    ))->route(8.9475, 125.5406, 8.9560, 125.5300);
+
+    Http::assertSent(fn ($request) => str_contains($request->url(), 'voice_instructions=true')
+        && str_contains($request->url(), 'voice_units=metric'));
 });
 
 it('throws when Mapbox returns no routes', function () {

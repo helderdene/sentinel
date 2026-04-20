@@ -1,11 +1,17 @@
 import { ref } from 'vue';
 
+export interface VoiceCue {
+    distance_along_geometry: number;
+    announcement: string;
+}
+
 export interface DirectionsStep {
     instruction: string;
     type: string;
     modifier: string | null;
     distance_meters: number;
     location: [number, number];
+    voice_instructions?: VoiceCue[];
 }
 
 export interface DirectionsRoute {

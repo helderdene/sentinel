@@ -3,6 +3,7 @@ import mapboxgl from 'mapbox-gl';
 import type { GeoJSONSource } from 'mapbox-gl';
 import { computed, onMounted, onUnmounted, ref, shallowRef, watch } from 'vue';
 import { useDirections, type DirectionsStep } from '@/composables/useDirections';
+import { useSpeech } from '@/composables/useSpeech';
 import type { ResponderIncident } from '@/types/responder';
 
 const MAP_STYLE = 'mapbox://styles/helderdene/cmmq06eqr005j01skbwodfq08';
@@ -54,6 +55,8 @@ const props = defineProps<{
 }>();
 
 const { getRoute } = useDirections();
+const speech = useSpeech();
+const spokenCues = new Set<string>();
 
 const mapContainer = ref<HTMLDivElement | null>(null);
 const map = shallowRef<mapboxgl.Map | null>(null);
@@ -206,6 +209,7 @@ async function fetchRouteGeometry(): Promise<void> {
     routeEtaMin.value = route.durationMin;
     routeSteps.value = route.steps ?? [];
     currentStepIndex.value = 0;
+    spokenCues.clear();
 
     if (!map.value || !isMapReady.value) {
         return;
@@ -355,11 +359,15 @@ function addMapLayers(): void {
         id: 'route-glow',
         type: 'line',
         source: 'route-line',
+        layout: {
+            'line-cap': 'round',
+            'line-join': 'round',
+        },
         paint: {
             'line-color': routeColor,
-            'line-width': 8,
-            'line-opacity': 0.25,
-            'line-blur': 4,
+            'line-width': 14,
+            'line-opacity': 0.35,
+            'line-blur': 6,
         },
     });
 
@@ -367,10 +375,14 @@ function addMapLayers(): void {
         id: 'route-line-layer',
         type: 'line',
         source: 'route-line',
+        layout: {
+            'line-cap': 'round',
+            'line-join': 'round',
+        },
         paint: {
             'line-color': routeColor,
-            'line-width': 3,
-            'line-dasharray': [2, 3],
+            'line-width': 6,
+            'line-opacity': 0.95,
         },
     });
 
@@ -545,6 +557,111 @@ function advanceCurrentStep(): void {
     }
 }
 
+let startAnnouncementPending = false;
+
+function buildStartAnnouncement(): string | null {
+    const typeName = props.incident.incident_type?.name;
+    const locationText =
+        props.incident.location_text ?? props.incident.barangay?.name ?? null;
+    const km = routeDistanceKm.value;
+
+    if (!typeName && !locationText && km === null) {
+        return null;
+    }
+
+    const parts: string[] = ['Starting route'];
+
+    if (typeName) {
+        parts.push(`to ${typeName}`);
+    }
+
+    if (locationText) {
+        parts.push(`at ${locationText}`);
+    }
+
+    if (km !== null && Number.isFinite(km) && km > 0) {
+        const distanceText =
+            km < 1
+                ? `${Math.round(km * 1000)} meters away`
+                : `${km.toFixed(1)} kilometers away`;
+        parts.push(distanceText);
+    }
+
+    const prefix = parts.join(' ') + '.';
+
+    const next = routeSteps.value[currentStepIndex.value + 1];
+    const firstCue = next?.voice_instructions?.[0]?.announcement;
+    const firstInstruction = firstCue ?? currentStep.value?.instruction ?? '';
+
+    if (firstCue && next) {
+        spokenCues.add(
+            `${currentStepIndex.value + 1}:${next.voice_instructions?.[0]?.distance_along_geometry ?? 0}`,
+        );
+    }
+
+    return firstInstruction ? `${prefix} ${firstInstruction}` : prefix;
+}
+
+function speakStartOfRoute(): void {
+    if (!isNavMode.value) {
+        return;
+    }
+
+    // Route distance may still be loading when EN_ROUTE is entered; defer
+    // the full announcement until it arrives.
+    if (routeDistanceKm.value === null) {
+        startAnnouncementPending = true;
+
+        return;
+    }
+
+    const announcement = buildStartAnnouncement();
+
+    if (announcement) {
+        speech.speak(announcement);
+    }
+
+    startAnnouncementPending = false;
+}
+
+watch(routeDistanceKm, (km) => {
+    if (startAnnouncementPending && km !== null && isNavMode.value) {
+        speakStartOfRoute();
+    }
+});
+
+function maybeSpeakVoiceCue(): void {
+    if (!isNavMode.value || !props.gpsPosition) {
+        return;
+    }
+
+    const nextStep = routeSteps.value[currentStepIndex.value + 1];
+
+    if (!nextStep?.voice_instructions?.length) {
+        return;
+    }
+
+    const gps: [number, number] = [props.gpsPosition.lng, props.gpsPosition.lat];
+    const distanceToManeuver = haversineMeters(gps, nextStep.location);
+
+    // Voice cues are sorted by distance_along_geometry descending in Mapbox's
+    // response (furthest-away announcement first). Fire the first cue whose
+    // threshold we've crossed and that hasn't fired yet.
+    for (const cue of nextStep.voice_instructions) {
+        const cueKey = `${currentStepIndex.value + 1}:${cue.distance_along_geometry}`;
+
+        if (spokenCues.has(cueKey)) {
+            continue;
+        }
+
+        if (distanceToManeuver <= cue.distance_along_geometry) {
+            spokenCues.add(cueKey);
+            speech.speak(cue.announcement);
+            break;
+        }
+    }
+}
+
 let hasFittedBounds = false;
 
 function tryFirstFit(): void {
@@ -564,12 +681,18 @@ watch(
     (newVal) => {
         if (newVal) {
             advanceCurrentStep();
+            maybeSpeakVoiceCue();
             updateUnitPosition();
             tryFirstFit();
         }
     },
     { deep: true, immediate: true },
 );
+
+watch(currentStepIndex, () => {
+    // New step became current — allow its cues to fire again
+    spokenCues.clear();
+});
 
 watch(isNavMode, (navActive) => {
     if (!map.value || !isMapReady.value) {
@@ -578,7 +701,10 @@ watch(isNavMode, (navActive) => {
 
     if (navActive) {
         recenterNavCamera();
+        speakStartOfRoute();
     } else {
+        startAnnouncementPending = false;
+        speech.cancel();
         map.value.easeTo({ pitch: 0, bearing: 0, duration: 400 });
         fitBounds();
     }
@@ -602,6 +728,7 @@ watch(incidentCoords, (coords) => {
 });
 
 onUnmounted(() => {
+    speech.cancel();
     map.value?.remove();
 });
 </script>
@@ -637,6 +764,50 @@ onUnmounted(() => {
                         }}
                     </p>
                 </div>
+
+                <button
+                    v-if="speech.isSupported.value"
+                    type="button"
+                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-white/20 active:scale-95"
+                    :aria-label="
+                        speech.isEnabled.value
+                            ? 'Mute voice directions'
+                            : 'Unmute voice directions'
+                    "
+                    :aria-pressed="speech.isEnabled.value"
+                    @click="speech.toggle()"
+                >
+                    <svg
+                        v-if="speech.isEnabled.value"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                    </svg>
+                    <svg
+                        v-else
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                        <line x1="23" y1="9" x2="17" y2="15" />
+                        <line x1="17" y1="9" x2="23" y2="15" />
+                    </svg>
+                </button>
             </div>
         </div>
 

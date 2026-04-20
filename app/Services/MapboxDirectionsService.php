@@ -36,6 +36,8 @@ class MapboxDirectionsService implements DirectionsServiceInterface
                     'geometries' => 'geojson',
                     'overview' => 'full',
                     'steps' => 'true',
+                    'voice_instructions' => 'true',
+                    'voice_units' => 'metric',
                     'annotations' => 'duration,distance',
                 ]);
         } catch (RequestException $e) {
@@ -63,12 +65,21 @@ class MapboxDirectionsService implements DirectionsServiceInterface
                 $maneuver = $step['maneuver'] ?? [];
                 $location = $maneuver['location'] ?? [0, 0];
 
+                $voice = [];
+                foreach (($step['voiceInstructions'] ?? []) as $cue) {
+                    $voice[] = [
+                        'distance_along_geometry' => (float) ($cue['distanceAlongGeometry'] ?? 0),
+                        'announcement' => (string) ($cue['announcement'] ?? ''),
+                    ];
+                }
+
                 $steps[] = [
                     'instruction' => (string) ($maneuver['instruction'] ?? ''),
                     'type' => (string) ($maneuver['type'] ?? ''),
                     'modifier' => isset($maneuver['modifier']) ? (string) $maneuver['modifier'] : null,
                     'distance_meters' => (float) ($step['distance'] ?? 0),
                     'location' => [(float) ($location[0] ?? 0), (float) ($location[1] ?? 0)],
+                    'voice_instructions' => $voice,
                 ];
             }
         }

@@ -280,16 +280,20 @@ export function useDispatchMap(
             return;
         }
 
-        // --- Connection glow (wide soft line behind the dashed line) ---
+        // --- Connection glow (wide soft line behind the solid line) ---
         map.value.addLayer({
             id: 'connection-glow',
             type: 'line',
             source: 'connections',
+            layout: {
+                'line-cap': 'round',
+                'line-join': 'round',
+            },
             paint: {
                 'line-color': PRIORITY_COLORS,
-                'line-width': 8,
-                'line-opacity': 0.25,
-                'line-blur': 4,
+                'line-width': 12,
+                'line-opacity': 0.35,
+                'line-blur': 6,
             },
         });
 
@@ -298,10 +302,14 @@ export function useDispatchMap(
             id: 'connection-lines',
             type: 'line',
             source: 'connections',
+            layout: {
+                'line-cap': 'round',
+                'line-join': 'round',
+            },
             paint: {
                 'line-color': PRIORITY_COLORS,
-                'line-width': 3,
-                'line-dasharray': [2, 3],
+                'line-width': 5,
+                'line-opacity': 0.95,
             },
         });
 

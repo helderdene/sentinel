@@ -22,6 +22,10 @@ interface DirectionsServiceInterface
      *         modifier: ?string,
      *         distance_meters: float,
      *         location: array{0: float, 1: float},
+     *         voice_instructions?: array<int, array{
+     *             distance_along_geometry: float,
+     *             announcement: string,
+     *         }>,
      *     }>,
      * }
      */
