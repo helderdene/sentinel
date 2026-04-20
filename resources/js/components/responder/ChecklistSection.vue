@@ -5,105 +5,33 @@ import type { ChecklistTemplate, ResponderIncident } from '@/types/responder';
 
 const props = defineProps<{
     incident: ResponderIncident;
+    template: ChecklistTemplate | null;
 }>();
 
-const CHECKLIST_TEMPLATES: ChecklistTemplate[] = [
-    {
-        id: 'cardiac',
-        label: 'Cardiac Emergency',
-        items: [
-            { key: 'scene_secured', label: 'Scene secured' },
-            { key: 'patient_responsive', label: 'Patient responsive check' },
-            { key: 'abc_assessment', label: 'ABC assessment' },
-            { key: 'vital_signs', label: 'Vital signs taken' },
-            { key: 'aed_monitor', label: 'AED/monitor attached' },
-            { key: 'iv_access', label: 'IV access established' },
-            { key: 'medication', label: 'Medication administered' },
-        ],
-    },
-    {
-        id: 'road_accident',
-        label: 'Road Accident',
-        items: [
-            { key: 'scene_secured', label: 'Scene secured' },
-            { key: 'traffic_control', label: 'Traffic control established' },
-            { key: 'vehicle_stability', label: 'Vehicle stability assessed' },
-            { key: 'extrication', label: 'Patient extrication (if needed)' },
-            {
-                key: 'spinal_immobilization',
-                label: 'Spinal immobilization applied',
-            },
-            { key: 'bleeding_control', label: 'Bleeding controlled' },
-            { key: 'patient_assessed', label: 'Patient assessed' },
-        ],
-    },
-    {
-        id: 'structure_fire',
-        label: 'Structure Fire',
-        items: [
-            { key: 'scene_secured', label: 'Scene secured' },
-            { key: 'fire_suppression', label: 'Fire suppression confirmed' },
-            { key: 'search_completed', label: 'Search completed' },
-            { key: 'hazmat_assessment', label: 'Hazmat assessment' },
-            { key: 'ventilation_status', label: 'Ventilation status' },
-            { key: 'patient_triage', label: 'Patient triage' },
-            { key: 'decontamination', label: 'Decontamination (if needed)' },
-        ],
-    },
-    {
-        id: 'default',
-        label: 'General',
-        items: [
-            { key: 'scene_secured', label: 'Scene secured' },
-            { key: 'area_assessment', label: 'Area assessment complete' },
-            { key: 'hazards_identified', label: 'Hazards identified' },
-            { key: 'patient_contacted', label: 'Patient contacted' },
-            { key: 'initial_assessment', label: 'Initial assessment' },
-            { key: 'treatment_provided', label: 'Treatment provided' },
-            { key: 'documentation_complete', label: 'Documentation complete' },
-        ],
-    },
+const FALLBACK_ITEMS: Array<{ key: string; label: string }> = [
+    { key: 'scene_secured', label: 'Scene secured' },
+    { key: 'area_assessment', label: 'Area assessment complete' },
+    { key: 'hazards_identified', label: 'Hazards identified' },
+    { key: 'patient_contacted', label: 'Patient contacted' },
+    { key: 'initial_assessment', label: 'Initial assessment' },
+    { key: 'treatment_provided', label: 'Treatment provided' },
+    { key: 'documentation_complete', label: 'Documentation complete' },
 ];
 
-function selectTemplate(incident: ResponderIncident): ChecklistTemplate {
-    const category = incident.incident_type.category.toLowerCase();
-    const code = incident.incident_type.code.toLowerCase();
-
-    if (
-        category.includes('fire') ||
-        code.includes('fire') ||
-        code.includes('blaze')
-    ) {
-        return CHECKLIST_TEMPLATES[2]; // structure fire
-    }
-
-    if (
-        (category.includes('medical') &&
-            (code.includes('cardiac') || code.includes('heart'))) ||
-        code.includes('cardiac')
-    ) {
-        return CHECKLIST_TEMPLATES[0]; // cardiac
-    }
-
-    if (
-        code.includes('accident') ||
-        code.includes('collision') ||
-        code.includes('vehicular')
-    ) {
-        return CHECKLIST_TEMPLATES[1]; // road accident
-    }
-
-    return CHECKLIST_TEMPLATES[3]; // default
-}
-
-const template = computed(() => selectTemplate(props.incident));
+const items = computed(() =>
+    props.template?.items && props.template.items.length > 0
+        ? props.template.items
+        : FALLBACK_ITEMS,
+);
 
 const checklistState = reactive<Record<string, boolean>>({});
 
 function initChecklist(): void {
-    const items = template.value.items;
+    for (const key of Object.keys(checklistState)) {
+        delete checklistState[key];
+    }
 
-    for (const item of items) {
+    for (const item of items.value) {
         checklistState[item.key] =
             props.incident.checklist_data?.[item.key] ?? false;
     }
@@ -116,12 +44,16 @@ watch(
     () => initChecklist(),
 );
 
-const completedCount = computed(
-    () =>
-        template.value.items.filter((item) => checklistState[item.key]).length,
+watch(
+    () => props.template?.id,
+    () => initChecklist(),
 );
 
-const totalCount = computed(() => template.value.items.length);
+const completedCount = computed(
+    () => items.value.filter((item) => checklistState[item.key]).length,
+);
+
+const totalCount = computed(() => items.value.length);
 
 const progressPercent = computed(() =>
     totalCount.value > 0
@@ -132,10 +64,10 @@ const progressPercent = computed(() =>
 async function toggleItem(key: string): Promise<void> {
     checklistState[key] = !checklistState[key];
 
-    const items: Record<string, boolean> = {};
+    const payload: Record<string, boolean> = {};
 
-    for (const item of template.value.items) {
-        items[item.key] = checklistState[item.key] ?? false;
+    for (const item of items.value) {
+        payload[item.key] = checklistState[item.key] ?? false;
     }
 
     const xsrfToken = decodeURIComponent(
@@ -158,11 +90,10 @@ async function toggleItem(key: string): Promise<void> {
                     'X-Requested-With': 'XMLHttpRequest',
                     'X-XSRF-TOKEN': xsrfToken,
                 },
-                body: JSON.stringify({ items }),
+                body: JSON.stringify({ items: payload }),
             },
         );
     } catch {
-        // Revert on failure
         checklistState[key] = !checklistState[key];
     }
 }
@@ -184,10 +115,18 @@ async function toggleItem(key: string): Promise<void> {
             </span>
         </div>
 
+        <!-- Template name (subtle) -->
+        <p
+            v-if="template"
+            class="font-mono text-[9px] tracking-[1.5px] text-t-text-faint uppercase"
+        >
+            {{ template.name }}
+        </p>
+
         <!-- Checklist items -->
         <ul class="flex flex-col gap-1">
             <li
-                v-for="item in template.items"
+                v-for="item in items"
                 :key="item.key"
                 class="active:bg-t-bg-dim/30 flex min-h-[44px] cursor-pointer items-center gap-3 rounded-lg px-3 py-2 transition-colors"
                 role="checkbox"

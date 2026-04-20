@@ -21,6 +21,7 @@ class IncidentType extends Model
      */
     protected $fillable = [
         'incident_category_id',
+        'checklist_template_id',
         'category',
         'name',
         'code',
@@ -51,6 +52,14 @@ class IncidentType extends Model
     public function incidentCategory(): BelongsTo
     {
         return $this->belongsTo(IncidentCategory::class);
+    }
+
+    /**
+     * Get the checklist template assigned to this incident type (if any).
+     */
+    public function checklistTemplate(): BelongsTo
+    {
+        return $this->belongsTo(ChecklistTemplate::class);
     }
 
     /**

@@ -6,6 +6,7 @@ use App\Enums\IncidentPriority;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreIncidentTypeRequest;
 use App\Http\Requests\Admin\UpdateIncidentTypeRequest;
+use App\Models\ChecklistTemplate;
 use App\Models\IncidentCategory;
 use App\Models\IncidentType;
 use Illuminate\Http\RedirectResponse;
@@ -48,7 +49,13 @@ class AdminIncidentTypeController extends Controller
             ->orderBy('name')
             ->get(['id', 'name', 'icon']);
 
+        $checklistTemplates = ChecklistTemplate::query()
+            ->active()
+            ->orderBy('name')
+            ->get(['id', 'name', 'slug']);
+
         return Inertia::render('admin/IncidentTypeForm', [
+            'checklistTemplates' => $checklistTemplates,
             'priorities' => IncidentPriority::cases(),
             'categories' => $categories,
         ]);
@@ -87,7 +94,13 @@ class AdminIncidentTypeController extends Controller
             ->orderBy('name')
             ->get(['id', 'name', 'icon']);
 
+        $checklistTemplates = ChecklistTemplate::query()
+            ->active()
+            ->orderBy('name')
+            ->get(['id', 'name', 'slug']);
+
         return Inertia::render('admin/IncidentTypeForm', [
+            'checklistTemplates' => $checklistTemplates,
             'type' => $incidentType,
             'priorities' => IncidentPriority::cases(),
             'categories' => $categories,

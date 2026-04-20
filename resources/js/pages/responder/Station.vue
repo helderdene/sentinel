@@ -21,6 +21,7 @@ import { useResponderSession } from '@/composables/useResponderSession';
 import ResponderLayout from '@/layouts/ResponderLayout.vue';
 import type {
     AssignmentPayload,
+    ChecklistTemplate,
     Hospital,
     IncidentMessageItem,
     IncidentStatus,
@@ -39,6 +40,7 @@ const props = defineProps<{
     messages: IncidentMessageItem[];
     hospitals: Hospital[];
     userId: number;
+    checklistTemplate: ChecklistTemplate | null;
 }>();
 
 const session = useResponderSession(
@@ -426,6 +428,7 @@ function handleMessagesRead(): void {
                     session.activeIncident.value
                 "
                 :incident="session.activeIncident.value"
+                :checklist-template="props.checklistTemplate"
             />
 
             <ChatTab

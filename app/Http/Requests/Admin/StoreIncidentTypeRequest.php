@@ -26,6 +26,7 @@ class StoreIncidentTypeRequest extends FormRequest
     {
         return [
             'incident_category_id' => ['required', 'exists:incident_categories,id'],
+            'checklist_template_id' => ['nullable', 'exists:checklist_templates,id'],
             'category' => ['nullable', 'string', 'max:50'],
             'name' => ['required', 'string', 'max:100'],
             'code' => ['required', 'string', 'max:20', 'unique:incident_types,code'],

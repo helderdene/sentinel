@@ -24,6 +24,7 @@ use App\Http\Requests\UpdateLocationRequest;
 use App\Http\Requests\UpdateVitalsRequest;
 use App\Jobs\GenerateIncidentReport;
 use App\Jobs\GenerateNdrrmcSitRep;
+use App\Models\ChecklistTemplate;
 use App\Models\Incident;
 use App\Models\User;
 use Clickbar\Magellan\Data\Geometries\Point;
@@ -44,14 +45,18 @@ class ResponderController extends Controller
         $unit = $user->unit;
 
         $activeIncident = null;
+        $checklistTemplate = null;
 
         if ($unit) {
-            $activeIncident = $unit->activeIncidents()
-                ->with(['incidentType', 'barangay', 'timeline', 'messages', 'assignedUnits'])
+            $activeIncidentModel = $unit->activeIncidents()
+                ->with(['incidentType.checklistTemplate', 'barangay', 'timeline', 'messages', 'assignedUnits'])
                 ->first();
 
-            if ($activeIncident) {
-                $activeIncident = $activeIncident->toArray();
+            if ($activeIncidentModel) {
+                $checklistTemplate = $activeIncidentModel->incidentType?->checklistTemplate
+                    ?? ChecklistTemplate::fallback();
+
+                $activeIncident = $activeIncidentModel->toArray();
             }
         }
 
@@ -60,6 +65,7 @@ class ResponderController extends Controller
             'unit' => $unit,
             'hospitals' => config('hospitals'),
             'userId' => $user->id,
+            'checklistTemplate' => $checklistTemplate,
             'messages' => $activeIncident
                 ? Incident::find($activeIncident['id'])?->messages()->orderBy('created_at')->get()
                 : [],

@@ -53,9 +53,13 @@ export interface VitalsData {
 }
 
 export interface ChecklistTemplate {
-    id: string;
-    label: string;
+    id: number;
+    name: string;
+    slug: string;
+    description: string | null;
     items: Array<{ key: string; label: string }>;
+    is_default: boolean;
+    is_active: boolean;
 }
 
 export type ResponderTab = 'assignment' | 'nav' | 'scene' | 'chat';

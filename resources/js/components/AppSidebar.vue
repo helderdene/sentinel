@@ -8,6 +8,7 @@ import {
     FolderTree,
     LayoutGrid,
     Landmark,
+    ListChecks,
     Map,
     RadioTower,
     Shield,
@@ -96,6 +97,11 @@ const mainNavItems = computed<NavItem[]>(() => {
                         title: 'Incident Types',
                         href: '/admin/incident-types',
                         icon: Tags,
+                    },
+                    {
+                        title: 'Checklist Templates',
+                        href: '/admin/checklist-templates',
+                        icon: ListChecks,
                     },
                     {
                         title: 'Units',

@@ -3,10 +3,11 @@ import { computed, ref } from 'vue';
 import AssessmentTags from '@/components/responder/AssessmentTags.vue';
 import ChecklistSection from '@/components/responder/ChecklistSection.vue';
 import VitalsForm from '@/components/responder/VitalsForm.vue';
-import type { ResponderIncident } from '@/types/responder';
+import type { ChecklistTemplate, ResponderIncident } from '@/types/responder';
 
 const props = defineProps<{
     incident: ResponderIncident;
+    checklistTemplate: ChecklistTemplate | null;
 }>();
 
 const openSection = ref<'checklist' | 'vitals' | 'assessment' | null>(
@@ -31,6 +32,12 @@ const checklistProgress = computed(() => {
 });
 
 const checklistTotal = computed(() => {
+    const templateTotal = props.checklistTemplate?.items.length;
+
+    if (templateTotal && templateTotal > 0) {
+        return String(templateTotal);
+    }
+
     const data = props.incident.checklist_data;
 
     if (!data) {
@@ -176,6 +183,7 @@ const sections = computed<AccordionSection[]>(() => [
                         <ChecklistSection
                             v-if="section.id === 'checklist'"
                             :incident="props.incident"
+                            :template="props.checklistTemplate"
                         />
 
                         <VitalsForm

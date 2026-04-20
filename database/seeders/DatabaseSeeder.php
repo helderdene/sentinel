@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             OperatorUserSeeder::class,
             IncidentTypeSeeder::class,
+            ChecklistTemplateSeeder::class,
             UnitSeeder::class,
             BarangaySeeder::class,
             AgencySeeder::class,

@@ -31,6 +31,7 @@ type CategoryInfo = {
 type IncidentTypeItem = {
     id: number;
     incident_category_id: number | null;
+    checklist_template_id: number | null;
     category: string;
     name: string;
     code: string;
@@ -41,10 +42,17 @@ type IncidentTypeItem = {
     sort_order: number | null;
 };
 
+type ChecklistTemplateOption = {
+    id: number;
+    name: string;
+    slug: string;
+};
+
 type Props = {
     type?: IncidentTypeItem;
     priorities: Array<{ value: string }>;
     categories: CategoryInfo[];
+    checklistTemplates: ChecklistTemplateOption[];
 };
 
 const props = defineProps<Props>();
@@ -61,6 +69,9 @@ const form = useForm({
     incident_category_id: props.type?.incident_category_id
         ? String(props.type.incident_category_id)
         : '',
+    checklist_template_id: props.type?.checklist_template_id
+        ? String(props.type.checklist_template_id)
+        : '',
     name: props.type?.name ?? '',
     code: props.type?.code ?? '',
     default_priority: props.type?.default_priority ?? '',
@@ -75,6 +86,9 @@ function submit(): void {
         ...data,
         incident_category_id: data.incident_category_id
             ? Number(data.incident_category_id)
+            : null,
+        checklist_template_id: data.checklist_template_id
+            ? Number(data.checklist_template_id)
             : null,
     }));
 
@@ -148,6 +162,30 @@ function submit(): void {
                         />
                         <InputError :message="form.errors.code" />
                     </div>
+                </div>
+
+                <div class="grid gap-2">
+                    <Label for="checklist_template_id">Checklist Template</Label>
+                    <Select v-model="form.checklist_template_id">
+                        <SelectTrigger class="w-full">
+                            <SelectValue
+                                placeholder="Use the fallback default template"
+                            />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="">
+                                — Use default fallback —
+                            </SelectItem>
+                            <SelectItem
+                                v-for="tpl in checklistTemplates"
+                                :key="tpl.id"
+                                :value="String(tpl.id)"
+                            >
+                                {{ tpl.name }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <InputError :message="form.errors.checklist_template_id" />
                 </div>
 
                 <div class="grid gap-2">
