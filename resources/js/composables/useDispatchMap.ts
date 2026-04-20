@@ -11,7 +11,7 @@ import type { DispatchIncident, DispatchUnit } from '@/types/dispatch';
 const BUTUAN_CENTER: [number, number] = [125.5406, 8.9475];
 const BUTUAN_ZOOM = 13;
 
-const DARK_STYLE = 'mapbox://styles/helderdene/cmmq06eqr005j01skbwodfq08';
+const DARK_STYLE = 'mapbox://styles/helderdene/cmns77fv5004e01sr9hh5bcqq';
 const LIGHT_STYLE = 'mapbox://styles/helderdene/cmmq06eqr005j01skbwodfq08';
 
 const PRIORITY_COLORS: ExpressionSpecification = [
