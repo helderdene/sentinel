@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\DirectionsController;
 use App\Http\Controllers\DispatchConsoleController;
 use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\IntakeStationController;
@@ -117,6 +118,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['role:operator,dispatcher,supervisor,admin'])->group(function () {
         Route::get('api/priority/suggest', [IncidentController::class, 'suggestPriority'])->name('api.priority.suggest');
         Route::get('api/geocoding/search', [IncidentController::class, 'geocodingSearch'])->name('api.geocoding.search');
+    });
+
+    // Directions API -- accessible to all roles that see a map
+    Route::middleware(['role:operator,dispatcher,responder,supervisor,admin'])->group(function () {
+        Route::get('api/directions', DirectionsController::class)->name('api.directions');
     });
 
     // Messages -- accessible to ALL communication roles

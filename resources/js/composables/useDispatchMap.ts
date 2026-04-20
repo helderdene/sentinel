@@ -5,7 +5,7 @@ import {
     CATEGORY_SVG_PATHS,
     getIncidentCategoryIcon,
 } from '@/composables/useCategoryIcons';
-import { useOsrmRoute } from '@/composables/useOsrmRoute';
+import { useDirections } from '@/composables/useDirections';
 import type { DispatchIncident, DispatchUnit } from '@/types/dispatch';
 
 const BUTUAN_CENTER: [number, number] = [125.5406, 8.9475];
@@ -120,7 +120,7 @@ export function useDispatchMap(
     const initialCenter = options.center ?? BUTUAN_CENTER;
     const initialZoom = options.zoom ?? BUTUAN_ZOOM;
 
-    const { getRoute } = useOsrmRoute();
+    const { getRoute } = useDirections();
 
     const unitPositions = new Map<string, [number, number]>();
     const activeAnimations = new Map<string, number>();

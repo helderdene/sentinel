@@ -20,6 +20,7 @@ use App\Listeners\SendAssignmentPushNotification;
 use App\Listeners\SendP1PushNotification;
 use App\Models\User;
 use App\Services\AnalyticsService;
+use App\Services\MapboxDirectionsService;
 use App\Services\ProximityRankingService;
 use App\Services\SmsParserService;
 use App\Services\StubBfpSyncService;
@@ -53,7 +54,16 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ProximityServiceInterface::class, ProximityRankingService::class);
         $this->app->bind(SmsServiceInterface::class, StubSemaphoreSmsService::class);
         $this->app->bind(SmsParserServiceInterface::class, SmsParserService::class);
-        $this->app->bind(DirectionsServiceInterface::class, StubMapboxDirectionsService::class);
+        $this->app->bind(DirectionsServiceInterface::class, function () {
+            $apiKey = (string) config('integrations.mapbox.api_key');
+            $endpoint = (string) config('integrations.mapbox.directions.endpoint');
+
+            if ($apiKey !== '' && $endpoint !== '') {
+                return new MapboxDirectionsService($endpoint, $apiKey);
+            }
+
+            return new StubMapboxDirectionsService;
+        });
         $this->app->bind(WeatherServiceInterface::class, StubPagasaWeatherService::class);
         $this->app->bind(HospitalEhrServiceInterface::class, StubHospitalEhrService::class);
         $this->app->bind(NdrrmcReportServiceInterface::class, StubNdrrmcReportService::class);

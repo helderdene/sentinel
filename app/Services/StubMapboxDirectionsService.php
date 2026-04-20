@@ -13,7 +13,7 @@ class StubMapboxDirectionsService implements DirectionsServiceInterface
      * Returns deterministic ETA based on straight-line distance at 30km/h
      * urban speed factor, matching Butuan City area travel estimates.
      *
-     * @return array{distance_meters: float, duration_seconds: float, geometry: string}
+     * @return array{distance_meters: float, duration_seconds: float, geometry: string, coordinates: array<int, array{0: float, 1: float}>}
      */
     public function route(float $originLat, float $originLng, float $destLat, float $destLng): array
     {
@@ -29,6 +29,11 @@ class StubMapboxDirectionsService implements DirectionsServiceInterface
             'distance_meters' => round($distanceMeters, 1),
             'duration_seconds' => round($durationSeconds, 1),
             'geometry' => '',
+            'coordinates' => [
+                [$originLng, $originLat],
+                [$destLng, $destLat],
+            ],
+            'steps' => [],
         ];
     }
 

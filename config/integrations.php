@@ -13,7 +13,7 @@ return [
     */
 
     'mapbox' => [
-        'api_key' => env('MAPBOX_API_KEY', ''),
+        'api_key' => env('MAPBOX_API_KEY', env('VITE_MAPBOX_TOKEN', '')),
         'geocoding' => [
             'endpoint' => env('MAPBOX_GEOCODING_URL', 'https://api.mapbox.com/geocoding/v5/mapbox.places'),
             'simulate_errors' => false,

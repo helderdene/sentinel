@@ -2,7 +2,7 @@
 import mapboxgl from 'mapbox-gl';
 import type { GeoJSONSource } from 'mapbox-gl';
 import { computed, onMounted, onUnmounted, ref, shallowRef, watch } from 'vue';
-import { useOsrmRoute } from '@/composables/useOsrmRoute';
+import { useDirections, type DirectionsStep } from '@/composables/useDirections';
 import type { ResponderIncident } from '@/types/responder';
 
 const MAP_STYLE = 'mapbox://styles/helderdene/cmmq06eqr005j01skbwodfq08';
@@ -53,13 +53,125 @@ const props = defineProps<{
     unitCallsign: string;
 }>();
 
-const { getRoute } = useOsrmRoute();
+const { getRoute } = useDirections();
 
 const mapContainer = ref<HTMLDivElement | null>(null);
 const map = shallowRef<mapboxgl.Map | null>(null);
 const isMapReady = ref(false);
 const routeDistanceKm = ref<number | null>(null);
 const routeEtaMin = ref<number | null>(null);
+const routeSteps = ref<DirectionsStep[]>([]);
+const currentStepIndex = ref(0);
+
+const isNavMode = computed(() => props.incident.status === 'EN_ROUTE');
+
+function haversineMeters(
+    a: [number, number],
+    b: [number, number],
+): number {
+    const R = 6371000;
+    const dLat = ((b[1] - a[1]) * Math.PI) / 180;
+    const dLng = ((b[0] - a[0]) * Math.PI) / 180;
+    const h =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos((a[1] * Math.PI) / 180) *
+            Math.cos((b[1] * Math.PI) / 180) *
+            Math.sin(dLng / 2) ** 2;
+
+    return R * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+}
+
+function bearingBetween(
+    a: [number, number],
+    b: [number, number],
+): number {
+    const lat1 = (a[1] * Math.PI) / 180;
+    const lat2 = (b[1] * Math.PI) / 180;
+    const dLng = ((b[0] - a[0]) * Math.PI) / 180;
+    const y = Math.sin(dLng) * Math.cos(lat2);
+    const x =
+        Math.cos(lat1) * Math.sin(lat2) -
+        Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+
+    return (Math.atan2(y, x) * 180) / Math.PI;
+}
+
+const currentStep = computed<DirectionsStep | null>(() => {
+    const idx = Math.min(currentStepIndex.value, routeSteps.value.length - 1);
+
+    return routeSteps.value[idx] ?? null;
+});
+
+const distanceToNextTurnMeters = computed<number | null>(() => {
+    if (!props.gpsPosition) {
+        return null;
+    }
+
+    const next = routeSteps.value[currentStepIndex.value + 1];
+
+    if (!next) {
+        return null;
+    }
+
+    return haversineMeters(
+        [props.gpsPosition.lng, props.gpsPosition.lat],
+        next.location,
+    );
+});
+
+const maneuverGlyph = computed(() => {
+    const step = currentStep.value;
+
+    if (!step) {
+        return '↑';
+    }
+
+    const modifier = step.modifier ?? '';
+    const type = step.type;
+
+    if (type === 'arrive') {
+        return '●';
+    }
+
+    if (type === 'roundabout' || type === 'rotary') {
+        return '↻';
+    }
+
+    switch (modifier) {
+        case 'sharp right':
+            return '↱';
+        case 'right':
+            return '→';
+        case 'slight right':
+            return '↗';
+        case 'sharp left':
+            return '↰';
+        case 'left':
+            return '←';
+        case 'slight left':
+            return '↖';
+        case 'uturn':
+            return '↺';
+        default:
+            return '↑';
+    }
+});
+
+function formatDistance(meters: number | null): string {
+    if (meters === null) {
+        return '';
+    }
+
+    if (meters < 50) {
+        return 'Now';
+    }
+
+    if (meters < 1000) {
+        return `${Math.round(meters / 10) * 10} m`;
+    }
+
+    return `${(meters / 1000).toFixed(1)} km`;
+}
 
 const incidentCoords = computed(() => {
     const c = props.incident.coordinates;
@@ -69,14 +181,6 @@ const incidentCoords = computed(() => {
     }
 
     return { lng: c.lng, lat: c.lat };
-});
-
-const googleMapsUrl = computed(() => {
-    if (!incidentCoords.value) {
-        return null;
-    }
-
-    return `https://www.google.com/maps/dir/?api=1&destination=${incidentCoords.value.lat},${incidentCoords.value.lng}&travelmode=driving`;
 });
 
 const distanceKm = computed(() => routeDistanceKm.value);
@@ -100,6 +204,8 @@ async function fetchRouteGeometry(): Promise<void> {
 
     routeDistanceKm.value = route.distanceKm;
     routeEtaMin.value = route.durationMin;
+    routeSteps.value = route.steps ?? [];
+    currentStepIndex.value = 0;
 
     if (!map.value || !isMapReady.value) {
         return;
@@ -366,7 +472,6 @@ function updateUnitPosition(): void {
     }
 
     if (incidentCoords.value) {
-        // Show a straight line immediately while OSRM loads
         const lineSource = map.value.getSource('route-line') as
             | GeoJSONSource
             | undefined;
@@ -385,8 +490,58 @@ function updateUnitPosition(): void {
             });
         }
 
-        fitBounds();
+        if (isNavMode.value) {
+            recenterNavCamera();
+        } else {
+            fitBounds();
+        }
+
         fetchRouteGeometry();
+    }
+}
+
+function recenterNavCamera(): void {
+    if (!map.value || !props.gpsPosition) {
+        return;
+    }
+
+    const gps: [number, number] = [props.gpsPosition.lng, props.gpsPosition.lat];
+
+    let bearing = 0;
+    const next = routeSteps.value[currentStepIndex.value + 1];
+
+    if (next) {
+        bearing = bearingBetween(gps, next.location);
+    } else if (incidentCoords.value) {
+        bearing = bearingBetween(gps, [
+            incidentCoords.value.lng,
+            incidentCoords.value.lat,
+        ]);
+    }
+
+    map.value.easeTo({
+        center: gps,
+        zoom: 17,
+        pitch: 60,
+        bearing,
+        duration: 600,
+    });
+}
+
+function advanceCurrentStep(): void {
+    if (!props.gpsPosition || routeSteps.value.length === 0) {
+        return;
+    }
+
+    const gps: [number, number] = [props.gpsPosition.lng, props.gpsPosition.lat];
+    const next = routeSteps.value[currentStepIndex.value + 1];
+
+    if (!next) {
+        return;
+    }
+
+    if (haversineMeters(gps, next.location) < 25) {
+        currentStepIndex.value += 1;
     }
 }
 
@@ -408,12 +563,26 @@ watch(
     () => props.gpsPosition,
     (newVal) => {
         if (newVal) {
+            advanceCurrentStep();
             updateUnitPosition();
             tryFirstFit();
         }
     },
     { deep: true, immediate: true },
 );
+
+watch(isNavMode, (navActive) => {
+    if (!map.value || !isMapReady.value) {
+        return;
+    }
+
+    if (navActive) {
+        recenterNavCamera();
+    } else {
+        map.value.easeTo({ pitch: 0, bearing: 0, duration: 400 });
+        fitBounds();
+    }
+});
 
 // When map becomes ready, apply GPS if it arrived earlier
 watch(isMapReady, (ready) => {
@@ -439,34 +608,35 @@ onUnmounted(() => {
 
 <template>
     <div class="flex min-h-0 flex-1 flex-col overflow-hidden">
-        <div class="shrink-0 px-4 pt-3 pb-2">
-            <a
-                v-if="googleMapsUrl"
-                :href="googleMapsUrl"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-[13px] bg-t-accent font-sans text-[14px] font-bold tracking-wide text-white transition-transform active:scale-[0.98]"
-                style="box-shadow: 0 6px 20px rgba(55, 138, 221, 0.31)"
-            >
-                <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <polygon points="3 11 22 2 13 21 11 13 3 11" />
-                </svg>
-                OPEN IN GOOGLE MAPS
-            </a>
+        <!-- Turn-by-turn banner: shown only while EN_ROUTE -->
+        <div
+            v-if="isNavMode && currentStep"
+            class="shrink-0 px-3 pt-3 pb-2"
+        >
             <div
-                v-else
-                class="flex min-h-[52px] w-full items-center justify-center rounded-[10px] bg-t-surface text-[13px] text-t-text-dim"
+                class="flex items-center gap-3 rounded-[13px] bg-[#05101E] px-4 py-3 text-white shadow-[0_6px_20px_rgba(0,0,0,0.35)]"
             >
-                No coordinates available
+                <div
+                    class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-t-accent text-2xl font-bold"
+                    aria-hidden="true"
+                >
+                    {{ maneuverGlyph }}
+                </div>
+
+                <div class="min-w-0 flex-1">
+                    <p
+                        v-if="distanceToNextTurnMeters !== null"
+                        class="font-mono text-[11px] tracking-[1.5px] text-t-accent uppercase"
+                    >
+                        In {{ formatDistance(distanceToNextTurnMeters) }}
+                    </p>
+                    <p class="truncate text-[14px] font-semibold">
+                        {{
+                            currentStep.instruction ||
+                            'Continue to destination'
+                        }}
+                    </p>
+                </div>
             </div>
         </div>
 

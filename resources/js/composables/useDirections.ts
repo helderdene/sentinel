@@ -1,15 +1,22 @@
 import { ref } from 'vue';
 
-export interface OsrmRoute {
+export interface DirectionsStep {
+    instruction: string;
+    type: string;
+    modifier: string | null;
+    distance_meters: number;
+    location: [number, number];
+}
+
+export interface DirectionsRoute {
     coordinates: [number, number][];
     distanceKm: number;
     durationMin: number;
+    steps: DirectionsStep[];
 }
 
-const OSRM_BASE = 'https://router.project-osrm.org/route/v1/driving';
-
-const routeCache = new Map<string, OsrmRoute>();
-const pendingRequests = new Map<string, Promise<OsrmRoute | null>>();
+const routeCache = new Map<string, DirectionsRoute>();
+const pendingRequests = new Map<string, Promise<DirectionsRoute | null>>();
 
 function cacheKey(from: [number, number], to: [number, number]): string {
     return `${from[0].toFixed(5)},${from[1].toFixed(5)};${to[0].toFixed(5)},${to[1].toFixed(5)}`;
@@ -18,7 +25,7 @@ function cacheKey(from: [number, number], to: [number, number]): string {
 function straightLineFallback(
     from: [number, number],
     to: [number, number],
-): OsrmRoute {
+): DirectionsRoute {
     const R = 6371;
     const dLat = ((to[1] - from[1]) * Math.PI) / 180;
     const dLng = ((to[0] - from[0]) * Math.PI) / 180;
@@ -33,13 +40,14 @@ function straightLineFallback(
         coordinates: [from, to],
         distanceKm,
         durationMin: Math.max(1, Math.round((distanceKm / 30) * 60)),
+        steps: [],
     };
 }
 
 async function fetchRoute(
     from: [number, number],
     to: [number, number],
-): Promise<OsrmRoute | null> {
+): Promise<DirectionsRoute | null> {
     const key = cacheKey(from, to);
     const cached = routeCache.get(key);
 
@@ -55,8 +63,19 @@ async function fetchRoute(
 
     const request = (async () => {
         try {
-            const url = `${OSRM_BASE}/${from[0]},${from[1]};${to[0]},${to[1]}?overview=full&geometries=geojson`;
-            const response = await fetch(url);
+            const params = new URLSearchParams({
+                from_lat: String(from[1]),
+                from_lng: String(from[0]),
+                to_lat: String(to[1]),
+                to_lng: String(to[0]),
+            });
+            const response = await fetch(`/api/directions?${params}`, {
+                headers: {
+                    Accept: 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                credentials: 'same-origin',
+            });
 
             if (!response.ok) {
                 return null;
@@ -64,15 +83,18 @@ async function fetchRoute(
 
             const data = await response.json();
 
-            if (data.code !== 'Ok' || !data.routes?.[0]) {
+            if (
+                !Array.isArray(data.coordinates) ||
+                data.coordinates.length === 0
+            ) {
                 return null;
             }
 
-            const route = data.routes[0];
-            const result: OsrmRoute = {
-                coordinates: route.geometry.coordinates,
-                distanceKm: route.distance / 1000,
-                durationMin: Math.max(1, Math.round(route.duration / 60)),
+            const result: DirectionsRoute = {
+                coordinates: data.coordinates,
+                distanceKm: Number(data.distance_km ?? 0),
+                durationMin: Math.max(1, Number(data.duration_min ?? 1)),
+                steps: Array.isArray(data.steps) ? data.steps : [],
             };
 
             routeCache.set(key, result);
@@ -90,13 +112,13 @@ async function fetchRoute(
     return request;
 }
 
-export function useOsrmRoute() {
+export function useDirections() {
     const isLoading = ref(false);
 
     async function getRoute(
         from: [number, number],
         to: [number, number],
-    ): Promise<OsrmRoute> {
+    ): Promise<DirectionsRoute> {
         isLoading.value = true;
 
         try {
@@ -111,7 +133,7 @@ export function useOsrmRoute() {
     function getRouteSync(
         from: [number, number],
         to: [number, number],
-    ): OsrmRoute | null {
+    ): DirectionsRoute | null {
         return routeCache.get(cacheKey(from, to)) ?? null;
     }
 
