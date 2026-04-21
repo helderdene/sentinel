@@ -2,7 +2,7 @@
 phase: 20
 slug: camera-personnel-admin-enrollment
 status: draft
-nyquist_compliant: false
+nyquist_compliant: true
 wave_0_complete: false
 created: 2026-04-21
 ---
@@ -40,7 +40,29 @@ created: 2026-04-21
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| — | — | — | — | — | Planner fills per task; Wave 0 rows pre-seeded below | — | — | — | ⬜ pending |
+| 20-01-T1 | 20-01 | 0 | PERSONNEL-02, CAMERA-02 | — | Intervention + fras_photos + config/fras.* land in install state | Feature | `php artisan test --compact tests/Feature/Fras/Wave0InfrastructureTest.php` | ⬜ wave0 | ⬜ pending |
+| 20-01-T2 | 20-01 | 0 | PERSONNEL-03 | T-20-01-03 | photo_access_token column + Personnel/Camera relations + photo_url accessor | Feature | `php artisan test --compact tests/Feature/Fras/Wave0InfrastructureTest.php` | ⬜ wave0 | ⬜ pending |
+| 20-01-T3 | 20-01 | 0 | CAMERA-04, PERSONNEL-05 | T-20-01-01, T-20-01-02, T-20-01-04, T-20-01-05 | ShouldBroadcast + ShouldDispatchAfterCommit on both events; fras.cameras + fras.enrollments channel gates | Feature | `php artisan test --compact tests/Feature/Fras/Wave0InfrastructureTest.php` | ⬜ wave0 | ⬜ pending |
+| 20-01-T4 | 20-01 | 0 | (doc amendments D-40..D-43) | — | REQUIREMENTS.md + ROADMAP.md Phase 20 text reflects mapbox-gl retained + last_seen_at | inspection | `rg -n 'MapLibre\|last_heartbeat_at' .planning/REQUIREMENTS.md .planning/ROADMAP.md` returns zero | ⬜ wave0 | ⬜ pending |
+| 20-01-T5 | 20-01 | 0 | all above | — | Full infrastructure gate | Feature | `php artisan test --compact tests/Feature/Fras/Wave0InfrastructureTest.php` | ⬜ wave0 | ⬜ pending |
+| 20-02-T1 | 20-02 | 1 | PERSONNEL-02 | T-20-02-01, T-20-02-02 | FrasPhotoProcessor converges ≤1MB/1080p, deterministic hash, PhotoTooLargeException on unshrinkable | Feature | `php artisan test --compact tests/Feature/Fras/FrasPhotoProcessorTest.php` | ❌ Wave 0 | ⬜ pending |
+| 20-02-T2 | 20-02 | 1 | PERSONNEL-04, PERSONNEL-07 | T-20-02-03, T-20-02-04 | CameraEnrollmentService dispatches per online camera, writes cache, broadcasts, MQTT publishes | Feature | `php artisan test --compact tests/Feature/Fras/CameraEnrollmentServiceTest.php` | ❌ Wave 0 | ⬜ pending |
+| 20-03-T1 | 20-03 | 2 | PERSONNEL-04 | T-20-03-05 | EnrollPersonnelBatch with WithoutOverlapping + $tries=3 + failed() handler | Feature | `php artisan test --compact tests/Feature/Fras/EnrollPersonnelBatchTest.php` | ❌ Wave 0 | ⬜ pending |
+| 20-03-T2 | 20-03 | 2 | PERSONNEL-04 | T-20-03-06 | PersonnelObserver gated on wasChanged(['photo_hash','category']); registered in boot() | Feature | `php artisan test --compact tests/Feature/Fras/PersonnelObserverTest.php` | ❌ Wave 0 | ⬜ pending |
+| 20-03-T3 | 20-03 | 2 | PERSONNEL-07 | T-20-03-01, T-20-03-07 | AckHandler correlates Cache::pull, updates rows, broadcasts, idempotent on duplicate delivery | Feature | `php artisan test --compact tests/Feature/Fras/AckHandlerTest.php` | ⚠️ Phase 19 stub extend | ⬜ pending |
+| 20-04-T1 | 20-04 | 2 | CAMERA-01 | T-20-04-02 | Form Requests + Route::resource + role:admin gate | Feature (route:list) | `php artisan route:list --path=admin/cameras --except-vendor` (8 routes) | ❌ Wave 0 | ⬜ pending |
+| 20-04-T2 | 20-04 | 2 | CAMERA-01, CAMERA-02, CAMERA-06 | T-20-04-01, T-20-04-07 | Controller CRUD + auto-sequence + barangay lookup + deletion guard + role gate | Feature | `php artisan test --compact tests/Feature/Admin/AdminCameraControllerTest.php` | ❌ Wave 0 | ⬜ pending |
+| 20-05-T1 | 20-05 | 2 | PERSONNEL-03 | T-20-05-02 | Public /fras/photo/{token} serves only while enrollment pending/syncing; 404 on revocation + token rotation | Feature | `php artisan test --compact tests/Feature/Fras/FrasPhotoAccessControllerTest.php` | ❌ Wave 0 | ⬜ pending |
+| 20-05-T2 | 20-05 | 2 | PERSONNEL-01, PERSONNEL-02, PERSONNEL-05 | T-20-05-01, T-20-05-04, T-20-05-05 | AdminPersonnelController full lifecycle + custom_id + photo rotation + retry/resync endpoints | Feature | `php artisan test --compact tests/Feature/Admin/AdminPersonnelControllerTest.php` | ❌ Wave 0 | ⬜ pending |
+| 20-05-T3 | 20-05 | 2 | PERSONNEL-05, CAMERA-04 | T-20-05-07 | Broadcast channel auth role matrix for fras.cameras + fras.enrollments | Feature | `php artisan test --compact tests/Feature/Fras/BroadcastAuthorizationTest.php` | ❌ Wave 0 | ⬜ pending |
+| 20-06-T1 | 20-06 | 3 | CAMERA-05 | T-20-06-01, T-20-06-04 | irms:camera-watchdog transitions online/degraded/offline; broadcast only on transition | Feature | `php artisan test --compact tests/Feature/Fras/CameraWatchdogTest.php` | ❌ Wave 0 | ⬜ pending |
+| 20-06-T2 | 20-06 | 3 | PERSONNEL-06 | T-20-06-03, T-20-06-07 | irms:personnel-expire-sweep unenrolls expired, soft-decommissions, marks enrollments done, logs | Feature | `php artisan test --compact tests/Feature/Fras/PersonnelExpireSweepTest.php` | ❌ Wave 0 | ⬜ pending |
+| 20-07-T1 | 20-07 | 4 | CAMERA-01, CAMERA-02 | T-20-07-01, T-20-07-05 | Cameras.vue + CameraForm.vue + CameraLocationPicker + CameraStatusBadge build clean | Build | `npm run lint && npm run types:check && npm run build` | ❌ Wave 0 | ⬜ pending |
+| 20-07-T2 | 20-07 | 4 | PERSONNEL-01, PERSONNEL-05 | T-20-07-02, T-20-07-04 | Personnel.vue + PersonnelForm.vue + EnrollmentProgressPanel + useEnrollmentProgress build clean | Build | `npm run lint && npm run types:check && npm run build` | ❌ Wave 0 | ⬜ pending |
+| 20-07-T3 | 20-07 | 4 | CAMERA-01, PERSONNEL-01, PERSONNEL-05 | — | Human-verify end-to-end admin UI + live EnrollmentProgressPanel | Manual UAT | Checkpoint (composer run dev + 2-tab live test) | ⬜ manual | ⬜ pending |
+| 20-08-T1 | 20-08 | 5 | CAMERA-03, CAMERA-04 | T-20-08-01, T-20-08-06, T-20-08-07 | DispatchConsoleController cameras prop + useDispatchMap cameras layer + Echo subscription | Feature + Build | `php artisan test --compact tests/Feature/Dispatch/DispatchConsoleCamerasPropTest.php && npm run build` | ❌ Wave 0 | ⬜ pending |
+| 20-08-T2 | 20-08 | 5 | all | — | Cross-surface integration: create camera → personnel → ACK → revocation | Feature | `php artisan test --compact tests/Feature/Fras/Phase20IntegrationTest.php` | ❌ Wave 0 | ⬜ pending |
+| 20-08-T3 | 20-08 | 5 | CAMERA-03, CAMERA-04 | — | Human-verify dispatch console cameras layer + live transitions | Manual UAT | Checkpoint (tinker flip + dispatch console observe) | ⬜ manual | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 *Populated by the planner during PLAN.md authoring from the RESEARCH.md §Per-Requirement Coverage Map.*

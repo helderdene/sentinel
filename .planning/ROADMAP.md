@@ -117,20 +117,22 @@ Plans:
 **Requirements**: CAMERA-01, CAMERA-02, CAMERA-03, CAMERA-04, CAMERA-05, CAMERA-06, PERSONNEL-01, PERSONNEL-02, PERSONNEL-03, PERSONNEL-04, PERSONNEL-05, PERSONNEL-06, PERSONNEL-07
 **Success Criteria** (what must be TRUE):
   1. An admin at `/admin/cameras` can create, edit, decommission, and recommission cameras following the v1.0 `AdminUnitController` pattern; new cameras get auto-generated `CAM-01`/`CAM-02` IDs alongside the MQTT `device_id`, and deletion is blocked when any `camera_enrollments` row for that camera is in `syncing` or `pending` state
-  2. Placing a camera on the MapLibre picker (rewritten from FRAS's Mapbox picker) populates forward-geocoded `address` and PostGIS-assigned `barangay_id`; the saved camera renders as a WebGL symbol layer on the dispatch console map with a live per-camera status indicator (online / offline / degraded) that updates via `CameraStatusChanged` on the private `fras.cameras` channel within 500ms
-  3. A scheduled watchdog flips a camera to `offline` after a configurable heartbeat gap (default 90s) and broadcasts `CameraStatusChanged`; CI bundle-check fails if any code path imports `mapbox-gl`
+  2. Placing a camera on the Mapbox-GL picker (port of existing `LocationMapPicker.vue` shape) populates forward-geocoded `address` and PostGIS-assigned `barangay_id`; the saved camera renders as a WebGL symbol layer on the dispatch console map with a live per-camera status indicator (online / offline / degraded) that updates via `CameraStatusChanged` on the private `fras.cameras` channel within 500ms
+  3. A scheduled watchdog flips cameras between `online` / `degraded` / `offline` based on configurable gap thresholds (degraded at 30s, offline at 90s) and broadcasts `CameraStatusChanged` on state transitions only
   4. An admin at `/admin/personnel` can CRUD personnel records with name, category (`block` / `missing` / `lost_child` / `allow`), optional `expires_at`, and `consent_basis` text — and uploading a photo routes through `FrasPhotoProcessor` (Intervention Image v4) which validates (≤1MB, ≤1080p), resizes, re-encodes as JPEG, and MD5-hashes for dedup
   5. Creating, updating, or deleting a personnel record enqueues `EnrollPersonnelBatch` jobs for every active camera on the dedicated `fras` Horizon queue, each wrapped in `WithoutOverlapping('enrollment-camera-{id}')->expireAfter(300)`; the admin sees per-camera progress (pending / syncing / done / failed) updating live via `EnrollmentProgressed` on `fras.enrollments`, plus retry-one-camera and resync-all-cameras buttons
   6. The per-personnel-photo unguessable-UUID public URL (used by cameras to HTTP-fetch during enrollment) is automatically revoked once the `AckHandler` correlates the matching camera enrollment ACK back to the `camera_enrollments` row via cache-backed request-ID mapping, with transient errors auto-retried and terminal errors surfaced to the admin
   7. A scheduled job auto-unenrolls any personnel whose `expires_at` has passed, across all cameras, so the watch-list does not grow unbounded
-**Plans:** 6 plans
+**Plans:** 8 plans
 Plans:
-- [ ] 18-01-PLAN.md — Wave 1: cameras table + CameraStatus enum + Camera model + CameraFactory (FRAMEWORK-04)
-- [ ] 18-02-PLAN.md — Wave 1: personnel table + PersonnelCategory enum + Personnel model + PersonnelFactory (FRAMEWORK-04)
-- [ ] 18-03-PLAN.md — Wave 2: camera_enrollments pivot + CameraEnrollmentStatus enum + CameraEnrollment model + factory (FRAMEWORK-04)
-- [ ] 18-04-PLAN.md — Wave 2: recognition_events table + RecognitionSeverity enum + RecognitionEvent model + factory with states (FRAMEWORK-04, FRAMEWORK-06)
-- [ ] 18-05-PLAN.md — Wave 3: mandatory Pest feature tests (CameraSpatialQueryTest + RecognitionEventIdempotencyTest) + FrasPlaceholderSeeder + FRAMEWORK-05 verification (SC2/SC3/SC4/SC5)
-- [ ] 18-06-PLAN.md — Wave 3: optional regression tests (SchemaTest + EnumCheckParityTest) — belt-and-suspenders drift guard for Phases 19-22
+- [ ] 20-01-PLAN.md — Wave 0: Intervention Image v4 install + photo_access_token migration + fras.* config + fras_photos disk + CameraStatusChanged/EnrollmentProgressed events + channels + D-40..D-43 doc amendments
+- [ ] 20-02-PLAN.md — Wave 1: FrasPhotoProcessor (Intervention v4 port) + CameraEnrollmentService (FRAS verbatim port with IRMS tweaks)
+- [ ] 20-03-PLAN.md — Wave 2: EnrollPersonnelBatch job (WithoutOverlapping + failed handler) + PersonnelObserver (wasChanged gate) + AckHandler::handle body fill
+- [ ] 20-04-PLAN.md — Wave 2: AdminCameraController (CRUD + auto-sequence + barangay lookup + deletion guard) + Form Requests + routes + feature tests
+- [ ] 20-05-PLAN.md — Wave 2: AdminPersonnelController + photo two-namespace URL (FrasPhotoAccess + signed operator) + retry/resync endpoints + broadcast auth tests
+- [ ] 20-06-PLAN.md — Wave 3: CameraWatchdogCommand + PersonnelExpireSweepCommand + routes/console.php scheduling
+- [ ] 20-07-PLAN.md — Wave 4: Cameras.vue + CameraForm.vue + Personnel.vue + PersonnelForm.vue + CameraLocationPicker + EnrollmentProgressPanel + useEnrollmentProgress + CameraStatusBadge
+- [ ] 20-08-PLAN.md — Wave 5: useDispatchMap cameras layer + Console.vue toggle + fras.cameras Echo subscription + cross-surface integration test + human-verify dispatch map
 **UI hint**: yes
 
 ### Phase 21: Recognition → IoT-Intake Bridge + Dispatch Map + IntakeStation Rail
