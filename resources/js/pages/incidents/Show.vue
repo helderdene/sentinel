@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import { downloadReport } from '@/actions/App/Http/Controllers/IncidentController';
 import IncidentTimeline from '@/components/incidents/IncidentTimeline.vue';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
@@ -18,6 +21,17 @@ import type {
 const props = defineProps<{
     incident: Incident;
 }>();
+
+const reportReady = computed(
+    () =>
+        props.incident.status === 'RESOLVED' &&
+        props.incident.report_pdf_url !== null,
+);
+const reportPending = computed(
+    () =>
+        props.incident.status === 'RESOLVED' &&
+        props.incident.report_pdf_url === null,
+);
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: dashboard() },
@@ -78,6 +92,26 @@ const reversedTimeline = [...timeline].reverse();
                 >
                     {{ incident.status.replace('_', ' ') }}
                 </Badge>
+                <div class="ml-auto">
+                    <Button
+                        v-if="reportReady"
+                        as="a"
+                        :href="downloadReport(incident.id).url"
+                        variant="default"
+                        size="sm"
+                    >
+                        Download Report
+                    </Button>
+                    <Button
+                        v-else-if="reportPending"
+                        variant="outline"
+                        size="sm"
+                        disabled
+                        title="Report generation is still running in the background. Refresh in a moment."
+                    >
+                        Report generating…
+                    </Button>
+                </div>
             </div>
 
             <div class="grid gap-6 lg:grid-cols-3">
