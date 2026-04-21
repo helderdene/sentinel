@@ -44,6 +44,52 @@ const STATUS_COLORS: ExpressionSpecification = [
     '#888888',
 ];
 
+const CAMERA_STATUS_COLORS: ExpressionSpecification = [
+    'match',
+    ['get', 'status'],
+    'online',
+    '#1D9E75',
+    'degraded',
+    '#EF9F27',
+    'offline',
+    '#6B7280',
+    '#888888',
+];
+
+const CAMERA_COLORS: Record<string, string> = {
+    online: '#1D9E75',
+    degraded: '#EF9F27',
+    offline: '#6B7280',
+};
+
+// Lucide Camera glyph (simplified) — used for camera-online/degraded/offline icons
+const CAMERA_ICON_PATH =
+    'M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3zM12 17.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z';
+
+export type DispatchCamera = {
+    id: string;
+    camera_id_display: string | null;
+    name: string;
+    status: 'online' | 'degraded' | 'offline';
+    coordinates: { lat: number; lng: number } | null;
+};
+
+// Server-controlled content injected into Popup innerHTML must be escaped to
+// prevent XSS (T-20-08-01).
+function escapeHtml(s: string): string {
+    return s.replace(/[&<>"']/g, (m) => {
+        const map: Record<string, string> = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;',
+        };
+
+        return map[m] ?? m;
+    });
+}
+
 // --- Icon generation: white circle with colored icon inside ---
 
 const ICON_SIZE = 64;
@@ -137,6 +183,10 @@ export function useDispatchMap(
         type: 'FeatureCollection',
         features: [],
     };
+    let currentCameraData: GeoJSON.FeatureCollection = {
+        type: 'FeatureCollection',
+        features: [],
+    };
 
     const incidentClickCallbacks: ClickCallback<string>[] = [];
     const unitClickCallbacks: ClickCallback<string>[] = [];
@@ -159,6 +209,25 @@ export function useDispatchMap(
                 promises.push(
                     loadSvgAsImage(
                         buildCircleIconSvg(UNIT_ICON_PATH, color),
+                    ).then((img) => {
+                        if (!m.hasImage(name)) {
+                            m.addImage(name, img);
+                        }
+                    }),
+                );
+            }
+        }
+
+        // Load camera icons (status-based: online/degraded/offline)
+        for (const [key, color] of Object.entries(CAMERA_COLORS)) {
+            const name = `camera-${key}`;
+
+            if (!map.value.hasImage(name)) {
+                const m = map.value;
+
+                promises.push(
+                    loadSvgAsImage(
+                        buildCircleIconSvg(CAMERA_ICON_PATH, color),
                     ).then((img) => {
                         if (!m.hasImage(name)) {
                             m.addImage(name, img);
@@ -273,6 +342,12 @@ export function useDispatchMap(
             type: 'geojson',
             data: currentConnectionData,
         });
+
+        map.value.addSource('cameras', {
+            type: 'geojson',
+            data: currentCameraData,
+            promoteId: 'id',
+        });
     }
 
     function addLayers(): void {
@@ -310,6 +385,59 @@ export function useDispatchMap(
                 'line-color': PRIORITY_COLORS,
                 'line-width': 5,
                 'line-opacity': 0.95,
+            },
+        });
+
+        // --- Camera halo (circle behind camera icon) ---
+        // Added BEFORE incident-halo so camera features render beneath incidents
+        // + units at identical map coordinates (Pitfall 6: z-fighting avoided).
+        map.value.addLayer({
+            id: 'camera-halo',
+            type: 'circle',
+            source: 'cameras',
+            paint: {
+                'circle-radius': 18,
+                'circle-color': CAMERA_STATUS_COLORS,
+                'circle-opacity': 0.15,
+                'circle-blur': 1,
+            },
+        });
+
+        // --- Camera body (symbol: camera-online/degraded/offline icon) ---
+        map.value.addLayer({
+            id: 'camera-body',
+            type: 'symbol',
+            source: 'cameras',
+            layout: {
+                'icon-image': [
+                    'concat',
+                    'camera-',
+                    ['get', 'status'],
+                ] as unknown as ExpressionSpecification,
+                'icon-size': 0.55,
+                'icon-allow-overlap': true,
+                'icon-ignore-placement': true,
+                'icon-anchor': 'center',
+            },
+        });
+
+        // --- Camera label (camera_id_display text) ---
+        map.value.addLayer({
+            id: 'camera-label',
+            type: 'symbol',
+            source: 'cameras',
+            layout: {
+                'text-field': ['get', 'camera_id_display'],
+                'text-font': ['DIN Pro Bold', 'Arial Unicode MS Bold'],
+                'text-size': 9,
+                'text-offset': [0, 1.6],
+                'text-anchor': 'top',
+                'text-allow-overlap': false,
+            },
+            paint: {
+                'text-color': '#ffffff',
+                'text-halo-color': '#000000',
+                'text-halo-width': 1,
             },
         });
 
@@ -477,6 +605,49 @@ export function useDispatchMap(
                 map.value.getCanvas().style.cursor = '';
             }
         });
+
+        // Camera marker click opens a Popup with name + status + edit link.
+        // Dynamic content HTML-escaped to prevent XSS (T-20-08-01).
+        map.value.on('click', 'camera-body', (e) => {
+            if (!map.value || !e.features || e.features.length === 0) {
+                return;
+            }
+
+            const feature = e.features[0];
+            const geometry = feature.geometry as GeoJSON.Point;
+            const coords = geometry.coordinates.slice() as [number, number];
+            const props = (feature.properties ?? {}) as Record<string, string>;
+
+            const name = escapeHtml(props.name ?? '');
+            const display = escapeHtml(props.camera_id_display ?? '');
+            const status = escapeHtml(props.status ?? '');
+            const editUrl = `/admin/cameras/${encodeURIComponent(props.id ?? '')}/edit`;
+
+            const html = `
+                <div class="space-y-1 text-sm">
+                    <div class="font-medium">${name}</div>
+                    <div class="text-xs text-muted-foreground">${display} &bull; ${status}</div>
+                    <a href="${editUrl}" class="text-xs underline">Edit camera</a>
+                </div>
+            `;
+
+            new mapboxgl.Popup({ closeButton: true, offset: 18 })
+                .setLngLat(coords)
+                .setHTML(html)
+                .addTo(map.value);
+        });
+
+        map.value.on('mouseenter', 'camera-body', () => {
+            if (map.value) {
+                map.value.getCanvas().style.cursor = 'pointer';
+            }
+        });
+
+        map.value.on('mouseleave', 'camera-body', () => {
+            if (map.value) {
+                map.value.getCanvas().style.cursor = '';
+            }
+        });
     }
 
     onMounted(() => {
@@ -585,6 +756,63 @@ export function useDispatchMap(
             | GeoJSONSource
             | undefined;
         source?.setData(currentUnitData);
+    }
+
+    function setCameraData(cameras: DispatchCamera[]): void {
+        currentCameraData = {
+            type: 'FeatureCollection',
+            features: cameras
+                .filter((c) => c.coordinates !== null)
+                .map((c) => ({
+                    type: 'Feature' as const,
+                    id: c.id,
+                    geometry: {
+                        type: 'Point' as const,
+                        coordinates: [
+                            c.coordinates!.lng,
+                            c.coordinates!.lat,
+                        ],
+                    },
+                    properties: {
+                        id: c.id,
+                        camera_id_display: c.camera_id_display,
+                        name: c.name,
+                        status: c.status,
+                    },
+                })),
+        };
+
+        const source = map.value?.getSource('cameras') as
+            | GeoJSONSource
+            | undefined;
+        source?.setData(currentCameraData);
+    }
+
+    function updateCameraStatus(
+        cameraId: string,
+        status: 'online' | 'degraded' | 'offline',
+    ): void {
+        const featureIndex = currentCameraData.features.findIndex(
+            (f) => f.properties?.id === cameraId,
+        );
+
+        if (featureIndex < 0) {
+            return;
+        }
+
+        const existing = currentCameraData.features[featureIndex];
+        currentCameraData.features[featureIndex] = {
+            ...existing,
+            properties: {
+                ...(existing.properties ?? {}),
+                status,
+            },
+        };
+
+        const source = map.value?.getSource('cameras') as
+            | GeoJSONSource
+            | undefined;
+        source?.setData(currentCameraData);
     }
 
     function updateUnitPosition(
@@ -784,6 +1012,8 @@ export function useDispatchMap(
         isLoaded,
         setIncidentData,
         setUnitData,
+        setCameraData,
+        updateCameraStatus,
         updateUnitPosition,
         animateUnitTo,
         updateConnectionLines,

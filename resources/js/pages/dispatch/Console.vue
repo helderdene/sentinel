@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { router, usePage } from '@inertiajs/vue3';
+import { useEcho } from '@laravel/echo-vue';
+import { Camera as CameraIcon } from 'lucide-vue-next';
 import type { Ref } from 'vue';
 import { computed, inject, ref, watch } from 'vue';
 import { unassignUnit } from '@/actions/App/Http/Controllers/DispatchConsoleController';
@@ -9,8 +11,16 @@ import MapLegend from '@/components/dispatch/MapLegend.vue';
 import UnitDetailPanel from '@/components/dispatch/UnitDetailPanel.vue';
 import UnitStatusPanel from '@/components/dispatch/UnitStatusPanel.vue';
 import MqttListenerHealthBanner from '@/components/fras/MqttListenerHealthBanner.vue';
+import { Button } from '@/components/ui/button';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useAlertSystem } from '@/composables/useAlertSystem';
 import { useDispatchFeed } from '@/composables/useDispatchFeed';
+import type { DispatchCamera } from '@/composables/useDispatchMap';
 import { useDispatchMap } from '@/composables/useDispatchMap';
 import { useDispatchSession } from '@/composables/useDispatchSession';
 import DispatchLayout from '@/layouts/DispatchLayout.vue';
@@ -27,6 +37,14 @@ import type {
     MqttListenerHealthStatus,
 } from '@/types/mqtt';
 
+type CameraStatusChangedPayload = {
+    camera_id: string;
+    camera_id_display: string | null;
+    status: 'online' | 'degraded' | 'offline';
+    last_seen_at: string | null;
+    location: { lat: number; lng: number } | null;
+};
+
 defineOptions({
     layout: DispatchLayout,
 });
@@ -36,6 +54,7 @@ const props = defineProps<{
     units: DispatchUnit[];
     agencies: DispatchAgency[];
     metrics: DispatchMetrics;
+    cameras: DispatchCamera[];
     mqtt_listener_health: {
         status: MqttListenerHealthStatus;
         last_message_received_at: string | null;
@@ -142,9 +161,12 @@ const mapComposable = useDispatchMap('dispatch-map', {
 });
 
 const {
+    map,
     isLoaded,
     setIncidentData,
     setUnitData,
+    setCameraData,
+    updateCameraStatus,
     updateConnectionLines,
     flyToIncident,
     flyToUnit,
@@ -152,6 +174,39 @@ const {
     onUnitClick,
     onDeselect,
 } = mapComposable;
+
+const camerasVisible = ref(true);
+
+function applyCamerasVisibility(visible: boolean): void {
+    const m = map.value;
+
+    if (!m) {
+        return;
+    }
+
+    for (const layerId of ['camera-halo', 'camera-body', 'camera-label']) {
+        if (m.getLayer(layerId)) {
+            m.setLayoutProperty(
+                layerId,
+                'visibility',
+                visible ? 'visible' : 'none',
+            );
+        }
+    }
+}
+
+watch(camerasVisible, (visible) => {
+    applyCamerasVisibility(visible);
+});
+
+// Live camera status updates — private-fras.cameras (dispatchRoles only).
+useEcho<CameraStatusChangedPayload>(
+    'fras.cameras',
+    'CameraStatusChanged',
+    (e) => {
+        updateCameraStatus(e.camera_id, e.status);
+    },
+);
 
 const currentUserId = computed(
     () => (usePage().props as { auth: { user: { id: number } } }).auth.user.id,
@@ -300,9 +355,23 @@ watch(isLoaded, (loaded) => {
     if (loaded) {
         setIncidentData(localIncidents.value);
         setUnitData(localUnits.value);
+        setCameraData(props.cameras);
+        applyCamerasVisibility(camerasVisible.value);
         buildConnectionLines();
     }
 });
+
+watch(
+    () => props.cameras,
+    (next) => {
+        if (!isLoaded.value) {
+            return;
+        }
+
+        setCameraData(next);
+        applyCamerasVisibility(camerasVisible.value);
+    },
+);
 
 watch(
     () => props.incidents,
@@ -442,6 +511,34 @@ onDeselect(() => {
             <div class="relative flex-1">
                 <div id="dispatch-map" class="h-full w-full" />
                 <MapLegend />
+                <TooltipProvider :delay-duration="150">
+                    <Tooltip>
+                        <TooltipTrigger as-child>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                class="absolute top-4 left-4 z-10 border border-t-border bg-t-bg/90 backdrop-blur-sm dark:border-t-border dark:bg-[#05101E]/90"
+                                :class="{ 'bg-accent': camerasVisible }"
+                                :aria-label="
+                                    camerasVisible
+                                        ? 'Hide cameras layer'
+                                        : 'Show cameras layer'
+                                "
+                                :aria-pressed="camerasVisible"
+                                @click="camerasVisible = !camerasVisible"
+                            >
+                                <CameraIcon class="size-4" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                            {{
+                                camerasVisible
+                                    ? 'Hide cameras layer'
+                                    : 'Show cameras layer'
+                            }}
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
             </div>
 
             <!-- Right panel -->

@@ -64,6 +64,12 @@ export default defineConfig({
             },
             injectManifest: {
                 globPatterns: ['**/*.{js,css,ico,png,svg,woff,woff2}'],
+                // Main Inertia/Vue bundle has grown past the 2MB default as
+                // the admin surfaces + FRAS/dispatch WebGL layers have landed;
+                // raised ceiling to 3 MiB so the PWA precache build succeeds.
+                // Re-evaluate in Phase 21 (Recognition bridge) if bundle
+                // splitting becomes warranted.
+                maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
             },
             devOptions: {
                 enabled: true,
