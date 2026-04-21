@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Camera extends Model
@@ -27,6 +28,8 @@ class Camera extends Model
         'name',
         'location_label',
         'location',
+        'barangay_id',
+        'notes',
         'status',
         'last_seen_at',
         'decommissioned_at',
@@ -66,5 +69,16 @@ class Camera extends Model
     public function enrollments(): HasMany
     {
         return $this->hasMany(CameraEnrollment::class);
+    }
+
+    /**
+     * Barangay this camera sits within (resolved via BarangayLookupService on
+     * store/update by AdminCameraController — Phase 20 Plan 04, D-14).
+     *
+     * @return BelongsTo<Barangay, Camera>
+     */
+    public function barangay(): BelongsTo
+    {
+        return $this->belongsTo(Barangay::class);
     }
 }
