@@ -188,4 +188,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-21 — v2.0 Phase 17 (Laravel 13 upgrade) complete*
+*Last updated: 2026-04-21 — v2.0 Phase 20 (Camera + Personnel Admin + Enrollment) complete*
