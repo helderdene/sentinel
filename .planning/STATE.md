@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
 status: executing
-stopped_at: Completed 18-01
-last_updated: "2026-04-21T09:18:34.037Z"
-last_activity: 2026-04-21 -- Phase --phase execution started
+stopped_at: Completed 18-02
+last_updated: "2026-04-21T09:25:06.286Z"
+last_activity: 2026-04-21
 progress:
   total_phases: 6
   completed_phases: 1
   total_plans: 10
-  completed_plans: 5
-  percent: 50
+  completed_plans: 6
+  percent: 60
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-04-21)
 ## Current Position
 
 Phase: 18 — EXECUTING
-Plan: 2 of 6
-Status: Executing Phase 18 (Plan 18-01 complete)
-Last activity: 2026-04-21 -- Plan 18-01 (cameras table + CameraStatus + Camera model + CameraFactory) complete
+Plan: 3 of 6
+Status: Ready to execute
+Last activity: 2026-04-21
 
-Progress: [█████░░░░░] 50%
+Progress: [██████░░░░] 60%
 
 ## v2.0 Phase Breakdown
 
@@ -117,6 +117,7 @@ Progress: [█████░░░░░] 50%
 | Phase 17 P02 | 18min | 2 tasks | 37 files |
 | Phase 17 P03 | 7min | 3 tasks | 1 files |
 | Phase 18 P01 | 3min | 2 tasks | 4 files |
+| Phase 18 P02 | 9min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -318,6 +319,9 @@ Decisions are logged in PROJECT.md Key Decisions table.
 - [18-01]: CHECK constraint naming convention {table}_{column}_check established via explicit DB::statement — first DB-level CHECK in v1.0 schema; will be repeated in Plans 18-02..04
 - [18-01]: FRAS enums use lowercase backed values (online/offline/degraded) — departure from Incident-family SCREAMING_CASE; matches DB CHECK literals and establishes convention for PersonnelCategory, CameraEnrollmentStatus, RecognitionSeverity
 - [18-01]: Camera model omits toArray() {lat,lng} override per D-66 minimalist scope — Phase 20 can add when admin JSON responses need it
+- [18-02]: protected $table = 'personnel' set explicitly on Personnel model — guards against Laravel pluralizer ambiguity ('personnel' is already plural); future inflection changes will not silently repoint
+- [18-02]: PersonnelFactory.gender emits randomElement([0, 1, null]) — covers M/F/unknown trichotomy without presuming a gender-coding schema; Phase 20 UI will map 0/1/null to labels
+- [18-02]: Shared Pattern B (raw DB CHECK constraint) confirmed stable on second application — personnel.category mirrors cameras.status idiom verbatim; Plans 18-03 and 18-04 can reuse
 
 ### Roadmap Evolution
 
@@ -361,8 +365,8 @@ All 5 items remain open for v2 milestone decision (verify / fix / close-out).
 
 ## Session Continuity
 
-Last session: 2026-04-21T09:18:34.033Z
-Stopped at: Completed 18-01
+Last session: 2026-04-21T09:24:55.776Z
+Stopped at: Completed 18-02
 Resume file: None
 
 **Planned Phase:** 18 (FRAS Schema Port to PostgreSQL) — 6 plans — 2026-04-21T08:55:03.586Z
