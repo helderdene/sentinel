@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
 status: executing
-stopped_at: Phase 20 UI-SPEC approved
-last_updated: "2026-04-21T23:30:00.000Z"
-last_activity: 2026-04-21 -- Phase 20 Plan 03 complete (Wave 2 runtime round-trip)
+stopped_at: Phase 20 Plan 04 complete (Wave 2 admin camera CRUD)
+last_updated: "2026-04-21T15:33:19.682Z"
+last_activity: 2026-04-21
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 24
-  completed_plans: 17
-  percent: 71
+  completed_plans: 20
+  percent: 83
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-04-21)
 ## Current Position
 
 Phase: 20 (camera-personnel-admin-enrollment) — EXECUTING
-Plan: 3 of 8 complete (Wave 2 sequential path — plans 01, 02, 03 done)
-Status: Executing Phase 20
-Last activity: 2026-04-21 -- Phase 20 Plan 03 complete (EnrollPersonnelBatch + PersonnelObserver + AckHandler round-trip)
+Plan: 4 of 8 complete (Wave 2 sequential path — plans 01, 02, 03 done)
+Status: Ready to execute
+Last activity: 2026-04-21
 
-Progress: [██████████] 100%
+Progress: [████████░░] 83%
 
 ## v2.0 Phase Breakdown
 
@@ -123,6 +123,7 @@ Progress: [██████████] 100%
 | Phase Phase 18 PP04 | 4min | 2 tasks tasks | 4 files files |
 | Phase 18 P05 | 5min | 2 tasks | 3 files |
 | Phase Phase 18 PP06 | 3min | 2 tasks tasks | 2 files files |
+| Phase 20 P04 | 6min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -348,6 +349,9 @@ Decisions are logged in PROJECT.md Key Decisions table.
 - [20-03]: CameraEnrollmentService declared `final` (FRAS port norm) blocks Mockery doubling — EnrollPersonnelBatch delegation test uses MQTT::shouldReceive side-effect observation (topic + payload substring + row transition) instead of method-level mock; equivalent coverage without subclass workaround
 - [20-03]: AckHandler warn-log tests use explicit `Mockery::spy(LoggerInterface::class)` bound via `Log::shouldReceive('channel')->andReturn($spy)` instead of `Log::spy()` — `Log::spy()`'s channel() returns null which fatals before assertion reach
 - [20-03]: Cache::pull atomicity verified under ArrayStore (Laravel's .env.testing default) — idempotency test proves duplicate ACK delivery produces exactly 1 transition under array driver; production Redis gets true LUA atomicity automatically
+- [20-04]: Additive migration 2026_04_22_000002 closes Phase 18 gap (barangay_id FK + notes + location_label nullable) without rewriting schema-freeze file — preserves D-20 schema-freeze contract while letting AdminCameraController.store persist BarangayLookupService results
+- [20-04]: Placeholder admin/Cameras.vue + admin/CameraForm.vue shipped as 9-line stubs so Pest Inertia ::render assertions pass Vite manifest lookup — Plan 07 wholly replaces with Mapbox picker implementation; same pattern as AdminUnitTest which depends on pre-existing admin/Units.vue
+- [20-04]: enrollAllToCamera test asserts Queue::assertNotPushed (not assertPushed) because CameraEnrollmentService gates on CameraStatus::Online and new cameras ship with status=offline — first heartbeat (Plan 06 watchdog) triggers first sync; controller→service handshake is what this test covers, not enrollment fan-out
 
 ### Roadmap Evolution
 
@@ -391,9 +395,9 @@ All 5 items remain open for v2 milestone decision (verify / fix / close-out).
 
 ## Session Continuity
 
-Last session: 2026-04-21T23:30:00Z
-Stopped at: Phase 20 Plan 03 complete (Wave 2 runtime round-trip)
-Resume file: .planning/phases/20-camera-personnel-admin-enrollment/20-03-SUMMARY.md
+Last session: 2026-04-21T15:33:19.676Z
+Stopped at: Phase 20 Plan 04 complete (Wave 2 admin camera CRUD)
+Resume file: None
 
 **Planned Phase:** 20 (Camera + Personnel Admin + Enrollment) — 8 plans — 2026-04-21T14:47:52.037Z
 **Plan 03 Wave 2 progress:** EnrollPersonnelBatch (stub → FRAS port), PersonnelObserver (wasChanged-gated + delete cascade), AckHandler::handle() (D-16 body + Cache::pull idempotency). Full fras group: 51 passed + 1 skipped.

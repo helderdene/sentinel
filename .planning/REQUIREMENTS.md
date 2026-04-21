@@ -52,12 +52,15 @@ MQTT ingestion surface separate from `app/Http/`.
 
 Admin CRUD + WebGL map layer reusing IRMS v1.0 Unit patterns.
 
-- [ ] **CAMERA-01**: Admin can create, edit, decommission, and recommission cameras via `/admin/cameras` following the `AdminUnitController` pattern (auto-generated `CAM-01`/`CAM-02` IDs alongside MQTT `device_id`)
-- [ ] **CAMERA-02**: Admin picks a camera location on a Mapbox-GL picker (port of `intake/LocationMapPicker.vue` shape), with forward geocoding to populate `address` + PostGIS barangay auto-assignment
+- [x] **CAMERA-01
+**: Admin can create, edit, decommission, and recommission cameras via `/admin/cameras` following the `AdminUnitController` pattern (auto-generated `CAM-01`/`CAM-02` IDs alongside MQTT `device_id`)
+- [x] **CAMERA-02
+**: Admin picks a camera location on a Mapbox-GL picker (port of `intake/LocationMapPicker.vue` shape), with forward geocoding to populate `address` + PostGIS barangay auto-assignment
 - [ ] **CAMERA-03**: Cameras render as a toggleable WebGL symbol layer on the dispatch console `mapbox-gl` map (no HTML overlays; layer extends `useDispatchMap.ts` alongside existing incidents + units layers)
 - [ ] **CAMERA-04**: Dispatcher sees a live per-camera status indicator (online, offline, degraded) on the map that updates in real-time via `CameraStatusChanged` broadcast on the private `fras.cameras` channel
 - [ ] **CAMERA-05**: `HeartbeatHandler` updates `cameras.last_seen_at` on every heartbeat; a scheduled watchdog flips cameras between `online`/`degraded`/`offline` based on configurable gap thresholds (degraded at 30s, offline at 90s) and broadcasts `CameraStatusChanged` on transitions
-- [ ] **CAMERA-06**: Camera deletion is blocked if any `camera_enrollments` row is `syncing` or `pending` for that camera (prevents orphaned enrollment state)
+- [x] **CAMERA-06
+**: Camera deletion is blocked if any `camera_enrollments` row is `syncing` or `pending` for that camera (prevents orphaned enrollment state)
 
 ### PERSONNEL — Personnel Management + BOLO + Enrollment Sync
 
