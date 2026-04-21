@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
-status: Roadmap defined; awaiting `/gsd-plan-phase 17`
-stopped_at: Phase 17 context gathered
-last_updated: "2026-04-21T05:09:39.256Z"
-last_activity: "2026-04-21 — v2.0 roadmap written (6 phases: 17-22), 43 requirements traced"
+status: executing
+stopped_at: "Completed 17-01-PLAN.md (Wave 1: snapshot baseline on L12)"
+last_updated: "2026-04-21T05:21:38.370Z"
+last_activity: 2026-04-21 -- Phase --phase execution started
 progress:
   total_phases: 6
   completed_phases: 0
   total_plans: 3
-  completed_plans: 0
-  percent: 0
+  completed_plans: 1
+  percent: 33
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-21)
 
 **Core value:** Dispatchers can receive an incident report, triage it, assign the nearest available unit, and track the response in real-time on a live map.
-**Current focus:** Milestone v2.0 — FRAS Integration (Phase 17: Laravel 12 → 13 Upgrade, awaiting planning)
+**Current focus:** Phase --phase — 17
 
 ## Current Position
 
-Phase: 17 — Laravel 12 → 13 Upgrade (not started)
-Plan: —
-Status: Roadmap defined; awaiting `/gsd-plan-phase 17`
-Last activity: 2026-04-21 — v2.0 roadmap written (6 phases: 17-22), 43 requirements traced
+Phase: --phase (17) — EXECUTING
+Plan: 1 of --name
+Status: Executing Phase --phase
+Last activity: 2026-04-21 -- Phase --phase execution started
 
-Progress: [░░░░░░░░░░] 0% (0/6 phases complete)
+Progress: [███░░░░░░░] 33%
 
 ## v2.0 Phase Breakdown
 
@@ -112,6 +112,7 @@ Progress: [░░░░░░░░░░] 0% (0/6 phases complete)
 | Phase 16 P16-01 | 9min | 3 tasks | 3 files |
 | Phase 16 P16-02 | 2 | 2 tasks | 1 files |
 | Phase 16 P16-03 | 21min | 3 tasks | 2 files |
+| Phase 17 P01 | 5min | 2 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -302,6 +303,9 @@ Decisions are logged in PROJECT.md Key Decisions table.
 - [Phase 16]: [16-02]: Last-updated line rewritten to credit Phase 16 backfill while preserving Phase 15 gap-closure context (RSPDR-06 and RSPDR-10) inside a parenthetical so both audits read in a single line
 - [Phase 16]: [16-03]: D-13 conflict resolved — used 'audited: 2026-04-17' (Phase 13 literal key) over CONTEXT.md's 'approved:' wording for precedent fidelity across VALIDATION files
 - [Phase 16]: [16-03]: Human-verify handoff pattern — Task 2 (executor) prepares scaffold + checklist + .gitkeep; Task 3 (user offline) captures 6 screenshots + flips frontmatter + commits atomically; finalization agent records outcome in SUMMARY
+- [17-01]: Carbon::setTestNow(fixed instant) beats freezeTime() for byte-identical fixtures — freezeTime pins to test-start Carbon::now() which still drifts run-to-run
+- [17-01]: Fixture convention tests/Feature/Broadcasting/__snapshots__/{EventName}.json (Jest-style) with first-run write-through + markTestIncomplete, second-run byte-compare via expect->toBe(file_get_contents)
+- [17-01]: 44 pre-existing full-suite failures on main exist prior to Wave 1 (UniqueConstraintViolationException in Feature tests) — Wave 2 needs diagnostic pass before L13 bump to distinguish new failures from baseline noise
 
 ### Roadmap Evolution
 
@@ -345,8 +349,8 @@ All 5 items remain open for v2 milestone decision (verify / fix / close-out).
 
 ## Session Continuity
 
-Last session: --stopped-at
-Stopped at: Phase 17 context gathered
-Resume file: --resume-file
+Last session: 2026-04-21T05:21:38.366Z
+Stopped at: Completed 17-01-PLAN.md (Wave 1: snapshot baseline on L12)
+Resume file: None (full-suite baseline has 44 pre-existing failures — Wave 2 diagnostic pass required)
 
 **Planned Phase:** 17 (Laravel 12 → 13 Upgrade) — 3 plans — 2026-04-21T05:09:39.245Z

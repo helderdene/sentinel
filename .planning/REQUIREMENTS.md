@@ -25,7 +25,8 @@ Locked before phase planning:
 Feature-free foundation that gates every downstream phase.
 
 - [ ] **FRAMEWORK-01**: Admin can deploy IRMS on Laravel 13 with the full v1.0 Pest suite green and no user-visible behavior change
-- [ ] **FRAMEWORK-02**: All 6 existing Reverb broadcast events (IncidentCreated, IncidentTriaged, UnitAssigned, UnitStatusChanged, ChecklistUpdated, ResourceRequested) emit identical payloads pre- and post-upgrade
+- [x] **FRAMEWORK-02
+**: All 6 existing Reverb broadcast events (IncidentCreated, IncidentTriaged, UnitAssigned, UnitStatusChanged, ChecklistUpdated, ResourceRequested) emit identical payloads pre- and post-upgrade
 - [ ] **FRAMEWORK-03**: Admin can follow a documented Horizon drain-and-deploy protocol so queued jobs never execute under a mixed Laravel-version worker
 - [ ] **FRAMEWORK-04**: IRMS Postgres schema gains empty `cameras`, `personnel`, `camera_enrollments`, `recognition_events` tables with UUID primary keys, JSONB columns (with GIN indexes on `raw_payload`), TIMESTAMPTZ timestamps, and Magellan `geography(POINT, 4326)` for `cameras.location`
 - [ ] **FRAMEWORK-05**: Pest test suite switches to PostgreSQL for FRAS test groups so JSONB + geography behavior is actually exercised (SQLite in-memory has neither)
