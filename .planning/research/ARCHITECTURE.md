@@ -1,601 +1,566 @@
-# Architecture Research
+# Architecture Research — FRAS Integration into IRMS v2.0
 
-**Domain:** Emergency Incident Response Management System (CAD-style dispatch platform)
-**Researched:** 2026-03-12
-**Confidence:** HIGH
+**Domain:** Embedding HDSystem's Face Recognition Alert System (MQTT ingestion, camera management, personnel enrollment, recognition alerting) into the existing IRMS Laravel 12 + Vue 3 + Inertia v2 codebase.
+**Researched:** 2026-04-21
+**Confidence:** HIGH (both codebases inspected directly: `/Users/helderdene/IRMS` and `/Users/helderdene/fras`)
 
 ## Standard Architecture
 
-### System Overview
-
-The IRMS is a Computer-Aided Dispatch (CAD) system layered onto an existing Laravel 12 + Vue 3 + Inertia v2 monolith. The architecture preserves the Inertia page-driven model for standard CRUD flows (intake forms, admin, analytics) while introducing a parallel real-time subsystem (Reverb WebSocket + MapLibre GL JS) for the dispatch console and responder tracking. This dual-mode approach -- Inertia for page navigation, WebSocket for live state -- is the key architectural decision.
+### System Overview — FRAS layer bolted onto existing IRMS layers
 
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                          CLIENT TIER                                    │
-│                                                                         │
-│  ┌─────────────────┐  ┌──────────────┐  ┌────────────────────────────┐ │
-│  │  Dispatch        │  │  Intake UI   │  │  Responder Mobile Web      │ │
-│  │  Console         │  │  (Inertia)   │  │  (Inertia + Echo)          │ │
-│  │  (Inertia +      │  └──────┬───────┘  └────────────┬───────────────┘ │
-│  │   Echo + MapLibre)│         │                       │                 │
-│  └────────┬─────────┘         │                       │                 │
-│           │                   │                       │                 │
-│    WebSocket + HTTP      HTTP only            WebSocket + HTTP          │
-└───────────┼───────────────────┼───────────────────────┼─────────────────┘
-            │                   │                       │
-┌───────────┼───────────────────┼───────────────────────┼─────────────────┐
-│           │          APPLICATION TIER                  │                 │
-│  ┌────────▼───────────────────▼───────────────────────▼──────────────┐  │
-│  │                   Laravel 12 Application                          │  │
-│  │                                                                   │  │
-│  │  ┌───────────────┐  ┌──────────────┐  ┌────────────────────────┐ │  │
-│  │  │ Inertia       │  │ REST API     │  │ Laravel Reverb         │ │  │
-│  │  │ Controllers   │  │ Controllers  │  │ (WebSocket Server)     │ │  │
-│  │  │ (pages)       │  │ (webhooks,   │  │ Channels:              │ │  │
-│  │  │               │  │  GPS, mobile)│  │  incidents, units,     │ │  │
-│  │  └───────┬───────┘  └──────┬───────┘  │  units.{id}.private    │ │  │
-│  │          │                  │          └────────────┬───────────┘ │  │
-│  │          │                  │                       │             │  │
-│  │  ┌───────▼──────────────────▼───────────────────────▼──────────┐  │  │
-│  │  │                   Domain Layer                              │  │  │
-│  │  │  Actions (single-task business logic)                      │  │  │
-│  │  │  Services (cross-cutting: Geocoding, Priority, ETA)        │  │  │
-│  │  │  Events + Listeners (incident lifecycle, broadcasts)       │  │  │
-│  │  └───────┬────────────────────────────────────────────────────┘  │  │
-│  │          │                                                       │  │
-│  │  ┌───────▼────────────────────────────────────────────────────┐  │  │
-│  │  │  Infrastructure Layer                                      │  │  │
-│  │  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌───────────┐ │  │  │
-│  │  │  │ Queue    │  │ Scheduler│  │ Broadcast│  │ External  │ │  │  │
-│  │  │  │ (Redis + │  │ (CRON)   │  │ (Reverb) │  │ API       │ │  │  │
-│  │  │  │ Horizon) │  │          │  │          │  │ Connectors│ │  │  │
-│  │  │  └──────────┘  └──────────┘  └──────────┘  └───────────┘ │  │  │
-│  │  └────────────────────────────────────────────────────────────┘  │  │
-│  └──────────────────────────────────────────────────────────────────┘  │
-└───────────────────────────────────────────────────────────────────────┘
-            │
-┌───────────▼──────────────────────────────────────────────────────────┐
-│                          DATA TIER                                    │
-│  ┌─────────────────────────┐   ┌──────────────────────────────────┐  │
-│  │  PostgreSQL + PostGIS   │   │  Redis                           │  │
-│  │  incidents, units,      │   │  Queue backend (Horizon)         │  │
-│  │  barangays (GIST idx),  │   │  Cache (session, config)         │  │
-│  │  timeline, messages,    │   │  Reverb pub/sub channel broker   │  │
-│  │  users (roles)          │   │                                  │  │
-│  └─────────────────────────┘   └──────────────────────────────────┘  │
-└──────────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────────┐
+│                 EXISTING IRMS INTAKE LAYER (v1.0, unchanged)               │
+│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌────────────────┐   │
+│  │ Phone   │  │  SMS    │  │  App    │  │  IoT    │  │  NEW: MQTT     │   │
+│  │ intake  │  │ webhook │  │ citizen │  │ webhook │  │  recognition   │   │
+│  │         │  │         │  │   SPA   │  │ (HMAC)  │  │  pipeline      │   │
+│  └────┬────┘  └────┬────┘  └────┬────┘  └────┬────┘  └───────┬────────┘   │
+│       │            │            │            │               │            │
+│       └────────────┴────────────┴────────────┴───────────────┘            │
+│                              ↓                                             │
+│              FrasIncidentFactory (shared Incident-creation seam)           │
+├────────────────────────────────────────────────────────────────────────────┤
+│                    EXISTING DISPATCH LAYER (v1.0, extended)                │
+│  ┌───────────────────┐  ┌──────────────────┐  ┌────────────────────────┐  │
+│  │ Dispatch Console  │  │   useDispatchFeed│  │ NEW: useFrasFeed       │  │
+│  │ (MapLibre +       │  │   (incidents +   │  │   (cameras +           │  │
+│  │  incidents/units) │  │    units)        │  │    recognition alerts) │  │
+│  │  + NEW camera     │  │                  │  │                        │  │
+│  │    marker layer   │  │                  │  │                        │  │
+│  └──────────┬────────┘  └─────────┬────────┘  └───────────┬────────────┘  │
+│             │                     │                       │               │
+├─────────────┴─────────────────────┴───────────────────────┴───────────────┤
+│                          LARAVEL REVERB (v1.0)                             │
+│  dispatch.incidents │ dispatch.units │ NEW: fras.alerts │ NEW: fras.cameras│
+│  incident.{id}      │ user.{id}      │ NEW: fras.enrollments              │
+├────────────────────────────────────────────────────────────────────────────┤
+│                          PROCESSES (long-running)                          │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐   │
+│  │ php artisan │  │ php artisan │  │ php artisan │  │ NEW: php artisan│   │
+│  │ serve       │  │ horizon     │  │ reverb:start│  │ fras:mqtt-listen│   │
+│  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────────┘   │
+│    (Nginx/PHP-FPM prod)   (queues)   (WebSocket)   (Mosquitto subscriber) │
+├────────────────────────────────────────────────────────────────────────────┤
+│         PostgreSQL + PostGIS       │         Local storage disk            │
+│  incidents, units, barangays, …    │  face crops, scene images             │
+│  NEW: cameras, personnel,          │  recognition/{date}/{faces,scenes}    │
+│       recognition_events,          │                                       │
+│       camera_enrollments           │                                       │
+└────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Component Responsibilities
+### Component Responsibilities — new FRAS components mapped onto IRMS conventions
 
-| Component | Responsibility | Typical Implementation |
-|-----------|----------------|------------------------|
-| **Intake Controller** | Receive incident reports from all channels, validate, classify priority, geocode, queue for dispatch | Inertia controller (desktop form) + API controllers (SMS webhook, IoT webhook) |
-| **Dispatch Controller** | Serve the map console page, manage unit assignment, dispatch queue CRUD | Inertia controller for page; API endpoints for assignment actions |
-| **Responder Controller** | Serve responder assignment pages, handle status transitions, scene data, closure | Inertia controller for pages; API endpoints for GPS updates and status changes |
-| **Analytics Controller** | Serve KPI dashboard and heatmap pages, generate compliance reports | Inertia controller; PostGIS aggregate queries for spatial analytics |
-| **Geocoding Service** | Convert address text to coordinates, reverse-geocode to barangay | Service class wrapping Mapbox API with PostGIS `ST_Contains()` fallback |
-| **Priority Classifier** | Auto-suggest P1-P4 based on incident type keywords | Action class with keyword-to-priority mapping; dispatcher overrides allowed |
-| **ETA Service** | Calculate estimated arrival time for units | Service class wrapping Mapbox Directions API |
-| **Broadcast Events** | Push real-time state changes to WebSocket channels | Laravel Events implementing `ShouldBroadcast` dispatched to Reverb |
-| **Map Composable** | Initialize MapLibre, manage GeoJSON sources, handle marker layers | Vue composable (`useDispatchMap`, `useResponderMap`) wrapping MapLibre GL JS |
-| **Echo Composable** | Subscribe to WebSocket channels, route events to map and UI state | Vue composable (`useIncidentChannel`, `useUnitChannel`) wrapping Laravel Echo |
-| **Integration Connectors** | Stubbed adapters for external APIs (Semaphore, PAGASA, NDRRMC, BFP, PNP, hospital) | Service classes behind interfaces; swap stubs for real implementations later |
-| **Report Generator** | Generate PDF reports on incident closure and scheduled compliance reports | Queued job using Dompdf; triggered by event listener on incident closure |
+| Component | Responsibility | Implementation (IRMS convention match) |
+|-----------|----------------|----------------------------------------|
+| **MQTT Listener** | Long-running subscriber to Mosquitto; no business logic | NEW artisan command `App\Console\Commands\FrasMqttListenCommand` (mirrors FRAS's `fras:mqtt-listen`). Added as a 6th process in `composer run dev` and as a new Supervisor block in production |
+| **TopicRouter** | Regex-dispatches MQTT topic → handler class | NEW `App\Mqtt\TopicRouter` (ported verbatim from `/Users/helderdene/fras/app/Mqtt/TopicRouter.php`) |
+| **MQTT Handlers** | Parse payload, persist event, trigger side effects | NEW `App\Mqtt\Handlers\{RecognitionHandler, AckHandler, HeartbeatHandler, OnlineOfflineHandler}` — each implements `App\Mqtt\Contracts\MqttHandler` |
+| **Recognition → Incident adapter** | Bridge MQTT recognition events to the existing IoT intake channel so they become Incidents | NEW `App\Services\FrasIncidentFactory` implementing `App\Contracts\FrasIncidentFactoryInterface` (follows existing IRMS Service + Contracts pattern used by `DirectionsServiceInterface`, `GeocodingServiceInterface`, etc.) |
+| **Camera enrollment service** | Build MQTT EditPersonsNew payloads, cache ACK correlation keys, publish via MQTT publisher connection | NEW `App\Services\CameraEnrollmentService` (ported from FRAS with minimal changes) |
+| **Photo processor** | Resize + compress personnel photos; compute MD5 hash | NEW `App\Services\FrasPhotoProcessor` (ported from FRAS's `PhotoProcessor`; renamed to avoid ambiguity with generic IRMS photo handling) |
+| **FRAS Reverb events** | Broadcast recognition, camera-status, enrollment events on private channels | NEW `App\Events\{RecognitionAlertReceived, CameraStatusChanged, EnrollmentProgressed}` — mirrors existing `IncidentCreated` / `UnitStatusChanged` pattern (ShouldBroadcast + ShouldDispatchAfterCommit + broadcastWith) |
+| **Camera / Personnel / Recognition Event models** | Eloquent models with PostGIS point on cameras, JSONB `raw_payload` on events | NEW `App\Models\{Camera, Personnel, RecognitionEvent, CameraEnrollment}`. Camera uses Magellan `Point` cast (same as `Unit`, `Incident`) |
+| **FRAS admin controllers** | CRUD for cameras and personnel, alert acknowledge/dismiss | NEW `App\Http\Controllers\Admin\{AdminCameraController, AdminPersonnelController}` and `App\Http\Controllers\Fras\{AlertController, EventHistoryController, EnrollmentController}` — matches existing `Admin/AdminUnitController` and top-level `DispatchConsoleController` conventions |
+| **Form Requests** | Validate camera + personnel payloads | NEW `App\Http\Requests\Admin\{StoreCameraRequest, UpdateCameraRequest, StorePersonnelRequest, UpdatePersonnelRequest}` — array-style rules per IRMS convention (see existing `app/Http/Requests/Settings/`) |
+| **Dispatch map camera layer** | Render cameras as a MapLibre WebGL source/layer on the existing console | MOD `resources/js/composables/useDispatchMap.ts` — adds camera marker layer alongside incidents + units |
+| **FRAS feed composable** | Subscribe to FRAS Reverb channels, merge state into dispatch UI | NEW `resources/js/composables/useFrasFeed.ts` — mirrors `useDispatchFeed.ts` signature and `useEcho` pattern |
+| **Retention cleanup** | Delete face crops after 90d, scene images after 30d | NEW `App\Console\Commands\FrasCleanupRetentionCommand` — scheduled in `routes/console.php` via existing scheduler |
+| **Enrollment timeout watchdog** | Expire stale EditPersonsNew cache keys, mark enrollments failed | NEW `App\Console\Commands\FrasCheckEnrollmentTimeoutsCommand` — scheduled every minute |
+| **Offline camera watchdog** | Mark cameras offline when last_seen_at > 90s | NEW `App\Console\Commands\FrasCheckOfflineCamerasCommand` — scheduled every 30s |
 
-## Recommended Project Structure
-
-The existing Laravel 12 structure must be extended, not reorganized. New IRMS domain code lives alongside existing auth/settings code.
+## Recommended Project Structure — new + modified paths
 
 ```
 app/
-├── Actions/
-│   ├── Fortify/                  # existing auth actions
-│   ├── Incident/                 # CreateIncident, ClassifyPriority, CloseIncident
-│   ├── Dispatch/                 # AssignUnit, ReassignUnit, LogMutualAid
-│   └── Responder/               # AcknowledgeAssignment, UpdateStatus, SubmitOutcome
-├── Concerns/                     # existing shared traits
+├── Console/Commands/
+│   ├── FrasMqttListenCommand.php              [NEW] long-running MQTT subscriber
+│   ├── FrasCleanupRetentionCommand.php        [NEW] scheduled retention deletes
+│   ├── FrasCheckEnrollmentTimeoutsCommand.php [NEW] scheduled every minute
+│   └── FrasCheckOfflineCamerasCommand.php     [NEW] scheduled every 30s
+├── Contracts/
+│   └── FrasIncidentFactoryInterface.php       [NEW] bridge contract (IoT intake)
+├── Enums/
+│   ├── AlertSeverity.php                      [NEW] critical | warning | info
+│   ├── CameraStatus.php                       [NEW] online | offline | unknown
+│   ├── EnrollmentStatus.php                   [NEW] pending | syncing | ok | failed | timeout
+│   ├── PersonType.php                         [NEW] allow | block | guest
+│   └── IncidentChannel.php                    (KEEP AS-IS — reuse existing IoT case; no new enum value)
 ├── Events/
-│   ├── IncidentCreated.php
-│   ├── IncidentStatusChanged.php
-│   ├── UnitLocationUpdated.php
-│   ├── UnitStatusChanged.php
-│   ├── AssignmentPushed.php
-│   ├── MessageSent.php
-│   └── ResourceRequested.php
+│   ├── RecognitionAlertReceived.php           [NEW] fras.alerts private channel
+│   ├── CameraStatusChanged.php                [NEW] fras.cameras private channel
+│   └── EnrollmentProgressed.php               [NEW] fras.enrollments private channel
 ├── Http/
 │   ├── Controllers/
-│   │   ├── Settings/             # existing
-│   │   ├── Intake/               # IntakeController, IoTWebhookController, SmsWebhookController
-│   │   ├── Dispatch/             # DispatchController, AssignmentController, QueueController
-│   │   ├── Responder/            # ResponderController, StatusController, SceneController
-│   │   ├── Analytics/            # DashboardController, HeatmapController, ReportController
-│   │   └── Api/                  # UnitLocationController, UnitStatusController
-│   ├── Middleware/
-│   │   ├── HandleInertiaRequests.php  # existing (extend with IRMS shared props)
-│   │   ├── HandleAppearance.php       # existing
-│   │   ├── EnsureRole.php             # new role-checking middleware
-│   │   └── ValidateWebhookSignature.php  # HMAC validation for IoT/external webhooks
+│   │   ├── Admin/
+│   │   │   ├── AdminCameraController.php      [NEW] cameras CRUD
+│   │   │   └── AdminPersonnelController.php   [NEW] personnel CRUD + enrollment triggers
+│   │   ├── Fras/
+│   │   │   ├── AlertController.php            [NEW] alert feed, acknowledge/dismiss, image serving
+│   │   │   ├── EventHistoryController.php     [NEW] searchable recognition log
+│   │   │   └── EnrollmentController.php       [NEW] retry / resync endpoints
+│   │   └── IoTWebhookController.php           [MOD] delegate Incident creation to FrasIncidentFactory
 │   └── Requests/
-│       ├── Settings/             # existing
-│       ├── Incident/             # StoreIncidentRequest, UpdateIncidentRequest
-│       ├── Dispatch/             # AssignUnitRequest
-│       └── Responder/            # UpdateStatusRequest, SubmitOutcomeRequest
-├── Listeners/
-│   ├── BroadcastIncidentCreated.php
-│   ├── StartAcknowledgementTimer.php
-│   ├── GenerateIncidentReport.php
-│   ├── UpdateDispatchMetrics.php
-│   └── LogTimelineEntry.php
+│       └── Admin/
+│           ├── StoreCameraRequest.php         [NEW]
+│           ├── UpdateCameraRequest.php        [NEW]
+│           ├── StorePersonnelRequest.php      [NEW]
+│           └── UpdatePersonnelRequest.php     [NEW]
+├── Jobs/
+│   └── EnrollPersonnelBatch.php               [NEW] WithoutOverlapping('enrollment-camera-{id}')
 ├── Models/
-│   ├── User.php                  # existing (add role, agency, unit_id)
-│   ├── Incident.php
-│   ├── Unit.php
-│   ├── Barangay.php
-│   ├── IncidentTimeline.php
-│   ├── IncidentMessage.php
-│   └── Enums/
-│       ├── IncidentPriority.php  # P1, P2, P3, P4
-│       ├── IncidentStatus.php    # PENDING, DISPATCHED, ACKNOWLEDGED, etc.
-│       ├── IncidentChannel.php   # SMS, APP, VOICE, IOT, WALKIN
-│       ├── UnitStatus.php        # STANDBY, ACKNOWLEDGED, EN_ROUTE, etc.
-│       ├── UnitType.php          # AMBULANCE, FIRE, RESCUE, POLICE
-│       └── UserRole.php          # DISPATCHER, RESPONDER, SUPERVISOR, ADMIN
-├── Policies/
-│   ├── IncidentPolicy.php
-│   └── UnitPolicy.php
-├── Services/
-│   ├── GeocodingService.php      # Mapbox geocode + PostGIS barangay lookup
-│   ├── EtaService.php            # Mapbox Directions API wrapper
-│   ├── PriorityClassifier.php    # Keyword-based auto-priority suggestion
-│   ├── DispatchQueueService.php  # Priority-ordered queue management
-│   └── Integrations/
-│       ├── Contracts/
-│       │   ├── SmsGateway.php    # interface
-│       │   ├── WeatherProvider.php
-│       │   └── HospitalNotifier.php
-│       ├── SemaphoreGateway.php  # implements SmsGateway (stubbed)
-│       ├── PagasaProvider.php    # implements WeatherProvider (stubbed)
-│       └── FhirNotifier.php     # implements HospitalNotifier (stubbed)
-└── Jobs/
-    ├── GenerateIncidentPdf.php
-    ├── ProcessGpsUpdate.php
-    └── GenerateComplianceReport.php
+│   ├── Camera.php                             [NEW] belongsTo Barangay; Magellan Point cast
+│   ├── Personnel.php                          [NEW] hasMany CameraEnrollment, RecognitionEvent
+│   ├── CameraEnrollment.php                   [NEW] pivot-ish: camera_id × personnel_id × status
+│   ├── RecognitionEvent.php                   [NEW] belongsTo Camera, Personnel, nullable Incident
+│   └── Incident.php                           [MOD] hasMany RecognitionEvent (nullable FK)
+├── Mqtt/
+│   ├── Contracts/
+│   │   └── MqttHandler.php                    [NEW] handle(topic, message) interface
+│   ├── Handlers/
+│   │   ├── RecognitionHandler.php             [NEW] RecPush → RecognitionEvent → Incident adapter
+│   │   ├── AckHandler.php                     [NEW] EditPersonsNew-Ack correlation
+│   │   ├── HeartbeatHandler.php               [NEW] update cameras.last_seen_at
+│   │   └── OnlineOfflineHandler.php           [NEW] explicit status transitions
+│   └── TopicRouter.php                        [NEW] regex pattern → handler dispatch
+├── Providers/
+│   └── AppServiceProvider.php                 [MOD] bind FrasIncidentFactoryInterface → FrasIncidentFactory
+└── Services/
+    ├── CameraEnrollmentService.php            [NEW] build + publish EditPersonsNew / DeletePersons
+    ├── FrasIncidentFactory.php                [NEW] recognition event → Incident (IoT channel)
+    └── FrasPhotoProcessor.php                 [NEW] resize + compress + MD5
+
+config/
+├── fras.php                                   [NEW] port of fras/config/hds.php (renamed)
+├── horizon.php                                [MOD] add 'fras-supervisor' block for fras queue
+└── mqtt-client.php                            [NEW] two connections: default (subscriber) + publisher
+
+database/
+├── migrations/
+│   ├── YYYY_MM_DD_create_cameras_table.php              [NEW] PostGIS point column
+│   ├── YYYY_MM_DD_create_personnel_table.php            [NEW]
+│   ├── YYYY_MM_DD_create_camera_enrollments_table.php   [NEW]
+│   └── YYYY_MM_DD_create_recognition_events_table.php   [NEW] nullable incident_id FK
+├── factories/                                            [NEW] Camera/Personnel/RecognitionEvent
+└── seeders/                                              [NEW] dev seed cameras + personnel
 
 resources/js/
-├── pages/
-│   ├── auth/                     # existing
-│   ├── settings/                 # existing
-│   ├── Dashboard.vue             # existing (becomes role-aware redirect)
-│   ├── intake/
-│   │   └── Index.vue             # Three-panel intake: channel monitor, triage form, queue
-│   ├── dispatch/
-│   │   └── Console.vue           # Full-screen map console with sidebar panels
-│   ├── responder/
-│   │   ├── Assignment.vue        # Active assignment with status-aware tabs
-│   │   └── Standby.vue           # Waiting screen when no assignment
-│   └── analytics/
-│       ├── Dashboard.vue         # KPI metrics with charts
-│       └── Heatmap.vue           # Choropleth map with filters
-├── components/
-│   ├── map/
-│   │   ├── DispatchMap.vue       # MapLibre dispatch console (3D, incident + unit layers)
-│   │   ├── ResponderMap.vue      # MapLibre mini-map for responder nav tab
-│   │   ├── HeatmapMap.vue        # MapLibre choropleth for analytics
-│   │   └── layers/               # Layer configuration objects (incident, unit, heatmap)
-│   ├── dispatch/
-│   │   ├── DispatchQueue.vue     # Priority-ordered incident queue sidebar
-│   │   ├── UnitPanel.vue         # Available units list with proximity sort
-│   │   ├── AssignmentModal.vue   # Unit selection + ETA display
-│   │   └── SessionMetrics.vue    # Header metrics bar
-│   ├── responder/
-│   │   ├── InfoTab.vue
-│   │   ├── NavTab.vue
-│   │   ├── SceneTab.vue          # Checklist + vitals + assessment tags
-│   │   ├── OutcomeTab.vue        # Closure form with hospital picker
-│   │   └── CommsTab.vue          # Bi-directional messaging
-│   ├── intake/
-│   │   ├── ChannelMonitor.vue    # Live feed from all 5 channels
-│   │   ├── TriageForm.vue        # Structured incident creation form
-│   │   └── PriorityBadge.vue     # Color-coded priority indicator
-│   └── shared/
-│       ├── AudioAlert.vue        # Web Audio API alert system
-│       └── NotificationToast.vue # Slide-in notification overlay
 ├── composables/
-│   ├── useAppearance.ts          # existing
-│   ├── useTwoFactorAuth.ts       # existing
-│   ├── useDispatchMap.ts         # MapLibre init, layer management, click handlers
-│   ├── useResponderMap.ts        # MapLibre mini-map with route polyline
-│   ├── useIncidentChannel.ts     # Echo subscription to incidents channel
-│   ├── useUnitChannel.ts         # Echo subscription to units channel
-│   ├── usePrivateChannel.ts      # Echo subscription to private unit assignment channel
-│   ├── useAudioAlert.ts          # Web Audio API tone generation per priority
-│   ├── useGpsTracking.ts         # Geolocation API + periodic POST to backend
-│   └── useAcknowledgementTimer.ts # 90-second countdown with escalation
-├── types/
-│   ├── incident.ts               # Incident, IncidentTimeline, IncidentMessage types
-│   ├── unit.ts                   # Unit type with coordinates
-│   ├── barangay.ts               # Barangay with GeoJSON boundary
-│   └── map.ts                    # GeoJSON feature types for map sources
-└── layouts/
-    ├── AppLayout.vue             # existing (extend with role-aware nav)
-    ├── DispatchLayout.vue        # Full-screen layout for dispatch console (no sidebar)
-    └── ResponderLayout.vue       # Mobile-optimized layout with bottom nav
+│   ├── useFrasFeed.ts                         [NEW] subscribes fras.alerts + fras.cameras + fras.enrollments
+│   └── useDispatchMap.ts                      [MOD] add camera WebGL source/layer
+├── pages/
+│   ├── admin/
+│   │   ├── cameras/                           [NEW] Index.vue, Create.vue, Edit.vue, Show.vue
+│   │   └── personnel/                         [NEW] Index.vue, Create.vue, Edit.vue, Show.vue
+│   ├── fras/
+│   │   ├── Alerts.vue                         [NEW] alert feed + acknowledge/dismiss
+│   │   └── Events.vue                         [NEW] searchable event history
+│   └── dispatch/
+│       └── Console.vue                        [MOD] integrate useFrasFeed; add camera rail
+└── types/
+    └── fras.ts                                [NEW] TS types for alerts, cameras, enrollments
 
 routes/
-├── web.php                       # existing + role-based dashboard redirect
-├── settings.php                  # existing
-├── intake.php                    # Intake layer routes (dispatcher role)
-├── dispatch.php                  # Dispatch layer routes (dispatcher role)
-├── responder.php                 # Responder layer routes (responder role)
-├── analytics.php                 # Analytics layer routes (supervisor role)
-├── api.php                       # GPS updates, unit status, webhooks
-└── channels.php                  # WebSocket channel authorization
+├── channels.php                               [MOD] add fras.alerts, fras.cameras, fras.enrollments
+├── console.php                                [MOD] schedule 3 new watchdog/cleanup commands
+└── web.php                                    [MOD] admin + fras route groups
+
+tests/Feature/Fras/                            [NEW] mirrors tests/Feature/{Intake,Dispatch}
+└── {RecognitionIngestionTest, CameraEnrollmentTest, AlertFeedTest, …}.php
+
+docs/
+└── IRMS-Specification.md                      [MOD] add FRAS section alongside the 5 layers
 ```
 
 ### Structure Rationale
 
-- **Actions/ by domain:** Each domain (Incident, Dispatch, Responder) gets its own action folder. Actions are single-purpose classes that encapsulate one business operation. This aligns with the existing Fortify action pattern already in the codebase.
-- **Services/ for cross-cutting:** GeocodingService, EtaService, and PriorityClassifier are used by multiple controllers/actions. They wrap external APIs and complex logic.
-- **Services/Integrations/ behind interfaces:** All external API connectors implement interfaces. Stubs are bound in the service container; swap to real implementations when API keys arrive. No controller code changes needed.
-- **Events/ flat structure:** Seven broadcast events cover the entire real-time surface. Each implements `ShouldBroadcast` and defines its channel. Flat because the event count is manageable.
-- **composables/ for WebSocket + Map:** The key frontend architectural decision. Vue composables encapsulate MapLibre and Echo subscriptions separately, then pages compose them together. This avoids coupling map rendering to WebSocket transport.
-- **Route files per layer:** Each IRMS layer gets its own route file included from `web.php` or `bootstrap/app.php`. Keeps routes organized and allows layer-specific middleware groups.
-- **Enums/ under Models:** PHP 8.1+ backed enums for all status, type, priority, and role values. Used in both migrations (check constraints) and application logic.
+- **`app/Mqtt/` as a sibling of `app/Http/` and `app/Services/`.** MQTT is a second ingress surface alongside HTTP. Placing it next to `Http/` (not inside `Services/`) mirrors how Laravel treats `Console/` — an ingress channel, not a domain service. This is exactly how FRAS structured it, and it slots into IRMS without polluting the existing service layer.
+- **`app/Http/Controllers/Admin/`** already holds admin CRUD (`AdminUnitController`, `AdminBarangayController`, `AdminUserController`); cameras and personnel join it with matching naming.
+- **`app/Http/Controllers/Fras/`** for operational (non-admin) routes (alerts, events, enrollment retry). Mirrors the existing top-level `DispatchConsoleController`/`ResponderController` style but scoped to the FRAS feature, since alerts are consumed by operator/dispatcher roles, not admin-only.
+- **`config/fras.php`** renamed from `config/hds.php` because inside IRMS "HDS" is the vendor, not the feature — matching IRMS conventions (`config/services.php` for externals, feature-named configs otherwise).
+- **`App\Contracts\FrasIncidentFactoryInterface`** enforces the rule that recognition events become Incidents via a documented seam; the IoT webhook and MQTT handler both depend on the abstraction. Mirrors the existing Contracts pattern (`DirectionsServiceInterface` → bound in `AppServiceProvider`).
 
 ## Architectural Patterns
 
-### Pattern 1: Inertia Pages + Echo Subscriptions (Hybrid Real-Time)
+### Pattern 1: IoT-intake adapter — recognition events become Incidents via a shared factory
 
-**What:** Standard Inertia pages load initial state via server props (full page data on load), then Vue composables subscribe to Reverb channels via Laravel Echo for incremental real-time updates. The page does not poll -- it receives pushed events.
+**What:** Both `IoTWebhookController` (existing HMAC webhook) and `Mqtt\Handlers\RecognitionHandler` (new) call a single `FrasIncidentFactory` that creates Incidents and dispatches `IncidentCreated` exactly as the current IoT controller does. No "new channel" — recognition events are tagged `IncidentChannel::IoT` to satisfy the v2.0 constraint ("Recognition events ingested through existing IoT intake channel").
 
-**When to use:** Dispatch console, responder assignment view, intake channel monitor -- any page where data changes in real-time after initial load.
+**When to use:** Every time an MQTT `RecPush` message with `AlertSeverity::Critical` (block-list) lands, or optionally `Warning` (refused). Info-level events stay in `recognition_events` without spawning an Incident.
 
-**Trade-offs:** PRO: Leverages Inertia for SSR/initial load speed, then WebSocket for live updates. CON: Two data paths to maintain (Inertia props for initial state, Echo events for updates). State can diverge if a WebSocket reconnect misses events.
+**Trade-offs:**
+- + Reuses the full intake → triage → dispatch pipeline (auto-priority, barangay lookup, Reverb broadcast) with zero new infrastructure
+- + Keeps the `IncidentChannel` enum unchanged; no UI changes needed in existing intake station
+- − Sensor-style IoT webhook and face-recognition events share the "IoT" label (fine — they really are the same intake category from CDRRMO's POV, per spec)
+- − Factory must be idempotent: an ACK-retry MQTT message must not create a duplicate Incident (guard on `recognition_events.(camera_id, record_id)` uniqueness)
 
-**Example:**
-```typescript
-// composables/useIncidentChannel.ts
-import Echo from 'laravel-echo';
-import type { Incident } from '@/types/incident';
-
-export function useIncidentChannel(
-  onCreated: (incident: Incident) => void,
-  onUpdated: (incident: Incident) => void,
-) {
-  const echo = window.Echo;
-
-  echo.channel('incidents')
-    .listen('IncidentCreated', (e: { incident: Incident }) => {
-      onCreated(e.incident);
-    })
-    .listen('IncidentUpdated', (e: { incident: Incident }) => {
-      onUpdated(e.incident);
-    });
-
-  return {
-    leave: () => echo.leave('incidents'),
-  };
-}
-```
-
-```vue
-<!-- pages/dispatch/Console.vue -->
-<script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
-import { useIncidentChannel } from '@/composables/useIncidentChannel';
-import type { Incident } from '@/types/incident';
-
-// Initial state from Inertia server props
-const props = defineProps<{
-  incidents: Incident[];
-  units: Unit[];
-}>();
-
-const liveIncidents = ref([...props.incidents]);
-
-// Subscribe to real-time updates after mount
-const { leave } = useIncidentChannel(
-  (incident) => liveIncidents.value.unshift(incident),
-  (incident) => {
-    const idx = liveIncidents.value.findIndex(i => i.id === incident.id);
-    if (idx !== -1) liveIncidents.value[idx] = incident;
-  },
-);
-
-onUnmounted(() => leave());
-</script>
-```
-
-### Pattern 2: GeoJSON Source Update via WebSocket (Live Map)
-
-**What:** MapLibre map uses GeoJSON sources for incident and unit markers. WebSocket events trigger `updateData()` (partial update with feature ID) on the GeoJSON source instead of `setData()` (full replacement). This is critical for performance when tracking 20+ units with 10-second GPS intervals.
-
-**When to use:** Dispatch map console for live unit tracking and incident markers.
-
-**Trade-offs:** PRO: `updateData()` avoids re-serializing the entire feature collection on every GPS tick. CON: Requires unique feature IDs on all GeoJSON features. Must handle feature add/remove separately from update.
-
-**Example:**
-```typescript
-// composables/useDispatchMap.ts (simplified)
-function handleUnitLocationUpdate(unitId: string, lat: number, lng: number) {
-  const source = map.getSource('unit-pts') as maplibregl.GeoJSONSource;
-  if (!source) return;
-
-  // Partial update: only this feature's geometry changes
-  source.updateData({
-    update: [{
-      id: unitId,
-      newGeometry: { type: 'Point', coordinates: [lng, lat] },
-    }],
-  });
-}
-
-function handleNewIncident(incident: Incident) {
-  const source = map.getSource('inc-pts') as maplibregl.GeoJSONSource;
-  if (!source) return;
-
-  source.updateData({
-    add: [{
-      type: 'Feature',
-      id: incident.id,
-      geometry: { type: 'Point', coordinates: [incident.longitude, incident.latitude] },
-      properties: {
-        r: priorityColorMap[incident.priority],
-        priority: incident.priority,
-        type: incident.type,
-        sel: 0,
-      },
-    }],
-  });
-}
-```
-
-### Pattern 3: Event-Driven Incident Lifecycle (Server-Side)
-
-**What:** Every incident state transition fires a Laravel event. Listeners handle side effects: broadcasting to WebSocket, logging timeline entries, triggering acknowledgement timers, generating reports. Controllers call Actions, Actions fire Events, Listeners handle consequences.
-
-**When to use:** All incident status changes, unit assignments, and message sends.
-
-**Trade-offs:** PRO: Decoupled -- adding a new side effect (e.g., SMS notification) means adding a listener, not modifying controller or action code. CON: Harder to trace the full flow; must document event-listener mappings.
-
-**Example flow:**
-```
-Controller receives status update request
-    → Action: UpdateIncidentStatus
-        → Validates transition (PENDING → DISPATCHED → ACKNOWLEDGED → ...)
-        → Updates model
-        → Fires IncidentStatusChanged event
-            → Listener: BroadcastToReverb (ShouldBroadcast)
-            → Listener: LogTimelineEntry (writes to incident_timeline)
-            → Listener: CheckAcknowledgementTimeout (if DISPATCHED, schedule 90s check)
-            → Listener: NotifyReporter (if ON_SCENE or RESOLVED, queue SMS)
-            → Listener: GenerateReport (if RESOLVED, queue PDF job)
-```
-
+**Example — the factory extraction:**
 ```php
-// app/Events/IncidentStatusChanged.php
-class IncidentStatusChanged implements ShouldBroadcast
+// NEW: app/Services/FrasIncidentFactory.php
+class FrasIncidentFactory implements FrasIncidentFactoryInterface
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
-
     public function __construct(
-        public Incident $incident,
-        public string $oldStatus,
-        public string $newStatus,
+        private BarangayLookupService $barangayLookup,
     ) {}
 
-    public function broadcastOn(): array
+    public function createFromRecognition(RecognitionEvent $event): ?Incident
     {
-        return [
-            new Channel('incidents'),
-            new PrivateChannel("incidents.{$this->incident->id}"),
-        ];
+        if (! $event->severity->shouldCreateIncident()) {
+            return null; // info-level: log only, no Incident
+        }
+
+        if ($event->incident_id !== null) {
+            return $event->incident; // idempotent guard
+        }
+
+        $camera = $event->camera;
+        $incidentType = IncidentType::query()
+            ->where('code', 'security_bolo_match')
+            ->firstOrFail();
+
+        $incident = Incident::query()->create([
+            'incident_type_id' => $incidentType->id,
+            'priority' => $event->severity->toIncidentPriority(),  // critical → P1
+            'status' => IncidentStatus::Pending,
+            'channel' => IncidentChannel::IoT,                     // existing channel, reused
+            'location_text' => $camera->location_text,
+            'notes' => "Recognition match: {$event->name_from_camera} "
+                    . "({$event->severity->label()}) at {$camera->name}",
+            'raw_message' => json_encode($event->raw_payload),
+            'coordinates' => $camera->coordinates,                 // Magellan Point passthrough
+            'barangay_id' => $camera->barangay_id,                 // cameras are pre-geocoded
+        ]);
+
+        IncidentTimeline::query()->create([
+            'incident_id' => $incident->id,
+            'event_type' => 'incident_created',
+            'event_data' => [
+                'source' => 'fras_recognition',       // distinguishes from 'iot_sensor'
+                'camera_id' => $camera->id,
+                'recognition_event_id' => $event->id,
+                'severity' => $event->severity->value,
+            ],
+        ]);
+
+        $event->update(['incident_id' => $incident->id]);
+
+        $incident->load('incidentType', 'barangay');
+        IncidentCreated::dispatch($incident);  // EXISTING Reverb event — dispatch console lights up
+
+        return $incident;
     }
 }
 ```
 
-### Pattern 4: Interface-Based Integration Connectors (Stub-First)
+Then `IoTWebhookController::__invoke()` is refactored to delegate its body to `$factory->createFromSensor($validated)`, guaranteeing one intake → Incident code path.
 
-**What:** Every external API (Mapbox, Semaphore, PAGASA, NDRRMC, BFP, PNP, hospital FHIR) is wrapped in a service class implementing an interface. The service container binds stubs in development. Swap to real implementations per-environment via config.
+### Pattern 2: MQTT handler + service layer (no business logic in handlers)
 
-**When to use:** All external integrations from day one. The interface must exist before the stub, so the contract is clear.
+**What:** Handlers do three things only: (1) parse the payload, (2) persist the raw event, (3) delegate to a service or factory. This keeps handlers diff-free against firmware quirks (per FRAS Appendix C) and puts all IRMS-side logic behind `Services/`.
 
-**Trade-offs:** PRO: Entire system testable without external dependencies. Real integrations plug in without touching business logic. CON: Requires upfront interface design; risk of designing interfaces that don't match real API semantics.
+**When to use:** Always. Never let handlers broadcast Reverb events directly or call `Incident::create` inline.
 
-**Example:**
+**Trade-offs:**
+- + Testable: handlers get unit-tested with stubbed services; services get feature-tested end-to-end
+- + Matches existing IRMS service layer (`BarangayLookupService`, `ProximityRankingService`, `PrioritySuggestionService`)
+- − One extra indirection per message (negligible at MQTT volumes of ≤8 cameras)
+
+**Example — handler shape:**
 ```php
-// app/Services/Integrations/Contracts/SmsGateway.php
-interface SmsGateway
+// NEW: app/Mqtt/Handlers/RecognitionHandler.php
+class RecognitionHandler implements MqttHandler
 {
-    public function send(string $to, string $message): bool;
-    public function parseInbound(array $payload): InboundSms;
-}
+    public function __construct(
+        private FrasIncidentFactoryInterface $incidentFactory,
+    ) {}
 
-// app/Services/Integrations/SemaphoreGateway.php (stub)
-class SemaphoreGateway implements SmsGateway
-{
-    public function send(string $to, string $message): bool
+    public function handle(string $topic, string $message): void
     {
-        Log::info("SMS stub: {$to} - {$message}");
-        return true;
+        $data = json_decode($message, true);
+        if (! $data || ($data['operator'] ?? null) !== 'RecPush') { return; }
+
+        // ... parse deviceId, lookup Camera, parsePayload, saveImage ...
+        $event = RecognitionEvent::query()->create([/* persisted with severity */]);
+
+        if ($event->severity->shouldBroadcast() && $parsed['is_real_time']) {
+            RecognitionAlertReceived::dispatch($event);           // Reverb to operators
+            $this->incidentFactory->createFromRecognition($event); // IoT adapter → IRMS Incident
+        }
     }
 }
-
-// app/Providers/AppServiceProvider.php
-$this->app->bind(SmsGateway::class, SemaphoreGateway::class);
 ```
+
+### Pattern 3: Reverb channel naming — `fras.*` as a new namespace alongside `dispatch.*`
+
+**What:** Add three new private channels (`fras.alerts`, `fras.cameras`, `fras.enrollments`) instead of reusing `dispatch.incidents`. Incidents created by recognition events still broadcast on `dispatch.incidents` (via `IncidentCreated` — Pattern 1), so dispatchers see them in the existing feed. But the *raw alert feed* (including info-level, non-Incident recognitions for situational awareness) rides its own channel.
+
+**When to use:** Any time a FRAS-specific consumer (alert rail, camera map layer, enrollment progress bar) needs a stream that doesn't warrant polluting the dispatch channels.
+
+**Trade-offs:**
+- + Mirrors the existing `dispatch.*` / `incident.{id}.*` namespacing convention
+- + Role-based auth on `fras.*` can differ from `dispatch.*` (e.g., `fras.enrollments` may be admin-only)
+- − Frontend subscribes to more channels (5 → 8) — but `useEcho` handles that fine
+- − Must add 3 new `Broadcast::channel()` callbacks in `routes/channels.php`
+
+**Example — channel registration:**
+```php
+// MOD: routes/channels.php
+$frasOperatorRoles = [UserRole::Operator, UserRole::Dispatcher,
+                      UserRole::Supervisor, UserRole::Admin];
+$frasAdminRoles    = [UserRole::Supervisor, UserRole::Admin];
+
+Broadcast::channel('fras.alerts', fn (User $u): bool =>
+    in_array($u->role, $frasOperatorRoles));
+
+Broadcast::channel('fras.cameras', fn (User $u): bool =>
+    in_array($u->role, $frasOperatorRoles));
+
+Broadcast::channel('fras.enrollments', fn (User $u): bool =>
+    in_array($u->role, $frasAdminRoles));
+```
+
+### Pattern 4: Composable hub mirroring `useDispatchFeed`
+
+**What:** `useFrasFeed.ts` subscribes to the three `fras.*` channels, merges payloads into local reactive state, and exposes `cameras`, `recentAlerts`, `unreadCriticalCount` computed refs to `Console.vue`. Uses the existing `@laravel/echo-vue` `useEcho()` helper that `useDispatchFeed` already uses.
+
+**When to use:** On any page that renders camera status or recognition alerts (dispatch console, dedicated FRAS alerts page, dashboard widget).
+
+**Trade-offs:**
+- + Code style identical to `useDispatchFeed` (same file shape, same `useEcho` pattern, same local-copy-of-Inertia-props technique)
+- + No Pinia needed (per IRMS v1.0 decision: "Pinia out of scope")
+- − One more composable to keep in lock-step with its server payload shape; mitigate with `types/fras.ts` sharing
+
+**Example — composable signature:**
+```ts
+// NEW: resources/js/composables/useFrasFeed.ts
+import { useEcho } from '@laravel/echo-vue';
+import { ref, computed, type Ref } from 'vue';
+import type { Camera, RecognitionAlertPayload, EnrollmentProgress } from '@/types/fras';
+
+export function useFrasFeed(
+    localCameras: Ref<Camera[]>,
+    currentUserId: number,
+) {
+    const recentAlerts = ref<RecognitionAlertPayload[]>([]);
+    const enrollmentProgress = ref<Record<number, EnrollmentProgress>>({});
+
+    useEcho('fras.alerts', 'RecognitionAlertReceived', (p: RecognitionAlertPayload) => {
+        recentAlerts.value = [p, ...recentAlerts.value].slice(0, 50);
+    });
+
+    useEcho('fras.cameras', 'CameraStatusChanged', (p) => {
+        const c = localCameras.value.find(x => x.id === p.id);
+        if (c) { c.status = p.status; c.last_seen_at = p.last_seen_at; }
+    });
+
+    useEcho('fras.enrollments', 'EnrollmentProgressed', (p: EnrollmentProgress) => {
+        enrollmentProgress.value[p.camera_id] = p;
+    });
+
+    const unreadCriticalCount = computed(() =>
+        recentAlerts.value.filter(a => a.severity === 'critical' && !a.acknowledged).length);
+
+    return { recentAlerts, enrollmentProgress, unreadCriticalCount };
+}
+```
+
+### Pattern 5: MapLibre camera layer reusing the existing dispatch map
+
+**What:** The dispatch console already has a MapLibre instance with WebGL sources for incidents and units (`useDispatchMap.ts`). Cameras become a 4th layer: a `GeoJSON` source whose features are built from the Inertia-prop-backed `localCameras` reactive array. `useFrasFeed` updates the source on `CameraStatusChanged` by calling `mapRef.updateCameraStatus(id, status)`.
+
+**When to use:** Always — v2.0 spec explicitly mandates "cameras rendered as a layer on the dispatch MapLibre map."
+
+**Trade-offs:**
+- + Zero new map libraries; no separate Mapbox instance. FRAS uses Mapbox; IRMS uses MapLibre — one wins, IRMS wins since the dispatch console is the target surface
+- + Camera markers use the same WebGL layer pattern as units (no HTML overlays — IRMS rule)
+- − Camera icon styling must be added to the existing sprite sheet / symbol layer config
+- − Mapbox-specific FRAS styles (HelderDene custom dark/light) don't carry over; IRMS already has its own Mapbox style (see commit `ea52f22 feat(dispatch): switch dark-mode map to custom Mapbox style`) — reuse it
+
+### Pattern 6: WithoutOverlapping per-camera + Horizon queue isolation
+
+**What:** `EnrollPersonnelBatch` job uses `WithoutOverlapping('enrollment-camera-'.$camera->id)` so only one batch flies per camera at a time (mandated by camera firmware: one batch in-flight). A new Horizon supervisor block routes `fras` queue jobs separately from the default queue, so a flood of enrollments doesn't starve dispatch-related jobs.
+
+**When to use:** All FRAS-originated jobs (`EnrollPersonnelBatch`, future photo-reprocessing jobs) dispatch to `->onQueue('fras')`.
+
+**Trade-offs:**
+- + Isolation: dispatch ops (incident broadcasts, notification webhooks) never blocked behind 200-personnel enrollment batches
+- + Horizon dashboard shows `fras` queue metrics separately
+- − One extra supervisor block in `config/horizon.php`
+- − Must document the queue name convention in `CLAUDE.md` FRAS section
 
 ## Data Flow
 
-### Incident Lifecycle Flow (Primary)
+### Request Flow — recognition event end to end
 
 ```
-[Report arrives]
-    │
-    ├── SMS Webhook ──► SmsWebhookController ──► ParseInbound ──┐
-    ├── IoT Webhook ──► IoTWebhookController ──► ParseSensor ───┤
-    ├── Desktop Form ─► IntakeController (Inertia) ─────────────┤
-    │                                                            │
-    ▼                                                            ▼
-[CreateIncident Action]
-    │
-    ├── GeocodingService.geocode(address) → { lat, lng }
-    ├── GeocodingService.findBarangay(lat, lng) → barangay_id (PostGIS ST_Contains)
-    ├── PriorityClassifier.suggest(type, message) → P1-P4
-    ├── Incident::create({...})
-    │
-    ▼
-[Fire IncidentCreated Event]
-    │
-    ├── Broadcast → Reverb → Dispatch Console (new marker on map, queue item)
-    ├── LogTimelineEntry → incident_timeline (CREATED entry)
-    └── NotifyChannelOriginator → SMS ack to caller (via SmsGateway stub)
-    │
-    ▼
-[Dispatcher views queue, selects incident, assigns unit(s)]
-    │
-    ▼
-[AssignUnit Action]
-    ├── EtaService.calculate(unit.coords, incident.coords) → ETA minutes
-    ├── Incident.update(assigned_unit, dispatched_at, status: DISPATCHED)
-    │
-    ▼
-[Fire AssignmentPushed Event]
-    ├── Broadcast → Reverb → Private channel units.{id}.private (responder receives)
-    ├── Schedule AcknowledgementTimeout job (90 seconds)
-    │
-    ▼
-[Responder acknowledges → en route → on scene → resolving → resolved]
-    │ (each transition fires IncidentStatusChanged)
-    │
-    ▼
-[CloseIncident Action]
-    ├── Incident.update(outcome, hospital, closure_notes, resolved_at)
-    ├── Fire IncidentStatusChanged (→ RESOLVED)
-    │   ├── Broadcast → all subscribers
-    │   ├── Queue GenerateIncidentPdf job
-    │   ├── Queue NotifyReporter (SMS: "incident resolved")
-    │   └── LogTimelineEntry (RESOLVED)
-    │
-    ▼
-[Incident archived with full timeline, vitals, report PDF URL]
+ Camera device (MQTT publish)
+   topic: mqtt/face/{device_id}/Rec
+   payload: RecPush JSON
+        │
+        ▼
+ Mosquitto broker
+        │
+        ▼
+ php artisan fras:mqtt-listen  (long-running, Supervisor-managed in prod)
+        │
+        ▼ MQTT::connection()->subscribe callback
+ App\Mqtt\TopicRouter::dispatch($topic, $message)
+        │ regex match: #mqtt/face/[^/]+/Rec$#
+        ▼
+ App\Mqtt\Handlers\RecognitionHandler::handle()
+        │ 1. json_decode, validate operator=RecPush
+        │ 2. Camera::where('device_id', $deviceId)->first()
+        │ 3. parsePayload() — handles firmware quirks
+        │ 4. RecognitionEvent::create([...])  — persisted with severity
+        │ 5. saveImage() — Storage::disk('local')->put() under recognition/{date}/…
+        ▼
+ If event->severity->shouldBroadcast() && is_real_time:
+        │
+        ├──► RecognitionAlertReceived::dispatch($event)
+        │      ▼
+        │    Reverb → private-fras.alerts → useFrasFeed (dispatch console + alerts page)
+        │
+        └──► FrasIncidentFactoryInterface::createFromRecognition($event)
+               │ if severity->shouldCreateIncident() (critical / block-list):
+               ▼
+             Incident::create([
+               channel: IncidentChannel::IoT,               // ← existing IoT channel reused
+               coordinates: $camera->coordinates,           // ← from cameras table
+               barangay_id: $camera->barangay_id,           // ← pre-geocoded
+               ...
+             ])
+               ▼
+             IncidentCreated::dispatch($incident)           // ← EXISTING Reverb event
+               ▼
+             Reverb → private-dispatch.incidents → useDispatchFeed
+               ▼
+             Dispatcher sees incident on map + intake queue, triages normally
 ```
 
-### Real-Time GPS Tracking Flow
+### Request Flow — enrollment (personnel push to cameras)
 
 ```
-[Responder device]
-    │
-    ├── useGpsTracking composable
-    │   └── navigator.geolocation.watchPosition()
-    │       └── Every 10s (EN_ROUTE) or 60s (ON_SCENE):
-    │           POST /api/units/{id}/location { lat, lng }
-    │
-    ▼
-[UnitLocationController]
-    │
-    ├── Validate request (rate limit: 1 req / 5 sec per unit)
-    ├── Unit.update(coordinates, location_at)
-    │
-    ▼
-[Fire UnitLocationUpdated Event (ShouldBroadcastNow)]
-    │
-    ├── Broadcast → Reverb → 'units' channel
-    │
-    ▼
-[Dispatch Console]
-    │
-    ├── useUnitChannel composable receives event
-    ├── Calls map.getSource('unit-pts').updateData({...})
-    ├── Unit marker moves on map (WebGL re-render, sub-frame)
-    │
-    ▼
-[Supervisor Dashboard]
-    │
-    └── Unit status panel updates position display
+ Admin creates Personnel (AdminPersonnelController::store)
+        │
+        ▼
+ CameraEnrollmentService::enrollPersonnel($personnel)
+        │ for each Camera:
+        │   - CameraEnrollment::updateOrCreate(status=pending)
+        │   - if camera->is_online:
+        │       EnrollPersonnelBatch::dispatch($camera, [$personnel->id])
+        │         ->onQueue('fras')
+        ▼
+ Horizon (fras queue worker)
+        │
+        ▼
+ EnrollPersonnelBatch::handle()
+   uses middleware: WithoutOverlapping('enrollment-camera-'.$id)
+        │
+        ▼
+ CameraEnrollmentService::upsertBatch()
+   - build EditPersonsNew payload
+   - Cache::put("enrollment-ack:{camera_id}:{messageId}", ...)
+   - MQTT::connection('publisher')->publish(topic, payload)
+        │
+        ▼
+ Camera device receives, processes, publishes Ack topic
+        │
+        ▼
+ fras:mqtt-listen → TopicRouter → AckHandler
+   - Cache::pull the correlation key
+   - CameraEnrollment updated to STATUS_OK or STATUS_FAILED
+   - EnrollmentProgressed::dispatch(...)
+        ▼
+ Reverb → private-fras.enrollments → admin UI progress indicator
 ```
 
-**Why `ShouldBroadcastNow` for GPS:** GPS updates are time-sensitive. Queuing them adds latency. The payload is tiny (unit_id + lat/lng + timestamp). Broadcasting directly from the request lifecycle is acceptable here, unlike heavier events like PDF generation.
-
-### WebSocket Channel Architecture
+### State Management
 
 ```
-Public Channels:
-  incidents          → All IncidentCreated, IncidentUpdated events
-  units              → All UnitLocationUpdated events (GPS positions)
-
-Private Channels (require auth):
-  incidents.{id}     → IncidentStatusChanged, MessageSent, ResourceRequested for specific incident
-  units.{id}.private → AssignmentPushed for specific unit (only that unit's responder)
-
-Presence Channels (optional, future):
-  dispatch.console   → Track which dispatchers are online (shift awareness)
+ PostgreSQL (source of truth)
+   cameras, personnel, recognition_events, camera_enrollments
+        ▲
+        │ CRUD via Form Requests + Eloquent
+        │
+ Inertia controllers (Admin\AdminCameraController, Fras\AlertController, ...)
+        │ Inertia::render('admin/cameras/Index', ['cameras' => ...])
+        ▼
+ Vue page props (initial state)
+        │
+        │ ref() wrap for reactivity (IRMS convention — see localIncidents/localUnits)
+        ▼
+ Composable (useFrasFeed) subscribes to Reverb
+        │ mutations: push to recentAlerts, update localCameras[i].status
+        ▼
+ Vue components re-render via Vue reactivity
 ```
 
 ### Key Data Flows
 
-1. **Intake to Dispatch Queue:** Incident created via any channel -> geocoded + classified -> appears in dispatch queue (Inertia prop on initial load, WebSocket push for subsequent). The queue is a database query ordered by priority then created_at, not an in-memory structure.
-
-2. **Dispatch Map State:** On page load, Inertia sends all active incidents + all active units as GeoJSON-ready props. After load, Echo subscriptions receive incremental updates via `updateData()`. On reconnect, Inertia partial reload (`router.reload({ only: ['incidents', 'units'] })`) resynchronizes full state.
-
-3. **Responder Assignment Push:** Assignment event sent to private channel. If responder is on the page, Echo receives it immediately. If not (page closed/backgrounded), the assignment persists in the database. On next page load, Inertia props contain the active assignment. No data is lost if WebSocket is disconnected.
+1. **MQTT → Recognition Event → Incident (Pattern 1 adapter):** Only critical (block-list) matches create Incidents; warning/info go to `recognition_events` + `fras.alerts` only. This prevents dispatcher channel flood from info-level recognitions.
+2. **Personnel CRUD → per-camera enrollment fan-out:** One DB write triggers N queue jobs (one per online camera). Offline cameras get `pending` rows that are picked up when they come online via the `OnlineOfflineHandler`.
+3. **Heartbeat → camera status → map refresh:** Every heartbeat updates `cameras.last_seen_at`. `FrasCheckOfflineCamerasCommand` (scheduled every 30s) flips stale cameras to offline and dispatches `CameraStatusChanged` so the map layer visually updates.
+4. **Retention cleanup:** Scheduled command scans `recognition_events.face_image_path` for rows older than 90 days and deletes files (rows are kept indefinitely — spec requirement). Scene images deleted after 30 days the same way.
+5. **Image serving:** Face crops served via authenticated controller routes (`alerts/{event}/face`, `alerts/{event}/scene`) — files live on `Storage::disk('local')`, not `public`, to enforce role auth.
 
 ## Scaling Considerations
 
 | Scale | Architecture Adjustments |
 |-------|--------------------------|
-| 1 dispatcher, 5-10 units | Monolith is fine. Single Reverb process. All queries on primary DB. This is the initial Butuan City deployment. |
-| 3-5 dispatchers, 20-50 units | Add Redis caching for dispatch queue and unit positions. Reverb handles this easily. Monitor PostGIS query times on spatial indices. |
-| Multi-LGU (10+ dispatchers, 100+ units) | Reverb horizontal scaling via Redis pub/sub. Read replica for analytics queries (heatmaps, reports). Horizon workers scaled to 4+. Consider separate queue for GPS updates vs. business events. |
-| Province-wide (50+ dispatchers, 500+ units) | Out of current scope. Would need: Reverb cluster behind load balancer, database partitioning by LGU, dedicated analytics database, possibly extract GPS ingestion to separate microservice. |
+| 1–8 cameras, ≤200 personnel (v2.0 target, matches FRAS v1.0) | Single `fras:mqtt-listen` process, single Horizon worker on `fras` queue, local disk storage. No changes needed. |
+| 20–50 cameras, 500–2000 personnel | Still a single listener process (MQTT subscriber is I/O-bound, not CPU-bound). Add a second Horizon supervisor with `minProcesses=2` on `fras` queue for enrollment parallelism (still bounded by `WithoutOverlapping` per camera). Move storage to S3-compatible object store (DigitalOcean Spaces) behind a signed-URL controller. |
+| 100+ cameras, 10k+ personnel | Shard the MQTT listener by topic (per `topic_prefix` or per camera group) as separate `fras:mqtt-listen --group=X` commands. Split `recognition_events` into time-partitioned tables (Postgres native partitioning). Consider moving MQTT handlers themselves to queued jobs (Recognition topic → handler persists minimal row → `HandleRecognitionJob::dispatch()`) to decouple MQTT throughput from DB write latency. |
 
 ### Scaling Priorities
 
-1. **First bottleneck: PostGIS spatial queries under concurrent dispatch load.** The `ST_Contains()` for barangay lookup and `ST_DWithin()` for proximity search are the most expensive queries. Mitigation: GIST indices on all geometry columns (already in spec), and cache barangay boundary polygons in Redis (they change rarely).
-
-2. **Second bottleneck: Reverb connection count.** Each dispatcher console and each responder maintains a persistent WebSocket. At 50 concurrent connections, Reverb handles this trivially. At 500+, use Reverb's Redis-based horizontal scaling to distribute across multiple Reverb processes.
-
-3. **Third bottleneck: GPS update write throughput.** At 50 units updating every 10 seconds = 300 writes/minute. PostgreSQL handles this easily. At 500 units = 3,000 writes/minute, consider batching GPS updates or writing to Redis first and flushing to PostgreSQL periodically.
+1. **First bottleneck at scale:** MQTT listener becomes a single point of failure (crashes = no ingestion). **Fix:** Supervisor `autorestart=true` + a health-check endpoint that the watchdog pings (`php artisan fras:mqtt-health` that checks `last_mqtt_message_at` cache key set by any handler).
+2. **Second bottleneck:** `recognition_events` table growth — a busy facility can produce thousands of rows/day. **Fix:** Index on `(camera_id, captured_at DESC)`, consider Postgres partitioning by month once table hits ~50M rows. Image file growth is already capped by retention commands.
+3. **Third bottleneck:** Storage disk space on single-server deploy. **Fix:** Move to DigitalOcean Spaces (S3-compatible) — `Storage::disk('spaces')` — and tighten retention.
 
 ## Anti-Patterns
 
-### Anti-Pattern 1: Polling Instead of WebSocket Push
+### Anti-Pattern 1: Putting the MQTT loop inside a queue worker
 
-**What people do:** Use Inertia polling (`useInterval` or `router.reload`) to refresh dispatch map state every 5 seconds.
-**Why it's wrong:** Creates unnecessary server load (N dispatchers x every 5s = constant HTTP requests). Latency is 0-5s instead of sub-500ms. Does not scale.
-**Do this instead:** Use Laravel Echo subscriptions for real-time events. Use Inertia `router.reload({ only: [...] })` only for reconnection recovery, not regular updates.
+**What people do:** "Laravel has queues, let's have a job subscribe to MQTT and re-queue itself." They try to fit the long-running subscriber into the Horizon worker model.
+**Why it's wrong:** Queue workers are designed to process-and-exit or process-in-loop with short-lived jobs. An MQTT loop blocks the worker indefinitely. Memory leaks, orphaned connections, and worker restarts breaking the subscription follow.
+**Do this instead:** Use `php artisan fras:mqtt-listen` as its own Supervisor-managed process (exactly how FRAS does it). Keep Horizon for *downstream* jobs like `EnrollPersonnelBatch`.
 
-### Anti-Pattern 2: Storing Map State in Pinia/Global Store
+### Anti-Pattern 2: Broadcasting Reverb events from inside MQTT handlers without ShouldDispatchAfterCommit
 
-**What people do:** Create a global Pinia store for all incidents and units, sync it from both Inertia props and WebSocket events.
-**Why it's wrong:** Dual source of truth. Inertia already manages page state. Adding Pinia creates sync conflicts and makes SSR harder (Pinia needs hydration).
-**Do this instead:** Use reactive `ref()` initialized from Inertia props, mutated by Echo event handlers. Keep state local to the page component. If multiple child components need it, provide/inject or pass as props. Pinia is out of scope per PROJECT.md.
+**What people do:** `event(new RecognitionAlertReceived($event))` fires immediately, before the DB transaction holding the `RecognitionEvent` insert has committed. Subscribers on the frontend receive the event ID, try to fetch details, and get 404.
+**Why it's wrong:** Classic race — MQTT handlers do heavy DB work; Reverb is faster than Postgres commit.
+**Do this instead:** Always mark FRAS events `implements ShouldDispatchAfterCommit` (matches existing `IncidentCreated` in IRMS). Safe and boring.
 
-### Anti-Pattern 3: Broadcasting Everything Synchronously
+### Anti-Pattern 3: Creating a new IncidentChannel for recognition events
 
-**What people do:** Use `ShouldBroadcastNow` on all events to avoid queue latency.
-**Why it's wrong:** Heavy events (incident creation with geocoding, PDF generation triggers) block the HTTP response. Only GPS updates need synchronous broadcast.
-**Do this instead:** Use `ShouldBroadcast` (queued) by default. Use `ShouldBroadcastNow` only for `UnitLocationUpdated` where sub-second delivery matters and payload is tiny.
+**What people do:** "FRAS recognitions aren't really IoT — let's add `IncidentChannel::Recognition`." They think of the new channel as the clean abstraction.
+**Why it's wrong:** The v2.0 spec explicitly mandates reuse of the existing IoT intake channel. A new enum value forces updates to every intake filter, channel count badge, analytics breakdown, and report generator — for no operational benefit to CDRRMO (the dispatcher's workflow is identical).
+**Do this instead:** Tag recognition-created Incidents as `IncidentChannel::IoT` and distinguish them in `IncidentTimeline.event_data.source = 'fras_recognition'` (same pattern already used for sensor events: `source = 'iot_sensor'`). The timeline entry is the identifier; the channel stays IoT.
 
-### Anti-Pattern 4: HTML Marker Overlays on MapLibre
+### Anti-Pattern 4: Building the camera map layer with HTML marker overlays
 
-**What people do:** Use MapLibre `Marker` class (which creates HTML DOM elements) for incident and unit pins.
-**Why it's wrong:** Each HTML marker is a separate DOM node. At 50+ markers with animations, DOM thrashing kills performance. The spec explicitly requires WebGL-rendered markers.
-**Do this instead:** Use circle layers with GeoJSON sources. Define layer stacks (halo, border, pin, dot) as MapLibre style layers. Update positions via `source.updateData()`. All rendering happens on GPU.
+**What people do:** They add `<div class="camera-marker">` children to the MapLibre container because it's familiar.
+**Why it's wrong:** IRMS v1.0 established WebGL-only markers as a performance rule (Constraints section of PROJECT.md — "all markers as WebGL layers, no HTML overlays"). HTML overlays tank performance past ~50 markers and break map interaction.
+**Do this instead:** Add a `GeoJSON` source + `symbol` layer to `useDispatchMap.ts` for cameras, using a sprite-sheet icon. Same pattern as incidents + units.
 
-### Anti-Pattern 5: Fat Controllers with Inline Business Logic
+### Anti-Pattern 5: Extending UserRole with FRAS-specific roles
 
-**What people do:** Put geocoding, priority classification, unit assignment, and broadcasting all inside the controller method.
-**Why it's wrong:** Untestable, unreusable, unmaintainable. The same incident creation logic is needed from 3 entry points (form, SMS webhook, IoT webhook).
-**Do this instead:** Controllers validate and delegate. Actions contain business logic. Services wrap external APIs. Events decouple side effects. Controller methods should be 5-15 lines.
+**What people do:** Add `UserRole::FrasOperator`, `UserRole::CameraAdmin`, etc.
+**Why it's wrong:** IRMS v1.0 settled on 5 roles and 9 gates; adding role variants explodes the gate matrix. Per-feature roles signal missing authorization primitives, not missing roles.
+**Do this instead:** Reuse existing roles. Map responsibilities like this:
+- Alert feed + camera map view → `operator, dispatcher, supervisor, admin`
+- Camera CRUD → `supervisor, admin`
+- Personnel CRUD → `supervisor, admin`
+- Enrollment retry/resync → `admin` only
 
-### Anti-Pattern 6: Raw PostGIS SQL in Controllers
+Add specific Gates (`view-fras-alerts`, `manage-cameras`, `manage-personnel`, `trigger-enrollment-retry`) in `AppServiceProvider` rather than new roles. This mirrors how v1.0 Phase 8 added the `operator` role with targeted gates, not a new role taxonomy.
 
-**What people do:** Write `DB::select("SELECT ST_Contains(boundary, ST_Point(?, ?))")` directly in controllers.
-**Why it's wrong:** Bypasses Eloquent, not testable, SQL injection risk if not parameterized carefully, duplicated across controllers.
-**Do this instead:** Use Laravel Magellan or `matanyadaev/laravel-eloquent-spatial` for Eloquent-integrated spatial queries. Or create dedicated service methods (e.g., `GeocodingService::findBarangay()`) that encapsulate the raw query in one place.
+### Anti-Pattern 6: Publishing Reverb broadcasts *and* writing to DB inside the same MQTT handler call
+
+**What people do:** The handler does DB work, then dispatches the Reverb event, then continues to persist images — a long path inside a single subscriber callback.
+**Why it's wrong:** MQTT loop throughput is bounded by the slowest handler. If the subscriber blocks for 500ms per event on image writes, burst rates drop below camera output.
+**Do this instead (if throughput becomes an issue at scale):** Handler persists a minimal `recognition_events` row (no image decoding), dispatches `ProcessRecognitionEventJob::dispatch($event->id)` to the `fras` queue; the job decodes images, runs the IoT adapter, and fires Reverb events. At v2.0 target volume (≤8 cameras, low event rate) the inline path is fine — note as a Pattern 6 flag rather than a required refactor.
 
 ## Integration Points
 
@@ -603,62 +568,154 @@ Presence Channels (optional, future):
 
 | Service | Integration Pattern | Notes |
 |---------|---------------------|-------|
-| Mapbox Geocoding API | REST via GeocodingService | Forward geocode with PH country filter. Fallback to manual pin if API fails. Cache results (same address = same coords). |
-| Mapbox Directions API | REST via EtaService | Calculate road-network ETA for unit-to-incident. Cache popular routes. Fallback to haversine straight-line estimate. |
-| Mapbox Vector Tiles | MapLibre GL JS basemap style URL | Loaded client-side. No server involvement. Requires access token in frontend config. |
-| Semaphore SMS API | REST via SmsGateway interface | Inbound: webhook parses SMS to incident. Outbound: acknowledgement + status updates. Stubbed initially. |
-| PAGASA Weather API | REST via WeatherProvider interface | Periodic fetch (every 15 min via scheduler). Flood advisory overlay on map. Auto-escalate flood incidents. Stubbed initially. |
-| Hospital HIMS (HL7 FHIR R4) | REST via HospitalNotifier interface | Pre-arrival notification triggered by "Transport to Hospital" outcome. Stubbed initially. |
-| NDRRMC Reporting API | REST/XML via ReportConnector interface | Auto-submit SitRep on P1 closure. Fallback: PDF email. Stubbed initially. |
-| BFP Fire Incident System | REST webhook (bidirectional) | Inbound: BFP fires appear in IRMS queue. Outbound: IRMS fires pushed to BFP. Stubbed initially. |
-| PNP e-Blotter | REST via BlotterConnector interface | Auto-create blotter for criminal incidents. Requires dispatcher confirmation. Stubbed initially. |
-| Laravel Reverb | WebSocket (Pusher protocol) | Self-hosted. Runs as separate process on port 6001. Managed by Supervisor in production. |
-| Redis | TCP connection | Queue backend (Horizon), cache, Reverb pub/sub. Single managed instance handles all three roles at current scale. |
+| Mosquitto MQTT broker | `php-mqtt/laravel-client` — two connections configured (`default` for subscriber, `publisher` for ACK-less publishes). Config: `config/mqtt-client.php` | Plain MQTT v3.1.1, QoS 0, internal subnet only. TLS deferred (matches FRAS v1.0 out-of-scope). Keepalive 30s, reconnect 5s, max attempts 10. |
+| AI IP cameras | MQTT publish/subscribe over broker; photos fetched via HTTP URL from Laravel | Firmware quirks handled in `RecognitionHandler::parsePayload()` — `personName` vs `persionName`, string-numeric fields, missing `scene` field (all per FRAS spec Appendix C). Cameras must reach the Laravel HTTP server for photo download (`picURI` must be network-reachable). |
+| Mapbox (maps + geocoding) | Already integrated for IRMS dispatch console | FRAS's separate Mapbox styles are not ported; IRMS's existing style and `MapboxDirectionsService` stay. Cameras use Mapbox reverse-geocoding on create (if lat/lng entered without barangay, fall back to PostGIS `BarangayLookupService`). |
+| Laravel Reverb | Existing installation + 6 events | Add 3 events, 3 channels. Same Pusher-protocol adapter. |
 
 ### Internal Boundaries
 
 | Boundary | Communication | Notes |
 |----------|---------------|-------|
-| Intake -> Dispatch | Database (incident record) + Event broadcast | Intake creates incident; dispatch console receives via IncidentCreated event on WebSocket. No direct controller-to-controller calls. |
-| Dispatch -> Responder | Event broadcast (private channel) + Database | AssignmentPushed event to responder's private channel. Assignment persisted in DB as source of truth. |
-| Responder -> Dispatch | HTTP API (status update, GPS) + Event broadcast | Responder POSTs status changes; events broadcast back to dispatch console. Bi-directional messaging via MessageSent events. |
-| Any Layer -> Integration | Service interface call (queued job) | Business logic calls interface methods. Actual HTTP to external APIs happens in queued jobs. Failures logged, retried, never block user flow. |
-| Any Layer -> Analytics | Database reads (PostGIS aggregates) | Analytics queries the same database. No separate data pipeline needed at current scale. Heavy queries (heatmaps) should use database read replica when available. |
+| MQTT handler ↔ FrasIncidentFactory | Direct PHP call via DI container | Factory is bound as singleton in `AppServiceProvider` → matches existing IRMS service-binding convention |
+| FrasIncidentFactory ↔ existing Incident domain | Reuses `Incident::create`, `IncidentTimeline::create`, `IncidentCreated` event | One-way — FRAS writes into IRMS; IRMS does not read FRAS tables (until later integrations like incident detail page showing recognition thumbnails) |
+| Incident ↔ RecognitionEvent | `recognition_events.incident_id` nullable FK | Most recognitions won't create Incidents; FK is nullable; `Incident::recognitionEvents()` relation added but non-critical |
+| Dispatch console Vue page ↔ useFrasFeed | Vue composable + Inertia props | `Console.vue` receives `cameras` in Inertia prop alongside existing `incidents`/`units`, wraps in `localCameras = ref(props.cameras)`, passes to `useFrasFeed` |
+| Admin camera CRUD ↔ Reverb (on status change) | Controller fires `CameraStatusChanged` directly after status update (not via observer) | Matches existing `DispatchConsoleController` pattern of explicit event dispatch |
+| Personnel photo storage ↔ camera HTTP fetch | Signed URL (short TTL) generated by `Personnel::photo_url` accessor | IRMS constraint: public-readable photos are OK for the camera subnet. Use signed URLs (not public disk) to add at least a modest barrier. |
+| Scheduler ↔ FRAS watchdogs | `routes/console.php` adds three scheduled commands | `fras:cleanup-retention` daily, `fras:check-enrollment-timeouts` every minute, `fras:check-offline-cameras` every 30 seconds |
 
-## Build Order Implications
+## Process Orchestration — dev and production
 
-Based on component dependencies, the suggested build order for IRMS layers:
+### Dev — extend `composer run dev`
 
-1. **Foundation (RBAC + PostGIS + Data Models)** -- Build first because every layer depends on roles, permissions, and the incident/unit data model. Migrate to PostgreSQL + PostGIS. Seed barangays with boundary polygons.
+The current script runs 5 concurrent processes (server, reverb, horizon, logs, vite). Add a 6th:
 
-2. **Intake Layer** -- Build second because dispatch needs incidents to exist. The triage form, geocoding service, and priority classifier are self-contained. This layer can be fully tested without dispatch or responder.
+```bash
+# MOD: composer.json "dev" script
+npx concurrently -c "#93c5fd,#c4b5fd,#fb7185,#fdba74,#86efac,#f472b6" \
+  "php artisan serve" \
+  "php artisan reverb:start" \
+  "php artisan horizon" \
+  "php artisan pail --timeout=0" \
+  "npm run dev" \
+  "php artisan fras:mqtt-listen" \
+  --names=server,reverb,horizon,logs,vite,mqtt --kill-others
+```
 
-3. **Real-Time Infrastructure (Reverb + Echo)** -- Set up third because dispatch console cannot function without it. Configure Reverb, install Laravel Echo, define channels and authorization. Test with simple broadcast events before building the dispatch UI.
+Developers with no local Mosquitto can set `MQTT_HOST=skip` and have the listener exit cleanly with `return self::SUCCESS` when that sentinel is set — small addition to `FrasMqttListenCommand::handle()`.
 
-4. **Dispatch Layer (Map Console + Assignment)** -- Build fourth. Depends on: incidents (from intake), real-time events (from Reverb), spatial data (from PostGIS). This is the most complex UI component -- MapLibre GL JS with WebGL layers, GeoJSON sources, and Echo subscriptions.
+### Production — Supervisor block
 
-5. **Responder Layer** -- Build fifth. Depends on: dispatch (assignments must exist), real-time events (status broadcasts), GPS tracking. Mobile-optimized Inertia pages with status-aware tabs.
+Add to production Supervisor config (alongside existing horizon + reverb blocks):
 
-6. **Integration Layer** -- Build sixth. Depends on: all other layers (integration connectors are called from intake, dispatch, and responder workflows). Interfaces designed early; stubs replaced with real implementations.
+```ini
+[program:fras-mqtt-listener]
+process_name=%(program_name)s
+command=php /var/www/irms/artisan fras:mqtt-listen
+autostart=true
+autorestart=true
+user=www-data
+redirect_stderr=true
+stdout_logfile=/var/log/supervisor/fras-mqtt-listener.log
+stopwaitsecs=10
+```
 
-7. **Analytics Layer** -- Build last. Depends on: historical data from all other layers. PostGIS aggregate queries for heatmaps. KPI calculations from incident timestamps. Report generation via queued jobs.
+Horizon `config/horizon.php` adds a supervisor block for the `fras` queue:
 
-**Critical dependency chain:** PostGIS + Data Models -> Intake -> Reverb setup -> Dispatch -> Responder -> Integration -> Analytics. No layer can be built out of this order without stub scaffolding.
+```php
+'fras-supervisor' => [
+    'connection' => 'redis',
+    'queue' => ['fras'],
+    'balance' => 'simple',
+    'minProcesses' => 1,
+    'maxProcesses' => 3,
+    'tries' => 3,
+    'timeout' => 120,
+],
+```
+
+## Suggested Build Order
+
+Build in dependency order. The first group is strictly sequential; later groups can parallelize in two tracks.
+
+### Sequential foundation (must finish before anything else)
+
+1. **Laravel 12 → 13 upgrade** — first because every subsequent composer require may pin against Laravel 13. Verify all v1.0 Pest tests still pass. (Pattern: install, run tests, update deprecations, run tests again; document breaking changes touched in `CLAUDE.md`.)
+2. **Package installs** — `php-mqtt/laravel-client`, `intervention/image` v3 — add composer requires, publish configs, write smoke tests for package bindings.
+3. **Config + Enums** — port `config/fras.php`, add `AlertSeverity`, `CameraStatus`, `EnrollmentStatus`, `PersonType` enums. These are leaves in the dependency graph; land early.
+4. **Migrations + Models + Factories** — cameras (PostGIS Point + barangay_id FK), personnel, camera_enrollments, recognition_events (nullable incident_id FK). Seeders for dev. Pest unit tests on model relationships.
+5. **MQTT listener skeleton** — `FrasMqttListenCommand`, `TopicRouter`, `MqttHandler` contract, minimal `HeartbeatHandler` only. Verify end-to-end MQTT → DB with Mosquitto test client. Update `composer run dev`. No broadcasts yet.
+
+### Track A (after step 5) — Ingestion + Alerts
+
+6. **RecognitionHandler + image storage** — parse payload, save images to `Storage::disk('local')` under date-partitioned paths. No broadcast, no Incident creation yet.
+7. **`fras.alerts` Reverb channel + RecognitionAlertReceived event** — broadcast after commit. Frontend: alerts page only (Console integration waits for track B).
+8. **FrasIncidentFactory + IoT-intake adapter (Pattern 1)** — the critical bridge. Factor shared Incident creation out of `IoTWebhookController` into `FrasIncidentFactory::createFromSensor` + `createFromRecognition`. Test: a block-list recognition creates an Incident visible to `useDispatchFeed` with `channel=iot`.
+9. **Alert acknowledge/dismiss + event history page** — admin UI + Fras controllers for alerts and history.
+10. **Retention cleanup command + scheduling** — `FrasCleanupRetentionCommand`.
+
+### Track B (can start after step 5, in parallel with track A) — Camera + Personnel Management
+
+6b. **Camera CRUD (Admin)** — `AdminCameraController`, Form Requests, migrations, `cameras/{Index,Create,Edit,Show}.vue`. Validates map + auth integration early.
+7b. **Camera liveness (HeartbeatHandler + OnlineOfflineHandler + `FrasCheckOfflineCamerasCommand`)** — camera status management without enrollment.
+8b. **`fras.cameras` Reverb channel + CameraStatusChanged event**.
+9b. **Personnel CRUD (Admin)** — photo processor service, photo validation, per-person CRUD. No enrollment yet.
+
+### Track A/B merge point — Enrollment
+
+11. **CameraEnrollmentService + EnrollPersonnelBatch job + AckHandler** — the enrollment pipeline. Requires cameras, personnel, and MQTT publisher connection. Use `WithoutOverlapping` middleware.
+12. **Enrollment progress broadcast** — `fras.enrollments` channel + `EnrollmentProgressed` event.
+13. **FrasCheckEnrollmentTimeoutsCommand** — scheduled timeout sweeper.
+14. **Horizon `fras` supervisor block**.
+
+### Integration Phase — Dispatch Console
+
+15. **useFrasFeed composable** — the frontend hub; mirrors `useDispatchFeed`.
+16. **useDispatchMap.ts camera layer** — WebGL source + symbol layer for cameras; status-driven styling (online/offline/alert pulse).
+17. **Console.vue integration** — wire Inertia `cameras` prop, `localCameras` ref, pass to useFrasFeed, render camera rail and map layer.
+
+### Polish Phase
+
+18. **Gates + routing cleanup** — add `view-fras-alerts`, `manage-cameras`, `manage-personnel`, `trigger-enrollment-retry` Gates. Audit route groups in `web.php`.
+19. **Navigation + menu items** — sidebar entries for admin/cameras, admin/personnel, fras/alerts, fras/events.
+20. **Supervisor config docs** — production deployment notes in `docs/`.
+21. **Requirements trace + Pest convention guards** — ensure all v2.0 features have tests; add convention guards if new (e.g., "all MQTT handlers must implement `MqttHandler` contract" via a reflection test).
+22. **`docs/IRMS-Specification.md` update** — add FRAS section.
+
+**Parallelization heuristic:** Track A and Track B are orthogonal until step 11 because ingestion (alerts) and management (cameras/personnel) touch different tables and controllers. Two developers — or two agent loops — can work concurrently. The bridge is the `FrasIncidentFactory` (step 8, Track A) which must land before any real recognition events create Incidents; but cameras + personnel management (Track B through step 9b) needs no coordination with Track A.
+
+## Risk Flags for Roadmap
+
+| Flag | Why it matters | Mitigation |
+|------|----------------|------------|
+| **Laravel 12 → 13 upgrade regressions** | 16 phases of v1.0 functionality must keep passing. Reverb, Horizon, Magellan, Fortify, Wayfinder, Inertia v2 all have major-version Laravel sensitivities. | Dedicate a phase to the upgrade; run full Pest suite pre- and post-upgrade; mark regressions as the first thing to fix before any FRAS code lands. |
+| **MySQL → Postgres schema port** | FRAS used MySQL JSON columns and MySQL-specific types; IRMS uses Postgres + PostGIS. | Port schema carefully: JSON → JSONB, MySQL enums → Postgres check constraints or proper Laravel enum casts, DATETIME → TIMESTAMP. The `recognition_events.raw_payload` must become `JSONB`, not `JSON`. |
+| **Mapbox vs MapLibre split** | FRAS uses Mapbox GL JS; IRMS uses MapLibre. Camera markers must use the IRMS map. | Drop the FRAS Mapbox integration entirely. Use the IRMS MapLibre instance; port only the camera marker styling to the MapLibre sprite sheet. |
+| **MQTT listener reliability** | Single process; if it crashes ingestion halts. | Supervisor `autorestart`, health-check cache key, and a dispatcher-visible "FRAS ingestion healthy" indicator in the dispatch console status bar. |
+| **Idempotency of recognition → Incident** | A duplicate RecPush or ACK replay must not create duplicate Incidents. | Unique index on `recognition_events.(camera_id, record_id)`; factory checks for existing `incident_id` before creating. |
+| **Photo URL reachability from camera subnet** | Cameras must HTTP-GET photo URLs; signed URLs with short TTL can fail if clocks drift or TTL is too short. | Make photo URL TTL configurable in `config/fras.php`; test end-to-end with actual hardware early (when personnel management lands). |
 
 ## Sources
 
-- [Laravel Reverb official documentation](https://laravel.com/docs/12.x/reverb) -- HIGH confidence
-- [Laravel Broadcasting documentation](https://laravel.com/docs/12.x/broadcasting) -- HIGH confidence
-- [Laravel Events documentation](https://laravel.com/docs/12.x/events) -- HIGH confidence
-- [MapLibre GL JS GeoJSONSource API (updateData)](https://maplibre.org/maplibre-gl-js/docs/API/classes/GeoJSONSource/) -- HIGH confidence
-- [MapLibre GL JS partial updates discussion](https://github.com/maplibre/maplibre-gl-js/issues/1236) -- MEDIUM confidence
-- [Laravel Magellan PostGIS package](https://github.com/clickbar/laravel-magellan) -- MEDIUM confidence
-- [matanyadaev/laravel-eloquent-spatial](https://packagist.org/packages/matanyadaev/laravel-eloquent-spatial) -- MEDIUM confidence
-- [vue-maplibre-gl Vue 3 plugin](https://github.com/indoorequal/vue-maplibre-gl) -- MEDIUM confidence
-- [Computer-Aided Dispatch architecture (Wikipedia)](https://en.wikipedia.org/wiki/Computer-aided_dispatch) -- MEDIUM confidence
-- [NHTSA CAD Interoperability Strategies](https://www.911.gov/assets/NHTSA-CAD-Strategies-for-the-Future_Mar-2023_Final.pdf) -- MEDIUM confidence
-- IRMS Technical Specification Document (`docs/IRMS-Specification.md`) -- HIGH confidence (project-specific)
+Direct code inspection of both repos as primary source:
+
+- `/Users/helderdene/IRMS/app/Http/Controllers/IoTWebhookController.php` — existing IoT intake pattern the adapter extracts from
+- `/Users/helderdene/IRMS/app/Events/IncidentCreated.php` — existing broadcast event pattern (ShouldDispatchAfterCommit + broadcastWith)
+- `/Users/helderdene/IRMS/routes/channels.php` — existing private channel auth pattern (`dispatch.incidents`, `incident.{id}`, `user.{id}`)
+- `/Users/helderdene/IRMS/routes/web.php` — existing route-group-by-role pattern
+- `/Users/helderdene/IRMS/resources/js/composables/useDispatchFeed.ts` — composable hub pattern to mirror in `useFrasFeed.ts`
+- `/Users/helderdene/IRMS/composer.json` — existing `dev` script with 5 processes; add 6th for MQTT
+- `/Users/helderdene/IRMS/app/Enums/{UserRole,IncidentChannel}.php` — existing roles and channels to reuse (5 roles, 5 channels)
+- `/Users/helderdene/IRMS/app/Services/BarangayLookupService.php` and siblings — existing service-layer + Contracts binding convention
+- `/Users/helderdene/fras/app/Mqtt/{TopicRouter.php,Handlers/*.php,Contracts/MqttHandler.php}` — to be ported with handler enhancements
+- `/Users/helderdene/fras/app/Console/Commands/FrasMqttListenCommand.php` — long-running subscriber template
+- `/Users/helderdene/fras/app/Jobs/EnrollPersonnelBatch.php` — WithoutOverlapping middleware pattern
+- `/Users/helderdene/fras/app/Services/CameraEnrollmentService.php` — enrollment service ported
+- `/Users/helderdene/fras/config/hds.php` — config file renamed `config/fras.php` in IRMS
+- `/Users/helderdene/IRMS/.planning/PROJECT.md` — v2.0 target features and constraints (canonical)
+- `/Users/helderdene/fras/.planning/PROJECT.md` — FRAS v1.0 validated requirements (canonical)
 
 ---
-*Architecture research for: Emergency Incident Response Management System (IRMS)*
-*Researched: 2026-03-12*
+*Architecture research for: FRAS integration into IRMS v2.0*
+*Researched: 2026-04-21*
