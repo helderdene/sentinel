@@ -123,12 +123,23 @@ class DispatchConsoleController extends Controller
             'active_camera_count' => Camera::query()->whereNull('decommissioned_at')->count(),
         ];
 
+        $cameras = Camera::active()->get()->map(fn (Camera $c) => [
+            'id' => $c->id,
+            'camera_id_display' => $c->camera_id_display,
+            'name' => $c->name,
+            'status' => $c->status->value,
+            'coordinates' => $c->location
+                ? ['lat' => $c->location->getLatitude(), 'lng' => $c->location->getLongitude()]
+                : null,
+        ])->filter(fn ($c) => $c['coordinates'] !== null)->values();
+
         return Inertia::render('dispatch/Console', [
             'incidents' => $incidents,
             'units' => $units,
             'agencies' => $agencies,
             'metrics' => $metrics,
             'mqtt_listener_health' => $mqttListenerHealth,
+            'cameras' => $cameras,
         ]);
     }
 
