@@ -104,7 +104,7 @@ Plans:
   6. The MQTT listener runs under its own Supervisor program, never under Horizon, and a Horizon restart leaves the listener untouched (verified by a Supervisor status check after `horizon:terminate`)
 **Plans:** 6 plans
 Plans:
-- [ ] 19-01-PLAN.md — Wave 1: install php-mqtt/laravel-client + configs (fras.php, mqtt-client.php dual subscriber/publisher, horizon fras-supervisor, logging mqtt channel, filesystems fras_events disk) + RecognitionSeverity::fromEvent() classifier (MQTT-06, Wave 0 gap A1)
+- [x] 19-01-PLAN.md — Wave 1: install php-mqtt/laravel-client + configs (fras.php, mqtt-client.php dual subscriber/publisher, horizon fras-supervisor, logging mqtt channel, filesystems fras_events disk) + RecognitionSeverity::fromEvent() classifier (MQTT-06, Wave 0 gap A1)
 - [ ] 19-02-PLAN.md — Wave 2: MqttHandler interface + 4 handler stubs + TopicRouter with liveness cache write + per-pattern Pest tests (MQTT-02, Pitfall 18)
 - [ ] 19-03-PLAN.md — Wave 3: 4 handler implementations — RecognitionHandler (personName/persionName fallback, idempotency, images, unknown-camera drop) + Heartbeat/OnlineOffline/Ack (MQTT-02, MQTT-03)
 - [ ] 19-04-PLAN.md — Wave 3: FrasMqttListenCommand + FrasMqttListenerWatchdogCommand + MqttListenerHealthChanged event + routes/console.php 30s schedule (MQTT-01, MQTT-04, MQTT-05)
