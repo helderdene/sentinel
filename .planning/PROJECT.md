@@ -99,7 +99,7 @@ Target features:
 - [ ] Personnel management + BOLO/block-list enrollment sync to cameras (managed from IRMS admin)
 - [ ] FRAS alert feed + event history (severity-classified alerts, acknowledge/dismiss, image retention)
 - [ ] Recognition events ingested through existing IoT intake channel (no new channel)
-- [ ] Framework upgrade: Laravel 12 → 13 (keep PostgreSQL/PostGIS; port FRAS MySQL schema to Postgres)
+- ✓ Framework upgrade: Laravel 12 → 13 (v2.0 Phase 17, 2026-04-21) — aligned ecosystem packages, drain-and-deploy runbook shipped, incident report PDF download gap closed
 
 Key constraints:
 
@@ -188,4 +188,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-21 — milestone v2.0 FRAS Integration started*
+*Last updated: 2026-04-21 — v2.0 Phase 17 (Laravel 13 upgrade) complete*

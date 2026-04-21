@@ -46,7 +46,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 ### 🚧 v2.0 FRAS Integration (Phases 17-22)
 
-- [ ] **Phase 17: Laravel 12 → 13 Upgrade** — Feature-free framework upgrade; six v1.0 broadcast events emit identical payloads pre/post; Horizon drain-and-deploy protocol documented
+- [x] **Phase 17: Laravel 12 → 13 Upgrade** — Feature-free framework upgrade; six v1.0 broadcast events emit identical payloads pre/post; Horizon drain-and-deploy protocol documented (completed 2026-04-21)
 - [ ] **Phase 18: FRAS Schema Port to PostgreSQL** — Feature-free schema port: 4 empty FRAS tables with UUID PKs, JSONB + GIN indexes, TIMESTAMPTZ, Magellan geography; Pest runs FRAS groups on Postgres
 - [ ] **Phase 19: MQTT Pipeline + Listener Infrastructure** — Dedicated `irms-mqtt` Supervisor program (not under Horizon), `irms:mqtt-listen` command, TopicRouter + 4 handlers, listener-health heartbeat banner
 - [ ] **Phase 20: Camera + Personnel Admin + Enrollment** — Admin CRUD for cameras + personnel, MapLibre camera picker, `CameraEnrollmentService` with per-camera mutex, BOLO categories with expiry auto-unenroll
@@ -65,12 +65,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. An admin following the documented Horizon drain-and-deploy protocol can deploy Laravel 13 without any queued job executing under a mixed-version worker (drain → deploy → restart is reproducible and documented in `docs/operations/`)
   4. A dispatcher completing a full Report → Triage → Dispatch → Acknowledge → OnScene → Resolve cycle on the upgraded build sees no behavioral difference from the v1.0 build (spot-verified against v1.0 UAT scripts)
   5. Inertia v2 is pinned and Fortify features are explicitly listed — no surprise passkey surface or v3 shim activates during the upgrade
-**Plans:** 4 plans (1 gap-closure)
+**Plans:** 4/4 plans complete
 Plans:
-- [ ] 17-01-PLAN.md — Wave 1: capture six byte-identical broadcast payload snapshots on Laravel 12 (FRAMEWORK-02 regression baseline, D-04 Commit 1)
+- [x] 17-01-PLAN.md — Wave 1: capture six byte-identical broadcast payload snapshots on Laravel 12 (FRAMEWORK-02 regression baseline, D-04 Commit 1)
 - [x] 17-02-PLAN.md — Wave 2 (RESCOPED 2026-04-21): atomic composer update bumping framework ^12→^13 + 11 aligned packages (tinker, magellan, dompdf, horizon, reverb, fortify, wayfinder, inertia-laravel, boost, pest) + PHP floor ^8.3 + routes/web.php CSRF rename. 6/6 broadcast snapshots byte-identical on L13. All full-suite failures classified as baseline Family A/B (no new regressions).
-- [ ] 17-03-PLAN.md — Wave 3 (NARROWED scope — aligned package bumps absorbed into Wave 2): Wayfinder TS regen (`php artisan wayfinder:generate`), docs/operations/laravel-13-upgrade.md runbook with drain-and-deploy + rollback (FRAMEWORK-03), final Horizon health check + v1.0 UAT spot-check
-- [ ] 17-04-PLAN.md — Wave 4 (GAP CLOSURE 2026-04-21): close the single UAT gap from Test 1 (17-HUMAN-UAT.md) — add GET /incidents/{incident}/report.pdf route + `download-incident-report` Gate + Wayfinder action + conditional Download Report button on incidents/Show.vue + 10-case Pest feature test. Pre-existing v1.0 gap; PDF was already generated but never exposed.
+- [x] 17-03-PLAN.md — Wave 3 (NARROWED scope — aligned package bumps absorbed into Wave 2): Wayfinder TS regen (`php artisan wayfinder:generate`), docs/operations/laravel-13-upgrade.md runbook with drain-and-deploy + rollback (FRAMEWORK-03), final Horizon health check + v1.0 UAT spot-check
+- [x] 17-04-PLAN.md — Wave 4 (GAP CLOSURE 2026-04-21): close the single UAT gap from Test 1 (17-HUMAN-UAT.md) — add GET /incidents/{incident}/report.pdf route + `download-incident-report` Gate + Wayfinder action + conditional Download Report button on incidents/Show.vue + 10-case Pest feature test. Pre-existing v1.0 gap; PDF was already generated but never exposed.
 
 ### Phase 18: FRAS Schema Port to PostgreSQL
 **Goal**: The four FRAS tables exist empty in IRMS's PostgreSQL database with types that match IRMS conventions (UUID PKs, JSONB, TIMESTAMPTZ, Magellan geography) and with the idempotency constraint recognition ingestion will rely on, so Phase 19 and Phase 20 can begin persisting data without schema churn
@@ -161,7 +161,7 @@ Plans:
 | 14. Sentinel Rebrand | v1.0 | 3/3 | Complete | 2026-03-14 |
 | 15. Close RSPDR Real-Time Dispatch Visibility | v1.0 | 2/2 | Complete | 2026-04-17 |
 | 16. v1.0 Hygiene & Traceability Cleanup | v1.0 | 3/3 | Complete | 2026-04-17 |
-| 17. Laravel 12 → 13 Upgrade | v2.0 | 0/3 | Planned | — |
+| 17. Laravel 12 → 13 Upgrade | v2.0 | 4/4 | Complete    | 2026-04-21 |
 | 18. FRAS Schema Port to PostgreSQL | v2.0 | 0/? | Not started | — |
 | 19. MQTT Pipeline + Listener Infrastructure | v2.0 | 0/? | Not started | — |
 | 20. Camera + Personnel Admin + Enrollment | v2.0 | 0/? | Not started | — |

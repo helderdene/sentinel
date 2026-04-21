@@ -144,9 +144,9 @@ Phase mapping (populated 2026-04-21 by gsd-roadmapper). All 43 v2.0 requirements
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FRAMEWORK-01 | Phase 17 | Pending |
-| FRAMEWORK-02 | Phase 17 | Pending |
-| FRAMEWORK-03 | Phase 17 | Pending |
+| FRAMEWORK-01 | Phase 17 | Complete |
+| FRAMEWORK-02 | Phase 17 | Complete |
+| FRAMEWORK-03 | Phase 17 | Complete |
 | FRAMEWORK-04 | Phase 18 | Pending |
 | FRAMEWORK-05 | Phase 18 | Pending |
 | FRAMEWORK-06 | Phase 18 | Pending |

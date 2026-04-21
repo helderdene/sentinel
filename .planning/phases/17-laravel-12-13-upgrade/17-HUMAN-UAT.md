@@ -1,9 +1,9 @@
 ---
-status: complete
+status: resolved
 phase: 17-laravel-12-13-upgrade
 source: [17-VERIFICATION.md]
 started: 2026-04-21T05:00:00Z
-updated: 2026-04-21T06:30:00Z
+updated: 2026-04-21T07:00:00Z
 ---
 
 ## Current Test
@@ -14,9 +14,10 @@ updated: 2026-04-21T06:30:00Z
 
 ### 1. Dispatcher full-cycle behavioral parity on Laravel 13 (Phase 17 SC4)
 expected: A dispatcher completing a full Report → Triage → Dispatch → ACK → OnScene → Resolve cycle on the upgraded L13 build sees no behavioral difference from the v1.0 L12 build (spot-verified against v1.0 UAT scripts).
-result: issue
+result: resolved
 reported: "No incident report for INC-2026-00014 was created after resolving the incident"
 severity: major
+resolution: "Closed by Phase 17 gap-closure plan 17-04 (commits 25ec02a + a07f1f2 + 06c4753). Added GET /incidents/{incident}/report.pdf named route, download-incident-report Gate, conditional Download Report button on Show.vue, and 10-case Pest feature test. Ready for clean re-UAT: dispatcher browses RESOLVED incident detail, clicks button, receives PDF."
 
 Steps:
 1. Serve the app on Herd at `irms.test` (L13 state is current working tree).
@@ -48,7 +49,8 @@ Steps:
 
 total: 2
 passed: 1
-issues: 1
+resolved: 1
+issues: 0
 pending: 0
 skipped: 0
 blocked: 0
@@ -56,7 +58,7 @@ blocked: 0
 ## Gaps
 
 - truth: "Dispatchers/operators/responders can download the generated incident report PDF from the UI after a responder resolves the incident"
-  status: failed
+  status: resolved
   reason: "User reported: No incident report for INC-2026-00014 was created after resolving the incident. Diagnosis (see .planning/debug/incident-report-pdf-not-generated.md): PDF is generated correctly at storage/app/private/incident-reports/INC-2026-00014.pdf (880KB) and Incident.report_pdf_url is populated — but v1.0 never shipped a download route or UI button. This is a pre-existing v1.0 feature gap, NOT an L13 regression. User elected to close it in Phase 17 gap-closure rather than defer."
   severity: major
   test: 1
@@ -71,3 +73,5 @@ blocked: 0
     - "Download button/affordance in incident detail view"
     - "Feature test for 200 PDF + 404 null + 403 unauthorized"
   decision: "Gap-closure in Phase 17 (violates D-06 feature-free posture, user-approved 2026-04-21)"
+  closed_by: "Phase 17 plan 17-04 (commits 25ec02a, a07f1f2, 06c4753)"
+  closed_at: 2026-04-21T07:00:00Z

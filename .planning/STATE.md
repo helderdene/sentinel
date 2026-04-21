@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
-status: executing
+status: ready_to_plan
 stopped_at: "Completed 17-03-PLAN.md (Wave 3: Wayfinder regen verified no-op + runbook shipped + final regression gate)"
-last_updated: "2026-04-21T06:03:34.696Z"
-last_activity: 2026-04-21 -- Phase --phase execution started
+last_updated: "2026-04-21T06:55:21.748Z"
+last_activity: 2026-04-21 -- Phase 17 execution started
 progress:
   total_phases: 6
   completed_phases: 1
-  total_plans: 3
+  total_plans: 4
   completed_plans: 3
-  percent: 100
+  percent: 17
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-21)
 
 **Core value:** Dispatchers can receive an incident report, triage it, assign the nearest available unit, and track the response in real-time on a live map.
-**Current focus:** Phase --phase — 17
+**Current focus:** Phase 17 — laravel-12-13-upgrade
 
 ## Current Position
 
-Phase: --phase (17) — EXECUTING
-Plan: 1 of --name
-Status: Executing Phase --phase
-Last activity: 2026-04-21 -- Phase --phase execution started
+Phase: 18
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-04-21
 
 Progress: [██████████] 100%
 
@@ -49,7 +49,7 @@ Progress: [██████████] 100%
 
 **Velocity:**
 
-- Total plans completed: 28
+- Total plans completed: 32
 - Average duration: 14min
 - Total execution time: 5.3 hours
 
@@ -65,6 +65,7 @@ Progress: [██████████] 100%
 | 9. Citizen Reporting App | 3/3 | 57min | 19min |
 | 15 | 2 | - | - |
 | 16 | 3 | - | - |
+| 17 | 4 | - | - |
 
 **Recent Trend:**
 
