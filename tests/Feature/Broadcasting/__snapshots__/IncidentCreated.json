@@ -1,0 +1,19 @@
+{
+    "id": "01929000-aaaa-bbbb-cccc-000000000001",
+    "incident_no": "INC-2026-00001",
+    "priority": "P2",
+    "status": "PENDING",
+    "incident_type_id": 1,
+    "incident_type": "Fire",
+    "location_text": "J.C. Aquino Ave.",
+    "barangay": "Libertad",
+    "channel": "phone",
+    "coordinates": {
+        "lat": 8.9475,
+        "lng": 125.5406
+    },
+    "caller_name": "Snapshot Tester",
+    "caller_contact": "09171234567",
+    "notes": "Fixture data",
+    "created_at": "2026-04-21T00:00:00.000000Z"
+}

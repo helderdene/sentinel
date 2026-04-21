@@ -1,0 +1,12 @@
+{
+    "id": "01929000-aaaa-bbbb-cccc-000000000002",
+    "incident_no": "INC-2026-00002",
+    "old_status": "PENDING",
+    "new_status": "TRIAGED",
+    "priority": "P2",
+    "acknowledged_at": null,
+    "en_route_at": null,
+    "on_scene_at": null,
+    "resolving_at": null,
+    "resolved_at": null
+}
