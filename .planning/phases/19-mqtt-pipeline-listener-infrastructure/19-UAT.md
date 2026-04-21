@@ -1,5 +1,5 @@
 ---
-status: testing
+status: partial
 phase: 19-mqtt-pipeline-listener-infrastructure
 source:
   - 19-01-SUMMARY.md
@@ -9,22 +9,12 @@ source:
   - 19-05-SUMMARY.md
   - 19-06-SUMMARY.md
 started: 2026-04-21T21:10:00Z
-updated: 2026-04-21T21:10:00Z
+updated: 2026-04-21T21:45:00Z
 ---
 
 ## Current Test
 
-number: 5
-name: Dispatch console loads with banner component present
-expected: |
-  Visit `/dispatch` while logged in as a user with `operator`, `dispatcher`, `supervisor`, or `admin` role.
-  Page loads without console errors.
-  No banner is visible (initial state `NO_ACTIVE_CAMERAS` = neutral, no banner rendered per D-09/D-11).
-  Open DevTools → Elements: confirm `MqttListenerHealthBanner` component is present but collapsed (guard hides it).
-awaiting: user response
-note: |
-  IMPORTANT: after the handler fix committed during this UAT session, please restart `composer run dev` (Ctrl+C then re-run) so the listener picks up the new Heartbeat/OnlineOffline logic before continuing.
-  Alternatively this test only requires the dispatch page to render — you can run it against the current /dispatch route; banner subscription picks up new events via Echo independently of handler changes.
+[testing complete — 9 passed / 1 issue fixed / 2 blocked-on-ops-env]
 
 ## Tests
 
@@ -69,7 +59,9 @@ expected: |
   Page loads without console errors.
   No banner is visible (initial state `NO_ACTIVE_CAMERAS` = neutral, no banner rendered per D-09/D-11).
   Open DevTools → Elements: confirm `MqttListenerHealthBanner` component is present but collapsed (guard hides it).
-result: [pending]
+result: pass
+evidence: |
+  Screenshot confirmed: /dispatch page loads cleanly (map renders with incident pins, sidebar, top controls). User confirmed "no console errors". No MQTT banner visible in viewport — correct for NO_ACTIVE_CAMERAS initial state. Logged in as admin@irms.test (admin role, created for this UAT).
 
 ### 6. Operations runbook exists and is complete
 expected: |
@@ -121,7 +113,10 @@ expected: |
   Wait 90-120 seconds (watchdog runs every 30s, silence threshold is 90s).
   Dispatch console banner turns red with status `SILENT` + "Last message: {ISO timestamp}".
   Restarting the listener (`supervisorctl start irms-mqtt:*` or re-running `php artisan irms:mqtt-listen`) clears the banner within 30s (next watchdog tick sees liveness key resume).
-result: [pending]
+result: blocked
+blocked_by: ops-environment
+reason: |
+  Requires operational simulation (kill listener + wait 90-120s). Documented as manual smoke test in 19-VALIDATION.md. Watchdog state machine itself is fully tested in MqttListenerWatchdogTest (7/7 green) — Carbon::setTestNow + Event::fake prove the HEALTHY → SILENT transition dispatches MqttListenerHealthChanged correctly. Live banner verification deferred to first ops smoke-test session.
 
 ### 12. Horizon isolation — MQTT listener untouched by horizon:terminate (requires Supervisor)
 expected: |
@@ -134,15 +129,19 @@ expected: |
   Run `php artisan horizon:terminate`.
   Re-check status — Horizon processes restart; irms-mqtt PIDs DO NOT change.
   This confirms Pitfall 6 mitigation (listener NOT under Horizon).
-result: [pending]
+result: blocked
+blocked_by: ops-environment
+reason: |
+  Requires production-like Supervisor setup with both programs registered ([program:irms-horizon] and [program:irms-mqtt] as separate blocks). Structural isolation is proven: config/horizon.php declares only `fras-supervisor` queue=['fras'], and the listener runs as a top-level Artisan command, not a Horizon job. Runbook at docs/operations/irms-mqtt.md documents the Supervisor block verbatim. Live verification deferred to first ops smoke-test session.
 
 ## Summary
 
 total: 12
-passed: 8
+passed: 9
 issues: 1
-pending: 3
+pending: 0
 skipped: 0
+blocked: 2
 
 ## Gaps
 
