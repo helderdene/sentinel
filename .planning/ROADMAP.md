@@ -65,7 +65,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. An admin following the documented Horizon drain-and-deploy protocol can deploy Laravel 13 without any queued job executing under a mixed-version worker (drain → deploy → restart is reproducible and documented in `docs/operations/`)
   4. A dispatcher completing a full Report → Triage → Dispatch → Acknowledge → OnScene → Resolve cycle on the upgraded build sees no behavioral difference from the v1.0 build (spot-verified against v1.0 UAT scripts)
   5. Inertia v2 is pinned and Fortify features are explicitly listed — no surprise passkey surface or v3 shim activates during the upgrade
-**Plans**: TBD
+**Plans:** 3 plans
+Plans:
+- [ ] 17-01-PLAN.md — Wave 1: capture six byte-identical broadcast payload snapshots on Laravel 12 (FRAMEWORK-02 regression baseline, D-04 Commit 1)
+- [ ] 17-02-PLAN.md — Wave 2: bump framework + tinker to L13, PHP floor to ^8.3, rename CSRF middleware (routes/web.php 3 lines), add serializable_classes config, pin Fortify features comment (D-04 Commit 2)
+- [ ] 17-03-PLAN.md — Wave 3: aligned package bumps (Horizon 5.45.6, Reverb 1.10, Fortify 1.36, Wayfinder 0.1.14, Inertia-Laravel 2.0.24, Boost 2.4, Magellan 2.1, Pest 4.6), Wayfinder regen, docs/operations/laravel-13-upgrade.md runbook with drain-and-deploy + rollback (D-04 Commit 3)
 
 ### Phase 18: FRAS Schema Port to PostgreSQL
 **Goal**: The four FRAS tables exist empty in IRMS's PostgreSQL database with types that match IRMS conventions (UUID PKs, JSONB, TIMESTAMPTZ, Magellan geography) and with the idempotency constraint recognition ingestion will rely on, so Phase 19 and Phase 20 can begin persisting data without schema churn
@@ -156,7 +160,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 | 14. Sentinel Rebrand | v1.0 | 3/3 | Complete | 2026-03-14 |
 | 15. Close RSPDR Real-Time Dispatch Visibility | v1.0 | 2/2 | Complete | 2026-04-17 |
 | 16. v1.0 Hygiene & Traceability Cleanup | v1.0 | 3/3 | Complete | 2026-04-17 |
-| 17. Laravel 12 → 13 Upgrade | v2.0 | 0/? | Not started | — |
+| 17. Laravel 12 → 13 Upgrade | v2.0 | 0/3 | Planned | — |
 | 18. FRAS Schema Port to PostgreSQL | v2.0 | 0/? | Not started | — |
 | 19. MQTT Pipeline + Listener Infrastructure | v2.0 | 0/? | Not started | — |
 | 20. Camera + Personnel Admin + Enrollment | v2.0 | 0/? | Not started | — |
