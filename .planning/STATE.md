@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
 status: executing
-stopped_at: Phase 20 Plan 05 complete (Wave 2 admin personnel CRUD + two-namespace photo URL)
-last_updated: "2026-04-21T15:45:00.000Z"
+stopped_at: Phase 20 Plan 06 complete (Wave 3 scheduled commands — camera watchdog + personnel expire sweep)
+last_updated: "2026-04-21T16:15:00.000Z"
 last_activity: 2026-04-21
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 24
-  completed_plans: 21
-  percent: 88
+  completed_plans: 22
+  percent: 92
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-04-21)
 ## Current Position
 
 Phase: 20 (camera-personnel-admin-enrollment) — EXECUTING
-Plan: 5 of 8 complete (Wave 2 sequential path — plans 01, 02, 03, 04 done; 05 just landed)
+Plan: 6 of 8 complete (Wave 3 sequential — plan 06 scheduled commands landed)
 Status: Ready to execute
 Last activity: 2026-04-21
 
-Progress: [████████▊░] 88%
+Progress: [█████████▏] 92%
 
 ## v2.0 Phase Breakdown
 
@@ -125,6 +125,7 @@ Progress: [████████▊░] 88%
 | Phase Phase 18 PP06 | 3min | 2 tasks tasks | 2 files files |
 | Phase 20 P04 | 6min | 2 tasks | 7 files |
 | Phase 20 P05 | 7min | 3 tasks | 16 files |
+| Phase 20 P06 | 22min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -359,6 +360,10 @@ Decisions are logged in PROJECT.md Key Decisions table.
 - [20-05]: destroy() calls `$service->deleteFromAllCameras($personnel)` explicitly — PersonnelObserver's `deleted` hook never fires on soft-decommission (the row is updated, not deleted), so DeletePersons MQTT must be published directly from the controller.
 - [20-05]: photo_access_token is a PostgreSQL uuid column (not varchar) — test fixtures must use Str::uuid() not free-form strings; `'old-token-xxx'` from the plan was corrected to Str::uuid()->toString() during GREEN.
 - [20-05]: Broadcast auth matrix dropped Citizen role entirely — UserRole enum has 5 cases (Admin/Supervisor/Operator/Dispatcher/Responder), no Citizen. fras.cameras allows 4 denies 1; fras.enrollments allows 2 denies 3; 10 assertions total.
+- [20-06]: Pinned pgsql session timezone to UTC via config/database.php 'timezone' => env('DB_TIMEZONE', 'UTC') — closes pre-existing TIMESTAMPTZ round-trip skew where PG's Asia/Manila session reinterpreted Eloquent's no-TZ Y-m-d H:i:s strings, producing an 8hr offset between writes and reads. Documented as a config gap in HeartbeatHandlerTest L25-28 prior to this plan; CameraWatchdogCommand cannot function correctly without the fix.
+- [20-06]: Transition-only CameraStatusChanged dispatch (if $camera->status !== $newStatus) prevents broadcast storm on steady-state ticks — T-20-06-01 mitigation. Test asserts 3 cameras at gap=10s produce 0 broadcasts.
+- [20-06]: PersonnelExpireSweepCommand uses bulk CameraEnrollment::where(...)->update(['status' => Done]) — no per-row broadcast because FRAS has no delete ACK (D-14); the flip is bookkeeping, the personnel row is already decommissioned and scopeActive will hide it from admin UI.
+- [20-06]: Carbon::setTestNow(Carbon::parse('...', 'UTC')) preferred over literal string form — robust to future database.php TZ config changes.
 
 ### Roadmap Evolution
 
@@ -402,9 +407,9 @@ All 5 items remain open for v2 milestone decision (verify / fix / close-out).
 
 ## Session Continuity
 
-Last session: 2026-04-21T15:45:00.000Z
-Stopped at: Phase 20 Plan 05 complete (Wave 2 admin personnel CRUD + two-namespace photo URL scheme)
+Last session: 2026-04-21T16:15:00.000Z
+Stopped at: Phase 20 Plan 06 complete (Wave 3 scheduled commands — camera watchdog + personnel expire sweep)
 Resume file: None
 
 **Planned Phase:** 20 (Camera + Personnel Admin + Enrollment) — 8 plans — 2026-04-21T14:47:52.037Z
-**Plan 05 Wave 2 progress:** FrasPhotoAccessController (public token-gated /fras/photo/{token} with enrollment-state revocation + mqtt access log), AdminPersonnelController (7 methods + custom_id derivation + photo_access_token rotation), AdminPersonnelPhotoController (signed-URL + D-22 role gate via new routes/fras.php), EnrollmentController (retry + resyncAll), broadcast auth role matrix. Full fras group: 93 passed + 0 skipped (was 63+1 before — +29 new + 1 previously-skipped unskipped).
+**Plan 06 Wave 3 progress:** CameraWatchdogCommand (irms:camera-watchdog, everyMinute, transition-only CameraStatusChanged dispatch) + PersonnelExpireSweepCommand (irms:personnel-expire-sweep, hourly, calls CameraEnrollmentService::deleteFromAllCameras + soft-decommission + bulk enrollment→Done + mqtt audit log). Schedule::command registrations appended to routes/console.php; both ->withoutOverlapping(). Pre-existing pgsql session TZ gap fixed by setting 'timezone' => env('DB_TIMEZONE', 'UTC') on the pgsql connection — without the fix, last_seen_at round-trip drift made every camera flip to Offline. Full fras group: 104 passed (+5 from baseline 99), 306 assertions. No regressions.
