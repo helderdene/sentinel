@@ -3,6 +3,7 @@
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\DirectionsController;
 use App\Http\Controllers\DispatchConsoleController;
+use App\Http\Controllers\Fras\FrasPhotoAccessController;
 use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\IntakeStationController;
 use App\Http\Controllers\IoTWebhookController;
@@ -23,6 +24,12 @@ Route::prefix('webhooks')->group(function () {
         ->withoutMiddleware([PreventRequestForgery::class])
         ->name('webhooks.sms-inbound');
 });
+
+// Public token-gated FRAS photo endpoint (Phase 20 D-20..D-23).
+// No auth middleware — the UUID token IS the access boundary. Access
+// revokes automatically once every enrollment settles (see controller).
+Route::get('/fras/photo/{token}', [FrasPhotoAccessController::class, 'show'])
+    ->name('fras.photo.show');
 
 // Serve service worker from root scope with correct headers.
 // In dev: minimal SW with push handlers only (no precaching).
