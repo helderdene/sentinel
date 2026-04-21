@@ -25,6 +25,13 @@ return new class extends Migration
                 ->nullOnDelete();
 
             $table->text('notes')->nullable()->after('decommissioned_at');
+
+            // StoreCameraRequest marks location_label as `nullable` and the
+            // Plan 07 Mapbox picker only emits it after reverseGeocode
+            // resolves — which may fail or be skipped. The Phase 18 schema
+            // shipped with NOT NULL; loosen here so the controller can
+            // persist null without violating the constraint.
+            $table->string('location_label', 150)->nullable()->change();
         });
     }
 
@@ -34,6 +41,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('cameras', function (Blueprint $table) {
+            $table->string('location_label', 150)->nullable(false)->change();
             $table->dropConstrainedForeignId('barangay_id');
             $table->dropColumn('notes');
         });
