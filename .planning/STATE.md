@@ -4,14 +4,14 @@ milestone: v2.0
 milestone_name: FRAS Integration
 status: executing
 stopped_at: Phase 20 UI-SPEC approved
-last_updated: "2026-04-21T14:50:37.306Z"
-last_activity: 2026-04-21 -- Phase 20 execution started
+last_updated: "2026-04-21T23:30:00.000Z"
+last_activity: 2026-04-21 -- Phase 20 Plan 03 complete (Wave 2 runtime round-trip)
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 24
-  completed_plans: 16
-  percent: 67
+  completed_plans: 17
+  percent: 71
 ---
 
 # Project State
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-04-21)
 ## Current Position
 
 Phase: 20 (camera-personnel-admin-enrollment) — EXECUTING
-Plan: 1 of 8
+Plan: 3 of 8 complete (Wave 2 sequential path — plans 01, 02, 03 done)
 Status: Executing Phase 20
-Last activity: 2026-04-21 -- Phase 20 execution started
+Last activity: 2026-04-21 -- Phase 20 Plan 03 complete (EnrollPersonnelBatch + PersonnelObserver + AckHandler round-trip)
 
 Progress: [██████████] 100%
 
@@ -343,6 +343,11 @@ Decisions are logged in PROJECT.md Key Decisions table.
 - [18-06]: ILIKE (not LIKE) for all pg_indexes.indexdef string matches — PostGIS emits USING gist / USING GIST inconsistently across versions; case-insensitive matches survive extension upgrades without test-suite churn
 - [18-06]: EnumCheckParityTest placed under tests/Feature/Fras/ (not Unit/Conventions/) — live pg_constraint introspection is Feature-shaped; placement inherits RefreshDatabase + pgsql binding automatically and colocates with fras-group tests
 - [18-06]: Sorted-array equality (collect()->sort()->values()->all()) for enum-vs-CHECK parity — one expression, symmetric, fails loudly on either-side drift without two-direction array_diff comparison
+- [20-03]: EnrollPersonnelBatch `$queue = 'fras'` set via constructor assignment instead of typed property — Queueable trait pre-declares `public $queue` (untyped) and a typed redeclaration causes a trait-composition fatal at class load; constructor assignment preserves the queue contract without the trait conflict
+- [20-03]: AppServiceProvider observer registration uses `configureObservers()` helper method following existing configureDefaults/Gates/RateLimiters/EventListeners pattern — keeps boot() a single-responsibility dispatcher
+- [20-03]: CameraEnrollmentService declared `final` (FRAS port norm) blocks Mockery doubling — EnrollPersonnelBatch delegation test uses MQTT::shouldReceive side-effect observation (topic + payload substring + row transition) instead of method-level mock; equivalent coverage without subclass workaround
+- [20-03]: AckHandler warn-log tests use explicit `Mockery::spy(LoggerInterface::class)` bound via `Log::shouldReceive('channel')->andReturn($spy)` instead of `Log::spy()` — `Log::spy()`'s channel() returns null which fatals before assertion reach
+- [20-03]: Cache::pull atomicity verified under ArrayStore (Laravel's .env.testing default) — idempotency test proves duplicate ACK delivery produces exactly 1 transition under array driver; production Redis gets true LUA atomicity automatically
 
 ### Roadmap Evolution
 
@@ -386,8 +391,9 @@ All 5 items remain open for v2 milestone decision (verify / fix / close-out).
 
 ## Session Continuity
 
-Last session: --stopped-at
-Stopped at: Phase 20 UI-SPEC approved
-Resume file: --resume-file
+Last session: 2026-04-21T23:30:00Z
+Stopped at: Phase 20 Plan 03 complete (Wave 2 runtime round-trip)
+Resume file: .planning/phases/20-camera-personnel-admin-enrollment/20-03-SUMMARY.md
 
 **Planned Phase:** 20 (Camera + Personnel Admin + Enrollment) — 8 plans — 2026-04-21T14:47:52.037Z
+**Plan 03 Wave 2 progress:** EnrollPersonnelBatch (stub → FRAS port), PersonnelObserver (wasChanged-gated + delete cascade), AckHandler::handle() (D-16 body + Cache::pull idempotency). Full fras group: 51 passed + 1 skipped.
