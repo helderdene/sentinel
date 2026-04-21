@@ -108,7 +108,7 @@ Plans:
 - [x] 19-02-PLAN.md — Wave 2: MqttHandler interface + 4 handler stubs + TopicRouter with liveness cache write + per-pattern Pest tests (MQTT-02, Pitfall 18)
 - [x] 19-03-PLAN.md — Wave 3: 4 handler implementations — RecognitionHandler (personName/persionName fallback, idempotency, images, unknown-camera drop) + Heartbeat/OnlineOffline/Ack (MQTT-02, MQTT-03)
 - [x] 19-04-PLAN.md — Wave 3: FrasMqttListenCommand + FrasMqttListenerWatchdogCommand + MqttListenerHealthChanged event + routes/console.php 30s schedule (MQTT-01, MQTT-04, MQTT-05)
-- [ ] 19-05-PLAN.md — Wave 4: DispatchConsoleController mqtt_listener_health shared prop + MqttListenerHealthBanner.vue + useDispatchFeed.ts Echo subscription + Console.vue banner wiring (MQTT-05 UI)
+- [x] 19-05-PLAN.md — Wave 4: DispatchConsoleController mqtt_listener_health shared prop + MqttListenerHealthBanner.vue + useDispatchFeed.ts Echo subscription + Console.vue banner wiring (MQTT-05 UI)
 - [ ] 19-06-PLAN.md — Wave 5: composer.json 6th dev process + docs/operations/irms-mqtt.md runbook (Supervisor block, deploy protocol, smoke test) + human-verify checkpoint (MQTT-01 operational, Pitfalls 6/7)
 
 ### Phase 20: Camera + Personnel Admin + Enrollment
