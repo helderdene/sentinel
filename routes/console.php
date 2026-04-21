@@ -12,3 +12,8 @@ Artisan::command('inspire', function () {
 Schedule::job(new GenerateDilgMonthlyReport)->monthlyOn(1, '00:00')
     ->timezone('Asia/Manila')
     ->description('Generate DILG monthly incident report');
+
+Schedule::command('irms:mqtt-listener-watchdog')
+    ->everyThirtySeconds()
+    ->withoutOverlapping()
+    ->description('Detect MQTT listener silence and broadcast health transitions');
