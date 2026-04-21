@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
 status: executing
-stopped_at: "Completed 17-01-PLAN.md (Wave 1: snapshot baseline on L12)"
-last_updated: "2026-04-21T05:21:38.370Z"
-last_activity: 2026-04-21 -- Phase --phase execution started
+stopped_at: "Completed 17-02-PLAN.md (Wave 2 rescoped: L13 framework + 11 aligned packages + CSRF rename atomically)"
+last_updated: "2026-04-21T05:45:00.000Z"
+last_activity: 2026-04-21 -- Completed Phase 17 Plan 02 (rescoped)
 progress:
   total_phases: 6
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
-  percent: 33
+  completed_plans: 2
+  percent: 67
 ---
 
 # Project State
@@ -113,6 +113,7 @@ Progress: [███░░░░░░░] 33%
 | Phase 16 P16-02 | 2 | 2 tasks | 1 files |
 | Phase 16 P16-03 | 21min | 3 tasks | 2 files |
 | Phase 17 P01 | 5min | 2 tasks | 12 files |
+| Phase 17 P02 | 18min | 2 tasks | 37 files |
 
 ## Accumulated Context
 
@@ -122,6 +123,9 @@ Decisions are logged in PROJECT.md Key Decisions table.
 
 **v2.0 roadmap-level decisions (2026-04-21):**
 
+- [17-02]: Wave 2 RESCOPED (2026-04-21) to absorb all aligned package bumps in a single atomic composer update. Original D-04 split framework+tinker (Commit 2) from aligned packages (Commit 3), but composer's resolver cannot land laravel/framework ^13.0 cleanly without simultaneously bumping magellan, dompdf, horizon, reverb, fortify, wayfinder, inertia-laravel, boost, pest, tinker together. Single commit preserves D-05 intent (explicit package list, no --with-all-dependencies) while acknowledging composer reality. Wave 3 is now narrowly scoped to Wayfinder TS regen + runbook + final verification.
+- [17-02]: SC1 reinterpreted as family-classification gate rather than absolute-count gate. L12 baseline (50 failures) is a single sample from a non-deterministic distribution (fake()->unique() drift in IncidentCategoryFactory). L13 5-run distribution is 41-59 failures, fully overlapping baseline within variance. Zero new root-cause families (only Family A: incident_categories_name_unique, Family B: users_pkey) confirms no L13 regression introduced.
+- [17-02]: nunomaduro/collision added to explicit composer update list as targeted transitive bump (pest ^4.6 requires collision ^8.9.3; was locked at v8.9.1). Collision's own root constraint ^8.6 already permits 8.9.3 so this is not scope expansion — it satisfies resolver without requiring -W (preserves D-05).
 - [Roadmap v2.0]: 6 phases (17-22) with forced ordering 17 → 18 → {19 ∥ 20} → 21 → 22 — all 4 research agents aligned
 - [Roadmap v2.0]: Phase 17 is feature-free Laravel 12 → 13 upgrade alone — bundling framework churn with FRAS features makes regression triage impossible
 - [Roadmap v2.0]: Phase 18 is feature-free schema port alone — MySQL → Postgres type mapping (JSONB, TIMESTAMPTZ, Magellan geography) is leaf dependency for all downstream phases

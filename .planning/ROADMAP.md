@@ -68,8 +68,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans:** 3 plans
 Plans:
 - [ ] 17-01-PLAN.md — Wave 1: capture six byte-identical broadcast payload snapshots on Laravel 12 (FRAMEWORK-02 regression baseline, D-04 Commit 1)
-- [ ] 17-02-PLAN.md — Wave 2: bump framework + tinker to L13, PHP floor to ^8.3, rename CSRF middleware (routes/web.php 3 lines), add serializable_classes config, pin Fortify features comment (D-04 Commit 2)
-- [ ] 17-03-PLAN.md — Wave 3: aligned package bumps (Horizon 5.45.6, Reverb 1.10, Fortify 1.36, Wayfinder 0.1.14, Inertia-Laravel 2.0.24, Boost 2.4, Magellan 2.1, Pest 4.6), Wayfinder regen, docs/operations/laravel-13-upgrade.md runbook with drain-and-deploy + rollback (D-04 Commit 3)
+- [x] 17-02-PLAN.md — Wave 2 (RESCOPED 2026-04-21): atomic composer update bumping framework ^12→^13 + 11 aligned packages (tinker, magellan, dompdf, horizon, reverb, fortify, wayfinder, inertia-laravel, boost, pest) + PHP floor ^8.3 + routes/web.php CSRF rename. 6/6 broadcast snapshots byte-identical on L13. All full-suite failures classified as baseline Family A/B (no new regressions).
+- [ ] 17-03-PLAN.md — Wave 3 (NARROWED scope — aligned package bumps absorbed into Wave 2): Wayfinder TS regen (`php artisan wayfinder:generate`), docs/operations/laravel-13-upgrade.md runbook with drain-and-deploy + rollback (FRAMEWORK-03), final Horizon health check + v1.0 UAT spot-check
 
 ### Phase 18: FRAS Schema Port to PostgreSQL
 **Goal**: The four FRAS tables exist empty in IRMS's PostgreSQL database with types that match IRMS conventions (UUID PKs, JSONB, TIMESTAMPTZ, Magellan geography) and with the idempotency constraint recognition ingestion will rely on, so Phase 19 and Phase 20 can begin persisting data without schema churn

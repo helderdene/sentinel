@@ -24,7 +24,8 @@ Locked before phase planning:
 
 Feature-free foundation that gates every downstream phase.
 
-- [ ] **FRAMEWORK-01**: Admin can deploy IRMS on Laravel 13 with the full v1.0 Pest suite green and no user-visible behavior change
+- [x] **FRAMEWORK-01
+**: Admin can deploy IRMS on Laravel 13 with the full v1.0 Pest suite green and no user-visible behavior change
 - [x] **FRAMEWORK-02
 **: All 6 existing Reverb broadcast events (IncidentCreated, IncidentTriaged, UnitAssigned, UnitStatusChanged, ChecklistUpdated, ResourceRequested) emit identical payloads pre- and post-upgrade
 - [ ] **FRAMEWORK-03**: Admin can follow a documented Horizon drain-and-deploy protocol so queued jobs never execute under a mixed Laravel-version worker
