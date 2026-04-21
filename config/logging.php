@@ -73,6 +73,14 @@ return [
             'replace_placeholders' => true,
         ],
 
+        'mqtt' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/mqtt.log'),
+            'level' => env('MQTT_LOG_LEVEL', 'info'),
+            'days' => env('MQTT_LOG_DAILY_DAYS', 14),
+            'replace_placeholders' => true,
+        ],
+
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),

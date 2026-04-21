@@ -60,6 +60,14 @@ return [
             'report' => false,
         ],
 
+        'fras_events' => [
+            'driver' => env('FRAS_EVENT_DISK', 'local'),
+            'root' => storage_path('app/private/fras_events'),
+            'visibility' => 'private',
+            'throw' => false,
+            'report' => false,
+        ],
+
     ],
 
     /*
