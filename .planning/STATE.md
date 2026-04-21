@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
 status: executing
-stopped_at: Completed 18-04
-last_updated: "2026-04-21T09:37:03.118Z"
+stopped_at: Completed 18-05
+last_updated: "2026-04-21T09:43:50.762Z"
 last_activity: 2026-04-21
 progress:
   total_phases: 6
   completed_phases: 1
   total_plans: 10
-  completed_plans: 8
-  percent: 80
+  completed_plans: 9
+  percent: 90
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-04-21)
 ## Current Position
 
 Phase: 18 — EXECUTING
-Plan: 5 of 6
+Plan: 6 of 6
 Status: Ready to execute
 Last activity: 2026-04-21
 
-Progress: [████████░░] 80%
+Progress: [█████████░] 90%
 
 ## v2.0 Phase Breakdown
 
@@ -120,6 +120,7 @@ Progress: [████████░░] 80%
 | Phase 18 P02 | 9min | 2 tasks | 4 files |
 | Phase Phase 18 PP03 | 3min | 2 tasks tasks | 4 files files |
 | Phase Phase 18 PP04 | 4min | 2 tasks tasks | 4 files files |
+| Phase 18 P05 | 5min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -332,6 +333,10 @@ Decisions are logged in PROJECT.md Key Decisions table.
 - [18-04]: GIN + jsonb_path_ops opclass via raw DB::statement for raw_payload (D-48) — 30% smaller than default jsonb_ops, same @> containment coverage; Blueprint does not expose opclass so raw DDL is the clean path
 - [18-04]: TIMESTAMPTZ(6) microsecond precision reserved for recognition_events.captured_at/received_at — FRAS cameras emit multi-events-per-second on busy intakes; second precision would lose ordering under burst load
 - [18-04]: RecognitionEventFactory preserves BOTH personName + persionName firmware typo in raw_payload (D-61) — Phase 19 handler parser must accept either spelling; factory output is test scaffolding for parser fallback coverage
+- [18-05]: pest()->group('fras') introduced as first Pest group tag in repo — enables ./vendor/bin/pest --group=fras subsystem-scoped runs without phpunit.xml edits (D-58)
+- [18-05]: FrasPlaceholderSeeder body left empty AND unregistered in DatabaseSeeder per D-62 — migrate:fresh --seed stays production-safe while SC4 'every table has a seeder' wording satisfied by file presence alone
+- [18-05]: CameraSpatialQueryTest uses standalone Butuan plaza lat/lng literals instead of Incident FK reference — decouples spatial proof from Incident-family schema drift, avoids IncidentFactory's FK chain, keeps test to pure ST_DWithin semantics
+- [18-05]: FRAMEWORK-05 verification is inspection-only (grep ^DB_CONNECTION=pgsql .env.testing) — .env.testing was already pgsql-configured pre-phase-18, so FRAMEWORK-05 is satisfied without reconfiguration
 
 ### Roadmap Evolution
 
@@ -375,8 +380,8 @@ All 5 items remain open for v2 milestone decision (verify / fix / close-out).
 
 ## Session Continuity
 
-Last session: 2026-04-21T09:37:03.114Z
-Stopped at: Completed 18-04
+Last session: 2026-04-21T09:43:50.751Z
+Stopped at: Completed 18-05
 Resume file: None
 
 **Planned Phase:** 18 (FRAS Schema Port to PostgreSQL) — 6 plans — 2026-04-21T08:55:03.586Z

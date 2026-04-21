@@ -32,7 +32,8 @@ Feature-free foundation that gates every downstream phase.
 **: Admin can follow a documented Horizon drain-and-deploy protocol so queued jobs never execute under a mixed Laravel-version worker
 - [x] **FRAMEWORK-04
 **: IRMS Postgres schema gains empty `cameras`, `personnel`, `camera_enrollments`, `recognition_events` tables with UUID primary keys, JSONB columns (with GIN indexes on `raw_payload`), TIMESTAMPTZ timestamps, and Magellan `geography(POINT, 4326)` for `cameras.location`
-- [ ] **FRAMEWORK-05**: Pest test suite switches to PostgreSQL for FRAS test groups so JSONB + geography behavior is actually exercised (SQLite in-memory has neither)
+- [x] **FRAMEWORK-05
+**: Pest test suite switches to PostgreSQL for FRAS test groups so JSONB + geography behavior is actually exercised (SQLite in-memory has neither)
 - [x] **FRAMEWORK-06
 **: `recognition_events` has a `(camera_id, record_id)` unique constraint for idempotency against MQTT redelivery
 
