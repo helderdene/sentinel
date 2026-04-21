@@ -1,36 +1,36 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: Hygiene & Traceability Cleanup
-status: verifying
-stopped_at: Completed 16-03-PLAN.md (Phase 16 complete — 3/3 plans)
-last_updated: "2026-04-17T12:41:26.653Z"
-last_activity: 2026-04-17
+milestone: v2.0
+milestone_name: FRAS Integration
+status: defining_requirements
+stopped_at: Milestone v2.0 started — defining requirements
+last_updated: "2026-04-21T00:00:00.000Z"
+last_activity: 2026-04-21
 progress:
-  total_phases: 16
-  completed_phases: 16
-  total_plans: 51
-  completed_plans: 51
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-12)
+See: .planning/PROJECT.md (updated 2026-04-21)
 
 **Core value:** Dispatchers can receive an incident report, triage it, assign the nearest available unit, and track the response in real-time on a live map.
-**Current focus:** Phase 16 — v1.0 Hygiene & Traceability Cleanup
+**Current focus:** Milestone v2.0 — FRAS Integration (defining requirements)
 
 ## Current Position
 
-Phase: 16
-Plan: Not started
-Status: Phase complete — ready for verification
-Last activity: 2026-04-17
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-04-21 — milestone v2.0 FRAS Integration started
 
-Progress: [██████████] 100%
+Progress: [░░░░░░░░░░] 0%
 
 ## Performance Metrics
 

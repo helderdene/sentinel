@@ -12,6 +12,21 @@ Dispatchers can receive an incident report, triage it, assign the nearest availa
 
 **Still the right core value after v1.0** — shipping validated that real-time dispatch + live map + multi-channel intake is the anchor capability; everything else orbits it.
 
+## Current Milestone: v2.0 FRAS Integration
+
+**Goal:** Embed HDSystem's Face Recognition Alert System capabilities into IRMS so that AI IP-camera recognition events flow into CDRRMO's dispatch pipeline via the existing IoT intake channel.
+
+**Target features:**
+
+- MQTT pipeline + recognition event handler (ports `php-mqtt/laravel-client`, `TopicRouter`, `RecPush`, Intervention Image v3)
+- Cameras CRUD + live heartbeat/online-offline status, rendered as a layer on the dispatch MapLibre map
+- Personnel management + BOLO/block-list enrollment sync to cameras
+- FRAS alert feed + event history with severity classification and image retention
+- Recognition events ingested through existing IoT intake channel (no new channel)
+- Laravel 12 → 13 upgrade (keep PostgreSQL/PostGIS; port FRAS MySQL schema)
+
+**Key context:** FRAS stays as a separate HDSystem product at `/Users/helderdene/fras`; IRMS gets its own CDRRMO-tailored port. Must not regress v1.0 dispatch/intake/responder flows during the framework upgrade.
+
 ## Requirements
 
 ### Validated
@@ -75,7 +90,22 @@ Dispatchers can receive an incident report, triage it, assign the nearest availa
 
 <!-- Current scope for next milestone. Populated by /gsd-new-milestone. -->
 
-- (None — run `/gsd-new-milestone` to define v2.0 scope)
+**v2.0 FRAS Integration** — embed HDSystem's Face Recognition Alert System capabilities into IRMS so AI IP-camera recognition events flow into CDRRMO's dispatch pipeline via the existing IoT intake channel.
+
+Target features:
+
+- [ ] MQTT pipeline + recognition event handler (port `php-mqtt/laravel-client`, `TopicRouter`, `RecPush` handler, Intervention Image v3 photo processing)
+- [ ] Cameras CRUD + live heartbeat/online-offline status, rendered as a layer on the dispatch MapLibre map
+- [ ] Personnel management + BOLO/block-list enrollment sync to cameras (managed from IRMS admin)
+- [ ] FRAS alert feed + event history (severity-classified alerts, acknowledge/dismiss, image retention)
+- [ ] Recognition events ingested through existing IoT intake channel (no new channel)
+- [ ] Framework upgrade: Laravel 12 → 13 (keep PostgreSQL/PostGIS; port FRAS MySQL schema to Postgres)
+
+Key constraints:
+
+- FRAS continues as a standalone HDSystem product at `/Users/helderdene/fras` (run in parallel indefinitely) — IRMS gets its own CDRRMO-tailored port, not a literal source merge
+- Must not regress v1.0 dispatch/intake/responder behavior during the framework upgrade
+- Reuses existing Reverb broadcast infrastructure; adds new channels alongside the 6 v1.0 broadcast events
 
 **v2.0 intake candidates (deferred from v1.0):**
 
@@ -140,5 +170,22 @@ Dispatchers can receive an incident report, triage it, assign the nearest availa
 | Pest convention guards | Belt-and-suspenders vs literal URL regression | ✓ Good — Phase 16 shipped `WayfinderConventionTest.php`; future violations fail CI |
 | `audited:` key in VALIDATION frontmatter (not `approved:`) | Match Phase 13 precedent verbatim for frontmatter consistency | ✓ Good — Phase 16 resolved across Phase 14 approval |
 
+## Evolution
+
+This document evolves at phase transitions and milestone boundaries.
+
+**After each phase transition** (via `/gsd-transition`):
+1. Requirements invalidated? → Move to Out of Scope with reason
+2. Requirements validated? → Move to Validated with phase reference
+3. New requirements emerged? → Add to Active
+4. Decisions to log? → Add to Key Decisions
+5. "What This Is" still accurate? → Update if drifted
+
+**After each milestone** (via `/gsd-complete-milestone`):
+1. Full review of all sections
+2. Core Value check — still the right priority?
+3. Audit Out of Scope — reasons still valid?
+4. Update Context with current state
+
 ---
-*Last updated: 2026-04-17 after v1.0 milestone completion*
+*Last updated: 2026-04-21 — milestone v2.0 FRAS Integration started*
