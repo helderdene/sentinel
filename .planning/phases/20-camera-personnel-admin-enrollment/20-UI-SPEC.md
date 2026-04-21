@@ -1,11 +1,12 @@
 ---
 phase: 20
 slug: camera-personnel-admin-enrollment
-status: draft
+status: approved
 shadcn_initialized: true
 preset: project-native (Reka UI + Sentinel token layer, pre-existing since Phase 10/14)
 created: 2026-04-21
 revised: 2026-04-21
+reviewed_at: 2026-04-21
 ---
 
 # Phase 20 — UI Design Contract
