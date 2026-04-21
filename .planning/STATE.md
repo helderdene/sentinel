@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
 status: executing
-stopped_at: Completed 18-03
-last_updated: "2026-04-21T09:30:30.138Z"
+stopped_at: Completed 18-04
+last_updated: "2026-04-21T09:37:03.118Z"
 last_activity: 2026-04-21
 progress:
   total_phases: 6
   completed_phases: 1
   total_plans: 10
-  completed_plans: 7
-  percent: 70
+  completed_plans: 8
+  percent: 80
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-04-21)
 ## Current Position
 
 Phase: 18 — EXECUTING
-Plan: 4 of 6
+Plan: 5 of 6
 Status: Ready to execute
 Last activity: 2026-04-21
 
-Progress: [███████░░░] 70%
+Progress: [████████░░] 80%
 
 ## v2.0 Phase Breakdown
 
@@ -119,6 +119,7 @@ Progress: [███████░░░] 70%
 | Phase 18 P01 | 3min | 2 tasks | 4 files |
 | Phase 18 P02 | 9min | 2 tasks | 4 files |
 | Phase Phase 18 PP03 | 3min | 2 tasks tasks | 4 files files |
+| Phase Phase 18 PP04 | 4min | 2 tasks tasks | 4 files files |
 
 ## Accumulated Context
 
@@ -326,6 +327,11 @@ Decisions are logged in PROJECT.md Key Decisions table.
 - [18-03]: Explicit constrained('personnel') table argument on foreignUuid FK — guards against Laravel pluralizer ambiguity (personnel is already plural); the Personnel model's $table override alone is insufficient at migration compile time
 - [18-03]: CameraEnrollment extends Model (not Pivot) — row has its own UUID PK + timestamps; Pivot's composite-PK semantics are wrong for row-has-id pivots
 - [18-03]: Shared Pattern B (raw DB::statement CHECK) confirmed stable on a third application (camera_enrollments.status); ready for verbatim reuse on recognition_events.severity in plan 18-04
+- [18-04]: decimal(5,2) over float for similarity (D-40) — fixed-point 0.00–100.00 prevents float rounding drift in Phase 19 dedup comparisons; 'decimal:2' cast round-trips to 2-digit-scale string preserved through JSON
+- [18-04]: foreignId(acknowledged_by)->constrained('users') coexists with foreignUuid FKs on recognition_events (D-50) — users.id is v1.0 bigint; Laravel Blueprint accepts mixed FK types in one migration without conflict
+- [18-04]: GIN + jsonb_path_ops opclass via raw DB::statement for raw_payload (D-48) — 30% smaller than default jsonb_ops, same @> containment coverage; Blueprint does not expose opclass so raw DDL is the clean path
+- [18-04]: TIMESTAMPTZ(6) microsecond precision reserved for recognition_events.captured_at/received_at — FRAS cameras emit multi-events-per-second on busy intakes; second precision would lose ordering under burst load
+- [18-04]: RecognitionEventFactory preserves BOTH personName + persionName firmware typo in raw_payload (D-61) — Phase 19 handler parser must accept either spelling; factory output is test scaffolding for parser fallback coverage
 
 ### Roadmap Evolution
 
@@ -369,8 +375,8 @@ All 5 items remain open for v2 milestone decision (verify / fix / close-out).
 
 ## Session Continuity
 
-Last session: 2026-04-21T09:30:30.132Z
-Stopped at: Completed 18-03
+Last session: 2026-04-21T09:37:03.114Z
+Stopped at: Completed 18-04
 Resume file: None
 
 **Planned Phase:** 18 (FRAS Schema Port to PostgreSQL) — 6 plans — 2026-04-21T08:55:03.586Z

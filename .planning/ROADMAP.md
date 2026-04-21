@@ -82,12 +82,12 @@ Plans:
   3. The Pest test suite for FRAS test groups runs against PostgreSQL (not SQLite in-memory), so JSONB queries and geography spatial operators are exercised in CI — and existing IRMS test groups still run against the current driver without regression
   4. Every new table has a factory and a seeder following the IRMS v1.0 `UnitFactory`/`IncidentFactory` pattern, and `php artisan migrate:fresh --seed` completes green on a clean database
   5. A PostGIS `ST_DWithin` query against `cameras.location` returns expected results for a seeded camera row, verified by a dedicated feature test
-**Plans:** 6 plans
+**Plans:** 4/6 plans complete
 Plans:
 - [x] 18-01-PLAN.md — Wave 1: cameras table + CameraStatus enum + Camera model + CameraFactory (FRAMEWORK-04)
-- [ ] 18-02-PLAN.md — Wave 1: personnel table + PersonnelCategory enum + Personnel model + PersonnelFactory (FRAMEWORK-04)
-- [ ] 18-03-PLAN.md — Wave 2: camera_enrollments pivot + CameraEnrollmentStatus enum + CameraEnrollment model + factory (FRAMEWORK-04)
-- [ ] 18-04-PLAN.md — Wave 2: recognition_events table + RecognitionSeverity enum + RecognitionEvent model + factory with states (FRAMEWORK-04, FRAMEWORK-06)
+- [x] 18-02-PLAN.md — Wave 1: personnel table + PersonnelCategory enum + Personnel model + PersonnelFactory (FRAMEWORK-04)
+- [x] 18-03-PLAN.md — Wave 2: camera_enrollments pivot + CameraEnrollmentStatus enum + CameraEnrollment model + factory (FRAMEWORK-04)
+- [x] 18-04-PLAN.md — Wave 2: recognition_events table + RecognitionSeverity enum + RecognitionEvent model + factory with states (FRAMEWORK-04, FRAMEWORK-06)
 - [ ] 18-05-PLAN.md — Wave 3: mandatory Pest feature tests (CameraSpatialQueryTest + RecognitionEventIdempotencyTest) + FrasPlaceholderSeeder + FRAMEWORK-05 verification (SC2/SC3/SC4/SC5)
 - [ ] 18-06-PLAN.md — Wave 3: optional regression tests (SchemaTest + EnumCheckParityTest) — belt-and-suspenders drift guard for Phases 19-22
 
