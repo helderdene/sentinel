@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
 status: executing
-stopped_at: Phase 20 Plan 06 complete (Wave 3 scheduled commands — camera watchdog + personnel expire sweep)
-last_updated: "2026-04-21T16:15:00.000Z"
+stopped_at: Phase 20 Plan 07 complete (Wave 4 parallel — admin cameras + personnel UI)
+last_updated: "2026-04-21T16:13:47.726Z"
 last_activity: 2026-04-21
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 24
-  completed_plans: 22
-  percent: 92
+  completed_plans: 23
+  percent: 96
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-04-21)
 ## Current Position
 
 Phase: 20 (camera-personnel-admin-enrollment) — EXECUTING
-Plan: 6 of 8 complete (Wave 3 sequential — plan 06 scheduled commands landed)
+Plan: 7 of 8 complete (Wave 3 sequential — plan 06 scheduled commands landed)
 Status: Ready to execute
 Last activity: 2026-04-21
 
-Progress: [█████████▏] 92%
+Progress: [██████████] 96%
 
 ## v2.0 Phase Breakdown
 
@@ -126,6 +126,7 @@ Progress: [█████████▏] 92%
 | Phase 20 P04 | 6min | 2 tasks | 7 files |
 | Phase 20 P05 | 7min | 3 tasks | 16 files |
 | Phase 20 P06 | 22min | 2 tasks | 7 files |
+| Phase 20 P07 | 18min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -364,6 +365,11 @@ Decisions are logged in PROJECT.md Key Decisions table.
 - [20-06]: Transition-only CameraStatusChanged dispatch (if $camera->status !== $newStatus) prevents broadcast storm on steady-state ticks — T-20-06-01 mitigation. Test asserts 3 cameras at gap=10s produce 0 broadcasts.
 - [20-06]: PersonnelExpireSweepCommand uses bulk CameraEnrollment::where(...)->update(['status' => Done]) — no per-row broadcast because FRAS has no delete ACK (D-14); the flip is bookkeeping, the personnel row is already decommissioned and scopeActive will hide it from admin UI.
 - [20-06]: Carbon::setTestNow(Carbon::parse('...', 'UTC')) preferred over literal string form — robust to future database.php TZ config changes.
+- [20-07]: CameraStatusBadge wraps Reka Badge with variant=secondary — primitive's default bg-primary overrides color-mix() tints via specificity; secondary is the neutral no-op variant (v1.0 Units convention)
+- [20-07]: CameraLocationPicker @blur handler extracted to onBlurSearch() using window.setTimeout — vue-tsc rejects bare setTimeout in template expressions because Vue's resolved component-instance type does not expose DOM globals
+- [20-07]: useEnrollmentProgress uses new Map(prev).set(id, row) reactive replacement (Phase 12 precedent) — Vue's reactivity proxy does not track in-place Map mutations on refs; replacing the ref value triggers the effect graph cleanly
+- [20-07]: Photo dropzone built inline in PersonnelForm.vue (not extracted to component) — FRAS /resources/js/pages/personnel/Create.vue is citizen-app surface; inline keeps form self-contained with native drag/drop events and client-side MIME/size enforcement before useForm sees the File
+- [20-07]: Collapsible Details+Contact sections default-open only when edit-mode AND underlying row has populated field values; create mode and empty-edit both default closed — reduces form height without hiding pre-existing data
 
 ### Roadmap Evolution
 
@@ -407,8 +413,8 @@ All 5 items remain open for v2 milestone decision (verify / fix / close-out).
 
 ## Session Continuity
 
-Last session: 2026-04-21T16:15:00.000Z
-Stopped at: Phase 20 Plan 06 complete (Wave 3 scheduled commands — camera watchdog + personnel expire sweep)
+Last session: 2026-04-21T16:13:27.374Z
+Stopped at: Phase 20 Plan 07 complete (Wave 4 parallel — admin cameras + personnel UI)
 Resume file: None
 
 **Planned Phase:** 20 (Camera + Personnel Admin + Enrollment) — 8 plans — 2026-04-21T14:47:52.037Z

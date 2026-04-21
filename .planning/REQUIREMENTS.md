@@ -66,11 +66,13 @@ Admin CRUD + WebGL map layer reusing IRMS v1.0 Unit patterns.
 
 Watch-list and enrollment pipeline.
 
-- [ ] **PERSONNEL-01**: Admin can CRUD personnel records with name, category (`block`, `missing`, `lost_child`, `allow`), optional `expires_at`, and `consent_basis` text field, under `/admin/personnel`
+- [x] **PERSONNEL-01
+**: Admin can CRUD personnel records with name, category (`block`, `missing`, `lost_child`, `allow`), optional `expires_at`, and `consent_basis` text field, under `/admin/personnel`
 - [ ] **PERSONNEL-02**: Admin uploads a personnel photo that `FrasPhotoProcessor` (Intervention Image v4) validates (≤1MB, ≤1080p), resizes, re-encodes as JPEG, and hashes (MD5) for dedup
 - [ ] **PERSONNEL-03**: Personnel photos served via an unguessable-UUID public URL that cameras can HTTP-fetch during enrollment, with the URL revoked automatically once the enrollment ACK is received
 - [ ] **PERSONNEL-04**: Creating, updating, or deleting a personnel record enqueues `EnrollPersonnelBatch` jobs for all active cameras, wrapped in `WithoutOverlapping('enrollment-camera-{id}')->expireAfter(300)` so only one enrollment runs per camera at a time
-- [ ] **PERSONNEL-05**: Admin sees per-camera enrollment progress (pending / syncing / done / failed) with a retry-one-camera button and a resync-all-cameras button, updating live via `EnrollmentProgressed` broadcast on the private `fras.enrollments` channel
+- [x] **PERSONNEL-05
+**: Admin sees per-camera enrollment progress (pending / syncing / done / failed) with a retry-one-camera button and a resync-all-cameras button, updating live via `EnrollmentProgressed` broadcast on the private `fras.enrollments` channel
 - [ ] **PERSONNEL-06**: Personnel with `expires_at` in the past are auto-unenrolled from all cameras by a scheduled job (lost_child and missing categories expire so watch-list doesn't grow unbounded)
 - [ ] **PERSONNEL-07**: `AckHandler` correlates camera enrollment ACKs back to `camera_enrollments` rows via cache-backed request-ID mapping, with per-error-code retry policy (transient → retry, terminal → surface to admin)
 
