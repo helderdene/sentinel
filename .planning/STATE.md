@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
-status: planning
+status: executing
 stopped_at: Phase 19 context gathered
-last_updated: "2026-04-21T10:26:37.867Z"
-last_activity: 2026-04-21
+last_updated: "2026-04-21T11:23:19.159Z"
+last_activity: 2026-04-21 -- Phase 19 execution started
 progress:
   total_phases: 6
   completed_phases: 2
-  total_plans: 10
+  total_plans: 16
   completed_plans: 10
-  percent: 100
+  percent: 63
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-21)
 
 **Core value:** Dispatchers can receive an incident report, triage it, assign the nearest available unit, and track the response in real-time on a live map.
-**Current focus:** Phase 18 — FRAS Schema Port to PostgreSQL (Plan 2 of 6)
+**Current focus:** Phase 19 — mqtt-pipeline-listener-infrastructure
 
 ## Current Position
 
-Phase: 19
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-04-21
+Phase: 19 (mqtt-pipeline-listener-infrastructure) — EXECUTING
+Plan: 1 of 6
+Status: Executing Phase 19
+Last activity: 2026-04-21 -- Phase 19 execution started
 
 Progress: [██████████] 100%
 
@@ -390,4 +390,4 @@ Last session: --stopped-at
 Stopped at: Phase 19 context gathered
 Resume file: --resume-file
 
-**Planned Phase:** 18 (FRAS Schema Port to PostgreSQL) — 6 plans — 2026-04-21T08:55:03.586Z
+**Planned Phase:** 19 (mqtt-pipeline-listener-infrastructure) — 6 plans — 2026-04-21T11:19:03.544Z

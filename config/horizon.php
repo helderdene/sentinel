@@ -223,6 +223,16 @@ return [
                 'tries' => 3,
                 'timeout' => 60,
             ],
+
+            'fras-supervisor' => [
+                'connection' => 'redis',
+                'queue' => ['fras'],
+                'balance' => 'auto',
+                'minProcesses' => 1,
+                'maxProcesses' => 3,
+                'tries' => 3,
+                'timeout' => 120,
+            ],
         ],
 
         'local' => [
@@ -234,6 +244,16 @@ return [
                 'maxProcesses' => 3,
                 'tries' => 3,
                 'timeout' => 30,
+            ],
+
+            'fras-supervisor' => [
+                'connection' => 'redis',
+                'queue' => ['fras'],
+                'balance' => 'auto',
+                'minProcesses' => 1,
+                'maxProcesses' => 1,
+                'tries' => 3,
+                'timeout' => 120,
             ],
         ],
     ],
