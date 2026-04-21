@@ -10,17 +10,17 @@ use App\Http\Controllers\PushSubscriptionController;
 use App\Http\Controllers\ResponderController;
 use App\Http\Controllers\SmsWebhookController;
 use App\Http\Controllers\StateSyncController;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('webhooks')->group(function () {
     Route::post('iot-sensor', IoTWebhookController::class)
         ->middleware('verify-iot-signature')
-        ->withoutMiddleware([VerifyCsrfToken::class])
+        ->withoutMiddleware([PreventRequestForgery::class])
         ->name('webhooks.iot-sensor');
 
     Route::post('sms-inbound', SmsWebhookController::class)
-        ->withoutMiddleware([VerifyCsrfToken::class])
+        ->withoutMiddleware([PreventRequestForgery::class])
         ->name('webhooks.sms-inbound');
 });
 
