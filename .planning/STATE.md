@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
-status: completed
-stopped_at: Phase 20 context gathered
-last_updated: "2026-04-21T13:06:59.830Z"
-last_activity: 2026-04-21 -- Phase 19 execution completed
+status: executing
+stopped_at: Phase 20 UI-SPEC approved
+last_updated: "2026-04-21T14:50:37.306Z"
+last_activity: 2026-04-21 -- Phase 20 execution started
 progress:
   total_phases: 6
   completed_phases: 3
-  total_plans: 16
+  total_plans: 24
   completed_plans: 16
-  percent: 100
+  percent: 67
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-21)
 
 **Core value:** Dispatchers can receive an incident report, triage it, assign the nearest available unit, and track the response in real-time on a live map.
-**Current focus:** Phase 19 — mqtt-pipeline-listener-infrastructure
+**Current focus:** Phase 20 — camera-personnel-admin-enrollment
 
 ## Current Position
 
-Phase: 19 (mqtt-pipeline-listener-infrastructure) — EXECUTED (automated), awaiting live smoke tests
-Plan: 6 of 6
-Status: Phase 19 complete — all 6 plans merged, 97/97 automated tests green. Manual smoke tests (live Mosquitto + Supervisor) pending per 19-VALIDATION.md.
-Last activity: 2026-04-21 -- Phase 19 execution completed
+Phase: 20 (camera-personnel-admin-enrollment) — EXECUTING
+Plan: 1 of 8
+Status: Executing Phase 20
+Last activity: 2026-04-21 -- Phase 20 execution started
 
 Progress: [██████████] 100%
 
@@ -387,7 +387,7 @@ All 5 items remain open for v2 milestone decision (verify / fix / close-out).
 ## Session Continuity
 
 Last session: --stopped-at
-Stopped at: Phase 20 context gathered
+Stopped at: Phase 20 UI-SPEC approved
 Resume file: --resume-file
 
-**Planned Phase:** 19 (mqtt-pipeline-listener-infrastructure) — 6 plans — 2026-04-21T11:19:03.544Z
+**Planned Phase:** 20 (Camera + Personnel Admin + Enrollment) — 8 plans — 2026-04-21T14:47:52.037Z
