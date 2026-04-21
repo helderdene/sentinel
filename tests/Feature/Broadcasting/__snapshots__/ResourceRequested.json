@@ -1,0 +1,9 @@
+{
+    "incident_id": "01929000-aaaa-bbbb-cccc-000000000006",
+    "incident_no": "INC-2026-00006",
+    "resource_type": "ADDITIONAL_AMBULANCE",
+    "resource_label": "Additional Ambulance",
+    "notes": "Additional unit needed",
+    "requested_by": "Requester Unit",
+    "timestamp": "2026-04-21T00:00:00.000000Z"
+}

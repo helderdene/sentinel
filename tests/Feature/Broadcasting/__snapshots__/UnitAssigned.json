@@ -1,0 +1,15 @@
+{
+    "id": "01929000-aaaa-bbbb-cccc-000000000003",
+    "incident_no": "INC-2026-00003",
+    "priority": "P2",
+    "status": "DISPATCHED",
+    "incident_type": "Fire",
+    "location_text": "J.C. Aquino Ave.",
+    "barangay": "Libertad",
+    "coordinates": {
+        "lat": 8.9475,
+        "lng": 125.5406
+    },
+    "notes": "Fixture data",
+    "unit_id": "AMB-01"
+}
