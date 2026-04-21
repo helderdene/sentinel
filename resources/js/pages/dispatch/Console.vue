@@ -8,6 +8,7 @@ import IncidentDetailPanel from '@/components/dispatch/IncidentDetailPanel.vue';
 import MapLegend from '@/components/dispatch/MapLegend.vue';
 import UnitDetailPanel from '@/components/dispatch/UnitDetailPanel.vue';
 import UnitStatusPanel from '@/components/dispatch/UnitStatusPanel.vue';
+import MqttListenerHealthBanner from '@/components/fras/MqttListenerHealthBanner.vue';
 import { useAlertSystem } from '@/composables/useAlertSystem';
 import { useDispatchFeed } from '@/composables/useDispatchFeed';
 import { useDispatchMap } from '@/composables/useDispatchMap';
@@ -21,6 +22,10 @@ import type {
     DispatchUnit,
 } from '@/types/dispatch';
 import type { ResourceRequest, TickerEvent } from '@/types/incident';
+import type {
+    MqttListenerHealth,
+    MqttListenerHealthStatus,
+} from '@/types/mqtt';
 
 defineOptions({
     layout: DispatchLayout,
@@ -31,7 +36,20 @@ const props = defineProps<{
     units: DispatchUnit[];
     agencies: DispatchAgency[];
     metrics: DispatchMetrics;
+    mqtt_listener_health: {
+        status: MqttListenerHealthStatus;
+        last_message_received_at: string | null;
+        since: string | null;
+        active_camera_count: number;
+    };
 }>();
+
+const initialMqttHealth: MqttListenerHealth = {
+    status: props.mqtt_listener_health.status,
+    lastMessageReceivedAt: props.mqtt_listener_health.last_message_received_at,
+    since: props.mqtt_listener_health.since,
+    activeCameraCount: props.mqtt_listener_health.active_camera_count,
+};
 
 const localIncidents = ref<DispatchIncident[]>([...props.incidents]);
 const localUnits = ref<DispatchUnit[]>([...props.units]);
@@ -115,7 +133,10 @@ const sharedCity = (
 
 const mapComposable = useDispatchMap('dispatch-map', {
     center: sharedCity
-        ? [Number(sharedCity.center_longitude), Number(sharedCity.center_latitude)]
+        ? [
+              Number(sharedCity.center_longitude),
+              Number(sharedCity.center_latitude),
+          ]
         : undefined,
     zoom: sharedCity?.default_zoom,
 });
@@ -140,6 +161,7 @@ const {
     tickerEvents,
     unreadByIncident,
     totalUnreadMessages,
+    mqttListenerHealth,
     clearUnread,
     getMessages,
     getResourceRequests,
@@ -151,6 +173,7 @@ const {
     alertSystem,
     currentUserId.value,
     selectedIncidentId,
+    initialMqttHealth,
 );
 
 watch(
@@ -396,55 +419,64 @@ onDeselect(() => {
 </script>
 
 <template>
-    <div class="flex h-full w-full">
-        <!-- Left panel: Incident Queue -->
-        <div
-            class="z-10 w-80 shrink-0 border-r border-t-border bg-t-bg/95 backdrop-blur-sm dark:border-t-border dark:bg-[#05101E]/95"
-        >
-            <DispatchQueuePanel
-                :incidents="localIncidents"
-                :selected-incident-id="selectedIncidentId"
-                :unread-by-incident="unreadByIncident"
-                @select-incident="handleIncidentSelect"
-            />
-        </div>
+    <div class="flex h-full w-full flex-col">
+        <MqttListenerHealthBanner
+            :status="mqttListenerHealth.status"
+            :last-message-received-at="mqttListenerHealth.lastMessageReceivedAt"
+            :since="mqttListenerHealth.since"
+        />
+        <div class="flex min-h-0 flex-1">
+            <!-- Left panel: Incident Queue -->
+            <div
+                class="z-10 w-80 shrink-0 border-r border-t-border bg-t-bg/95 backdrop-blur-sm dark:border-t-border dark:bg-[#05101E]/95"
+            >
+                <DispatchQueuePanel
+                    :incidents="localIncidents"
+                    :selected-incident-id="selectedIncidentId"
+                    :unread-by-incident="unreadByIncident"
+                    @select-incident="handleIncidentSelect"
+                />
+            </div>
 
-        <!-- Center map area -->
-        <div class="relative flex-1">
-            <div id="dispatch-map" class="h-full w-full" />
-            <MapLegend />
-        </div>
+            <!-- Center map area -->
+            <div class="relative flex-1">
+                <div id="dispatch-map" class="h-full w-full" />
+                <MapLegend />
+            </div>
 
-        <!-- Right panel -->
-        <div
-            class="z-10 w-[360px] shrink-0 border-l border-t-border bg-t-bg/95 backdrop-blur-sm dark:border-t-border dark:bg-[#05101E]/95"
-        >
-            <IncidentDetailPanel
-                v-if="rightPanelMode === 'incident-detail' && selectedIncident"
-                :incident="selectedIncident"
-                :agencies="props.agencies"
-                :messages="selectedIncidentMessages"
-                :resource-requests="selectedIncidentResourceRequests"
-                :messages-expanded="messagesExpanded"
-                :current-user-id="currentUserId"
-                :unread-count="selectedIncidentUnread"
-                @close="handleIncidentClose"
-                @ack-expired="handleAckExpired"
-                @unassign="handleUnassign"
-                @toggle-messages="handleToggleMessages"
-                @send-message="handleSendMessage"
-            />
-            <UnitDetailPanel
-                v-else-if="rightPanelMode === 'unit-detail' && selectedUnit"
-                :unit="selectedUnit"
-                :incidents="localIncidents"
-                @back="handleUnitBack"
-            />
-            <UnitStatusPanel
-                v-else
-                :units="localUnits"
-                @select-unit="handleUnitSelect"
-            />
+            <!-- Right panel -->
+            <div
+                class="z-10 w-[360px] shrink-0 border-l border-t-border bg-t-bg/95 backdrop-blur-sm dark:border-t-border dark:bg-[#05101E]/95"
+            >
+                <IncidentDetailPanel
+                    v-if="
+                        rightPanelMode === 'incident-detail' && selectedIncident
+                    "
+                    :incident="selectedIncident"
+                    :agencies="props.agencies"
+                    :messages="selectedIncidentMessages"
+                    :resource-requests="selectedIncidentResourceRequests"
+                    :messages-expanded="messagesExpanded"
+                    :current-user-id="currentUserId"
+                    :unread-count="selectedIncidentUnread"
+                    @close="handleIncidentClose"
+                    @ack-expired="handleAckExpired"
+                    @unassign="handleUnassign"
+                    @toggle-messages="handleToggleMessages"
+                    @send-message="handleSendMessage"
+                />
+                <UnitDetailPanel
+                    v-else-if="rightPanelMode === 'unit-detail' && selectedUnit"
+                    :unit="selectedUnit"
+                    :incidents="localIncidents"
+                    @back="handleUnitBack"
+                />
+                <UnitStatusPanel
+                    v-else
+                    :units="localUnits"
+                    @select-unit="handleUnitSelect"
+                />
+            </div>
         </div>
     </div>
 </template>

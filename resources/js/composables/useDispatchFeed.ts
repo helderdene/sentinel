@@ -22,6 +22,10 @@ import type {
     ResourceRequestedPayload,
     TickerEvent,
 } from '@/types/incident';
+import type {
+    MqttListenerHealth,
+    MqttListenerHealthPayload,
+} from '@/types/mqtt';
 
 const PRIORITY_ORDER: Record<string, number> = {
     P1: 0,
@@ -39,6 +43,7 @@ export function useDispatchFeed(
     alertSystem: ReturnType<typeof useAlertSystem>,
     currentUserId: number,
     selectedIncidentId: Ref<string | null>,
+    initialMqttHealth: MqttListenerHealth,
 ) {
     const tickerEvents = ref<TickerEvent[]>([]);
     const unreadByIncident = ref(new Map<string, number>());
@@ -46,6 +51,7 @@ export function useDispatchFeed(
     const resourceRequestsByIncident = ref(
         new Map<string, ResourceRequest[]>(),
     );
+    const mqttListenerHealth = ref<MqttListenerHealth>(initialMqttHealth);
 
     const totalUnreadMessages = computed(() => {
         let total = 0;
@@ -305,7 +311,9 @@ export function useDispatchFeed(
         'dispatch.incidents',
         'MutualAidRequested',
         (e) => {
-            const inc = localIncidents.value.find((i) => i.id === e.incident_id);
+            const inc = localIncidents.value.find(
+                (i) => i.id === e.incident_id,
+            );
 
             addTickerEvent({
                 incident_no: e.incident_no,
@@ -340,7 +348,9 @@ export function useDispatchFeed(
         (e) => {
             alertSystem.playResourceRequestTone();
 
-            const inc = localIncidents.value.find((i) => i.id === e.incident_id);
+            const inc = localIncidents.value.find(
+                (i) => i.id === e.incident_id,
+            );
 
             addTickerEvent({
                 incident_no: e.incident_no,
@@ -401,6 +411,19 @@ export function useDispatchFeed(
 
                 alertSystem.playMessageTone();
             }
+        },
+    );
+
+    useEcho<MqttListenerHealthPayload>(
+        'dispatch.incidents',
+        'MqttListenerHealthChanged',
+        (e) => {
+            mqttListenerHealth.value = {
+                status: e.status,
+                lastMessageReceivedAt: e.last_message_received_at,
+                since: e.since,
+                activeCameraCount: e.active_camera_count,
+            };
         },
     );
 
@@ -521,6 +544,7 @@ export function useDispatchFeed(
         totalUnreadMessages,
         messagesByIncident,
         resourceRequestsByIncident,
+        mqttListenerHealth,
         clearUnread,
         getMessages,
         getResourceRequests,
