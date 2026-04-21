@@ -18,10 +18,12 @@ use App\Http\Requests\MutualAidRequest;
 use App\Http\Requests\SendMessageRequest;
 use App\Http\Requests\UnassignUnitRequest;
 use App\Models\Agency;
+use App\Models\Camera;
 use App\Models\Incident;
 use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -114,11 +116,19 @@ class DispatchConsoleController extends Controller
                 : null,
         ];
 
+        $mqttListenerHealth = [
+            'status' => Cache::get('mqtt:listener:last_known_state', 'NO_ACTIVE_CAMERAS'),
+            'last_message_received_at' => Cache::get('mqtt:listener:last_message_received_at'),
+            'since' => Cache::get('mqtt:listener:last_state_since'),
+            'active_camera_count' => Camera::query()->whereNull('decommissioned_at')->count(),
+        ];
+
         return Inertia::render('dispatch/Console', [
             'incidents' => $incidents,
             'units' => $units,
             'agencies' => $agencies,
             'metrics' => $metrics,
+            'mqtt_listener_health' => $mqttListenerHealth,
         ]);
     }
 
