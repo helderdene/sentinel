@@ -137,7 +137,63 @@ Explicit exclusions with reasoning:
 
 ## Traceability
 
-<!-- Phase mapping populated by gsd-roadmapper. -->
+Phase mapping (populated 2026-04-21 by gsd-roadmapper). All 43 v2.0 requirements mapped to exactly one phase — 100% coverage, no orphans.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| FRAMEWORK-01 | Phase 17 | Pending |
+| FRAMEWORK-02 | Phase 17 | Pending |
+| FRAMEWORK-03 | Phase 17 | Pending |
+| FRAMEWORK-04 | Phase 18 | Pending |
+| FRAMEWORK-05 | Phase 18 | Pending |
+| FRAMEWORK-06 | Phase 18 | Pending |
+| MQTT-01 | Phase 19 | Pending |
+| MQTT-02 | Phase 19 | Pending |
+| MQTT-03 | Phase 19 | Pending |
+| MQTT-04 | Phase 19 | Pending |
+| MQTT-05 | Phase 19 | Pending |
+| MQTT-06 | Phase 19 | Pending |
+| CAMERA-01 | Phase 20 | Pending |
+| CAMERA-02 | Phase 20 | Pending |
+| CAMERA-03 | Phase 20 | Pending |
+| CAMERA-04 | Phase 20 | Pending |
+| CAMERA-05 | Phase 20 | Pending |
+| CAMERA-06 | Phase 20 | Pending |
+| PERSONNEL-01 | Phase 20 | Pending |
+| PERSONNEL-02 | Phase 20 | Pending |
+| PERSONNEL-03 | Phase 20 | Pending |
+| PERSONNEL-04 | Phase 20 | Pending |
+| PERSONNEL-05 | Phase 20 | Pending |
+| PERSONNEL-06 | Phase 20 | Pending |
+| PERSONNEL-07 | Phase 20 | Pending |
+| RECOGNITION-01 | Phase 21 | Pending |
+| RECOGNITION-02 | Phase 21 | Pending |
+| RECOGNITION-03 | Phase 21 | Pending |
+| RECOGNITION-04 | Phase 21 | Pending |
+| RECOGNITION-05 | Phase 21 | Pending |
+| RECOGNITION-06 | Phase 21 | Pending |
+| RECOGNITION-07 | Phase 21 | Pending |
+| RECOGNITION-08 | Phase 21 | Pending |
+| INTEGRATION-01 | Phase 21 | Pending |
+| INTEGRATION-03 | Phase 21 | Pending |
+| INTEGRATION-04 | Phase 21 | Pending |
+| ALERTS-01 | Phase 22 | Pending |
+| ALERTS-02 | Phase 22 | Pending |
+| ALERTS-03 | Phase 22 | Pending |
+| ALERTS-04 | Phase 22 | Pending |
+| ALERTS-05 | Phase 22 | Pending |
+| ALERTS-06 | Phase 22 | Pending |
+| ALERTS-07 | Phase 22 | Pending |
+| INTEGRATION-02 | Phase 22 | Pending |
+| DPA-01 | Phase 22 | Pending |
+| DPA-02 | Phase 22 | Pending |
+| DPA-03 | Phase 22 | Pending |
+| DPA-04 | Phase 22 | Pending |
+| DPA-05 | Phase 22 | Pending |
+| DPA-06 | Phase 22 | Pending |
+| DPA-07 | Phase 22 | Pending |
+
+**Coverage:** 43/43 requirements mapped (100%). No orphans.
 
 ---
-*Last updated: 2026-04-21 — REQUIREMENTS defined*
+*Last updated: 2026-04-21 — v2.0 roadmap + traceability populated*

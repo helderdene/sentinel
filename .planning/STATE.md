@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
-status: defining_requirements
-stopped_at: Milestone v2.0 started — defining requirements
+status: roadmap_defined
+stopped_at: Milestone v2.0 roadmap defined — awaiting `/gsd-plan-phase 17`
 last_updated: "2026-04-21T00:00:00.000Z"
 last_activity: 2026-04-21
 progress:
-  total_phases: 0
+  total_phases: 6
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -21,16 +21,29 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-21)
 
 **Core value:** Dispatchers can receive an incident report, triage it, assign the nearest available unit, and track the response in real-time on a live map.
-**Current focus:** Milestone v2.0 — FRAS Integration (defining requirements)
+**Current focus:** Milestone v2.0 — FRAS Integration (Phase 17: Laravel 12 → 13 Upgrade, awaiting planning)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 17 — Laravel 12 → 13 Upgrade (not started)
 Plan: —
-Status: Defining requirements
-Last activity: 2026-04-21 — milestone v2.0 FRAS Integration started
+Status: Roadmap defined; awaiting `/gsd-plan-phase 17`
+Last activity: 2026-04-21 — v2.0 roadmap written (6 phases: 17-22), 43 requirements traced
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [░░░░░░░░░░] 0% (0/6 phases complete)
+
+## v2.0 Phase Breakdown
+
+| Phase | Name | Requirements | Status |
+|-------|------|--------------|--------|
+| 17 | Laravel 12 → 13 Upgrade | FRAMEWORK-01, 02, 03 | Not started |
+| 18 | FRAS Schema Port to PostgreSQL | FRAMEWORK-04, 05, 06 | Not started |
+| 19 | MQTT Pipeline + Listener Infrastructure | MQTT-01..06 | Not started |
+| 20 | Camera + Personnel Admin + Enrollment | CAMERA-01..06, PERSONNEL-01..07 | Not started |
+| 21 | Recognition → IoT-Intake Bridge + Dispatch Map + IntakeStation Rail | RECOGNITION-01..08, INTEGRATION-01, 03, 04 | Not started |
+| 22 | Alert Feed + Event History + Responder Context + DPA Compliance | ALERTS-01..07, INTEGRATION-02, DPA-01..07 | Not started (milestone gate) |
+
+**Ordering (locked):** 17 → 18 → {19 ∥ 20} → 21 → 22. Phases 19 and 20 parallelise after 18. Phase 22 blocks on CDRRMO legal sign-off.
 
 ## Performance Metrics
 
@@ -105,7 +118,19 @@ Progress: [░░░░░░░░░░] 0%
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
+
+**v2.0 roadmap-level decisions (2026-04-21):**
+
+- [Roadmap v2.0]: 6 phases (17-22) with forced ordering 17 → 18 → {19 ∥ 20} → 21 → 22 — all 4 research agents aligned
+- [Roadmap v2.0]: Phase 17 is feature-free Laravel 12 → 13 upgrade alone — bundling framework churn with FRAS features makes regression triage impossible
+- [Roadmap v2.0]: Phase 18 is feature-free schema port alone — MySQL → Postgres type mapping (JSONB, TIMESTAMPTZ, Magellan geography) is leaf dependency for all downstream phases
+- [Roadmap v2.0]: Phases 19 (MQTT infrastructure) and 20 (Camera/Personnel admin) parallelise after Phase 18 — different tables, different controllers, no shared seam
+- [Roadmap v2.0]: ALERTS + DPA kept together in Phase 22 (not split) — access-log / signed-URL / retention surface is the same code path the alert feed queries, splitting would fragment the legal-sign-off gate
+- [Roadmap v2.0]: Severity → priority mapping Critical→P2 default (one-click dispatcher escalation to P1), Warning→P4 notify-only, Info→history-only — all thresholds in `config/fras.php`
+- [Roadmap v2.0]: MQTT listener under dedicated `irms-mqtt` Supervisor program, never under Horizon — Horizon restart must not interrupt camera ingestion
+- [Roadmap v2.0]: UUID PKs on all 4 new FRAS tables (matches IRMS Incident/Message precedent); `mapbox-gl` rejected, CI bundle-check enforces MapLibre-only; Inertia v2 retained (v3 deferred to separate milestone)
+
+**v1.0 phase-level decisions carried forward** (prior entries preserved below for continuity):
 
 - [Roadmap]: 2D dispatch map (no pitch, no terrain) — simplifies Phase 4 MapLibre setup
 - [Roadmap]: 7 phases following strict dependency chain — Foundation > Intake > Real-Time > Dispatch > Responder > Integration > Analytics
@@ -288,6 +313,7 @@ Recent decisions affecting current work:
 - Phase 13 added: PWA setup
 - Phase 14 added: Update design system to Sentinel branding and rename app
 - Phase 15 added: WebRTC live video stream from responder to dispatch
+- Phases 17-22 added: v2.0 FRAS Integration milestone (Laravel 13 upgrade, schema port, MQTT, camera/personnel admin, recognition bridge, alerts + DPA)
 
 ### Pending Todos
 
@@ -299,10 +325,13 @@ None yet.
 - [Phase 4]: MapLibre v5 updateData() validated -- using direct maplibre-gl (no vue-maplibre-gl wrapper) for maximum control
 - [Phase 6]: Semaphore SMS API docs need verification when phase begins — no maintained Laravel package
 - [Phase 7]: NDRRMC SitRep XML schema and DILG monthly report format not publicly documented — need agency contact
+- [Phase 17]: Horizon 6 + Magellan Laravel-13 compatibility to re-verify at upgrade time (research flag)
+- [Phase 21]: Severity-mapping field validation with CDRRMO dispatchers; dedup/confidence defaults need field tuning (research flag)
+- [Phase 22]: CDRRMO legal / Butuan LGU Data Privacy Officer engagement timeline — milestone gate blocks on their sign-off; owner on client side TBD (research flag)
 
 ## Deferred Items
 
-Items acknowledged and deferred at v1.0 milestone close on 2026-04-17:
+Items acknowledged and deferred at v1.0 milestone close on 2026-04-17, carried over to v2.0 intake:
 
 | Category | Item | Status |
 |----------|------|--------|
@@ -312,10 +341,10 @@ Items acknowledged and deferred at v1.0 milestone close on 2026-04-17:
 | debug | chat-input-hidden-by-status-btn | diagnosed — hypothesis recorded (StatusButton position: fixed overlaps ChatTab slot content); fix never confirmed in browser |
 | debug | dispatch-messages-not-visible | resolved — file still in .planning/debug/ (housekeeping only; not moved to resolved/) |
 
-All 5 items carry over to v2 milestone intake for decision (verify / fix / close-out).
+All 5 items remain open for v2 milestone decision (verify / fix / close-out).
 
 ## Session Continuity
 
-Last session: 2026-04-17T12:29:28.311Z
-Stopped at: Completed 16-03-PLAN.md (Phase 16 complete — 3/3 plans)
+Last session: 2026-04-21
+Stopped at: v2.0 roadmap defined (6 phases 17-22, 43 requirements mapped) — awaiting `/gsd-plan-phase 17`
 Resume file: None
