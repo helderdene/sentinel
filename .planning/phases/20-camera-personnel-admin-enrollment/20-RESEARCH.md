@@ -800,22 +800,22 @@ public function handle(): int
 
 **Signal:** A1-A5 are all low-risk (syntax confirmations, not design decisions). No assumption requires user confirmation before planning; they'll be caught by the planner's code review or by Wave 0 framework install.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Does `AdminCameraController::store` barangay lookup block the request?**
    - What we know: `BarangayLookupService::findByCoordinates` is a synchronous `DB::select` against a PostGIS `ST_Contains` query. On Butuan's ~88 barangays with GIST index, latency is ~1-3ms.
    - What's unclear: Whether CAMERA-02 acceptance requires the barangay to be set **before** the response returns (synchronous) or may be deferred to a job.
-   - Recommendation: **Do it synchronously in the controller.** Latency is negligible at CDRRMO scale; admin workflow expects the saved camera to show the correct barangay on the redirect-to-index. FRAS has no precedent. Planner can override if UX feedback shows the save feels slow.
+   - RESOLVED: Synchronous barangay lookup in the controller — Latency is negligible at CDRRMO scale; admin workflow expects the saved camera to show the correct barangay on the redirect-to-index. FRAS has no precedent. Planner can override if UX feedback shows the save feels slow.
 
 2. **`PersonnelExpireSweep`: one command run sweeps all, or chunked by camera?**
    - What we know: CONTEXT discretion area. Low volume (<200 personnel, most won't expire in a given hour).
    - What's unclear: Nothing material — CDRRMO scale doesn't stress either approach.
-   - Recommendation: Single-command iteration over `Personnel::whereNotNull('expires_at')->where('expires_at', '<', now())->whereNull('decommissioned_at')->get()`. Inside the loop, call `deleteFromAllCameras` (which already chunks per-camera MQTT publishes). No outer chunking needed.
+   - RESOLVED: PersonnelExpireSweep single-pass loop — single-command iteration over `Personnel::whereNotNull('expires_at')->where('expires_at', '<', now())->whereNull('decommissioned_at')->get()`. Inside the loop, call `deleteFromAllCameras` (which already chunks per-camera MQTT publishes). No outer chunking needed.
 
 3. **Mapbox camera marker click behavior — popup contents?**
    - What we know: UI-SPEC section 7 specifies "clicking opens a lightweight Popup with name, status, last-seen relative time, and a Link to `/admin/cameras/{id}/edit`".
    - What's unclear: Whether the Popup uses Mapbox's native `new Popup()` or a Vue component wrapped in a Teleport. UI-SPEC says "mapbox-gl `new Popup()`" — native.
-   - Recommendation: Follow UI-SPEC — native Popup with innerHTML strings. If richer interactivity ever needed, escalate to a Vue-teleport-based popup.
+   - RESOLVED: Camera marker click → native mapbox-gl Popup with innerHTML strings. If richer interactivity ever needed, escalate to a Vue-teleport-based popup.
 
 ## Environment Availability
 
