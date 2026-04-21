@@ -11,7 +11,7 @@ Locked before phase planning:
 - **PK type:** UUIDs on all 4 new FRAS tables (cameras, personnel, recognition_events, camera_enrollments), matching IRMS Incident/Message precedent.
 - **Severity → Priority:** Critical → P2 default with dispatcher one-click escalation to P1. Warning → P4 notify-only, never auto-Incident. Info → history-only, never surfaces on dispatch.
 - **Frontend baseline:** Inertia v2 retained. FRAS v3 pages port down to v2 at copy-time.
-- **Map baseline:** MapLibre GL JS. `mapbox-gl` explicitly rejected. CI bundle-check must fail if imported.
+- **Map baseline:** `mapbox-gl` retained (v1.0 continuity). MapLibre path deprecated.
 - **Process model:** MQTT listener runs under a dedicated Supervisor program, never under Horizon. Horizon gains a separate `fras` queue supervisor for enrollment jobs.
 - **Integration surface:** Reuse `IncidentChannel::IoT` enum value — no new channel. Recognition events tagged via `IncidentTimeline.event_data.source = 'fras_recognition'`.
 - **Photo URL model:** Two-namespace scheme — public unguessable-UUID URL for camera enrollment fetch (revoked post-sync), auth-signed 5-min URL for human operators (operator/supervisor/admin only; responders and dispatchers excluded from raw recognition images).
@@ -53,10 +53,10 @@ MQTT ingestion surface separate from `app/Http/`.
 Admin CRUD + WebGL map layer reusing IRMS v1.0 Unit patterns.
 
 - [ ] **CAMERA-01**: Admin can create, edit, decommission, and recommission cameras via `/admin/cameras` following the `AdminUnitController` pattern (auto-generated `CAM-01`/`CAM-02` IDs alongside MQTT `device_id`)
-- [ ] **CAMERA-02**: Admin picks a camera location on a MapLibre GL JS picker (ported from FRAS's Mapbox picker, rewritten for MapLibre), with forward geocoding to populate `address` + PostGIS barangay auto-assignment
-- [ ] **CAMERA-03**: Cameras render as a toggleable WebGL symbol layer on the dispatch console MapLibre map (no HTML overlays, no `mapbox-gl` import — CI bundle check enforces)
+- [ ] **CAMERA-02**: Admin picks a camera location on a Mapbox-GL picker (port of `intake/LocationMapPicker.vue` shape), with forward geocoding to populate `address` + PostGIS barangay auto-assignment
+- [ ] **CAMERA-03**: Cameras render as a toggleable WebGL symbol layer on the dispatch console `mapbox-gl` map (no HTML overlays; layer extends `useDispatchMap.ts` alongside existing incidents + units layers)
 - [ ] **CAMERA-04**: Dispatcher sees a live per-camera status indicator (online, offline, degraded) on the map that updates in real-time via `CameraStatusChanged` broadcast on the private `fras.cameras` channel
-- [ ] **CAMERA-05**: `HeartbeatHandler` updates `cameras.last_heartbeat_at` on every heartbeat; a scheduled watchdog flips cameras to `offline` after a configurable gap (default 90s) and broadcasts `CameraStatusChanged`
+- [ ] **CAMERA-05**: `HeartbeatHandler` updates `cameras.last_seen_at` on every heartbeat; a scheduled watchdog flips cameras between `online`/`degraded`/`offline` based on configurable gap thresholds (degraded at 30s, offline at 90s) and broadcasts `CameraStatusChanged` on transitions
 - [ ] **CAMERA-06**: Camera deletion is blocked if any `camera_enrollments` row is `syncing` or `pending` for that camera (prevents orphaned enrollment state)
 
 ### PERSONNEL — Personnel Management + BOLO + Enrollment Sync
@@ -134,7 +134,7 @@ Philippine Data Privacy Act (RA 10173) compliance package for LGU deployment. Ph
 Explicit exclusions with reasoning:
 
 - **Source-merge of FRAS repo into IRMS** — FRAS continues as a standalone HDSystem product at `/Users/helderdene/fras` for other clients. IRMS gets its own CDRRMO-tailored port, not a file-level merge.
-- **`mapbox-gl` dependency** — IRMS's MapLibre setup is the map baseline. FRAS's Mapbox picker gets rewritten for MapLibre. CI bundle check enforces.
+- **`mapbox-gl` dependency** — `mapbox-gl ^3.20.0` is retained across IRMS (v1.0 continuity per D-01 2026-04-21). No migration work in Phase 20; camera picker + dispatch-map cameras layer both reuse the existing mapbox-gl instance.
 - **New `IncidentChannel` enum value** — recognition events route via existing `IncidentChannel::IoT`. Disambiguation happens at `event_data.source = 'fras_recognition'`, not at the channel level.
 - **Auto-P1 on Critical recognition** — decision already locked (Critical → P2 default with dispatcher escalation). Prevents dispatcher alert-fatigue during the first weeks of field tuning.
 - **Responder access to raw recognition scene images** — face crop context only. Scene images carry higher PII burden and are restricted to operator/supervisor/admin.
