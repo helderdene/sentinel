@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
-status: planning
-stopped_at: Phase 18 context gathered
-last_updated: "2026-04-21T08:55:03.598Z"
-last_activity: 2026-04-21
+status: executing
+stopped_at: Completed 18-01
+last_updated: "2026-04-21T09:18:34.037Z"
+last_activity: 2026-04-21 -- Phase --phase execution started
 progress:
   total_phases: 6
   completed_phases: 1
   total_plans: 10
-  completed_plans: 4
-  percent: 40
+  completed_plans: 5
+  percent: 50
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-21)
 
 **Core value:** Dispatchers can receive an incident report, triage it, assign the nearest available unit, and track the response in real-time on a live map.
-**Current focus:** Phase 17 — laravel-12-13-upgrade
+**Current focus:** Phase 18 — FRAS Schema Port to PostgreSQL (Plan 2 of 6)
 
 ## Current Position
 
-Phase: 18
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-04-21
+Phase: 18 — EXECUTING
+Plan: 2 of 6
+Status: Executing Phase 18 (Plan 18-01 complete)
+Last activity: 2026-04-21 -- Plan 18-01 (cameras table + CameraStatus + Camera model + CameraFactory) complete
 
-Progress: [██████████] 100%
+Progress: [█████░░░░░] 50%
 
 ## v2.0 Phase Breakdown
 
@@ -116,6 +116,7 @@ Progress: [██████████] 100%
 | Phase 17 P01 | 5min | 2 tasks | 12 files |
 | Phase 17 P02 | 18min | 2 tasks | 37 files |
 | Phase 17 P03 | 7min | 3 tasks | 1 files |
+| Phase 18 P01 | 3min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -313,6 +314,10 @@ Decisions are logged in PROJECT.md Key Decisions table.
 - [17-01]: Fixture convention tests/Feature/Broadcasting/__snapshots__/{EventName}.json (Jest-style) with first-run write-through + markTestIncomplete, second-run byte-compare via expect->toBe(file_get_contents)
 - [17-01]: 44 pre-existing full-suite failures on main exist prior to Wave 1 (UniqueConstraintViolationException in Feature tests) — Wave 2 needs diagnostic pass before L13 bump to distinguish new failures from baseline noise
 - Phase 17 complete: FRAMEWORK-01/02/03 all met. Runbook shipped at docs/operations/laravel-13-upgrade.md; final regression gate clean (6/6 broadcast snapshots byte-identical; full suite failures confined to Family A/B baseline). Next: HUMAN-UAT dispatch flow spot-check per D-12.
+- [18-01]: Migration filename 2026_04_21_000001_ reserves sequential slots 000002-000004 for personnel/camera_enrollments/recognition_events migrations in Plans 18-02..04
+- [18-01]: CHECK constraint naming convention {table}_{column}_check established via explicit DB::statement — first DB-level CHECK in v1.0 schema; will be repeated in Plans 18-02..04
+- [18-01]: FRAS enums use lowercase backed values (online/offline/degraded) — departure from Incident-family SCREAMING_CASE; matches DB CHECK literals and establishes convention for PersonnelCategory, CameraEnrollmentStatus, RecognitionSeverity
+- [18-01]: Camera model omits toArray() {lat,lng} override per D-66 minimalist scope — Phase 20 can add when admin JSON responses need it
 
 ### Roadmap Evolution
 
@@ -356,8 +361,8 @@ All 5 items remain open for v2 milestone decision (verify / fix / close-out).
 
 ## Session Continuity
 
-Last session: --stopped-at
-Stopped at: Phase 18 context gathered
-Resume file: --resume-file
+Last session: 2026-04-21T09:18:34.033Z
+Stopped at: Completed 18-01
+Resume file: None
 
 **Planned Phase:** 18 (FRAS Schema Port to PostgreSQL) — 6 plans — 2026-04-21T08:55:03.586Z

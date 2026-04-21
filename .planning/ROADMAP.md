@@ -84,7 +84,7 @@ Plans:
   5. A PostGIS `ST_DWithin` query against `cameras.location` returns expected results for a seeded camera row, verified by a dedicated feature test
 **Plans:** 6 plans
 Plans:
-- [ ] 18-01-PLAN.md — Wave 1: cameras table + CameraStatus enum + Camera model + CameraFactory (FRAMEWORK-04)
+- [x] 18-01-PLAN.md — Wave 1: cameras table + CameraStatus enum + Camera model + CameraFactory (FRAMEWORK-04)
 - [ ] 18-02-PLAN.md — Wave 1: personnel table + PersonnelCategory enum + Personnel model + PersonnelFactory (FRAMEWORK-04)
 - [ ] 18-03-PLAN.md — Wave 2: camera_enrollments pivot + CameraEnrollmentStatus enum + CameraEnrollment model + factory (FRAMEWORK-04)
 - [ ] 18-04-PLAN.md — Wave 2: recognition_events table + RecognitionSeverity enum + RecognitionEvent model + factory with states (FRAMEWORK-04, FRAMEWORK-06)
@@ -197,7 +197,7 @@ Plans:
 | 15. Close RSPDR Real-Time Dispatch Visibility | v1.0 | 2/2 | Complete | 2026-04-17 |
 | 16. v1.0 Hygiene & Traceability Cleanup | v1.0 | 3/3 | Complete | 2026-04-17 |
 | 17. Laravel 12 → 13 Upgrade | v2.0 | 4/4 | Complete    | 2026-04-21 |
-| 18. FRAS Schema Port to PostgreSQL | v2.0 | 0/6 | Not started | — |
+| 18. FRAS Schema Port to PostgreSQL | v2.0 | 1/6 | In progress | — |
 | 19. MQTT Pipeline + Listener Infrastructure | v2.0 | 0/? | Not started | — |
 | 20. Camera + Personnel Admin + Enrollment | v2.0 | 0/? | Not started | — |
 | 21. Recognition → IoT-Intake Bridge + Dispatch Map + IntakeStation Rail | v2.0 | 0/? | Not started | — |
