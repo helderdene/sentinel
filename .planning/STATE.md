@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
-status: roadmap_defined
-stopped_at: Milestone v2.0 roadmap defined — awaiting `/gsd-plan-phase 17`
-last_updated: "2026-04-21T00:00:00.000Z"
-last_activity: 2026-04-21
+status: Roadmap defined; awaiting `/gsd-plan-phase 17`
+stopped_at: Phase 17 context gathered
+last_updated: "2026-04-21T04:34:49.747Z"
+last_activity: "2026-04-21 — v2.0 roadmap written (6 phases: 17-22), 43 requirements traced"
 progress:
   total_phases: 6
   completed_phases: 0
@@ -345,6 +345,6 @@ All 5 items remain open for v2 milestone decision (verify / fix / close-out).
 
 ## Session Continuity
 
-Last session: 2026-04-21
-Stopped at: v2.0 roadmap defined (6 phases 17-22, 43 requirements mapped) — awaiting `/gsd-plan-phase 17`
-Resume file: None
+Last session: --stopped-at
+Stopped at: Phase 17 context gathered
+Resume file: --resume-file
