@@ -82,7 +82,14 @@ Plans:
   3. The Pest test suite for FRAS test groups runs against PostgreSQL (not SQLite in-memory), so JSONB queries and geography spatial operators are exercised in CI — and existing IRMS test groups still run against the current driver without regression
   4. Every new table has a factory and a seeder following the IRMS v1.0 `UnitFactory`/`IncidentFactory` pattern, and `php artisan migrate:fresh --seed` completes green on a clean database
   5. A PostGIS `ST_DWithin` query against `cameras.location` returns expected results for a seeded camera row, verified by a dedicated feature test
-**Plans**: TBD
+**Plans:** 6 plans
+Plans:
+- [ ] 18-01-PLAN.md — Wave 1: cameras table + CameraStatus enum + Camera model + CameraFactory (FRAMEWORK-04)
+- [ ] 18-02-PLAN.md — Wave 1: personnel table + PersonnelCategory enum + Personnel model + PersonnelFactory (FRAMEWORK-04)
+- [ ] 18-03-PLAN.md — Wave 2: camera_enrollments pivot + CameraEnrollmentStatus enum + CameraEnrollment model + factory (FRAMEWORK-04)
+- [ ] 18-04-PLAN.md — Wave 2: recognition_events table + RecognitionSeverity enum + RecognitionEvent model + factory with states (FRAMEWORK-04, FRAMEWORK-06)
+- [ ] 18-05-PLAN.md — Wave 3: mandatory Pest feature tests (CameraSpatialQueryTest + RecognitionEventIdempotencyTest) + FrasPlaceholderSeeder + FRAMEWORK-05 verification (SC2/SC3/SC4/SC5)
+- [ ] 18-06-PLAN.md — Wave 3: optional regression tests (SchemaTest + EnumCheckParityTest) — belt-and-suspenders drift guard for Phases 19-22
 
 ### Phase 19: MQTT Pipeline + Listener Infrastructure
 **Goal**: The MQTT ingress surface is operational — a dedicated listener process is running, topics route to handlers, recognition payloads persist with raw JSONB, and operators can see the listener's health — so feature code in Phase 20 and Phase 21 can assume MQTT events land reliably
@@ -95,7 +102,14 @@ Plans:
   4. A dispatcher sees a `mqtt_listener_health` banner on the dispatch console within 60 seconds of the listener going silent (3 missed heartbeats), so a silently-crashed listener is visible without SSH access
   5. `config/mqtt-client.php` declares separate subscriber and publisher connections, so a slow enrollment publish cannot block recognition subscription throughput (verified by a publish-blocking test that confirms recognition messages still land)
   6. The MQTT listener runs under its own Supervisor program, never under Horizon, and a Horizon restart leaves the listener untouched (verified by a Supervisor status check after `horizon:terminate`)
-**Plans**: TBD
+**Plans:** 6 plans
+Plans:
+- [ ] 18-01-PLAN.md — Wave 1: cameras table + CameraStatus enum + Camera model + CameraFactory (FRAMEWORK-04)
+- [ ] 18-02-PLAN.md — Wave 1: personnel table + PersonnelCategory enum + Personnel model + PersonnelFactory (FRAMEWORK-04)
+- [ ] 18-03-PLAN.md — Wave 2: camera_enrollments pivot + CameraEnrollmentStatus enum + CameraEnrollment model + factory (FRAMEWORK-04)
+- [ ] 18-04-PLAN.md — Wave 2: recognition_events table + RecognitionSeverity enum + RecognitionEvent model + factory with states (FRAMEWORK-04, FRAMEWORK-06)
+- [ ] 18-05-PLAN.md — Wave 3: mandatory Pest feature tests (CameraSpatialQueryTest + RecognitionEventIdempotencyTest) + FrasPlaceholderSeeder + FRAMEWORK-05 verification (SC2/SC3/SC4/SC5)
+- [ ] 18-06-PLAN.md — Wave 3: optional regression tests (SchemaTest + EnumCheckParityTest) — belt-and-suspenders drift guard for Phases 19-22
 
 ### Phase 20: Camera + Personnel Admin + Enrollment
 **Goal**: Admins can manage the camera fleet and the personnel watch-list from IRMS, and enrollment flows from IRMS to the cameras reliably — so the recognition pipeline in Phase 21 has a populated fleet and a populated watch-list to match against
@@ -109,7 +123,14 @@ Plans:
   5. Creating, updating, or deleting a personnel record enqueues `EnrollPersonnelBatch` jobs for every active camera on the dedicated `fras` Horizon queue, each wrapped in `WithoutOverlapping('enrollment-camera-{id}')->expireAfter(300)`; the admin sees per-camera progress (pending / syncing / done / failed) updating live via `EnrollmentProgressed` on `fras.enrollments`, plus retry-one-camera and resync-all-cameras buttons
   6. The per-personnel-photo unguessable-UUID public URL (used by cameras to HTTP-fetch during enrollment) is automatically revoked once the `AckHandler` correlates the matching camera enrollment ACK back to the `camera_enrollments` row via cache-backed request-ID mapping, with transient errors auto-retried and terminal errors surfaced to the admin
   7. A scheduled job auto-unenrolls any personnel whose `expires_at` has passed, across all cameras, so the watch-list does not grow unbounded
-**Plans**: TBD
+**Plans:** 6 plans
+Plans:
+- [ ] 18-01-PLAN.md — Wave 1: cameras table + CameraStatus enum + Camera model + CameraFactory (FRAMEWORK-04)
+- [ ] 18-02-PLAN.md — Wave 1: personnel table + PersonnelCategory enum + Personnel model + PersonnelFactory (FRAMEWORK-04)
+- [ ] 18-03-PLAN.md — Wave 2: camera_enrollments pivot + CameraEnrollmentStatus enum + CameraEnrollment model + factory (FRAMEWORK-04)
+- [ ] 18-04-PLAN.md — Wave 2: recognition_events table + RecognitionSeverity enum + RecognitionEvent model + factory with states (FRAMEWORK-04, FRAMEWORK-06)
+- [ ] 18-05-PLAN.md — Wave 3: mandatory Pest feature tests (CameraSpatialQueryTest + RecognitionEventIdempotencyTest) + FrasPlaceholderSeeder + FRAMEWORK-05 verification (SC2/SC3/SC4/SC5)
+- [ ] 18-06-PLAN.md — Wave 3: optional regression tests (SchemaTest + EnumCheckParityTest) — belt-and-suspenders drift guard for Phases 19-22
 **UI hint**: yes
 
 ### Phase 21: Recognition → IoT-Intake Bridge + Dispatch Map + IntakeStation Rail
@@ -123,7 +144,14 @@ Plans:
   4. A dispatcher viewing an Incident created from a recognition event sees a one-click "Escalate to P1" button that, when clicked, updates the Incident priority and writes an audit timeline entry — without taking any other action
   5. The dispatch console map gains a toggleable cameras layer alongside the existing incidents + units layers, with a pulse animation on the matched camera marker triggered by `RecognitionAlertReceived` within 500ms; `useDispatchFeed` remains unchanged (recognition-created Incidents flow through the existing `IncidentCreated` broadcast)
   6. The IntakeStation gains a 4th channel rail showing recent recognition events, so operators triage FRAS alerts alongside SMS / App / IoT / Walk-in in one workspace — verified by a load test of 50 events/sec/camera that confirms dispatch console frame rate and Reverb throttle hold up
-**Plans**: TBD
+**Plans:** 6 plans
+Plans:
+- [ ] 18-01-PLAN.md — Wave 1: cameras table + CameraStatus enum + Camera model + CameraFactory (FRAMEWORK-04)
+- [ ] 18-02-PLAN.md — Wave 1: personnel table + PersonnelCategory enum + Personnel model + PersonnelFactory (FRAMEWORK-04)
+- [ ] 18-03-PLAN.md — Wave 2: camera_enrollments pivot + CameraEnrollmentStatus enum + CameraEnrollment model + factory (FRAMEWORK-04)
+- [ ] 18-04-PLAN.md — Wave 2: recognition_events table + RecognitionSeverity enum + RecognitionEvent model + factory with states (FRAMEWORK-04, FRAMEWORK-06)
+- [ ] 18-05-PLAN.md — Wave 3: mandatory Pest feature tests (CameraSpatialQueryTest + RecognitionEventIdempotencyTest) + FrasPlaceholderSeeder + FRAMEWORK-05 verification (SC2/SC3/SC4/SC5)
+- [ ] 18-06-PLAN.md — Wave 3: optional regression tests (SchemaTest + EnumCheckParityTest) — belt-and-suspenders drift guard for Phases 19-22
 **UI hint**: yes
 
 ### Phase 22: Alert Feed + Event History + Responder Context + DPA Compliance
@@ -138,7 +166,14 @@ Plans:
   5. A scheduled retention cleanup purges scene images at 30 days and face crops at 90 days (both configurable in `config/fras.php`), with an active-incident-protection clause that never purges images referenced by open Incidents — verified by a feature test that creates an expired image linked to an open Incident and asserts it survives
   6. A CDRRMO operator or citizen visiting `/privacy` sees a published CDRRMO-branded Privacy Notice covering biometric data collection, lawful basis, retention, and data-subject rights; `docs/dpa/` contains the PIA template, signage-template generator, and operator training notes ready for the Butuan LGU Data Privacy Officer handoff
   7. Five new gates (`view-fras-alerts`, `manage-cameras`, `manage-personnel`, `trigger-enrollment-retry`, `view-recognition-image`) extend the existing 9 without creating a new role; supervisor + admin have full access, operator has view-only on alerts, and CDRRMO legal sign-off is recorded in the Phase 22 VALIDATION before the milestone closes
-**Plans**: TBD
+**Plans:** 6 plans
+Plans:
+- [ ] 18-01-PLAN.md — Wave 1: cameras table + CameraStatus enum + Camera model + CameraFactory (FRAMEWORK-04)
+- [ ] 18-02-PLAN.md — Wave 1: personnel table + PersonnelCategory enum + Personnel model + PersonnelFactory (FRAMEWORK-04)
+- [ ] 18-03-PLAN.md — Wave 2: camera_enrollments pivot + CameraEnrollmentStatus enum + CameraEnrollment model + factory (FRAMEWORK-04)
+- [ ] 18-04-PLAN.md — Wave 2: recognition_events table + RecognitionSeverity enum + RecognitionEvent model + factory with states (FRAMEWORK-04, FRAMEWORK-06)
+- [ ] 18-05-PLAN.md — Wave 3: mandatory Pest feature tests (CameraSpatialQueryTest + RecognitionEventIdempotencyTest) + FrasPlaceholderSeeder + FRAMEWORK-05 verification (SC2/SC3/SC4/SC5)
+- [ ] 18-06-PLAN.md — Wave 3: optional regression tests (SchemaTest + EnumCheckParityTest) — belt-and-suspenders drift guard for Phases 19-22
 **UI hint**: yes
 
 ## Progress
@@ -162,7 +197,7 @@ Plans:
 | 15. Close RSPDR Real-Time Dispatch Visibility | v1.0 | 2/2 | Complete | 2026-04-17 |
 | 16. v1.0 Hygiene & Traceability Cleanup | v1.0 | 3/3 | Complete | 2026-04-17 |
 | 17. Laravel 12 → 13 Upgrade | v2.0 | 4/4 | Complete    | 2026-04-21 |
-| 18. FRAS Schema Port to PostgreSQL | v2.0 | 0/? | Not started | — |
+| 18. FRAS Schema Port to PostgreSQL | v2.0 | 0/6 | Not started | — |
 | 19. MQTT Pipeline + Listener Infrastructure | v2.0 | 0/? | Not started | — |
 | 20. Camera + Personnel Admin + Enrollment | v2.0 | 0/? | Not started | — |
 | 21. Recognition → IoT-Intake Bridge + Dispatch Map + IntakeStation Rail | v2.0 | 0/? | Not started | — |
