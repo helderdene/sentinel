@@ -19,7 +19,9 @@ use App\Events\IncidentCreated;
 use App\Listeners\SendAssignmentPushNotification;
 use App\Listeners\SendP1PushNotification;
 use App\Models\Incident;
+use App\Models\Personnel;
 use App\Models\User;
+use App\Observers\PersonnelObserver;
 use App\Services\AnalyticsService;
 use App\Services\MapboxDirectionsService;
 use App\Services\ProximityRankingService;
@@ -81,6 +83,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureGates();
         $this->configureRateLimiters();
         $this->configureEventListeners();
+        $this->configureObservers();
     }
 
     /**
@@ -220,5 +223,13 @@ class AppServiceProvider extends ServiceProvider
             IncidentCreated::class,
             SendP1PushNotification::class,
         );
+    }
+
+    /**
+     * Configure Eloquent observers for FRAS camera enrollment bridging.
+     */
+    protected function configureObservers(): void
+    {
+        Personnel::observe(PersonnelObserver::class);
     }
 }
