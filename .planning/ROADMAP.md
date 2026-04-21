@@ -65,11 +65,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. An admin following the documented Horizon drain-and-deploy protocol can deploy Laravel 13 without any queued job executing under a mixed-version worker (drain → deploy → restart is reproducible and documented in `docs/operations/`)
   4. A dispatcher completing a full Report → Triage → Dispatch → Acknowledge → OnScene → Resolve cycle on the upgraded build sees no behavioral difference from the v1.0 build (spot-verified against v1.0 UAT scripts)
   5. Inertia v2 is pinned and Fortify features are explicitly listed — no surprise passkey surface or v3 shim activates during the upgrade
-**Plans:** 3 plans
+**Plans:** 4 plans (1 gap-closure)
 Plans:
 - [ ] 17-01-PLAN.md — Wave 1: capture six byte-identical broadcast payload snapshots on Laravel 12 (FRAMEWORK-02 regression baseline, D-04 Commit 1)
 - [x] 17-02-PLAN.md — Wave 2 (RESCOPED 2026-04-21): atomic composer update bumping framework ^12→^13 + 11 aligned packages (tinker, magellan, dompdf, horizon, reverb, fortify, wayfinder, inertia-laravel, boost, pest) + PHP floor ^8.3 + routes/web.php CSRF rename. 6/6 broadcast snapshots byte-identical on L13. All full-suite failures classified as baseline Family A/B (no new regressions).
 - [ ] 17-03-PLAN.md — Wave 3 (NARROWED scope — aligned package bumps absorbed into Wave 2): Wayfinder TS regen (`php artisan wayfinder:generate`), docs/operations/laravel-13-upgrade.md runbook with drain-and-deploy + rollback (FRAMEWORK-03), final Horizon health check + v1.0 UAT spot-check
+- [ ] 17-04-PLAN.md — Wave 4 (GAP CLOSURE 2026-04-21): close the single UAT gap from Test 1 (17-HUMAN-UAT.md) — add GET /incidents/{incident}/report.pdf route + `download-incident-report` Gate + Wayfinder action + conditional Download Report button on incidents/Show.vue + 10-case Pest feature test. Pre-existing v1.0 gap; PDF was already generated but never exposed.
 
 ### Phase 18: FRAS Schema Port to PostgreSQL
 **Goal**: The four FRAS tables exist empty in IRMS's PostgreSQL database with types that match IRMS conventions (UUID PKs, JSONB, TIMESTAMPTZ, Magellan geography) and with the idempotency constraint recognition ingestion will rely on, so Phase 19 and Phase 20 can begin persisting data without schema churn
