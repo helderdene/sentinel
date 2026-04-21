@@ -151,8 +151,8 @@ Phase mapping (populated 2026-04-21 by gsd-roadmapper). All 43 v2.0 requirements
 | FRAMEWORK-02 | Phase 17 | Complete |
 | FRAMEWORK-03 | Phase 17 | Complete |
 | FRAMEWORK-04 | Phase 18 | Complete |
-| FRAMEWORK-05 | Phase 18 | Pending |
-| FRAMEWORK-06 | Phase 18 | Pending |
+| FRAMEWORK-05 | Phase 18 | Complete |
+| FRAMEWORK-06 | Phase 18 | Complete |
 | MQTT-01 | Phase 19 | Pending |
 | MQTT-02 | Phase 19 | Pending |
 | MQTT-03 | Phase 19 | Pending |

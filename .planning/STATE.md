@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
-status: verifying
+status: ready_to_plan
 stopped_at: Completed 18-06 — Phase 18 FRAS schema port COMPLETE (all 6 plans shipped)
 last_updated: "2026-04-21T09:49:53.720Z"
 last_activity: 2026-04-21
 progress:
   total_phases: 6
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 10
   completed_plans: 10
-  percent: 100
+  percent: 50
 ---
 
 # Project State
@@ -25,9 +25,9 @@ See: .planning/PROJECT.md (updated 2026-04-21)
 
 ## Current Position
 
-Phase: 18 — EXECUTING
-Plan: 6 of 6
-Status: Phase complete — ready for verification
+Phase: 19
+Plan: Not started
+Status: Ready to plan
 Last activity: 2026-04-21
 
 Progress: [██████████] 100%
@@ -49,7 +49,7 @@ Progress: [██████████] 100%
 
 **Velocity:**
 
-- Total plans completed: 32
+- Total plans completed: 38
 - Average duration: 14min
 - Total execution time: 5.3 hours
 
@@ -66,6 +66,7 @@ Progress: [██████████] 100%
 | 15 | 2 | - | - |
 | 16 | 3 | - | - |
 | 17 | 4 | - | - |
+| 18 | 6 | - | - |
 
 **Recent Trend:**
 
