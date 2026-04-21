@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
 status: executing
-stopped_at: Completed 18-02
-last_updated: "2026-04-21T09:25:06.286Z"
+stopped_at: Completed 18-03
+last_updated: "2026-04-21T09:30:30.138Z"
 last_activity: 2026-04-21
 progress:
   total_phases: 6
   completed_phases: 1
   total_plans: 10
-  completed_plans: 6
-  percent: 60
+  completed_plans: 7
+  percent: 70
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-04-21)
 ## Current Position
 
 Phase: 18 — EXECUTING
-Plan: 3 of 6
+Plan: 4 of 6
 Status: Ready to execute
 Last activity: 2026-04-21
 
-Progress: [██████░░░░] 60%
+Progress: [███████░░░] 70%
 
 ## v2.0 Phase Breakdown
 
@@ -118,6 +118,7 @@ Progress: [██████░░░░] 60%
 | Phase 17 P03 | 7min | 3 tasks | 1 files |
 | Phase 18 P01 | 3min | 2 tasks | 4 files |
 | Phase 18 P02 | 9min | 2 tasks | 4 files |
+| Phase Phase 18 PP03 | 3min | 2 tasks tasks | 4 files files |
 
 ## Accumulated Context
 
@@ -322,6 +323,9 @@ Decisions are logged in PROJECT.md Key Decisions table.
 - [18-02]: protected $table = 'personnel' set explicitly on Personnel model — guards against Laravel pluralizer ambiguity ('personnel' is already plural); future inflection changes will not silently repoint
 - [18-02]: PersonnelFactory.gender emits randomElement([0, 1, null]) — covers M/F/unknown trichotomy without presuming a gender-coding schema; Phase 20 UI will map 0/1/null to labels
 - [18-02]: Shared Pattern B (raw DB CHECK constraint) confirmed stable on second application — personnel.category mirrors cameras.status idiom verbatim; Plans 18-03 and 18-04 can reuse
+- [18-03]: Explicit constrained('personnel') table argument on foreignUuid FK — guards against Laravel pluralizer ambiguity (personnel is already plural); the Personnel model's $table override alone is insufficient at migration compile time
+- [18-03]: CameraEnrollment extends Model (not Pivot) — row has its own UUID PK + timestamps; Pivot's composite-PK semantics are wrong for row-has-id pivots
+- [18-03]: Shared Pattern B (raw DB::statement CHECK) confirmed stable on a third application (camera_enrollments.status); ready for verbatim reuse on recognition_events.severity in plan 18-04
 
 ### Roadmap Evolution
 
@@ -365,8 +369,8 @@ All 5 items remain open for v2 milestone decision (verify / fix / close-out).
 
 ## Session Continuity
 
-Last session: 2026-04-21T09:24:55.776Z
-Stopped at: Completed 18-02
+Last session: 2026-04-21T09:30:30.132Z
+Stopped at: Completed 18-03
 Resume file: None
 
 **Planned Phase:** 18 (FRAS Schema Port to PostgreSQL) — 6 plans — 2026-04-21T08:55:03.586Z

@@ -197,7 +197,7 @@ Plans:
 | 15. Close RSPDR Real-Time Dispatch Visibility | v1.0 | 2/2 | Complete | 2026-04-17 |
 | 16. v1.0 Hygiene & Traceability Cleanup | v1.0 | 3/3 | Complete | 2026-04-17 |
 | 17. Laravel 12 → 13 Upgrade | v2.0 | 4/4 | Complete    | 2026-04-21 |
-| 18. FRAS Schema Port to PostgreSQL | v2.0 | 1/6 | In progress | — |
+| 18. FRAS Schema Port to PostgreSQL | v2.0 | 3/6 | In progress | — |
 | 19. MQTT Pipeline + Listener Infrastructure | v2.0 | 0/? | Not started | — |
 | 20. Camera + Personnel Admin + Enrollment | v2.0 | 0/? | Not started | — |
 | 21. Recognition → IoT-Intake Bridge + Dispatch Map + IntakeStation Rail | v2.0 | 0/? | Not started | — |
