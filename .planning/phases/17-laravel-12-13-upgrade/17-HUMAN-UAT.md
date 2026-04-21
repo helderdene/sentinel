@@ -55,10 +55,19 @@ blocked: 0
 
 ## Gaps
 
-- truth: "Incident report PDF is auto-generated and downloadable after a responder resolves the incident (per v1.0 dispatch flow, AssignmentPushed/IncidentStatusChanged broadcast + IncidentReportJob queued on resolve)"
+- truth: "Dispatchers/operators/responders can download the generated incident report PDF from the UI after a responder resolves the incident"
   status: failed
-  reason: "User reported: No incident report for INC-2026-00014 was created after resolving the incident"
+  reason: "User reported: No incident report for INC-2026-00014 was created after resolving the incident. Diagnosis (see .planning/debug/incident-report-pdf-not-generated.md): PDF is generated correctly at storage/app/private/incident-reports/INC-2026-00014.pdf (880KB) and Incident.report_pdf_url is populated — but v1.0 never shipped a download route or UI button. This is a pre-existing v1.0 feature gap, NOT an L13 regression. User elected to close it in Phase 17 gap-closure rather than defer."
   severity: major
   test: 1
-  artifacts: []
-  missing: []
+  root_cause: "Missing download route + UI. GenerateIncidentReport::dispatch fires correctly in ResponderController::resolve (line 353); DomPDF writes the file; DB column updates. Gap is routes/web.php (no download route) + resources/js/pages/incidents/Show.vue (no download button) + tests/Feature/Incidents/ (no feature test)."
+  artifacts:
+    - "app/Http/Controllers/IncidentController.php (add downloadReport method)"
+    - "routes/web.php (add incidents.download-report route)"
+    - "resources/js/pages/incidents/Show.vue (add conditional download button)"
+    - "tests/Feature/Incidents/DownloadReportTest.php (new feature test)"
+  missing:
+    - "Download route (GET /incidents/{incident}/report.pdf)"
+    - "Download button/affordance in incident detail view"
+    - "Feature test for 200 PDF + 404 null + 403 unauthorized"
+  decision: "Gap-closure in Phase 17 (violates D-06 feature-free posture, user-approved 2026-04-21)"
