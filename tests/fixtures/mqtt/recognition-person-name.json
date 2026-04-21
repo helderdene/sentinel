@@ -1,0 +1,11 @@
+{
+  "deviceId": "CAM01",
+  "recordId": 42,
+  "personName": "Juan Dela Cruz",
+  "personType": 0,
+  "verifyStatus": 1,
+  "similarity": 0.87,
+  "capturedAt": "2026-04-21T09:15:30+08:00",
+  "faceImage": "aGVsbG8tZmFjZS1pbWFnZS1ieXRlcw==",
+  "sceneImage": "aGVsbG8tc2NlbmUtaW1hZ2UtYnl0ZXM="
+}
