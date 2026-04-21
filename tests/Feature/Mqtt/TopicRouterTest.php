@@ -9,9 +9,8 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
-use Tests\TestCase;
 
-pest()->extend(TestCase::class)->group('mqtt');
+pest()->group('mqtt');
 
 it('routes Rec topic to RecognitionHandler', function () {
     $mock = $this->mock(RecognitionHandler::class, fn (MockInterface $m) => $m->shouldReceive('handle')->once());
