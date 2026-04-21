@@ -60,7 +60,7 @@ Admin CRUD + WebGL map layer reusing IRMS v1.0 Unit patterns.
 **: Cameras render as a toggleable WebGL symbol layer on the dispatch console `mapbox-gl` map (no HTML overlays; layer extends `useDispatchMap.ts` alongside existing incidents + units layers)
 - [x] **CAMERA-04
 **: Dispatcher sees a live per-camera status indicator (online, offline, degraded) on the map that updates in real-time via `CameraStatusChanged` broadcast on the private `fras.cameras` channel
-- [ ] **CAMERA-05**: `HeartbeatHandler` updates `cameras.last_seen_at` on every heartbeat; a scheduled watchdog flips cameras between `online`/`degraded`/`offline` based on configurable gap thresholds (degraded at 30s, offline at 90s) and broadcasts `CameraStatusChanged` on transitions
+- [x] **CAMERA-05**: `HeartbeatHandler` updates `cameras.last_seen_at` on every heartbeat; a scheduled watchdog flips cameras between `online`/`degraded`/`offline` based on configurable gap thresholds (degraded at 30s, offline at 90s) and broadcasts `CameraStatusChanged` on transitions
 - [x] **CAMERA-06
 **: Camera deletion is blocked if any `camera_enrollments` row is `syncing` or `pending` for that camera (prevents orphaned enrollment state)
 
@@ -70,13 +70,13 @@ Watch-list and enrollment pipeline.
 
 - [x] **PERSONNEL-01
 **: Admin can CRUD personnel records with name, category (`block`, `missing`, `lost_child`, `allow`), optional `expires_at`, and `consent_basis` text field, under `/admin/personnel`
-- [ ] **PERSONNEL-02**: Admin uploads a personnel photo that `FrasPhotoProcessor` (Intervention Image v4) validates (≤1MB, ≤1080p), resizes, re-encodes as JPEG, and hashes (MD5) for dedup
-- [ ] **PERSONNEL-03**: Personnel photos served via an unguessable-UUID public URL that cameras can HTTP-fetch during enrollment, with the URL revoked automatically once the enrollment ACK is received
-- [ ] **PERSONNEL-04**: Creating, updating, or deleting a personnel record enqueues `EnrollPersonnelBatch` jobs for all active cameras, wrapped in `WithoutOverlapping('enrollment-camera-{id}')->expireAfter(300)` so only one enrollment runs per camera at a time
+- [x] **PERSONNEL-02**: Admin uploads a personnel photo that `FrasPhotoProcessor` (Intervention Image v4) validates (≤1MB, ≤1080p), resizes, re-encodes as JPEG, and hashes (MD5) for dedup
+- [x] **PERSONNEL-03**: Personnel photos served via an unguessable-UUID public URL that cameras can HTTP-fetch during enrollment, with the URL revoked automatically once the enrollment ACK is received
+- [x] **PERSONNEL-04**: Creating, updating, or deleting a personnel record enqueues `EnrollPersonnelBatch` jobs for all active cameras, wrapped in `WithoutOverlapping('enrollment-camera-{id}')->expireAfter(300)` so only one enrollment runs per camera at a time
 - [x] **PERSONNEL-05
 **: Admin sees per-camera enrollment progress (pending / syncing / done / failed) with a retry-one-camera button and a resync-all-cameras button, updating live via `EnrollmentProgressed` broadcast on the private `fras.enrollments` channel
-- [ ] **PERSONNEL-06**: Personnel with `expires_at` in the past are auto-unenrolled from all cameras by a scheduled job (lost_child and missing categories expire so watch-list doesn't grow unbounded)
-- [ ] **PERSONNEL-07**: `AckHandler` correlates camera enrollment ACKs back to `camera_enrollments` rows via cache-backed request-ID mapping, with per-error-code retry policy (transient → retry, terminal → surface to admin)
+- [x] **PERSONNEL-06**: Personnel with `expires_at` in the past are auto-unenrolled from all cameras by a scheduled job (lost_child and missing categories expire so watch-list doesn't grow unbounded)
+- [x] **PERSONNEL-07**: `AckHandler` correlates camera enrollment ACKs back to `camera_enrollments` rows via cache-backed request-ID mapping, with per-error-code retry policy (transient → retry, terminal → surface to admin)
 
 ### RECOGNITION — Pipeline + IoT-Intake Bridge
 
@@ -166,19 +166,19 @@ Phase mapping (populated 2026-04-21 by gsd-roadmapper). All 43 v2.0 requirements
 | MQTT-04 | Phase 19 | Pending |
 | MQTT-05 | Phase 19 | Pending |
 | MQTT-06 | Phase 19 | Pending |
-| CAMERA-01 | Phase 20 | Pending |
-| CAMERA-02 | Phase 20 | Pending |
-| CAMERA-03 | Phase 20 | Pending |
-| CAMERA-04 | Phase 20 | Pending |
-| CAMERA-05 | Phase 20 | Pending |
-| CAMERA-06 | Phase 20 | Pending |
-| PERSONNEL-01 | Phase 20 | Pending |
-| PERSONNEL-02 | Phase 20 | Pending |
-| PERSONNEL-03 | Phase 20 | Pending |
-| PERSONNEL-04 | Phase 20 | Pending |
-| PERSONNEL-05 | Phase 20 | Pending |
-| PERSONNEL-06 | Phase 20 | Pending |
-| PERSONNEL-07 | Phase 20 | Pending |
+| CAMERA-01 | Phase 20 | Complete |
+| CAMERA-02 | Phase 20 | Complete |
+| CAMERA-03 | Phase 20 | Complete |
+| CAMERA-04 | Phase 20 | Complete |
+| CAMERA-05 | Phase 20 | Complete |
+| CAMERA-06 | Phase 20 | Complete |
+| PERSONNEL-01 | Phase 20 | Complete |
+| PERSONNEL-02 | Phase 20 | Complete |
+| PERSONNEL-03 | Phase 20 | Complete |
+| PERSONNEL-04 | Phase 20 | Complete |
+| PERSONNEL-05 | Phase 20 | Complete |
+| PERSONNEL-06 | Phase 20 | Complete |
+| PERSONNEL-07 | Phase 20 | Complete |
 | RECOGNITION-01 | Phase 21 | Pending |
 | RECOGNITION-02 | Phase 21 | Pending |
 | RECOGNITION-03 | Phase 21 | Pending |

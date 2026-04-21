@@ -49,7 +49,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 17: Laravel 12 → 13 Upgrade** — Feature-free framework upgrade; six v1.0 broadcast events emit identical payloads pre/post; Horizon drain-and-deploy protocol documented (completed 2026-04-21)
 - [x] **Phase 18: FRAS Schema Port to PostgreSQL** — Feature-free schema port: 4 empty FRAS tables with UUID PKs, JSONB + GIN indexes, TIMESTAMPTZ, Magellan geography; Pest runs FRAS groups on Postgres (completed 2026-04-21)
 - [ ] **Phase 19: MQTT Pipeline + Listener Infrastructure** — Dedicated `irms-mqtt` Supervisor program (not under Horizon), `irms:mqtt-listen` command, TopicRouter + 4 handlers, listener-health heartbeat banner
-- [ ] **Phase 20: Camera + Personnel Admin + Enrollment** — Admin CRUD for cameras + personnel, MapLibre camera picker, `CameraEnrollmentService` with per-camera mutex, BOLO categories with expiry auto-unenroll
+- [x] **Phase 20: Camera + Personnel Admin + Enrollment** — Admin CRUD for cameras + personnel, MapLibre camera picker, `CameraEnrollmentService` with per-camera mutex, BOLO categories with expiry auto-unenroll (completed 2026-04-21)
 - [ ] **Phase 21: Recognition → IoT-Intake Bridge + Dispatch Map + IntakeStation Rail** — `FrasIncidentFactory` bridges Critical recognitions to `IncidentChannel::IoT` Incidents at P2 with one-click P1 escalation; dispatch map cameras layer with pulse animation; IntakeStation gains a 4th rail
 - [ ] **Phase 22: Alert Feed + Event History + Responder Context + DPA Compliance** — Operator `/fras/alerts` + `/fras/events`; responder SceneTab Person-of-Interest accordion; Privacy Notice route, `fras_access_log`, signed 5-min URLs, retention purge with active-incident protection — milestone gate: CDRRMO legal sign-off
 
@@ -123,7 +123,7 @@ Plans:
   5. Creating, updating, or deleting a personnel record enqueues `EnrollPersonnelBatch` jobs for every active camera on the dedicated `fras` Horizon queue, each wrapped in `WithoutOverlapping('enrollment-camera-{id}')->expireAfter(300)`; the admin sees per-camera progress (pending / syncing / done / failed) updating live via `EnrollmentProgressed` on `fras.enrollments`, plus retry-one-camera and resync-all-cameras buttons
   6. The per-personnel-photo unguessable-UUID public URL (used by cameras to HTTP-fetch during enrollment) is automatically revoked once the `AckHandler` correlates the matching camera enrollment ACK back to the `camera_enrollments` row via cache-backed request-ID mapping, with transient errors auto-retried and terminal errors surfaced to the admin
   7. A scheduled job auto-unenrolls any personnel whose `expires_at` has passed, across all cameras, so the watch-list does not grow unbounded
-**Plans:** 8 plans
+**Plans:** 8/8 plans complete
 Plans:
 - [x] 20-01-PLAN.md — Wave 0: Intervention Image v4 install + photo_access_token migration + fras.* config + fras_photos disk + CameraStatusChanged/EnrollmentProgressed events + channels + D-40..D-43 doc amendments
 - [x] 20-02-PLAN.md — Wave 1: FrasPhotoProcessor (Intervention v4 port) + CameraEnrollmentService (FRAS verbatim port with IRMS tweaks)
@@ -201,6 +201,6 @@ Plans:
 | 17. Laravel 12 → 13 Upgrade | v2.0 | 4/4 | Complete    | 2026-04-21 |
 | 18. FRAS Schema Port to PostgreSQL | v2.0 | 6/6 | Complete    | 2026-04-21 |
 | 19. MQTT Pipeline + Listener Infrastructure | v2.0 | 0/? | Not started | — |
-| 20. Camera + Personnel Admin + Enrollment | v2.0 | 0/? | Not started | — |
+| 20. Camera + Personnel Admin + Enrollment | v2.0 | 8/8 | Complete    | 2026-04-21 |
 | 21. Recognition → IoT-Intake Bridge + Dispatch Map + IntakeStation Rail | v2.0 | 0/? | Not started | — |
 | 22. Alert Feed + Event History + Responder Context + DPA Compliance | v2.0 | 0/? | Not started | — |

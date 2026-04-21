@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
-status: executing
+status: ready_to_plan
 stopped_at: Phase 20 Plan 08 complete (Wave 5 sequential — dispatch map cameras layer)
 last_updated: "2026-04-21T16:30:37.853Z"
 last_activity: 2026-04-21
 progress:
   total_phases: 6
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 24
   completed_plans: 24
-  percent: 100
+  percent: 83
 ---
 
 # Project State
@@ -25,9 +25,9 @@ See: .planning/PROJECT.md (updated 2026-04-21)
 
 ## Current Position
 
-Phase: 20 (camera-personnel-admin-enrollment) — EXECUTING
-Plan: 8 of 8 complete (Wave 3 sequential — plan 06 scheduled commands landed)
-Status: Ready to execute
+Phase: 21
+Plan: Not started
+Status: Ready to plan
 Last activity: 2026-04-21
 
 Progress: [██████████] 100%
@@ -49,7 +49,7 @@ Progress: [██████████] 100%
 
 **Velocity:**
 
-- Total plans completed: 38
+- Total plans completed: 46
 - Average duration: 14min
 - Total execution time: 5.3 hours
 
@@ -67,6 +67,7 @@ Progress: [██████████] 100%
 | 16 | 3 | - | - |
 | 17 | 4 | - | - |
 | 18 | 6 | - | - |
+| 20 | 8 | - | - |
 
 **Recent Trend:**
 
