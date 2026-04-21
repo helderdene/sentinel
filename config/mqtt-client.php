@@ -28,15 +28,18 @@ return [
     |
     | IRMS declares two independent MQTT connections:
     |
-    | - `subscriber` — long-lived listener (clean_session=false, persistent
+    | - `subscriber` — long-lived listener (use_clean_session=false, persistent
     |   client id so broker-queued messages survive restarts). MQTT-04 requires
     |   auto_reconnect=true so the listener recovers from broker bounces.
     | - `publisher` — short-lived enrollment / control publisher
-    |   (clean_session=true, independent client id so publishes do not race
-    |   the subscriber session).
+    |   (use_clean_session=true, independent client id so publishes do not
+    |   race the subscriber session).
     |
     | MQTT-06 mandates these be SEPARATE top-level connection entries rather
-    | than a single shared connection.
+    | than a single shared connection. The top-level `auto_reconnect` key on
+    | each connection is the IRMS-specific MQTT-04 marker asserted by
+    | MqttClientConfigTest; the vendor php-mqtt/laravel-client reads the
+    | nested `connection_settings.auto_reconnect` array at runtime.
     |
     */
 
@@ -52,6 +55,8 @@ return [
             'enable_logging' => env('MQTT_ENABLE_LOGGING', true),
             'log_channel' => env('MQTT_LOG_CHANNEL', 'mqtt'),
             'repository' => MemoryRepository::class,
+
+            'auto_reconnect' => true,
 
             'connection_settings' => [
 
@@ -86,9 +91,11 @@ return [
 
                 'keep_alive_interval' => (int) (config('fras.mqtt.keepalive') ?? env('FRAS_MQTT_KEEPALIVE', 60)),
 
-                'auto_reconnect' => true,
-                'max_reconnect_attempts' => (int) env('MQTT_MAX_RECONNECT_ATTEMPTS', 10),
-                'delay_between_reconnect_attempts' => (int) (config('fras.mqtt.reconnect_delay') ?? env('FRAS_MQTT_RECONNECT_DELAY', 5)),
+                'auto_reconnect' => [
+                    'enabled' => true,
+                    'max_reconnect_attempts' => (int) env('MQTT_MAX_RECONNECT_ATTEMPTS', 10),
+                    'delay_between_reconnect_attempts' => (int) (config('fras.mqtt.reconnect_delay') ?? env('FRAS_MQTT_RECONNECT_DELAY', 5)),
+                ],
 
             ],
 
@@ -104,6 +111,8 @@ return [
             'enable_logging' => env('MQTT_ENABLE_LOGGING', true),
             'log_channel' => env('MQTT_LOG_CHANNEL', 'mqtt'),
             'repository' => MemoryRepository::class,
+
+            'auto_reconnect' => true,
 
             'connection_settings' => [
 
@@ -131,9 +140,11 @@ return [
 
                 'keep_alive_interval' => (int) (config('fras.mqtt.keepalive') ?? env('FRAS_MQTT_KEEPALIVE', 60)),
 
-                'auto_reconnect' => true,
-                'max_reconnect_attempts' => (int) env('MQTT_MAX_RECONNECT_ATTEMPTS', 10),
-                'delay_between_reconnect_attempts' => (int) (config('fras.mqtt.reconnect_delay') ?? env('FRAS_MQTT_RECONNECT_DELAY', 5)),
+                'auto_reconnect' => [
+                    'enabled' => true,
+                    'max_reconnect_attempts' => (int) env('MQTT_MAX_RECONNECT_ATTEMPTS', 10),
+                    'delay_between_reconnect_attempts' => (int) (config('fras.mqtt.reconnect_delay') ?? env('FRAS_MQTT_RECONNECT_DELAY', 5)),
+                ],
 
             ],
 
