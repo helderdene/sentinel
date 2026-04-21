@@ -18,8 +18,11 @@ use Clickbar\Magellan\Data\Geometries\Point;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class IncidentController extends Controller
 {
@@ -167,6 +170,22 @@ class IncidentController extends Controller
         return Inertia::render('incidents/Show', [
             'incident' => $incident,
         ]);
+    }
+
+    /**
+     * Stream the generated incident report PDF for download.
+     */
+    public function downloadReport(Incident $incident): StreamedResponse
+    {
+        Gate::authorize('download-incident-report', $incident);
+
+        abort_if($incident->report_pdf_url === null, 404);
+        abort_unless(Storage::disk('local')->exists($incident->report_pdf_url), 404);
+
+        return Storage::disk('local')->download(
+            $incident->report_pdf_url,
+            "{$incident->incident_no}.pdf",
+        );
     }
 
     /**

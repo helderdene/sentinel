@@ -18,6 +18,7 @@ use App\Events\AssignmentPushed;
 use App\Events\IncidentCreated;
 use App\Listeners\SendAssignmentPushNotification;
 use App\Listeners\SendP1PushNotification;
+use App\Models\Incident;
 use App\Models\User;
 use App\Services\AnalyticsService;
 use App\Services\MapboxDirectionsService;
@@ -159,6 +160,30 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('view-session-log', fn (User $user): bool => in_array($user->role, [
             UserRole::Supervisor, UserRole::Admin,
         ], true));
+
+        Gate::define('download-incident-report', function (User $user, Incident $incident): bool {
+            if (in_array($user->role, [
+                UserRole::Operator,
+                UserRole::Dispatcher,
+                UserRole::Supervisor,
+                UserRole::Admin,
+            ], true)) {
+                return true;
+            }
+
+            if ($user->role === UserRole::Responder) {
+                if ($user->unit_id === null) {
+                    return false;
+                }
+
+                return DB::table('incident_unit')
+                    ->where('incident_id', $incident->id)
+                    ->where('unit_id', $user->unit_id)
+                    ->exists();
+            }
+
+            return false;
+        });
     }
 
     /**

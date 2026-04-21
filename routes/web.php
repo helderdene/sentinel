@@ -120,6 +120,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('api/geocoding/search', [IncidentController::class, 'geocodingSearch'])->name('api.geocoding.search');
     });
 
+    // Incident report PDF download -- operators/dispatchers/supervisors/admins + assigned responders (Gate-enforced)
+    Route::middleware(['role:operator,dispatcher,responder,supervisor,admin'])->group(function () {
+        Route::get('incidents/{incident}/report.pdf', [IncidentController::class, 'downloadReport'])
+            ->name('incidents.download-report');
+    });
+
     // Directions API -- accessible to all roles that see a map
     Route::middleware(['role:operator,dispatcher,responder,supervisor,admin'])->group(function () {
         Route::get('api/directions', DirectionsController::class)->name('api.directions');
