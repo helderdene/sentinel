@@ -47,7 +47,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 ### 🚧 v2.0 FRAS Integration (Phases 17-22)
 
 - [x] **Phase 17: Laravel 12 → 13 Upgrade** — Feature-free framework upgrade; six v1.0 broadcast events emit identical payloads pre/post; Horizon drain-and-deploy protocol documented (completed 2026-04-21)
-- [ ] **Phase 18: FRAS Schema Port to PostgreSQL** — Feature-free schema port: 4 empty FRAS tables with UUID PKs, JSONB + GIN indexes, TIMESTAMPTZ, Magellan geography; Pest runs FRAS groups on Postgres
+- [x] **Phase 18: FRAS Schema Port to PostgreSQL** — Feature-free schema port: 4 empty FRAS tables with UUID PKs, JSONB + GIN indexes, TIMESTAMPTZ, Magellan geography; Pest runs FRAS groups on Postgres (completed 2026-04-21)
 - [ ] **Phase 19: MQTT Pipeline + Listener Infrastructure** — Dedicated `irms-mqtt` Supervisor program (not under Horizon), `irms:mqtt-listen` command, TopicRouter + 4 handlers, listener-health heartbeat banner
 - [ ] **Phase 20: Camera + Personnel Admin + Enrollment** — Admin CRUD for cameras + personnel, MapLibre camera picker, `CameraEnrollmentService` with per-camera mutex, BOLO categories with expiry auto-unenroll
 - [ ] **Phase 21: Recognition → IoT-Intake Bridge + Dispatch Map + IntakeStation Rail** — `FrasIncidentFactory` bridges Critical recognitions to `IncidentChannel::IoT` Incidents at P2 with one-click P1 escalation; dispatch map cameras layer with pulse animation; IntakeStation gains a 4th rail
@@ -82,14 +82,14 @@ Plans:
   3. The Pest test suite for FRAS test groups runs against PostgreSQL (not SQLite in-memory), so JSONB queries and geography spatial operators are exercised in CI — and existing IRMS test groups still run against the current driver without regression
   4. Every new table has a factory and a seeder following the IRMS v1.0 `UnitFactory`/`IncidentFactory` pattern, and `php artisan migrate:fresh --seed` completes green on a clean database
   5. A PostGIS `ST_DWithin` query against `cameras.location` returns expected results for a seeded camera row, verified by a dedicated feature test
-**Plans:** 4/6 plans complete
+**Plans:** 6/6 plans complete
 Plans:
 - [x] 18-01-PLAN.md — Wave 1: cameras table + CameraStatus enum + Camera model + CameraFactory (FRAMEWORK-04)
 - [x] 18-02-PLAN.md — Wave 1: personnel table + PersonnelCategory enum + Personnel model + PersonnelFactory (FRAMEWORK-04)
 - [x] 18-03-PLAN.md — Wave 2: camera_enrollments pivot + CameraEnrollmentStatus enum + CameraEnrollment model + factory (FRAMEWORK-04)
 - [x] 18-04-PLAN.md — Wave 2: recognition_events table + RecognitionSeverity enum + RecognitionEvent model + factory with states (FRAMEWORK-04, FRAMEWORK-06)
-- [ ] 18-05-PLAN.md — Wave 3: mandatory Pest feature tests (CameraSpatialQueryTest + RecognitionEventIdempotencyTest) + FrasPlaceholderSeeder + FRAMEWORK-05 verification (SC2/SC3/SC4/SC5)
-- [ ] 18-06-PLAN.md — Wave 3: optional regression tests (SchemaTest + EnumCheckParityTest) — belt-and-suspenders drift guard for Phases 19-22
+- [x] 18-05-PLAN.md — Wave 3: mandatory Pest feature tests (CameraSpatialQueryTest + RecognitionEventIdempotencyTest) + FrasPlaceholderSeeder + FRAMEWORK-05 verification (SC2/SC3/SC4/SC5)
+- [x] 18-06-PLAN.md — Wave 3: optional regression tests (SchemaTest + EnumCheckParityTest) — belt-and-suspenders drift guard for Phases 19-22
 
 ### Phase 19: MQTT Pipeline + Listener Infrastructure
 **Goal**: The MQTT ingress surface is operational — a dedicated listener process is running, topics route to handlers, recognition payloads persist with raw JSONB, and operators can see the listener's health — so feature code in Phase 20 and Phase 21 can assume MQTT events land reliably

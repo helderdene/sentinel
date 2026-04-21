@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
-status: executing
-stopped_at: Completed 18-05
-last_updated: "2026-04-21T09:43:50.762Z"
+status: verifying
+stopped_at: Completed 18-06 — Phase 18 FRAS schema port COMPLETE (all 6 plans shipped)
+last_updated: "2026-04-21T09:49:53.720Z"
 last_activity: 2026-04-21
 progress:
   total_phases: 6
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 10
-  completed_plans: 9
-  percent: 90
+  completed_plans: 10
+  percent: 100
 ---
 
 # Project State
@@ -27,10 +27,10 @@ See: .planning/PROJECT.md (updated 2026-04-21)
 
 Phase: 18 — EXECUTING
 Plan: 6 of 6
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-04-21
 
-Progress: [█████████░] 90%
+Progress: [██████████] 100%
 
 ## v2.0 Phase Breakdown
 
@@ -121,6 +121,7 @@ Progress: [█████████░] 90%
 | Phase Phase 18 PP03 | 3min | 2 tasks tasks | 4 files files |
 | Phase Phase 18 PP04 | 4min | 2 tasks tasks | 4 files files |
 | Phase 18 P05 | 5min | 2 tasks | 3 files |
+| Phase Phase 18 PP06 | 3min | 2 tasks tasks | 2 files files |
 
 ## Accumulated Context
 
@@ -337,6 +338,10 @@ Decisions are logged in PROJECT.md Key Decisions table.
 - [18-05]: FrasPlaceholderSeeder body left empty AND unregistered in DatabaseSeeder per D-62 — migrate:fresh --seed stays production-safe while SC4 'every table has a seeder' wording satisfied by file presence alone
 - [18-05]: CameraSpatialQueryTest uses standalone Butuan plaza lat/lng literals instead of Incident FK reference — decouples spatial proof from Incident-family schema drift, avoids IncidentFactory's FK chain, keeps test to pure ST_DWithin semantics
 - [18-05]: FRAMEWORK-05 verification is inspection-only (grep ^DB_CONNECTION=pgsql .env.testing) — .env.testing was already pgsql-configured pre-phase-18, so FRAMEWORK-05 is satisfied without reconfiguration
+- [18-06]: extractCheckValues() helper uses regex /'([^']+)'/ on pg_get_constraintdef output — shape-agnostic across both Postgres CHECK output dialects (IN (...) and (col)::text = ANY (ARRAY[...::text])); one helper works across dialect rewrites without re-tokenization
+- [18-06]: ILIKE (not LIKE) for all pg_indexes.indexdef string matches — PostGIS emits USING gist / USING GIST inconsistently across versions; case-insensitive matches survive extension upgrades without test-suite churn
+- [18-06]: EnumCheckParityTest placed under tests/Feature/Fras/ (not Unit/Conventions/) — live pg_constraint introspection is Feature-shaped; placement inherits RefreshDatabase + pgsql binding automatically and colocates with fras-group tests
+- [18-06]: Sorted-array equality (collect()->sort()->values()->all()) for enum-vs-CHECK parity — one expression, symmetric, fails loudly on either-side drift without two-direction array_diff comparison
 
 ### Roadmap Evolution
 
@@ -380,8 +385,8 @@ All 5 items remain open for v2 milestone decision (verify / fix / close-out).
 
 ## Session Continuity
 
-Last session: 2026-04-21T09:43:50.751Z
-Stopped at: Completed 18-05
+Last session: 2026-04-21T09:49:53.716Z
+Stopped at: Completed 18-06 — Phase 18 FRAS schema port COMPLETE (all 6 plans shipped)
 Resume file: None
 
 **Planned Phase:** 18 (FRAS Schema Port to PostgreSQL) — 6 plans — 2026-04-21T08:55:03.586Z
