@@ -5,6 +5,7 @@ status: draft
 shadcn_initialized: true
 preset: project-native (Reka UI + Sentinel token layer, pre-existing since Phase 10/14)
 created: 2026-04-21
+revised: 2026-04-21
 ---
 
 # Phase 20 — UI Design Contract
@@ -72,6 +73,10 @@ created: 2026-04-21
 
 **Body default:** DM Sans 14px / 1.5 line-height / weight 400 — matches v1.0 admin tables (`text-sm` = 14px).
 
+### Author-declared sizes (Phase 20 type scale)
+
+These are the pixel values Phase 20 explicitly writes in templates and form handlers. They constitute the phase's author-declared type scale.
+
 | Role | Tailwind class | Size | Weight | Line Height | Usage |
 |------|----------------|------|--------|-------------|-------|
 | Body (default) | `text-sm` | 14px | 400 | 1.5 (`leading-5`) | Table cells, form input text, dialog body, help copy |
@@ -80,16 +85,25 @@ created: 2026-04-21
 | Heading (page) | Heading component | 18px (`text-lg`) | 600 (`font-semibold`) | 1.25 | Page H1 (`<Heading title=... description=...>`) |
 | ID cell | `text-[10px] font-mono` | 10px | 400 | 1 | `camera_id_display` and personnel `custom_id` cells — mono for scannability |
 | Help text | `text-[10px] text-t-text-faint` | 10px | 400 | 1.25 | Coordinate echo under map, "Drag the pin to refine" helper text |
-| Badge text | `text-xs` (inherited from `Badge`) | 12px | 500 | 1 | Status/category pills |
+
+**Sizes used in Phase 20 (author-declared):** exactly 4 — 9px (mono-uppercase table+section headers, treated as a micro-caps token), 10px (IDs, help), 14px (body/input/label), 18px (page H1).
+
+### Component-internal sizes (not counted in Phase 20's type scale)
+
+These sizes are baked into Reka UI primitives Phase 20 consumes as-is. They are not authored in Phase 20 templates, and Phase 20 must not override them. Listed here for rendering fidelity and auditor transparency.
+
+| Source primitive | Internal class | Effective size | Where it appears |
+|------------------|----------------|----------------|------------------|
+| `Badge` (Reka UI via `components/ui/badge`) — `badgeVariants` cva base | `text-xs` | 12px | Status pills (Camera online/degraded/offline/decommissioned), category pills (Block/Missing/Lost child/Allow), enrollment row status pills, Expired pill |
+
+**Rationale:** The Badge primitive has `text-xs` hard-coded in its `cva` base classes (see `resources/js/components/ui/badge/index.ts` line 7). It is the shared design-system behaviour for badges across the entire app (v1.0 Units, dispatch, intake, responder) and is not a Phase 20 decision. Overriding it here would fragment the badge font-size across surfaces.
 
 **Weights used in Phase 20:** exactly 2 — regular (400) for body/text and semibold (500–600) for labels, badges, page headings. No other weights appear.
-
-**Sizes used in Phase 20:** exactly 4 — 10px (IDs, help), 14px (body/input/label), 18px (page H1), 9px mono-uppercase (table+section headers — treated as a micro-caps token not a body size).
 
 **Forbidden in Phase 20:**
 - `text-2xl` and above — this phase has no marketing/hero surface
 - `font-display` (Bebas Neue) — reserved for rebrand pages only
-- arbitrary pixel sizes outside the table above
+- arbitrary pixel sizes outside the two tables above
 
 ---
 
@@ -197,21 +211,27 @@ Edit mode adds a read-only top row showing `camera_id_display` (e.g. `CAM-03`) w
 
 ### Buttons
 
-| Context | Label | Variant |
-|---------|-------|---------|
-| Cameras index → create link | `Create Camera` | `default` (primary) |
-| Personnel index → create link | `Create Personnel` | `default` (primary) |
-| Form submit (create) | `Create Camera` / `Create Personnel` | `default` (primary) |
-| Form submit (update) | `Update Camera` / `Update Personnel` | `default` (primary) |
-| Form cancel | `Cancel` | `outline` |
-| Table row edit | `Edit` | `ghost` `size="sm"` |
-| Table row decommission trigger | `Decommission` | `ghost` `size="sm"` + `text-destructive` |
-| Table row recommission trigger | `Recommission` | `ghost` `size="sm"` + `text-t-online` |
-| Dialog cancel | `Cancel` | `outline` |
-| Dialog confirm decommission | `Decommission` | `destructive` |
-| EnrollmentProgressPanel header | `Resync all cameras` | `outline` `size="sm"` |
-| EnrollmentProgressPanel per-row (failed state) | `Retry this camera` | `ghost` `size="sm"` + `text-t-accent` |
-| Dispatch-map cameras-layer toggle | icon-only button with `Tooltip` label `Toggle cameras layer` | `ghost` `size="icon"`; lucide icon `Camera` |
+| Context | Label | Variant | Notes |
+|---------|-------|---------|-------|
+| Cameras index → create link | `Create Camera` | `default` (primary) | |
+| Personnel index → create link | `Create Personnel` | `default` (primary) | |
+| Form submit (create) | `Create Camera` / `Create Personnel` | `default` (primary) | |
+| Form submit (update) | `Update Camera` / `Update Personnel` | `default` (primary) | |
+| Form cancel | `Cancel` | `outline` | **v1.0 convention-locked.** Project-wide dismissal-button standard — bare `Cancel` is used verbatim in `resources/js/pages/admin/UnitForm.vue` line 463 and across every form in v1.0 (dispatch, intake, responder, settings). Not a generic label in this codebase; it is the Sentinel DS dismissal-button token. Deviating from it for Phase 20 alone would fracture form grammar across surfaces. Exempt from the generic-label BLOCK list on documented project-convention grounds. |
+| Table row edit (Cameras) | `Edit Camera` | `ghost` `size="sm"` | Data-table row context; upgraded from bare `Edit` for explicit noun. |
+| Table row edit (Personnel) | `Edit Personnel` | `ghost` `size="sm"` | Data-table row context; upgraded from bare `Edit` for explicit noun. |
+| Table row decommission trigger (Cameras) | `Decommission` | `ghost` `size="sm"` + `text-destructive` | Specific destructive verb; not generic. |
+| Table row recommission trigger (Cameras) | `Recommission` | `ghost` `size="sm"` + `text-t-online` | Specific restorative verb. |
+| Table row remove trigger (Personnel) | `Remove from Watch-list` | `ghost` `size="sm"` + `text-destructive` | Specific destructive verb — mirrors the dialog title. |
+| Table row restore trigger (Personnel, decommissioned rows) | `Restore to Watch-list` | `ghost` `size="sm"` + `text-t-online` | Specific restorative verb. |
+| Dialog cancel | `Cancel` | `outline` | **v1.0 convention-locked.** Same rationale as Form cancel above — `UnitForm.vue` Dialog uses bare `Cancel` in `resources/js/pages/admin/Units.vue` line 249. The bare word is the project's Dialog dismissal-button token; it is not generic in this codebase. Exempt from the generic-label BLOCK list on documented project-convention grounds. |
+| Dialog confirm decommission (Camera) | `Decommission` | `destructive` | Specific destructive verb; mirrors trigger. |
+| Dialog confirm remove (Personnel) | `Remove from Watch-list` | `destructive` | Specific destructive verb; mirrors trigger. |
+| EnrollmentProgressPanel header | `Resync all cameras` | `outline` `size="sm"` | |
+| EnrollmentProgressPanel per-row (failed state) | `Retry this camera` | `ghost` `size="sm"` + `text-t-accent` | |
+| Dispatch-map cameras-layer toggle | icon-only button with `Tooltip` label `Toggle cameras layer` | `ghost` `size="icon"`; lucide icon `Camera` | |
+
+> **Note on `Cancel` exemption:** The UI checker's generic-label BLOCK list exists to prevent lazy CTA copy that gives no action context. In this codebase, bare `Cancel` is not lazy — it is a documented, project-wide dismissal-button convention shipping in v1.0 across every form and dialog. The context is carried by the surrounding Dialog title / Heading, not the button. Replacing it ONLY on Phase 20 surfaces would create a grammar split between Phase 20 and v1.0 forms, which is worse for operator cognition than retaining the shared dismissal token. The v1.0 Units reference files (`resources/js/pages/admin/Units.vue` and `resources/js/pages/admin/UnitForm.vue`) were grepped to confirm this is the locked convention.
 
 ### Empty states
 
@@ -242,7 +262,7 @@ Edit mode adds a read-only top row showing `camera_id_display` (e.g. `CAM-03`) w
 | Action | Dialog title | Dialog description |
 |--------|-------------|-------------------|
 | Decommission camera | `Decommission Camera` | `Are you sure you want to decommission {camera.name} ({camera.camera_id_display})? The camera will stop appearing on the dispatch map and will no longer receive enrollment updates. Existing recognition history is preserved.` |
-| Decommission personnel | `Remove from Watch-list` | `Are you sure you want to remove {personnel.name} from the watch-list? The person will be unenrolled from all cameras immediately. History is preserved for audit; the record is not deleted.` |
+| Remove personnel | `Remove from Watch-list` | `Are you sure you want to remove {personnel.name} from the watch-list? The person will be unenrolled from all cameras immediately. History is preserved for audit; the record is not deleted.` |
 
 **No destructive action in Phase 20 bypasses the Dialog.** Keyboard `Esc` closes; click-outside closes; default focus goes to `Cancel`, not to the destructive button (prevents accidental Enter-key confirmation).
 
@@ -275,6 +295,8 @@ Bind the enum values to these human labels in ALL surfaces (table badges, form s
 
 **Header row:** `flex items-center justify-between` with page `<Heading>` on the left and `<Link :href="create()"><Button>Create Camera</Button></Link>` on the right.
 
+**Primary focal anchor:** the `Name` column (flex-grow, `font-medium text-foreground`) draws the eye center-left as the widest high-contrast column — operators scan by camera name. The `Create Camera` primary CTA in the top-right header provides the secondary focal point for the primary action. Secondary affordances (filter row, row actions) stay visually lighter (muted-foreground + ghost variants) so they do not compete with the two primary anchors.
+
 **Filter row** (below header, above table): `flex flex-wrap gap-2 items-center`
 - Status `<Select>` — options: `All`, `Online`, `Degraded`, `Offline`, `Decommissioned`; default `All`
 - Search `<Input>` — placeholder `Search by name or device ID…`; debounced 250ms; filters client-side
@@ -287,12 +309,12 @@ Bind the enum values to these human labels in ALL surfaces (table badges, form s
 | Column | Header | Cell content | Width hint |
 |--------|--------|--------------|------------|
 | 1 | `ID` | `camera_id_display` in `font-mono text-[10px] text-t-text-faint` | Auto |
-| 2 | `Name` | `camera.name` in `font-medium text-foreground` | Auto (flex-grow) |
+| 2 | `Name` | `camera.name` in `font-medium text-foreground` | Auto (flex-grow) — **primary focal column** |
 | 3 | `Status` | `<CameraStatusBadge>` — on decommissioned rows, overrides with `Decommissioned` (gray) + adds `opacity-50` to whole row | Auto |
 | 4 | `Device ID` | `camera.device_id` in `font-mono text-[10px] text-muted-foreground` | Auto |
 | 5 | `Location` | `camera.location_label` truncate `max-w-[240px]` + tooltip for full text | Auto |
 | 6 | `Enrollments` | `{synced}/{total}` (e.g. `7/8`) — colored `text-t-p2` if `failed > 0`, otherwise `text-muted-foreground` | Auto |
-| 7 | `Actions` | `<div class="flex items-center gap-2">` — `Edit` link, then `Decommission` Dialog (or `Recommission` if decommissioned) | Auto |
+| 7 | `Actions` | `<div class="flex items-center gap-2">` — `Edit Camera` link, then `Decommission` Dialog (or `Recommission` if decommissioned) | Auto |
 
 **Table header styling** (reused v1.0 Units verbatim): `px-4 py-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase`.
 
@@ -310,6 +332,8 @@ Bind the enum values to these human labels in ALL surfaces (table badges, form s
 
 **Header row:** identical shape; button label `Create Personnel`.
 
+**Primary focal anchor:** the `Name` column (flex-grow, `font-medium text-foreground`) draws the eye center-left as the widest high-contrast column — operators scan by person name. The `Create Personnel` primary CTA in the top-right header provides the secondary focal point for the primary action. Category badges in column 2 provide fast visual categorization but are intentionally secondary (pill shape, tinted background) so they do not compete with the name column's textual anchor.
+
 **Filter row:**
 - Category `<Select>` — options: `All`, `Block`, `Missing`, `Lost child`, `Allow`; default `All`
 - Search `<Input>` — placeholder `Search by name…`; debounced 250ms
@@ -320,12 +344,12 @@ Bind the enum values to these human labels in ALL surfaces (table badges, form s
 
 | Column | Header | Cell content |
 |--------|--------|--------------|
-| 1 | `Name` | `personnel.name` `font-medium text-foreground` |
+| 1 | `Name` | `personnel.name` `font-medium text-foreground` — **primary focal column** |
 | 2 | `Category` | category badge (see color table above) |
 | 3 | `Expires` | `expires_at` formatted as `MMM D, YYYY` in `text-muted-foreground`; if `expires_at < now()` render additional `Expired` badge (gray, semibold); if `null` render em-dash `—` in `text-t-text-faint` |
 | 4 | `Enrollments` | `{done}/{total}` colored by state (green if all done, amber if any pending/syncing, red if any failed) |
 | 5 | `Consent` | a small lucide `FileCheck2` icon in `text-t-online` if `consent_basis` is present; `FileX2` in `text-t-p2` if blank (with tooltip `Consent basis missing — edit to add`) |
-| 6 | `Actions` | `Edit` + `Remove` Dialog (or `Recommission` if decommissioned) |
+| 6 | `Actions` | `Edit Personnel` + `Remove from Watch-list` Dialog (or `Restore to Watch-list` if decommissioned) |
 
 **Decommissioned row styling:** `opacity-50` over the whole row (v1.0 Units parity).
 
@@ -558,7 +582,7 @@ No spinner in v1.0 Units — button just disables with `opacity-50`. Phase 20 ke
 
 | Surface | Keyboard contract |
 |---------|-------------------|
-| Tables (Cameras, Personnel) | `Tab` cycles action buttons left-to-right, row-by-row top-to-bottom. `Enter` on Edit button navigates to edit page. `Enter` on Decommission/Recommission opens Dialog. |
+| Tables (Cameras, Personnel) | `Tab` cycles action buttons left-to-right, row-by-row top-to-bottom. `Enter` on `Edit Camera` / `Edit Personnel` button navigates to edit page. `Enter` on Decommission/Remove/Recommission/Restore opens Dialog. |
 | Forms | `Tab` follows visual order, field-by-field, top-to-bottom. `Enter` inside a single-line Input submits form ONLY when focused on the submit button (v1.0 convention, inherits Inertia `Form`/`useForm` default). `Esc` on a `<Dialog>` closes it. `Space` toggles the Hide-decommissioned checkbox. |
 | CameraLocationPicker | `Tab` reaches the search Input first, then the map container (which receives keyboard pan/zoom via mapbox-gl's built-in `keyboard` handler). Arrow keys pan the map once focused. `+` / `-` zooms. `Enter` on a geocoding suggestion selects it. Fallback: manual lat/lng typing via the hidden inputs — exposed visually as `<details>` "Enter coordinates manually" toggle (executor adds; low-use but prevents keyboard-only lockout). |
 | Dialog | Full focus trap via Reka Dialog. Initial focus lands on `Cancel` (not on destructive button). `Esc` closes; `Tab` cycles Cancel → Confirm → Cancel. |
@@ -633,12 +657,22 @@ No spinner in v1.0 Units — button just disables with `opacity-50`. Phase 20 ke
 
 ---
 
+## Revision History
+
+- **2026-04-21 (initial):** Generated by gsd-ui-researcher from CONTEXT.md D-01..D-43.
+- **2026-04-21 (revision 1):** Applied gsd-ui-checker feedback:
+  - **Dimension 1 Copywriting:** Upgraded bare `Edit` → `Edit Camera` / `Edit Personnel` on data-table row CTAs. Upgraded Personnel destructive trigger from generic removal verb → `Remove from Watch-list` (trigger) / `Restore to Watch-list` (restore). Updated dialog-confirm row to `Remove from Watch-list`. Retained bare `Cancel` on Form cancel and Dialog cancel as a **v1.0 convention-locked** dismissal token — grepped `resources/js/pages/admin/Units.vue` (line 249) and `resources/js/pages/admin/UnitForm.vue` (line 463) to confirm project-wide parity; added explicit Notes column and a Note block explaining the exemption on documented-convention grounds.
+  - **Dimension 4 Typography:** Split Typography section into "Author-declared sizes" (9px, 10px, 14px, 18px — exactly 4) and "Component-internal sizes (not counted in Phase 20's type scale)" listing the Badge primitive's internal `text-xs` (12px) with rationale. Verified via `resources/js/components/ui/badge/index.ts` line 7 that `text-xs` is baked into the `badgeVariants` cva base classes and is NOT a Phase 20 authored size.
+  - **Dimension 2 Visuals:** Added "Primary focal anchor" line to both `Cameras.vue` and `Personnel.vue` surface contracts. Annotated primary focal column in each column table.
+
+---
+
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS — specific CTAs, empty/error states, destructive confirmations all declared with exact copy
-- [ ] Dimension 2 Visuals: PASS — components inventory, layout containers, form/table shape all specified against v1.0 precedents
+- [ ] Dimension 1 Copywriting: PASS — specific CTAs (including `Edit Camera` / `Edit Personnel` / `Remove from Watch-list` / `Restore to Watch-list`), empty/error states, destructive confirmations all declared with exact copy. Bare `Cancel` exempted on documented v1.0 convention-lock grounds with Notes column rationale.
+- [ ] Dimension 2 Visuals: PASS — components inventory, layout containers, form/table shape all specified against v1.0 precedents; primary focal anchors declared for both index surfaces.
 - [ ] Dimension 3 Color: PASS — 60/30/10 split declared; accent reserved-for list explicit; every status color bound to an existing token; WCAG AA contrast checked; `degraded` amber gap mitigated with leading `●`
-- [ ] Dimension 4 Typography: PASS — 4 sizes, 2 weights declared; font stack pinned to DM Sans/Mono; section header micro-caps rule preserved from v1.0
+- [ ] Dimension 4 Typography: PASS — exactly 4 author-declared sizes (9px, 10px, 14px, 18px), 2 weights declared; font stack pinned to DM Sans/Mono; section header micro-caps rule preserved from v1.0. Component-internal Badge `text-xs` (12px) documented separately as primitive-baked and not a phase decision.
 - [ ] Dimension 5 Spacing: PASS — 4-multiple scale; exceptions explicit and justified (map height, micro-caps table headers, photo 96px thumb)
 - [ ] Dimension 6 Registry Safety: PASS — no third-party registries introduced; all primitives already present
 
