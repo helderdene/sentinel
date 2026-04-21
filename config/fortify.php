@@ -143,6 +143,20 @@ return [
     |
     */
 
+    /*
+    |--------------------------------------------------------------------------
+    | Feature Lockdown (Phase 17 — Laravel 13 upgrade)
+    |--------------------------------------------------------------------------
+    |
+    | IRMS v1.0 deliberately enables only: resetPasswords, emailVerification,
+    | twoFactorAuthentication. Fortify's passkey / WebAuthn, registerUsers, and
+    | updateProfileInformation features are NOT enabled and MUST NOT be auto-
+    | enabled by future Fortify minor bumps. If a Fortify upgrade introduces a
+    | new default feature, keep it omitted here until a dedicated phase lands
+    | UAT for the added auth surface.
+    |
+    */
+
     'features' => [
         Features::resetPasswords(),
         Features::emailVerification(),

@@ -114,4 +114,21 @@ return [
 
     'prefix' => env('CACHE_PREFIX', Str::slug((string) env('APP_NAME', 'laravel')).'-cache-'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Serializable Classes (Laravel 13+)
+    |--------------------------------------------------------------------------
+    |
+    | L13 defaults to restricting class unserialization from cache to prevent
+    | deserialization gadget chains. IRMS uses the database cache store and
+    | does not currently cache PHP objects — only primitives and arrays.
+    | Setting this to `false` disables custom-class unserialization entirely.
+    |
+    | If a future phase introduces `Cache::put('key', $someObject)`, replace
+    | `false` with an explicit allow-list: `[App\Data\ThatClass::class, ...]`.
+    |
+    */
+
+    'serializable_classes' => false,
+
 ];
