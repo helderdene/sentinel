@@ -125,8 +125,8 @@ Plans:
   7. A scheduled job auto-unenrolls any personnel whose `expires_at` has passed, across all cameras, so the watch-list does not grow unbounded
 **Plans:** 8 plans
 Plans:
-- [ ] 20-01-PLAN.md — Wave 0: Intervention Image v4 install + photo_access_token migration + fras.* config + fras_photos disk + CameraStatusChanged/EnrollmentProgressed events + channels + D-40..D-43 doc amendments
-- [ ] 20-02-PLAN.md — Wave 1: FrasPhotoProcessor (Intervention v4 port) + CameraEnrollmentService (FRAS verbatim port with IRMS tweaks)
+- [x] 20-01-PLAN.md — Wave 0: Intervention Image v4 install + photo_access_token migration + fras.* config + fras_photos disk + CameraStatusChanged/EnrollmentProgressed events + channels + D-40..D-43 doc amendments
+- [x] 20-02-PLAN.md — Wave 1: FrasPhotoProcessor (Intervention v4 port) + CameraEnrollmentService (FRAS verbatim port with IRMS tweaks)
 - [ ] 20-03-PLAN.md — Wave 2: EnrollPersonnelBatch job (WithoutOverlapping + failed handler) + PersonnelObserver (wasChanged gate) + AckHandler::handle body fill
 - [ ] 20-04-PLAN.md — Wave 2: AdminCameraController (CRUD + auto-sequence + barangay lookup + deletion guard) + Form Requests + routes + feature tests
 - [ ] 20-05-PLAN.md — Wave 2: AdminPersonnelController + photo two-namespace URL (FrasPhotoAccess + signed operator) + retry/resync endpoints + broadcast auth tests
