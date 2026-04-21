@@ -67,7 +67,6 @@ class RecognitionEvent extends Model
             'verify_status' => 'integer',
             'person_type' => 'integer',
             'is_no_mask' => 'integer',
-            'record_id' => 'integer',
         ];
     }
 
