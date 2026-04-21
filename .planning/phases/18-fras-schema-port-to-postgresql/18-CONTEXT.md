@@ -70,7 +70,7 @@ The phase goal is "no schema churn" for downstream phases. Phase 18 includes all
 - **D-37:** `camera_person_id` varchar(100) NULLABLE — firmware's camera-side person ID (FRAS quirk, preserve for debugging).
 - **D-38:** `verify_status` smallint NOT NULL — camera-reported 0-3 value (FRAS preserves).
 - **D-39:** `person_type` smallint NOT NULL — camera-reported 0/1 at recognition time (snapshot; personnel.category might drift later).
-- **D-40:** `similarity` real NOT NULL — 0.0–100.0 face-match score (Postgres `real` is single-precision float).
+- **D-40:** `similarity` decimal(5,2) NOT NULL — 0.00–100.00 face-match score. **Corrected 2026-04-21 (plan-checker blocker #1):** Original decision said `real`, but Laravel's `$table->float()` emits `DOUBLE PRECISION` on Postgres, not `real`. Using `$table->decimal('similarity', 5, 2)` gives exact 0.00–100.00 range semantics (4 bytes vs 8 for double precision, fixed-point vs binary float — also what FRAS firmware reports anyway). Cast as `'decimal:2'` on the model.
 - **D-41:** `is_real_time` boolean NOT NULL.
 - **D-42:** `name_from_camera` varchar(100) NULLABLE, `facesluice_id` varchar(100) NULLABLE, `id_card` varchar(32) NULLABLE, `phone` varchar(32) NULLABLE — camera-reported fields snapshot.
 - **D-43:** `is_no_mask` smallint NOT NULL — 0/1/2 mask detection state from firmware.
@@ -80,7 +80,7 @@ The phase goal is "no schema churn" for downstream phases. Phase 18 includes all
 - **D-47:** `face_image_path` varchar(255) NULLABLE, `scene_image_path` varchar(255) NULLABLE — local disk paths (Phase 19 writes to private disk).
 - **D-48:** `raw_payload` jsonb NOT NULL — full MQTT RecPush JSON. **GIN index** via `$table->index('raw_payload', null, 'gin')` (Laravel builder) or raw `CREATE INDEX ... USING GIN (raw_payload)` in migration.
 - **D-49:** `severity` varchar(10) NOT NULL DEFAULT 'info' — values `info | warning | critical`. DB-level `CHECK`. Matches FRAS's `add_acknowledgment_columns` migration. Phase 21 writes on ingest.
-- **D-50:** `acknowledged_by` uuid NULLABLE FK → users, `ON DELETE SET NULL` — Phase 22 alert feed ack.
+- **D-50:** `acknowledged_by` bigint NULLABLE FK → users, `ON DELETE SET NULL` — Phase 22 alert feed ack. **Corrected 2026-04-21 (plan-checker blocker #1):** Original said `uuid`, but `users.id` is `$table->id()` = bigint (v1.0 shipped before FRAS UUID convention). Use `$table->foreignId('acknowledged_by')->nullable()->constrained('users')->nullOnDelete()`.
 - **D-51:** `acknowledged_at` TIMESTAMPTZ(0) NULLABLE.
 - **D-52:** `dismissed_at` TIMESTAMPTZ(0) NULLABLE.
 - **D-53:** `created_at` / `updated_at` default precision 0.
@@ -113,10 +113,10 @@ The phase goal is "no schema churn" for downstream phases. Phase 18 includes all
 
 - **D-63:** Four Eloquent models in `app/Models/`: `Camera`, `Personnel`, `CameraEnrollment`, `RecognitionEvent`. Each uses `HasUuids` + `HasFactory`.
 - **D-64:** Casts per model:
-  - `Camera`: location via Magellan `Point::class`, last_seen_at / decommissioned_at via `'datetime'`, status via `PersonnelCategory::class` — no wait, `CameraStatus::class` (new enum).
+  - `Camera`: location via Magellan `Point::class`, last_seen_at / decommissioned_at via `'datetime'`, status via `CameraStatus::class` enum cast.
   - `Personnel`: category via `PersonnelCategory::class` enum cast, expires_at / decommissioned_at via `'datetime'`, birthday via `'date'`.
   - `CameraEnrollment`: status via `CameraEnrollmentStatus::class` enum cast, enrolled_at via `'datetime'`.
-  - `RecognitionEvent`: raw_payload via `'array'`, target_bbox via `'array'`, captured_at / received_at via `'datetime'`, severity via `RecognitionSeverity::class` enum cast, is_real_time via `'boolean'`.
+  - `RecognitionEvent`: raw_payload via `'array'`, target_bbox via `'array'`, captured_at / received_at via `'datetime'`, severity via `RecognitionSeverity::class` enum cast, is_real_time via `'boolean'`, similarity via `'decimal:2'`.
 - **D-65:** PHP enums created:
   - `app/Enums/CameraStatus.php` — `Online`, `Offline`, `Degraded`
   - `app/Enums/PersonnelCategory.php` — `Allow`, `Block`, `Missing`, `LostChild`
