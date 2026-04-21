@@ -68,6 +68,14 @@ return [
             'report' => false,
         ],
 
+        'fras_photos' => [
+            'driver' => env('FRAS_PHOTO_DISK', 'local'),
+            'root' => storage_path('app/private/fras_photos'),
+            'visibility' => 'private',
+            'throw' => false,
+            'report' => false,
+        ],
+
     ],
 
     /*

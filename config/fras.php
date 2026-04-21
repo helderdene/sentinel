@@ -22,4 +22,20 @@ return [
         'reconnect_delay' => (int) env('FRAS_MQTT_RECONNECT_DELAY', 5),
     ],
 
+    'cameras' => [
+        'degraded_gap_s' => (int) env('FRAS_CAMERA_DEGRADED_GAP_S', 30),
+        'offline_gap_s' => (int) env('FRAS_CAMERA_OFFLINE_GAP_S', 90),
+    ],
+
+    'enrollment' => [
+        'batch_size' => (int) env('FRAS_ENROLLMENT_BATCH_SIZE', 10),
+        'ack_timeout_minutes' => (int) env('FRAS_ENROLLMENT_ACK_TIMEOUT_MINUTES', 5),
+    ],
+
+    'photo' => [
+        'max_dimension' => (int) env('FRAS_PHOTO_MAX_DIMENSION', 1080),
+        'jpeg_quality' => (int) env('FRAS_PHOTO_JPEG_QUALITY', 85),
+        'max_size_bytes' => (int) env('FRAS_PHOTO_MAX_SIZE_BYTES', 1_048_576),
+    ],
+
 ];
