@@ -17,3 +17,13 @@ Schedule::command('irms:mqtt-listener-watchdog')
     ->everyThirtySeconds()
     ->withoutOverlapping()
     ->description('Detect MQTT listener silence and broadcast health transitions');
+
+Schedule::command('irms:camera-watchdog')
+    ->everyMinute()
+    ->withoutOverlapping()
+    ->description('Flip camera status between online/degraded/offline based on heartbeat gap');
+
+Schedule::command('irms:personnel-expire-sweep')
+    ->hourly()
+    ->withoutOverlapping()
+    ->description('Unenroll personnel whose BOLO expiry has passed');
