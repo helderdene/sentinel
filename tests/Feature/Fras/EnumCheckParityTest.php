@@ -19,13 +19,13 @@ pest()->group('fras');
  */
 function extractCheckValues(string $table, string $column): array
 {
-    $constraint = DB::selectOne("
+    $constraint = DB::selectOne('
         SELECT pg_get_constraintdef(oid) AS def
         FROM pg_constraint
         WHERE conrelid = ?::regclass
-          AND contype = 'c'
-          AND pg_get_constraintdef(oid) LIKE ?
-    ", [$table, "%{$column}%"]);
+          AND contype = ?
+          AND conname = ?
+    ', [$table, 'c', "{$table}_{$column}_check"]);
 
     if (! $constraint) {
         return [];
