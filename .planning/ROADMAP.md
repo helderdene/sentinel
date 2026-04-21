@@ -104,12 +104,12 @@ Plans:
   6. The MQTT listener runs under its own Supervisor program, never under Horizon, and a Horizon restart leaves the listener untouched (verified by a Supervisor status check after `horizon:terminate`)
 **Plans:** 6 plans
 Plans:
-- [x] 18-01-PLAN.md — Wave 1: cameras table + CameraStatus enum + Camera model + CameraFactory (FRAMEWORK-04)
-- [x] 18-02-PLAN.md — Wave 1: personnel table + PersonnelCategory enum + Personnel model + PersonnelFactory (FRAMEWORK-04)
-- [x] 18-03-PLAN.md — Wave 2: camera_enrollments pivot + CameraEnrollmentStatus enum + CameraEnrollment model + factory (FRAMEWORK-04)
-- [x] 18-04-PLAN.md — Wave 2: recognition_events table + RecognitionSeverity enum + RecognitionEvent model + factory with states (FRAMEWORK-04, FRAMEWORK-06)
-- [x] 18-05-PLAN.md — Wave 3: mandatory Pest feature tests (CameraSpatialQueryTest + RecognitionEventIdempotencyTest) + FrasPlaceholderSeeder + FRAMEWORK-05 verification (SC2/SC3/SC4/SC5)
-- [x] 18-06-PLAN.md — Wave 3: optional regression tests (SchemaTest + EnumCheckParityTest) — belt-and-suspenders drift guard for Phases 19-22
+- [ ] 19-01-PLAN.md — Wave 1: install php-mqtt/laravel-client + configs (fras.php, mqtt-client.php dual subscriber/publisher, horizon fras-supervisor, logging mqtt channel, filesystems fras_events disk) + RecognitionSeverity::fromEvent() classifier (MQTT-06, Wave 0 gap A1)
+- [ ] 19-02-PLAN.md — Wave 2: MqttHandler interface + 4 handler stubs + TopicRouter with liveness cache write + per-pattern Pest tests (MQTT-02, Pitfall 18)
+- [ ] 19-03-PLAN.md — Wave 3: 4 handler implementations — RecognitionHandler (personName/persionName fallback, idempotency, images, unknown-camera drop) + Heartbeat/OnlineOffline/Ack (MQTT-02, MQTT-03)
+- [ ] 19-04-PLAN.md — Wave 3: FrasMqttListenCommand + FrasMqttListenerWatchdogCommand + MqttListenerHealthChanged event + routes/console.php 30s schedule (MQTT-01, MQTT-04, MQTT-05)
+- [ ] 19-05-PLAN.md — Wave 4: DispatchConsoleController mqtt_listener_health shared prop + MqttListenerHealthBanner.vue + useDispatchFeed.ts Echo subscription + Console.vue banner wiring (MQTT-05 UI)
+- [ ] 19-06-PLAN.md — Wave 5: composer.json 6th dev process + docs/operations/irms-mqtt.md runbook (Supervisor block, deploy protocol, smoke test) + human-verify checkpoint (MQTT-01 operational, Pitfalls 6/7)
 
 ### Phase 20: Camera + Personnel Admin + Enrollment
 **Goal**: Admins can manage the camera fleet and the personnel watch-list from IRMS, and enrollment flows from IRMS to the cameras reliably — so the recognition pipeline in Phase 21 has a populated fleet and a populated watch-list to match against
