@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
 status: executing
-stopped_at: Phase 20 Plan 04 complete (Wave 2 admin camera CRUD)
-last_updated: "2026-04-21T15:33:19.682Z"
+stopped_at: Phase 20 Plan 05 complete (Wave 2 admin personnel CRUD + two-namespace photo URL)
+last_updated: "2026-04-21T15:45:00.000Z"
 last_activity: 2026-04-21
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 24
-  completed_plans: 20
-  percent: 83
+  completed_plans: 21
+  percent: 88
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-04-21)
 ## Current Position
 
 Phase: 20 (camera-personnel-admin-enrollment) — EXECUTING
-Plan: 4 of 8 complete (Wave 2 sequential path — plans 01, 02, 03 done)
+Plan: 5 of 8 complete (Wave 2 sequential path — plans 01, 02, 03, 04 done; 05 just landed)
 Status: Ready to execute
 Last activity: 2026-04-21
 
-Progress: [████████░░] 83%
+Progress: [████████▊░] 88%
 
 ## v2.0 Phase Breakdown
 
@@ -124,6 +124,7 @@ Progress: [████████░░] 83%
 | Phase 18 P05 | 5min | 2 tasks | 3 files |
 | Phase Phase 18 PP06 | 3min | 2 tasks tasks | 2 files files |
 | Phase 20 P04 | 6min | 2 tasks | 7 files |
+| Phase 20 P05 | 7min | 3 tasks | 16 files |
 
 ## Accumulated Context
 
@@ -352,6 +353,12 @@ Decisions are logged in PROJECT.md Key Decisions table.
 - [20-04]: Additive migration 2026_04_22_000002 closes Phase 18 gap (barangay_id FK + notes + location_label nullable) without rewriting schema-freeze file — preserves D-20 schema-freeze contract while letting AdminCameraController.store persist BarangayLookupService results
 - [20-04]: Placeholder admin/Cameras.vue + admin/CameraForm.vue shipped as 9-line stubs so Pest Inertia ::render assertions pass Vite manifest lookup — Plan 07 wholly replaces with Mapbox picker implementation; same pattern as AdminUnitTest which depends on pre-existing admin/Units.vue
 - [20-04]: enrollAllToCamera test asserts Queue::assertNotPushed (not assertPushed) because CameraEnrollmentService gates on CameraStatus::Online and new cameras ship with status=offline — first heartbeat (Plan 06 watchdog) triggers first sync; controller→service handshake is what this test covers, not enrollment fan-out
+- [20-05]: routes/fras.php houses admin.personnel.photo via a second withRouting->then group — shares prefix('admin') + name('admin.') with the admin.php group but broadens the role gate from role:admin to role:operator,supervisor,admin (D-22). URL surface `/admin/personnel/{id}/photo` + name `admin.personnel.photo` stable; only the middleware chain differs.
+- [20-05]: Token rotation happens inside AdminPersonnelController (Str::uuid()->toString() in both store and update photo paths) — Form Request whitelists explicitly omit photo_access_token, blocking mass-assignment (T-20-05-01).
+- [20-05]: update() guards delete() with `$oldPath !== $result['photo_path']` — FrasPhotoProcessor writes deterministically to `personnel/{id}.jpg` so old+new paths are typically identical on replace; unconditional delete would wipe the just-written file.
+- [20-05]: destroy() calls `$service->deleteFromAllCameras($personnel)` explicitly — PersonnelObserver's `deleted` hook never fires on soft-decommission (the row is updated, not deleted), so DeletePersons MQTT must be published directly from the controller.
+- [20-05]: photo_access_token is a PostgreSQL uuid column (not varchar) — test fixtures must use Str::uuid() not free-form strings; `'old-token-xxx'` from the plan was corrected to Str::uuid()->toString() during GREEN.
+- [20-05]: Broadcast auth matrix dropped Citizen role entirely — UserRole enum has 5 cases (Admin/Supervisor/Operator/Dispatcher/Responder), no Citizen. fras.cameras allows 4 denies 1; fras.enrollments allows 2 denies 3; 10 assertions total.
 
 ### Roadmap Evolution
 
@@ -395,9 +402,9 @@ All 5 items remain open for v2 milestone decision (verify / fix / close-out).
 
 ## Session Continuity
 
-Last session: 2026-04-21T15:33:19.676Z
-Stopped at: Phase 20 Plan 04 complete (Wave 2 admin camera CRUD)
+Last session: 2026-04-21T15:45:00.000Z
+Stopped at: Phase 20 Plan 05 complete (Wave 2 admin personnel CRUD + two-namespace photo URL scheme)
 Resume file: None
 
 **Planned Phase:** 20 (Camera + Personnel Admin + Enrollment) — 8 plans — 2026-04-21T14:47:52.037Z
-**Plan 03 Wave 2 progress:** EnrollPersonnelBatch (stub → FRAS port), PersonnelObserver (wasChanged-gated + delete cascade), AckHandler::handle() (D-16 body + Cache::pull idempotency). Full fras group: 51 passed + 1 skipped.
+**Plan 05 Wave 2 progress:** FrasPhotoAccessController (public token-gated /fras/photo/{token} with enrollment-state revocation + mqtt access log), AdminPersonnelController (7 methods + custom_id derivation + photo_access_token rotation), AdminPersonnelPhotoController (signed-URL + D-22 role gate via new routes/fras.php), EnrollmentController (retry + resyncAll), broadcast auth role matrix. Full fras group: 93 passed + 0 skipped (was 63+1 before — +29 new + 1 previously-skipped unskipped).
