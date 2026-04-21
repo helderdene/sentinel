@@ -127,9 +127,9 @@ Plans:
 Plans:
 - [x] 20-01-PLAN.md — Wave 0: Intervention Image v4 install + photo_access_token migration + fras.* config + fras_photos disk + CameraStatusChanged/EnrollmentProgressed events + channels + D-40..D-43 doc amendments
 - [x] 20-02-PLAN.md — Wave 1: FrasPhotoProcessor (Intervention v4 port) + CameraEnrollmentService (FRAS verbatim port with IRMS tweaks)
-- [ ] 20-03-PLAN.md — Wave 2: EnrollPersonnelBatch job (WithoutOverlapping + failed handler) + PersonnelObserver (wasChanged gate) + AckHandler::handle body fill
-- [ ] 20-04-PLAN.md — Wave 2: AdminCameraController (CRUD + auto-sequence + barangay lookup + deletion guard) + Form Requests + routes + feature tests
-- [ ] 20-05-PLAN.md — Wave 2: AdminPersonnelController + photo two-namespace URL (FrasPhotoAccess + signed operator) + retry/resync endpoints + broadcast auth tests
+- [x] 20-03-PLAN.md — Wave 2: EnrollPersonnelBatch job (WithoutOverlapping + failed handler) + PersonnelObserver (wasChanged gate) + AckHandler::handle body fill
+- [x] 20-04-PLAN.md — Wave 2: AdminCameraController (CRUD + auto-sequence + barangay lookup + deletion guard) + Form Requests + routes + feature tests
+- [x] 20-05-PLAN.md — Wave 2: AdminPersonnelController + photo two-namespace URL (FrasPhotoAccess + signed operator) + retry/resync endpoints + broadcast auth tests
 - [ ] 20-06-PLAN.md — Wave 3: CameraWatchdogCommand + PersonnelExpireSweepCommand + routes/console.php scheduling
 - [ ] 20-07-PLAN.md — Wave 4: Cameras.vue + CameraForm.vue + Personnel.vue + PersonnelForm.vue + CameraLocationPicker + EnrollmentProgressPanel + useEnrollmentProgress + CameraStatusBadge
 - [ ] 20-08-PLAN.md — Wave 5: useDispatchMap cameras layer + Console.vue toggle + fras.cameras Echo subscription + cross-surface integration test + human-verify dispatch map
