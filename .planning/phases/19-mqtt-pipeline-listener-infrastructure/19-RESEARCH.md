@@ -1135,27 +1135,19 @@ Recommendation: **new tiny composable `useMqttListenerHealth.ts`** is cleaner th
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **`RecognitionSeverity::fromEvent()` classification matrix exact values.**
-   - What we know: FRAS source referenced `AlertSeverity::fromEvent($parsed['person_type'], $parsed['verify_status'])` without us inspecting the enum file directly.
-   - What's unclear: the exact person_type → severity mapping; what verify_status values modify severity.
-   - Recommendation: Wave 0 task — read `/Users/helderdene/fras/app/Enums/AlertSeverity.php` + lock matrix in `RecognitionSeverity.php` as part of the plan that introduces `RecognitionHandler`.
+1. **RESOLVED: `RecognitionSeverity::fromEvent()` classification matrix.**
+   - Resolution: Plan 19-01 Task 3 reads `/Users/helderdene/fras/app/Enums/AlertSeverity.php` verbatim and ports the matrix into `app/Enums/RecognitionSeverity.php` with a `fromEvent(int $personType, int $verifyStatus): self` classifier. FRAS's `Ignored` case collapses to `Info` (IRMS enum has no `Ignored` variant — documented rationale in plan).
 
-2. **AckHandler Phase 19 scaffold: does it validate anything against `camera_enrollments` rows?**
-   - What we know: CONTEXT.md says "Phase 19 scaffolding only; Phase 20 fills in enrollment state."
-   - What's unclear: whether Phase 19 should insert `CameraEnrollment` rows on ACK (persist the correlation) or skip all DB writes.
-   - Recommendation: **Skip all DB writes in AckHandler for Phase 19** — scaffolding means "parse + validate + log + return." Phase 20's `AckHandler` upgrade then adds the Cache::pull + CameraEnrollment update logic. Keep Phase 19 AckHandler side-effect-free beyond logging.
+2. **RESOLVED: AckHandler Phase 19 scaffold — DB-write policy.**
+   - Resolution: Plan 19-03 Task 2 implements `AckHandler` as parse + validate + log + return ONLY. Zero DB writes in Phase 19. The `Cache::pull` correlation + `CameraEnrollment` state update lands in Phase 20.
 
-3. **Should the watchdog's `transitionTo()` write a row to `recognition_events` or any audit table on every state change?**
-   - What we know: CONTEXT.md D-05..D-07 says cache-only; no schema changes.
-   - What's unclear: retention/visibility of state-transition history for operator post-mortems.
-   - Recommendation: Stay cache-only for Phase 19. If ops feedback shows need for historical listener-health timeline, Phase 22 adds `mqtt_listener_health_events` table.
+3. **RESOLVED: Watchdog state-transition persistence.**
+   - Resolution: Plan 19-04 Task 2 keeps watchdog cache-only. `MqttListenerHealthChanged` is the sole persistence path (broadcast + log). No new audit table in Phase 19. Deferred to Phase 22 if ops feedback requests historical timeline.
 
-4. **Banner component placement: new `MqttListenerHealthBanner.vue` or extend existing `ConnectionBanner.vue`?**
-   - What we know: `ConnectionBanner.vue` renders based on `BannerLevel` + Reverb connection state (useWebSocket).
-   - What's unclear: whether a single banner should multiplex both concerns (WebSocket down + MQTT silent) or stay as separate banners stacked.
-   - Recommendation: **Separate banner component** — different failure domain (MQTT ingress vs WebSocket dispatch), different operator action (restart Supervisor vs check Reverb), different message text. Stack them with the MQTT banner rendering first (higher priority — recognition flow blocked) if both fire. Cosmetic choice; planner picks.
+4. **RESOLVED: Banner component placement.**
+   - Resolution: Plan 19-05 Task 2 creates new `resources/js/components/fras/MqttListenerHealthBanner.vue` (separate from `ConnectionBanner.vue`). Rationale: different failure domain (MQTT ingress vs WebSocket dispatch), different operator action, different message text. Stack them with MQTT banner rendering first when both fire.
 
 ---
 
