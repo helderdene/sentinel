@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
 status: executing
-stopped_at: "Completed 17-02-PLAN.md (Wave 2 rescoped: L13 framework + 11 aligned packages + CSRF rename atomically)"
-last_updated: "2026-04-21T05:45:00.000Z"
-last_activity: 2026-04-21 -- Completed Phase 17 Plan 02 (rescoped)
+stopped_at: "Completed 17-03-PLAN.md (Wave 3: Wayfinder regen verified no-op + runbook shipped + final regression gate)"
+last_updated: "2026-04-21T06:03:34.696Z"
+last_activity: 2026-04-21 -- Phase --phase execution started
 progress:
   total_phases: 6
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 2
-  percent: 67
+  completed_plans: 3
+  percent: 100
 ---
 
 # Project State
@@ -30,7 +30,7 @@ Plan: 1 of --name
 Status: Executing Phase --phase
 Last activity: 2026-04-21 -- Phase --phase execution started
 
-Progress: [███░░░░░░░] 33%
+Progress: [██████████] 100%
 
 ## v2.0 Phase Breakdown
 
@@ -114,6 +114,7 @@ Progress: [███░░░░░░░] 33%
 | Phase 16 P16-03 | 21min | 3 tasks | 2 files |
 | Phase 17 P01 | 5min | 2 tasks | 12 files |
 | Phase 17 P02 | 18min | 2 tasks | 37 files |
+| Phase 17 P03 | 7min | 3 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -310,6 +311,7 @@ Decisions are logged in PROJECT.md Key Decisions table.
 - [17-01]: Carbon::setTestNow(fixed instant) beats freezeTime() for byte-identical fixtures — freezeTime pins to test-start Carbon::now() which still drifts run-to-run
 - [17-01]: Fixture convention tests/Feature/Broadcasting/__snapshots__/{EventName}.json (Jest-style) with first-run write-through + markTestIncomplete, second-run byte-compare via expect->toBe(file_get_contents)
 - [17-01]: 44 pre-existing full-suite failures on main exist prior to Wave 1 (UniqueConstraintViolationException in Feature tests) — Wave 2 needs diagnostic pass before L13 bump to distinguish new failures from baseline noise
+- Phase 17 complete: FRAMEWORK-01/02/03 all met. Runbook shipped at docs/operations/laravel-13-upgrade.md; final regression gate clean (6/6 broadcast snapshots byte-identical; full suite failures confined to Family A/B baseline). Next: HUMAN-UAT dispatch flow spot-check per D-12.
 
 ### Roadmap Evolution
 
@@ -353,8 +355,8 @@ All 5 items remain open for v2 milestone decision (verify / fix / close-out).
 
 ## Session Continuity
 
-Last session: 2026-04-21T05:21:38.366Z
-Stopped at: Completed 17-01-PLAN.md (Wave 1: snapshot baseline on L12)
-Resume file: None (full-suite baseline has 44 pre-existing failures — Wave 2 diagnostic pass required)
+Last session: 2026-04-21T06:03:34.692Z
+Stopped at: Completed 17-03-PLAN.md (Wave 3: Wayfinder regen verified no-op + runbook shipped + final regression gate)
+Resume file: None
 
 **Planned Phase:** 17 (Laravel 12 → 13 Upgrade) — 3 plans — 2026-04-21T05:09:39.245Z
