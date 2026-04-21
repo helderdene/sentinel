@@ -26,7 +26,10 @@ class OnlineOfflineHandler implements MqttHandler
             return;
         }
 
-        $deviceId = $payload['facesluiceId'] ?? null;
+        // Real hardware publishes `facesluiceId` nested under `info`; synthetic
+        // tests use the top-level form. Accept both for FRAS-parity (FRAS uses
+        // `$data['info']['facesluiceId']` verbatim — see fras reference source).
+        $deviceId = $payload['info']['facesluiceId'] ?? $payload['facesluiceId'] ?? null;
         $operator = $payload['operator'] ?? null;
 
         if (! $deviceId || ! in_array($operator, ['Online', 'Offline'], true)) {

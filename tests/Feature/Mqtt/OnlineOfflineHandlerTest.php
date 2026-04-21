@@ -75,3 +75,26 @@ it('drives expected transitions when fed online.json + offline.json fixtures', f
     $this->camera->refresh();
     expect($this->camera->status)->toBe(CameraStatus::Offline);
 });
+
+it('accepts nested info.facesluiceId on basic topic (real-hardware payload shape)', function () {
+    // Real cameras publish: {"operator": "Online", "info": {"facesluiceId": "CAM01", "username": "admin", ...}}
+    // Matches FRAS verbatim (/Users/helderdene/fras/app/Mqtt/Handlers/OnlineOfflineHandler.php:36).
+    // UAT against live broker 148.230.99.73 surfaced this shape; top-level
+    // `facesluiceId` was a synthetic-test assumption.
+    app(OnlineOfflineHandler::class)->handle(
+        'mqtt/face/basic',
+        json_encode([
+            'operator' => 'Online',
+            'info' => [
+                'facesluiceId' => 'CAM01',
+                'username' => 'admin',
+                'time' => '2026-04-21 20:33:46',
+                'ip' => '192.168.254.100',
+                'facesname' => 'IPC1026700',
+            ],
+        ]),
+    );
+
+    $this->camera->refresh();
+    expect($this->camera->status)->toBe(CameraStatus::Online);
+});

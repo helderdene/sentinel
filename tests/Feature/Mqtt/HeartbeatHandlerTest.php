@@ -53,3 +53,17 @@ it('updates last_seen_at when driven by the heartbeat.json fixture', function ()
     $this->camera->refresh();
     expect($this->camera->last_seen_at)->not->toBeNull();
 });
+
+it('accepts nested info.facesluiceId (real-hardware payload shape)', function () {
+    // Real cameras publish: {"info": {"facesluiceId": "CAM01", ...}}
+    // This matches FRAS verbatim (see /Users/helderdene/fras/app/Mqtt/Handlers/HeartbeatHandler.php:22).
+    // UAT against live broker 148.230.99.73 surfaced this shape; top-level
+    // `facesluiceId` was a synthetic-test assumption.
+    app(HeartbeatHandler::class)->handle(
+        'mqtt/face/heartbeat',
+        json_encode(['info' => ['facesluiceId' => 'CAM01', 'time' => '2026-04-21 20:33:27']]),
+    );
+
+    $this->camera->refresh();
+    expect($this->camera->last_seen_at)->not->toBeNull();
+});
