@@ -140,20 +140,19 @@ Plans:
 **Depends on**: Phase 19, Phase 20
 **Requirements**: RECOGNITION-01, RECOGNITION-02, RECOGNITION-03, RECOGNITION-04, RECOGNITION-05, RECOGNITION-06, RECOGNITION-07, RECOGNITION-08, INTEGRATION-01, INTEGRATION-03, INTEGRATION-04
 **Success Criteria** (what must be TRUE):
-  1. A Critical-severity recognition event at ≥ 0.75 confidence against a block-list personnel creates exactly one IRMS Incident with `channel = IncidentChannel::IoT`, `priority = P2` (default), an `IncidentTimeline.event_data.source = 'fras_recognition'` entry, and `recognition_events.incident_id` set — and all severity / dedup / confidence thresholds are read from `config/fras.php`, not hardcoded
+  1. A Critical-severity recognition event at ≥ 0.75 confidence against a block-list, missing, or lost-child personnel creates exactly one IRMS Incident with `channel = IncidentChannel::IoT`, `priority = P2` (default, P1 for lost-child per configurable priority_map), an `IncidentTimeline.event_data.source = 'fras_recognition'` entry, and `recognition_events.incident_id` set — and all severity / dedup / confidence thresholds are read from `config/fras.php`, not hardcoded
   2. A second recognition event with the same `(camera_id, personnel_id)` within the configurable dedup window (default 60s) does **not** create a second Incident; it still persists to `recognition_events` for history
   3. The v1.0 IoT sensor webhook behavior is preserved — `IoTWebhookController` delegates to `FrasIncidentFactory::createFromSensor()` (the factored-out v1.0 body), and the existing IoT sensor Pest tests pass unchanged; Warning severity broadcasts on `fras.alerts` for operator awareness but never auto-creates an Incident; Info severity never surfaces beyond event history
   4. A dispatcher viewing an Incident created from a recognition event sees a one-click "Escalate to P1" button that, when clicked, updates the Incident priority and writes an audit timeline entry — without taking any other action
   5. The dispatch console map gains a toggleable cameras layer alongside the existing incidents + units layers, with a pulse animation on the matched camera marker triggered by `RecognitionAlertReceived` within 500ms; `useDispatchFeed` remains unchanged (recognition-created Incidents flow through the existing `IncidentCreated` broadcast)
-  6. The IntakeStation gains a 4th channel rail showing recent recognition events, so operators triage FRAS alerts alongside SMS / App / IoT / Walk-in in one workspace — verified by a load test of 50 events/sec/camera that confirms dispatch console frame rate and Reverb throttle hold up
-**Plans:** 6 plans
+  6. The IntakeStation gains a 6th channel rail showing recent recognition events, so operators triage FRAS alerts alongside Voice / SMS / App / IoT / Walk-in in one workspace — verified by a load test of 50 events/sec/camera that confirms dispatch console frame rate and Reverb throttle hold up
+**Plans:** 5 plans
 Plans:
-- [ ] 18-01-PLAN.md — Wave 1: cameras table + CameraStatus enum + Camera model + CameraFactory (FRAMEWORK-04)
-- [ ] 18-02-PLAN.md — Wave 1: personnel table + PersonnelCategory enum + Personnel model + PersonnelFactory (FRAMEWORK-04)
-- [ ] 18-03-PLAN.md — Wave 2: camera_enrollments pivot + CameraEnrollmentStatus enum + CameraEnrollment model + factory (FRAMEWORK-04)
-- [ ] 18-04-PLAN.md — Wave 2: recognition_events table + RecognitionSeverity enum + RecognitionEvent model + factory with states (FRAMEWORK-04, FRAMEWORK-06)
-- [ ] 18-05-PLAN.md — Wave 3: mandatory Pest feature tests (CameraSpatialQueryTest + RecognitionEventIdempotencyTest) + FrasPlaceholderSeeder + FRAMEWORK-05 verification (SC2/SC3/SC4/SC5)
-- [ ] 18-06-PLAN.md — Wave 3: optional regression tests (SchemaTest + EnumCheckParityTest) — belt-and-suspenders drift guard for Phases 19-22
+- [ ] 21-01-PLAN.md — Wave 1: test scaffolding (4 failing Fras tests) + PersonOfInterestIncidentTypeSeeder + config/fras.php recognition section + RecognitionAlertReceived event + fras.alerts channel + ROADMAP/REQUIREMENTS text amendments (RECOGNITION-01/05/07/08, INTEGRATION-01)
+- [ ] 21-02-PLAN.md — Wave 2: FrasIncidentFactory (createFromSensor factored + createFromRecognition 5-gate chain) + IoTWebhookController thin refactor + RecognitionHandler factory wire + RecognitionHandlerTest extension (RECOGNITION-01/02/03/05/06/07/08)
+- [ ] 21-03-PLAN.md — Wave 2: IntakeStationController.show recentFrasEvents prop + overridePriority trigger field + HandleInertiaRequests frasConfig shared prop + signed fras.event.face route + FrasEventFaceController (RECOGNITION-04/08, INTEGRATION-03)
+- [ ] 21-04-PLAN.md — Wave 3: useDispatchMap pulseCamera + feature-state paint expressions + useFrasAlerts + useFrasRail + resources/js/types/fras.ts + ChBadge/ChannelFeed 6th rail + IntakeIconFras + --t-ch-fras token (INTEGRATION-01/03/04, RECOGNITION-05)
+- [ ] 21-05-PLAN.md — Wave 4: FrasSeverityBadge + FrasRailCard + FrasEventDetailModal + EscalateToP1Button + IntakeStation/incidents-Show/Console wiring + Wayfinder regen + human-verify checkpoint (RECOGNITION-04, INTEGRATION-01/03)
 **UI hint**: yes
 
 ### Phase 22: Alert Feed + Event History + Responder Context + DPA Compliance
