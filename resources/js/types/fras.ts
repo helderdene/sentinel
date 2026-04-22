@@ -52,3 +52,39 @@ export interface FrasRailEvent {
 export interface FrasConfig {
     pulseDurationSeconds: number;
 }
+
+/**
+ * Display-shaped item in the /fras/alerts live feed ring buffer.
+ * Backend source: FrasAlertFeedController::index() (Plan 22-05).
+ */
+export interface FrasAlertItem {
+    event_id: string;
+    severity: 'critical' | 'warning';
+    personnel: {
+        id: string;
+        name: string;
+        category: 'block' | 'missing' | 'lost_child';
+    };
+    camera: {
+        id: string;
+        camera_id_display: string;
+        name: string;
+    };
+    captured_at: string;
+    face_image_url: string | null;
+    can_promote: boolean;
+}
+
+/**
+ * Broadcast payload shape for FrasAlertAcknowledged on fras.alerts.
+ * Backend source: App\Events\FrasAlertAcknowledged::broadcastWith() (Plan 22-02).
+ */
+export interface FrasAckPayload {
+    event_id: string;
+    action: 'ack' | 'dismiss';
+    actor_user_id: number;
+    actor_name: string;
+    reason: string | null;
+    reason_note: string | null;
+    acted_at: string;
+}
