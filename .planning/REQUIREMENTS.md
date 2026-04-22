@@ -41,12 +41,12 @@ Feature-free foundation that gates every downstream phase.
 
 MQTT ingestion surface separate from `app/Http/`.
 
-- [ ] **MQTT-01**: Operator can run `php artisan irms:mqtt-listen` locally (as the 6th `composer run dev` process) and in production under a dedicated `irms-mqtt` Supervisor program, not under Horizon
-- [ ] **MQTT-02**: `app/Mqtt/TopicRouter` dispatches incoming messages to 4 handler classes (Recognition, Ack, Heartbeat, OnlineOffline) based on topic pattern, with unmatched topics logged not silently dropped
-- [ ] **MQTT-03**: `RecognitionHandler` parses RecPush payloads including firmware quirks (`personName` vs `persionName`), stores base64 face crop + scene image to a private disk under date-partitioned directories, and persists the raw payload to `recognition_events.raw_payload` (JSONB)
-- [ ] **MQTT-04**: Listener rotates cleanly every hour via `--max-time=3600` and reconnects automatically when the broker disconnects, without losing subscription state
-- [ ] **MQTT-05**: Dispatcher sees a `mqtt_listener_health` banner on the dispatch console if the listener misses 3 consecutive heartbeats (≥60s gap), so silent listener death is visible
-- [ ] **MQTT-06**: `config/mqtt-client.php` has separate subscriber and publisher connections so enrollment publish cannot block recognition subscribe
+- [x] **MQTT-01**: Operator can run `php artisan irms:mqtt-listen` locally (as the 6th `composer run dev` process) and in production under a dedicated `irms-mqtt` Supervisor program, not under Horizon
+- [x] **MQTT-02**: `app/Mqtt/TopicRouter` dispatches incoming messages to 4 handler classes (Recognition, Ack, Heartbeat, OnlineOffline) based on topic pattern, with unmatched topics logged not silently dropped
+- [x] **MQTT-03**: `RecognitionHandler` parses RecPush payloads including firmware quirks (`personName` vs `persionName`), stores base64 face crop + scene image to a private disk under date-partitioned directories, and persists the raw payload to `recognition_events.raw_payload` (JSONB)
+- [x] **MQTT-04**: Listener rotates cleanly every hour via `--max-time=3600` and reconnects automatically when the broker disconnects, without losing subscription state
+- [x] **MQTT-05**: Dispatcher sees a `mqtt_listener_health` banner on the dispatch console if the listener misses 3 consecutive heartbeats (≥60s gap), so silent listener death is visible
+- [x] **MQTT-06**: `config/mqtt-client.php` has separate subscriber and publisher connections so enrollment publish cannot block recognition subscribe
 
 ### CAMERA — Camera Management + Dispatch Map Layer
 
@@ -103,13 +103,13 @@ The integration seam: MQTT recognition event → IRMS Incident.
 
 Operator-facing alert surface.
 
-- [ ] **ALERTS-01**: Operator sees a live severity-classified FRAS alert feed at `/fras/alerts` with real-time updates via the private `fras.alerts` channel
-- [ ] **ALERTS-02**: Operator can acknowledge or dismiss an alert with one click; state persists and broadcasts back so other operators see the same acknowledged status
-- [ ] **ALERTS-03**: Alert feed plays a severity-distinct audio cue on Critical alerts using the shared `useAlertSystem.ts` composable (no parallel Web Audio stack)
-- [ ] **ALERTS-04**: Operator can filter the event history page (`/fras/events`) by date range, severity (pills), camera (select), and debounced free-text search over person name + camera label
-- [ ] **ALERTS-05**: Event history paginates with numbered pages (not cursor-based) and shows replay badges when a face appears multiple times across events
-- [ ] **ALERTS-06**: `useFrasFeed` composable exposes a bounded 100-alert ring buffer so long operator sessions don't leak memory
-- [ ] **ALERTS-07**: Operator can manually promote a non-Critical recognition event to an Incident from the event-detail modal (for cases where severity classification missed)
+- [x] **ALERTS-01**: Operator sees a live severity-classified FRAS alert feed at `/fras/alerts` with real-time updates via the private `fras.alerts` channel
+- [x] **ALERTS-02**: Operator can acknowledge or dismiss an alert with one click; state persists and broadcasts back so other operators see the same acknowledged status
+- [x] **ALERTS-03**: Alert feed plays a severity-distinct audio cue on Critical alerts using the shared `useAlertSystem.ts` composable (no parallel Web Audio stack)
+- [x] **ALERTS-04**: Operator can filter the event history page (`/fras/events`) by date range, severity (pills), camera (select), and debounced free-text search over person name + camera label
+- [x] **ALERTS-05**: Event history paginates with numbered pages (not cursor-based) and shows replay badges when a face appears multiple times across events
+- [x] **ALERTS-06**: `useFrasFeed` composable exposes a bounded 100-alert ring buffer so long operator sessions don't leak memory
+- [x] **ALERTS-07**: Operator can manually promote a non-Critical recognition event to an Incident from the event-detail modal (for cases where severity classification missed)
 
 ### INTEGRATION — Responder + IntakeStation + Dispatch Map
 
@@ -117,7 +117,7 @@ v1.0 feature surfaces gain FRAS context.
 
 - [x] **INTEGRATION-01
 **: Dispatch console map gains a toggleable cameras layer alongside existing incidents + units layers, with a pulse animation triggered by `RecognitionAlertReceived` on the matched camera marker
-- [ ] **INTEGRATION-02**: Responder SceneTab on an Incident created from a recognition event shows a "Person of Interest" accordion with the face crop, personnel name + category, camera label, and event timestamp (responders see face crop but not raw scene image per DPA role-gating)
+- [x] **INTEGRATION-02**: Responder SceneTab on an Incident created from a recognition event shows a "Person of Interest" accordion with the face crop, personnel name + category, camera label, and event timestamp (responders see face crop but not raw scene image per DPA role-gating)
 - [x] **INTEGRATION-03
 **: IntakeStation gains a 6th channel rail showing recent recognition events, so operators can triage FRAS alerts alongside Voice / SMS / App / IoT / Walk-in in one workspace
 - [x] **INTEGRATION-04
@@ -127,13 +127,13 @@ v1.0 feature surfaces gain FRAS context.
 
 Philippine Data Privacy Act (RA 10173) compliance package for LGU deployment. Phase 22 blocks on CDRRMO legal sign-off.
 
-- [ ] **DPA-01**: Published `/privacy` route with a CDRRMO-branded Privacy Notice page covering biometric data collection, lawful basis, retention, and data-subject rights
-- [ ] **DPA-02**: `fras_access_log` table records an append-on-every-view audit entry (actor, IP, image ID, timestamp) whenever a human fetches a recognition image
-- [ ] **DPA-03**: Raw recognition images served only via auth-signed 5-minute URLs scoped to operator/supervisor/admin roles — responders and dispatchers explicitly excluded
-- [ ] **DPA-04**: Scheduled retention cleanup purges scene images at 30 days and face crops at 90 days by default (configurable), with an active-incident-protection clause so images referenced by open Incidents are never purged
-- [ ] **DPA-05**: Admin can configure retention windows in `config/fras.php` so CDRRMO legal can tighten or loosen the window without a deploy
-- [ ] **DPA-06**: PIA (Privacy Impact Assessment) template + signage-template generator + operator training notes committed to `docs/dpa/` for CDRRMO legal / Butuan LGU Data Privacy Officer handoff
-- [ ] **DPA-07**: New gates (`view-fras-alerts`, `manage-cameras`, `manage-personnel`, `trigger-enrollment-retry`, `view-recognition-image`) extend the existing 9 gates without creating a new role, with supervisor + admin having full access and operator having view-only on alerts
+- [x] **DPA-01**: Published `/privacy` route with a CDRRMO-branded Privacy Notice page covering biometric data collection, lawful basis, retention, and data-subject rights
+- [x] **DPA-02**: `fras_access_log` table records an append-on-every-view audit entry (actor, IP, image ID, timestamp) whenever a human fetches a recognition image
+- [x] **DPA-03**: Raw recognition images served only via auth-signed 5-minute URLs scoped to operator/supervisor/admin roles — responders and dispatchers explicitly excluded
+- [x] **DPA-04**: Scheduled retention cleanup purges scene images at 30 days and face crops at 90 days by default (configurable), with an active-incident-protection clause so images referenced by open Incidents are never purged
+- [x] **DPA-05**: Admin can configure retention windows in `config/fras.php` so CDRRMO legal can tighten or loosen the window without a deploy
+- [x] **DPA-06**: PIA (Privacy Impact Assessment) template + signage-template generator + operator training notes committed to `docs/dpa/` for CDRRMO legal / Butuan LGU Data Privacy Officer handoff
+- [x] **DPA-07**: New gates (`view-fras-alerts`, `manage-cameras`, `manage-personnel`, `trigger-enrollment-retry`, `view-recognition-image`) extend the existing 9 gates without creating a new role, with supervisor + admin having full access and operator having view-only on alerts
 
 ## Future Requirements (deferred from v2.0)
 
@@ -171,12 +171,12 @@ Phase mapping (populated 2026-04-21 by gsd-roadmapper). All 43 v2.0 requirements
 | FRAMEWORK-04 | Phase 18 | Complete |
 | FRAMEWORK-05 | Phase 18 | Complete |
 | FRAMEWORK-06 | Phase 18 | Complete |
-| MQTT-01 | Phase 19 | Pending |
-| MQTT-02 | Phase 19 | Pending |
-| MQTT-03 | Phase 19 | Pending |
-| MQTT-04 | Phase 19 | Pending |
-| MQTT-05 | Phase 19 | Pending |
-| MQTT-06 | Phase 19 | Pending |
+| MQTT-01 | Phase 19 | Complete |
+| MQTT-02 | Phase 19 | Complete |
+| MQTT-03 | Phase 19 | Complete |
+| MQTT-04 | Phase 19 | Complete |
+| MQTT-05 | Phase 19 | Complete |
+| MQTT-06 | Phase 19 | Complete |
 | CAMERA-01 | Phase 20 | Complete |
 | CAMERA-02 | Phase 20 | Complete |
 | CAMERA-03 | Phase 20 | Complete |
@@ -201,21 +201,21 @@ Phase mapping (populated 2026-04-21 by gsd-roadmapper). All 43 v2.0 requirements
 | INTEGRATION-01 | Phase 21 | Complete |
 | INTEGRATION-03 | Phase 21 | Complete |
 | INTEGRATION-04 | Phase 21 | Complete |
-| ALERTS-01 | Phase 22 | Pending |
-| ALERTS-02 | Phase 22 | Pending |
-| ALERTS-03 | Phase 22 | Pending |
-| ALERTS-04 | Phase 22 | Pending |
-| ALERTS-05 | Phase 22 | Pending |
-| ALERTS-06 | Phase 22 | Pending |
-| ALERTS-07 | Phase 22 | Pending |
-| INTEGRATION-02 | Phase 22 | Pending |
-| DPA-01 | Phase 22 | Pending |
-| DPA-02 | Phase 22 | Pending |
-| DPA-03 | Phase 22 | Pending |
-| DPA-04 | Phase 22 | Pending |
-| DPA-05 | Phase 22 | Pending |
-| DPA-06 | Phase 22 | Pending |
-| DPA-07 | Phase 22 | Pending |
+| ALERTS-01 | Phase 22 | Complete |
+| ALERTS-02 | Phase 22 | Complete |
+| ALERTS-03 | Phase 22 | Complete |
+| ALERTS-04 | Phase 22 | Complete |
+| ALERTS-05 | Phase 22 | Complete |
+| ALERTS-06 | Phase 22 | Complete |
+| ALERTS-07 | Phase 22 | Complete |
+| INTEGRATION-02 | Phase 22 | Complete |
+| DPA-01 | Phase 22 | Complete |
+| DPA-02 | Phase 22 | Complete |
+| DPA-03 | Phase 22 | Complete |
+| DPA-04 | Phase 22 | Complete |
+| DPA-05 | Phase 22 | Complete |
+| DPA-06 | Phase 22 | Complete |
+| DPA-07 | Phase 22 | Complete |
 
 **Coverage:** 43/43 requirements mapped (100%). No orphans.
 
