@@ -1,49 +1,53 @@
 ---
 gsd_state_version: 1.0
-milestone: v2.0
-milestone_name: FRAS Integration
-status: executing
-stopped_at: Phase 22 UI-SPEC approved
-last_updated: "2026-04-22T07:24:58.952Z"
-last_activity: 2026-04-22 -- Phase 22 execution started
+milestone: null
+milestone_name: null
+status: between_milestones
+stopped_at: v2.0 milestone complete
+last_updated: "2026-04-22T12:00:00.000Z"
+last_activity: 2026-04-22 — v2.0 FRAS Integration milestone shipped and archived
 progress:
-  total_phases: 6
-  completed_phases: 5
-  total_plans: 38
-  completed_plans: 29
-  percent: 76
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-04-21)
+See: .planning/PROJECT.md (updated 2026-04-22)
 
-**Core value:** Dispatchers can receive an incident report, triage it, assign the nearest available unit, and track the response in real-time on a live map.
-**Current focus:** Phase 22 — alert-feed-event-history-responder-context-dpa-compliance
+**Core value:** Dispatchers can receive an incident report — from any channel, including AI camera recognition — triage it, assign the nearest available unit, and track the response in real-time on a live map.
+**Current focus:** Between milestones — v2.0 FRAS Integration shipped 2026-04-22. Next milestone TBD via `/gsd-new-milestone`.
 
 ## Current Position
 
-Phase: 22 (alert-feed-event-history-responder-context-dpa-compliance) — EXECUTING
-Plan: 9 of 9 (All waves complete — 22-01..22-09)
-Status: Phase 22 execution complete — awaiting verification
-Last activity: 2026-04-22 -- Wave 4 complete (22-08 responder POI + /privacy + 22-09 DPA docs/export/signoff merged, 224 FRAS tests passing)
+**v2.0 FRAS Integration milestone complete and archived 2026-04-22.**
 
-Progress: [██████████] 100%
+- 6 phases shipped (17-22), 38 plans, 58 tasks
+- 283 commits · 465 files · +90k/-4k LOC since v1.0
+- All artifact audits clear; all 51 v2.0 requirements satisfied
+- Archive: `.planning/milestones/v2.0-ROADMAP.md`, `v2.0-REQUIREMENTS.md`, `v2.0-MILESTONE-AUDIT.md`, `v2.0-phases/`
 
-## v2.0 Phase Breakdown
+**Post-ship items tracked outside the milestone (carried into v2.1):**
 
-| Phase | Name | Requirements | Status |
-|-------|------|--------------|--------|
-| 17 | Laravel 12 → 13 Upgrade | FRAMEWORK-01, 02, 03 | Not started |
-| 18 | FRAS Schema Port to PostgreSQL | FRAMEWORK-04, 05, 06 | Not started |
-| 19 | MQTT Pipeline + Listener Infrastructure | MQTT-01..06 | Not started |
-| 20 | Camera + Personnel Admin + Enrollment | CAMERA-01..06, PERSONNEL-01..07 | Not started |
-| 21 | Recognition → IoT-Intake Bridge + Dispatch Map + IntakeStation Rail | RECOGNITION-01..08, INTEGRATION-01, 03, 04 | Not started |
-| 22 | Alert Feed + Event History + Responder Context + DPA Compliance | ALERTS-01..07, INTEGRATION-02, DPA-01..07 | Not started (milestone gate) |
+- CDRRMO Data Privacy Officer legal sign-off via `php artisan fras:legal-signoff` (CLI ready, DPO review pending)
+- Phase 19 ops smoke-test (listener-silence banner + Horizon isolation under live Supervisor)
+- Nyquist VALIDATION.md audit catchup for Phases 17, 18, 19, 21 (currently draft)
 
-**Ordering (locked):** 17 → 18 → {19 ∥ 20} → 21 → 22. Phases 19 and 20 parallelise after 18. Phase 22 blocks on CDRRMO legal sign-off.
+## Shipped Milestones
+
+| Milestone | Phases | Plans | Shipped | Archive |
+|-----------|--------|-------|---------|---------|
+| v1.0 IRMS MVP | 1-16 | 51 | 2026-04-17 | [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) |
+| v2.0 FRAS Integration | 17-22 | 38 | 2026-04-22 | [milestones/v2.0-ROADMAP.md](milestones/v2.0-ROADMAP.md) |
+
+## Next Milestone
+
+v2.1 — TBD. Run `/gsd-new-milestone` to scope.
 
 ## Performance Metrics
 

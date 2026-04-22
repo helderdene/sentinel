@@ -1,5 +1,24 @@
 # Milestones
 
+## v2.0 FRAS Integration (Shipped: 2026-04-22)
+
+**Delivered:** Full integration of HDSystem's Face Recognition Alert System into IRMS — IP-camera MQTT ingestion, BOLO personnel enrollment, live recognition alerts, and an automated bridge that promotes Critical recognition events into dispatch-ready Incidents, all RA 10173 compliant.
+
+**Phases completed:** 6 phases, 38 plans, 58 tasks
+**Commits:** 283 commits · 465 files changed · +90k/-4k LOC
+**Timeline:** 2026-04-17 → 2026-04-22 (6 days)
+
+**Key accomplishments:**
+
+- **Phase 17 — Laravel 12 → 13 upgrade** with byte-identical broadcast payload snapshots, CSRF middleware rename, drain-and-deploy runbook, and closes the incident-report PDF download gap (route + Gate + 10 Pest tests).
+- **Phase 18 — FRAS PostgreSQL schema port**: cameras (PostGIS geography + GIST), personnel (VARCHAR+CHECK category enum), camera_enrollments pivot (idempotency UNIQUE), recognition_events (28 columns, JSONB GIN index, microsecond TIMESTAMPTZ, UNIQUE(camera_id, record_id)). 11 regression tests guard shape drift across downstream phases.
+- **Phase 19 — MQTT pipeline + listener infrastructure**: dedicated `php-mqtt/laravel-client` listener running under `[program:irms-mqtt]` Supervisor (never Horizon), TopicRouter → 4 handlers (Recognition/Heartbeat/OnlineOffline/Ack), `mqtt_listener_health` watchdog banner on dispatch console, live-broker verified against cloud MQTT 148.230.99.73 with real firmware `info.facesluiceId` payload shape.
+- **Phase 20 — Camera & Personnel admin + enrollment sync**: full CRUD on `/admin/cameras` and `/admin/personnel` with status live-updates via `CameraStatusChanged` broadcast, FrasPhotoProcessor photo pipeline (Intervention Image v4), unguessable-UUID enrollment photo URLs, `EnrollPersonnelBatch` with `WithoutOverlapping` per-camera lock, retention expiry scheduler, dispatch map cameras layer.
+- **Phase 21 — Recognition → IoT-Intake bridge + dispatch map pulse**: `FrasIncidentFactory` service layer (single integration seam, reuses `IncidentChannel::IoT` — no new channel enum), severity-aware Mapbox pulse on camera layer, FRAS rail cards + read-only event modal + Escalate-to-P1 button, SSR-seeded 50-event buffer.
+- **Phase 22 — Alert feed + event history + responder context + DPA compliance gate**: `/fras/alerts` live feed with 100-alert ring buffer and cross-operator ACK broadcast, `/fras/events` filterable/paginated history with promote-to-Incident, responder POI accordion (face crop + personnel + camera, never raw scene image per DPA role-gating), public `/privacy` page with CDRRMO branding + bilingual EN/TL toggle, `fras_access_log` audit trail, 5-minute signed URLs, retention purge (30d scene / 90d face) with active-incident protection, `docs/dpa/` package (PIA + signage + operator training), `fras:dpa:export` + `fras:legal-signoff` CLIs.
+
+---
+
 ## v1.0 IRMS v1.0 MVP (Shipped: 2026-04-17)
 
 **Phases completed:** 16 phases, 51 plans, 111 tasks

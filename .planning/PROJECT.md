@@ -4,28 +4,34 @@
 
 A full-stack emergency incident response platform for the City Disaster Risk Reduction and Management Office (CDRRMO) of Butuan City, Caraga Region. It digitizes the entire incident lifecycle — from public report intake through dispatch, field response, and post-incident analytics — replacing manual radio-log and paper-based workflows with a real-time, multi-channel system connecting dispatchers and field responders.
 
-**Current state (post-v1.0):** 16 phases shipped — full Report → Intake → Triage → Dispatch → Response → Resolution → Reporting pipeline operational. Real-time dispatch via Laravel Reverb, PostGIS-backed geospatial queries, installable PWA with Web Push, Sentinel-branded UI, and a separate citizen reporting SPA. 82,960 LOC, 111 tasks, 51 plans. 123 requirements traced to phases. See [MILESTONES.md](MILESTONES.md) and [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md).
+**As of v2.0, IRMS also includes a complete Face Recognition Alert System (FRAS):** MQTT ingestion from IP cameras, BOLO/block-list personnel enrollment, live severity-classified alerts to dispatchers, and an automated bridge that promotes Critical recognition events into dispatch-ready Incidents — all RA 10173 (Data Privacy Act) compliant, with a CDRRMO-branded bilingual Privacy Notice, access audit log, signed image URLs, and retention purge with active-incident protection.
+
+**Current state:** 22 phases shipped across two milestones. 89 plans, 169 tasks, 283 commits since v1.0 tag. Full Report → Intake → Triage → Dispatch → Response → Resolution → Reporting pipeline operational, plus the complete FRAS recognition surface. See [MILESTONES.md](MILESTONES.md).
 
 ## Core Value
 
-Dispatchers can receive an incident report, triage it, assign the nearest available unit, and track the response in real-time on a live map — reducing emergency response time and providing situational awareness across all active incidents.
+Dispatchers can receive an incident report — from any channel, including AI camera recognition — triage it, assign the nearest available unit, and track the response in real-time on a live map, reducing emergency response time and providing situational awareness across all active incidents.
 
-**Still the right core value after v1.0** — shipping validated that real-time dispatch + live map + multi-channel intake is the anchor capability; everything else orbits it.
+**Still the right core value after v2.0** — shipping FRAS validated that the core value extends cleanly to IoT-channel recognition events without diluting it. Real-time dispatch + live map + multi-channel intake remains the anchor; recognition events are "just another intake channel" that reuse the same dispatch pipeline via `FrasIncidentFactory` → `IncidentChannel::IoT`.
 
-## Current Milestone: v2.0 FRAS Integration
+## Current State
 
-**Goal:** Embed HDSystem's Face Recognition Alert System capabilities into IRMS so that AI IP-camera recognition events flow into CDRRMO's dispatch pipeline via the existing IoT intake channel.
+- **v1.0 IRMS MVP** — shipped 2026-04-17 (16 phases, 51 plans). Full dispatch pipeline, citizen reporting SPA, Sentinel branding, PWA + Web Push.
+- **v2.0 FRAS Integration** — shipped 2026-04-22 (6 phases, 38 plans). MQTT listener, camera/personnel admin, recognition bridge, alert feed, DPA compliance gate.
 
-**Target features:**
+**Post-ship items tracked outside the milestone:**
 
-- MQTT pipeline + recognition event handler (ports `php-mqtt/laravel-client`, `TopicRouter`, `RecPush`, Intervention Image v3)
-- Cameras CRUD + live heartbeat/online-offline status, rendered as a layer on the dispatch MapLibre map
-- Personnel management + BOLO/block-list enrollment sync to cameras
-- FRAS alert feed + event history with severity classification and image retention
-- Recognition events ingested through existing IoT intake channel (no new channel)
-- Laravel 12 → 13 upgrade (keep PostgreSQL/PostGIS; port FRAS MySQL schema)
+- **CDRRMO Data Privacy Officer legal sign-off** via `php artisan fras:legal-signoff` — CLI fully tested (LegalSignoffTest 5/5), runs once DPO completes RA 10173 review of `/privacy` page + `docs/dpa/` artifacts.
+- **Phase 19 ops-environment smoke tests** (listener silence → banner, Horizon isolation under Supervisor) — documented manual verifications for the first production ops session; structural coverage already green (MqttListenerWatchdogTest 7/7, DispatchConsoleMqttHealthPropTest 4/4).
 
-**Key context:** FRAS stays as a separate HDSystem product at `/Users/helderdene/fras`; IRMS gets its own CDRRMO-tailored port. Must not regress v1.0 dispatch/intake/responder flows during the framework upgrade.
+## Next Milestone Goals
+
+TBD — to be scoped via `/gsd-new-milestone`. Likely candidates from accumulated tech debt and deferred items (see the v2.0 intake candidates section under Out of Scope):
+
+- Nyquist VALIDATION.md audit catchup for phases 17/18/19/21 (draft → compliant).
+- Capacitor.js APK wrapper (deferred since v1.0 planning).
+- AI/ML triage service (Python + FastAPI) — Phase 6 future per original spec.
+- Real external API integrations (Semaphore SMS, PAGASA, hospital EHR, NDRRMC, BFP, PNP) as agency MOUs land.
 
 ## Requirements
 
@@ -33,7 +39,32 @@ Dispatchers can receive an incident report, triage it, assign the nearest availa
 
 <!-- Shipped and confirmed valuable. -->
 
-**v1.0 (shipped 2026-04-17):**
+**v2.0 FRAS Integration (shipped 2026-04-22):**
+
+- ✓ Laravel 13 upgrade with byte-identical broadcast payload parity (v1.0 never regressed) — v2.0 Phase 17
+- ✓ Incident report PDF download route + Gate + UI affordance (closes v1.0 gap) — v2.0 Phase 17
+- ✓ FRAS PostgreSQL schema: cameras (PostGIS), personnel (CHECK enum), camera_enrollments (UNIQUE idempotency), recognition_events (28 cols, JSONB GIN, microsecond TIMESTAMPTZ) — v2.0 Phase 18
+- ✓ MQTT listener under dedicated `[program:irms-mqtt]` Supervisor (not Horizon); TopicRouter → 4 handlers; watchdog banner on dispatch console — v2.0 Phase 19
+- ✓ RecPush handler with firmware quirk support (`personName`/`persionName`, nested `info.facesluiceId`); raw JSONB payload persist; date-partitioned image storage on private disk — v2.0 Phase 19
+- ✓ Admin Camera CRUD + live status broadcast (CameraStatusChanged); MapLibre camera picker; dispatch map cameras layer — v2.0 Phase 20
+- ✓ Admin Personnel CRUD + BOLO categories (allow/block/missing/lost_child) with expires_at auto-unenroll — v2.0 Phase 20
+- ✓ FrasPhotoProcessor (Intervention Image v4): ≤1MB, ≤1080p, JPEG re-encode + MD5 dedup; unguessable-UUID enrollment photo URLs — v2.0 Phase 20
+- ✓ EnrollPersonnelBatch job with `WithoutOverlapping('enrollment-camera-{id}')` per-camera mutex; AckHandler correlates enrollment ACKs — v2.0 Phase 20
+- ✓ FrasIncidentFactory bridges Critical recognitions to `IncidentChannel::IoT` Incidents at P2 (single integration seam, no new channel enum) — v2.0 Phase 21
+- ✓ Dispatch map severity-aware Mapbox feature-state pulse on camera layer; fras.alerts Echo composable; SSR-seeded 50-event rail buffer — v2.0 Phase 21
+- ✓ IntakeStation 4th rail: severity badge, rail card, read-only event modal, Escalate-to-P1 destructive action — v2.0 Phase 21
+- ✓ `/fras/alerts` live feed with 100-alert ring buffer, cross-operator ACK broadcast (fras.alerts channel), P1 audio via shared useAlertSystem — v2.0 Phase 22
+- ✓ `/fras/events` history with date/severity/camera/debounced-search filters, numbered pagination, replay badges, promote-to-Incident modal — v2.0 Phase 22
+- ✓ Responder POI accordion (face crop + personnel + camera + timestamp); scene image absence enforced by arch test for DPA role-gating — v2.0 Phase 22
+- ✓ Public `/privacy` route: CDRRMO-branded bilingual (EN/TL) DPA notice covering biometric collection, lawful basis, retention, data-subject rights — v2.0 Phase 22
+- ✓ `fras_access_log` audit table: actor, IP, image ID, timestamp on every image fetch — v2.0 Phase 22
+- ✓ 5-minute signed image URLs scoped to operator/supervisor/admin (responder + dispatcher explicitly 403'd) — v2.0 Phase 22
+- ✓ Retention purge: 30d scene / 90d face (configurable) with active-incident protection clause — v2.0 Phase 22
+- ✓ `docs/dpa/` package: PIA template, bilingual signage templates, operator training notes; `fras:dpa:export` PDF generator; `fras:legal-signoff` CLI — v2.0 Phase 22
+- ✓ 5 new gates (view-fras-alerts, manage-cameras, manage-personnel, trigger-enrollment-retry, view-recognition-image) extend existing 9 without new role — v2.0 Phase 22
+
+<details>
+<summary>v1.0 IRMS MVP (shipped 2026-04-17) — 40 items</summary>
 
 - ✓ Role-based access control with 5 roles (dispatcher, responder, supervisor, admin, operator) and 9 gates — v1.0 Phase 1 + 8
 - ✓ PostgreSQL + PostGIS database with spatial queries and 86 seeded barangay polygons — v1.0 Phase 1
@@ -74,57 +105,46 @@ Dispatchers can receive an incident report, triage it, assign the nearest availa
 - ✓ Real-time dispatch visibility closure: ChecklistUpdated + ResourceRequested live broadcast wiring — v1.0 Phase 15
 - ✓ v1.0 hygiene closure: Wayfinder URL swaps, REQUIREMENTS.md backfill (102→123), Phase 14 approved, Phase 10 browser-verified — v1.0 Phase 16
 
-**Pre-v1.0 (initial codebase):**
+Pre-v1.0 (Fortify starter): user registration, email verification, password reset, login/logout with session persistence, 2FA (TOTP) with recovery codes, profile management, password change, appearance/theme switching, Vue 3 + Inertia SPA with Tailwind + Wayfinder.
 
-- ✓ User registration with email and password — existing (Fortify)
-- ✓ Email verification after signup — existing (Fortify)
-- ✓ Password reset via email link — existing (Fortify)
-- ✓ Login/logout with session persistence — existing (Fortify)
-- ✓ Two-factor authentication (TOTP) with recovery codes — existing (Fortify)
-- ✓ Profile management (name, email, delete account) — existing
-- ✓ Password change with current password confirmation — existing
-- ✓ Appearance/theme switching (dark/light/system) — existing
-- ✓ Vue 3 + Inertia SPA with Tailwind CSS, Wayfinder route generation — existing
+</details>
 
 ### Active
 
 <!-- Current scope for next milestone. Populated by /gsd-new-milestone. -->
 
-**v2.0 FRAS Integration** — embed HDSystem's Face Recognition Alert System capabilities into IRMS so AI IP-camera recognition events flow into CDRRMO's dispatch pipeline via the existing IoT intake channel.
+*No active milestone. Use `/gsd-new-milestone` to scope v2.1.*
 
-Target features:
+**Carried forward from v2.0 (post-ship):**
 
-- [ ] MQTT pipeline + recognition event handler (port `php-mqtt/laravel-client`, `TopicRouter`, `RecPush` handler, Intervention Image v3 photo processing)
-- [ ] Cameras CRUD + live heartbeat/online-offline status, rendered as a layer on the dispatch MapLibre map
-- [ ] Personnel management + BOLO/block-list enrollment sync to cameras (managed from IRMS admin)
-- [ ] FRAS alert feed + event history (severity-classified alerts, acknowledge/dismiss, image retention)
-- [ ] Recognition events ingested through existing IoT intake channel (no new channel)
-- ✓ Framework upgrade: Laravel 12 → 13 (v2.0 Phase 17, 2026-04-21) — aligned ecosystem packages, drain-and-deploy runbook shipped, incident report PDF download gap closed
+- [ ] CDRRMO legal sign-off via `fras:legal-signoff` CLI (waiting on DPO review of `/privacy` + `docs/dpa/`)
+- [ ] Phase 19 ops smoke-test (listener-silence banner + Horizon isolation under live Supervisor)
+- [ ] Nyquist VALIDATION.md audit catchup for Phases 17, 18, 19, 21 (currently `draft`)
 
-Key constraints:
-
-- FRAS continues as a standalone HDSystem product at `/Users/helderdene/fras` (run in parallel indefinitely) — IRMS gets its own CDRRMO-tailored port, not a literal source merge
-- Must not regress v1.0 dispatch/intake/responder behavior during the framework upgrade
-- Reuses existing Reverb broadcast infrastructure; adds new channels alongside the 6 v1.0 broadcast events
-
-**v2.0 intake candidates (deferred from v1.0):**
+**Candidate intake for v2.1:**
 
 - [ ] Phase 15 human UAT completion (6 pending items: Scene Progress gate, live checklist update, resource audio/ticker, state-sync reload, XSS) — see STATE.md `## Deferred Items`
-- [ ] Resolve `chat-input-hidden-by-status-btn` debug session (hypothesis recorded but unverified)
 - [ ] `dompdf` memory exhaustion (pre-existing, explicitly deferred from v1.0)
 - [ ] `UnitForm.vue` TS2322 type error (pre-existing, explicitly deferred from v1.0)
-- [ ] Phase 15 Nyquist VALIDATION.md approval (still `draft`)
 - [ ] Capacitor.js APK wrapper (deferred since v1.0 planning)
 - [ ] AI/ML triage service (Python + FastAPI) — Phase 6 future per original spec
+- [ ] Real external API integrations (Semaphore SMS, PAGASA, hospital EHR, NDRRMC, BFP, PNP) as agency MOUs land
 
 ### Out of Scope
 
 <!-- Explicit boundaries. Includes reasoning to prevent re-adding. -->
 
-- Multi-tenancy (stancl/tenancy) — still deferred post-v1.0; single-LGU (Butuan) deployment proven; revisit if another LGU adopts
-- Pinia state management — Inertia props + composables (useDispatchFeed, useResponderSession, useEcho) have sufficed through v1.0; keep as-is unless a concrete pain point emerges
-- Real external API integrations — all external services (Semaphore SMS, PAGASA, hospital EHR, NDRRMC, BFP, PNP) remain stubbed at v1.0 ship; activate when API keys and agency MOUs are in place
-- 3D map with pitch/terrain — v1.0 used 2D flat MapLibre per Phase 4 decision; upgrade only if dispatchers ask for it
+- Multi-tenancy (stancl/tenancy) — single-LGU (Butuan) deployment proven through v2.0; revisit if another LGU adopts
+- Pinia state management — Inertia props + composables (useDispatchFeed, useResponderSession, useEcho, useFrasFeed) sufficed through v2.0; keep as-is unless a concrete pain point emerges
+- Real external API integrations — all external services remain stubbed at v2.0 ship; activate when API keys and agency MOUs land
+- 3D map with pitch/terrain — v2.0 still uses 2D flat MapLibre; upgrade only if dispatchers ask for it
+- Merging FRAS into a single codebase with IRMS — FRAS continues as standalone HDSystem product at `/Users/helderdene/fras`; IRMS runs its own CDRRMO-tailored port (validated through v2.0 Phase 21 FrasIncidentFactory seam)
+- `mapbox-gl` — explicitly avoided for v2.0; MapLibre + Mapbox tile/geocoding APIs proved sufficient for the cameras layer + recognition pulse
+- MQTT under Horizon — explicitly rejected in Phase 19 (Pitfall 6); dedicated Supervisor program is load-bearing
+
+**Moved in scope during v2.0:**
+
+- Public unauthenticated `/privacy` route — originally scoped as an authenticated settings page; v2.0 DPA compliance required public bilingual accessibility for CDRRMO legal
 
 **Moved in scope during v1.0:**
 
@@ -134,41 +154,49 @@ Key constraints:
 
 - **Client:** CDRRMO Butuan City, Caraga Region XIII
 - **Prepared by:** HDSystem (HyperDrive System), Butuan City
-- **Existing codebase:** Laravel 12 + Vue 3 + Inertia v2 starter with Fortify auth (registration, login, 2FA, password reset, email verification), user settings (profile, password, appearance), and Wayfinder route generation. Served locally via Laravel Herd at `irms.test`.
-- **Specification:** Full technical spec at `docs/IRMS-Specification.md` (1,137 lines) covering all five layers, data models, API reference, real-time events, priority system, roles, mobile approach, external integrations, infrastructure, and security.
-- **Target deployment:** DigitalOcean (Droplet + Managed PostgreSQL + Redis), Nginx, PHP-FPM, Laravel Reverb on port 6001, Horizon for queues.
-- **Target users:** CDRRMO dispatchers (desktop), field responders (mobile web), supervisors/Mayor's Office (desktop dashboards).
+- **Codebase:** Laravel 13 + Vue 3 + Inertia v2 + TypeScript + Tailwind CSS 4 + Laravel Fortify auth + Laravel Wayfinder route generation. Reverb WebSocket, Horizon queues, dedicated `irms-mqtt` Supervisor program for MQTT ingestion. Served locally via Laravel Herd at `irms.test`.
+- **Specification:** Full technical spec at `docs/IRMS-Specification.md`. FRAS-specific reference port at `/Users/helderdene/fras` (standalone HDSystem product, parallel deployment).
+- **DPA compliance:** `docs/dpa/` contains PIA template, bilingual signage templates, operator training notes. RA 10173 sign-off mechanism ready via `php artisan fras:legal-signoff`.
+- **Target deployment:** DigitalOcean (Droplet + Managed PostgreSQL + Redis), Nginx, PHP-FPM, Laravel Reverb on port 6001, Horizon for queues, dedicated `irms-mqtt` Supervisor program for MQTT listener.
+- **Target users:** CDRRMO dispatchers + operators (desktop), field responders (mobile web), admins (desktop camera/personnel management), supervisors/Mayor's Office (desktop dashboards), public citizens (unauthenticated `/privacy` + public reporting SPA).
 
 ## Constraints
 
-- **Tech stack:** Laravel 12 + Vue 3 + Inertia v2 + TypeScript + Tailwind CSS 4 — already established, must continue
-- **Database:** PostgreSQL + PostGIS required for spatial queries (geocoding, barangay assignment, proximity search, heatmaps)
+- **Tech stack:** Laravel 13 + Vue 3 + Inertia v2 + TypeScript + Tailwind CSS 4 — established through v2.0
+- **Database:** PostgreSQL + PostGIS required for spatial queries + FRAS JSONB recognition_events
 - **Real-time:** Laravel Reverb (Pusher-compatible WebSocket) — spec mandates sub-500ms message delivery
-- **Maps:** MapLibre GL JS with Mapbox basemap/geocoding/directions APIs — all markers as WebGL layers (no HTML overlays)
-- **Auth:** Laravel Fortify already in place — extend with role/permission system, not replace
+- **Maps:** MapLibre GL JS with Mapbox basemap/geocoding/directions APIs; no `mapbox-gl` (explicit v2.0 constraint)
+- **Auth:** Laravel Fortify + 14 gates (9 v1.0 + 5 v2.0 FRAS) — extend, don't replace
+- **MQTT:** `php-mqtt/laravel-client` under dedicated `[program:irms-mqtt]` Supervisor program (never Horizon)
+- **DPA:** RA 10173 compliance is non-negotiable; 5-minute signed URLs, access audit log, retention purge, bilingual Privacy Notice
 - **Browser support:** Chrome 110+, Edge 110+ (desktop dispatch/analytics), Safari 16.4+ (iOS responder)
-- **External APIs:** All stubbed initially — must be architecturally ready for real integrations without refactoring
-- **Performance:** API p95 < 200ms, map initial load < 3s on 4G, GPS update processing < 1s
+- **External APIs:** All stubbed initially — architecture must absorb real integrations without refactoring
+- **Performance:** API p95 < 200ms, map initial load < 3s on 4G, GPS update processing < 1s, MQTT message → alert feed < 2s
 
 ## Key Decisions
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| PostgreSQL + PostGIS from the start | Spatial queries are core to dispatch, geocoding, and analytics — SQLite can't do this | ✓ Good — Magellan casts + ST_Contains/ST_SimplifyPreserveTopology powered dispatch proximity ranking, barangay lookup, and heatmap |
-| Laravel Reverb for WebSocket | Real-time unit tracking and dispatch updates are fundamental, not an add-on | ✓ Good — 6 broadcast events with role-based channel auth; Phase 15 added 2 more live subscribers without architecture changes |
-| MapLibre GL JS (WebGL markers) | Spec requires 3D map with animated markers; HTML overlays won't perform at scale | ✓ Good — shipped 2D flat; WebGL marker layers absorbed heavy marker counts; 3D deferred |
-| Web-first responder, PWA later | Get the responder workflow right in browser first, add offline/PWA shell after | ✓ Good — validated web-first in Phases 5 + 12, then Phase 13 shipped installable PWA with Web Push |
-| Stub all external integrations | No API keys or agency agreements yet; build integration layer with mock endpoints | ✓ Good — Phase 6 delivered contracts + stubs (SMS, Directions, PAGASA, FHIR R4, NDRRMC, BFP, PNP); real wiring is plug-in |
-| Role-based access early | Dispatcher vs responder vs supervisor views are fundamentally different; can't add later | ✓ Good — 9 gates landed in Phase 1; Phase 8 cleanly added 5th role (operator) without refactor |
-| Defer multi-tenancy | Single-LGU (Butuan City) first; multi-tenant adds complexity with no immediate value | ✓ Good — single-LGU deployed; no regret |
-| Extend Fortify, not replace | Auth scaffolding is working; add roles/permissions alongside existing Fortify setup | ✓ Good — Fortify TOTP + role redirect + custom LoginResponse worked through all 16 phases without friction |
-| **v1.0 milestone decisions** |  |  |
-| Magellan over raw PostGIS SQL | Type-safe spatial casts in Eloquent | ✓ Good — no raw SQL needed for 95% of geospatial queries |
-| Custom role enum + gates (not Spatie) | 4 fixed roles, no permission UI needed | ✓ Good — gates remained legible; Phase 8 added operator in one migration |
-| Named Wayfinder imports (not default) | Tree-shaking + matches useGpsTracking analog | ✓ Good — resolved as policy in Phase 16 D-07 |
-| TDD for Phase 8 operator role | High-stakes role redirect + 6 gates | ✓ Good — 56 tests caught edge cases during implementation |
-| Pest convention guards | Belt-and-suspenders vs literal URL regression | ✓ Good — Phase 16 shipped `WayfinderConventionTest.php`; future violations fail CI |
-| `audited:` key in VALIDATION frontmatter (not `approved:`) | Match Phase 13 precedent verbatim for frontmatter consistency | ✓ Good — Phase 16 resolved across Phase 14 approval |
+| PostgreSQL + PostGIS from the start | Spatial queries are core to dispatch, geocoding, analytics, and FRAS camera picker | ✓ Good — extended cleanly to FRAS cameras (Magellan geography) and recognition_events (JSONB GIN) |
+| Laravel Reverb for WebSocket | Real-time unit tracking, dispatch updates, and now FRAS alerts are fundamental | ✓ Good — added `fras.alerts` + camera status broadcasts without architectural changes |
+| MapLibre GL JS (WebGL markers) | 3D map with animated markers; HTML overlays won't perform | ✓ Good — absorbed camera layer + severity pulse in v2.0 Phase 21 without mapbox-gl |
+| Web-first responder, PWA later | Get responder workflow right in browser first | ✓ Good — PWA shipped v1.0 Phase 13 after workflow stabilized |
+| Stub all external integrations | No API keys or agency agreements yet | ✓ Good — real wiring is plug-in; no refactor needed through v2.0 |
+| Role-based access early | Dispatcher/responder/supervisor views are fundamentally different | ✓ Good — 9 gates v1.0 + 5 v2.0 extended cleanly with no new role |
+| Defer multi-tenancy | Single-LGU first; multi-tenant adds complexity with no immediate value | ✓ Good — single-LGU deployed through v2.0; no regret |
+| Extend Fortify, not replace | Auth scaffolding works; add roles alongside | ✓ Good — survived L12→L13 upgrade untouched |
+| **v1.0 decisions** |  |  |
+| Magellan over raw PostGIS SQL | Type-safe spatial casts in Eloquent | ✓ Good — extended to FRAS cameras table without new patterns |
+| Custom role enum + gates (not Spatie) | Fixed roles, no permission UI needed | ✓ Good — v2.0 added 5 FRAS gates via same pattern |
+| Named Wayfinder imports (not default) | Tree-shaking | ✓ Good — v2.0 added 20+ new action imports, no regressions |
+| **v2.0 decisions** |  |  |
+| Keep FRAS standalone; port into IRMS | FRAS is HDSystem product; IRMS is CDRRMO deployment | ✓ Good — `FrasIncidentFactory` seam kept the port surgical |
+| Reuse `IncidentChannel::IoT` (no new enum) | Recognition events are "just another IoT intake" | ✓ Good — dispatch pipeline accepted FRAS incidents with zero new code paths |
+| MQTT under dedicated Supervisor, never Horizon | Horizon `terminate` would kill the long-running subscriber | ✓ Good — `[program:irms-mqtt]` isolation held through Phase 19 |
+| Accept firmware `persionName` typo + nested `info.facesluiceId` | Match HDSystem reference port verbatim | ✓ Good — real-hardware UAT proved the fallback was load-bearing |
+| Bilingual public `/privacy` (EN + TL) | CDRRMO legal + LGU Data Privacy Officer require Filipino | ✓ Good — bilingual toggle landed with Day 4 shipping; unblocks DPO sign-off |
+| 5-minute signed URLs + audit log on every fetch | RA 10173 Data Privacy Act mandate | ✓ Good — `fras_access_log` + FrasEventFaceController 10/10 tests passing |
+| CDRRMO legal sign-off as external post-deploy gate | DPO availability is not a ship blocker | ✓ Good — `fras:legal-signoff` CLI ready; v2.0 shipped, sign-off tracked separately |
 
 ## Evolution
 
@@ -188,4 +216,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-21 — v2.0 Phase 20 (Camera + Personnel Admin + Enrollment) complete*
+*Last updated: 2026-04-22 — after v2.0 FRAS Integration milestone close*
