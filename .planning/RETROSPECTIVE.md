@@ -69,6 +69,64 @@
 
 ---
 
+## Milestone: v2.0 — FRAS Integration
+
+**Shipped:** 2026-04-22
+**Phases:** 6 | **Plans:** 38 | **Tasks:** 58 | **Commits:** 283 | **Timeline:** 6 days (2026-04-17 → 2026-04-22) | **LOC:** +90k/-4k (PHP/TS/Vue)
+
+### What Was Built
+
+- **Laravel 13 upgrade (Phase 17)** — Feature-free framework jump with byte-identical broadcast payload snapshots as the regression oracle. 11 aligned package bumps, CSRF middleware rename, drain-and-deploy runbook. Also closed the pre-existing incident-report PDF download gap (route + Gate + 10 Pest tests).
+- **FRAS PostgreSQL schema port (Phase 18)** — cameras (PostGIS geography + GIST), personnel (VARCHAR+CHECK category enum), camera_enrollments pivot (composite UNIQUE for idempotency), recognition_events (28 columns, JSONB GIN, microsecond TIMESTAMPTZ, idempotency UNIQUE on camera_id+record_id). 11 regression tests guarding shape drift across phases 19-22.
+- **MQTT listener infrastructure (Phase 19)** — `php-mqtt/laravel-client` under dedicated `[program:irms-mqtt]` Supervisor (explicitly NOT Horizon per Pitfall 6). TopicRouter → 4 handlers. `mqtt_listener_health` watchdog banner on dispatch console. Live-verified against cloud MQTT broker 148.230.99.73 with real-firmware payload shape (`info.facesluiceId` nested).
+- **Camera & Personnel admin + enrollment (Phase 20)** — Full CRUD on `/admin/cameras` + `/admin/personnel` with live status broadcasts (CameraStatusChanged). FrasPhotoProcessor (Intervention Image v4) photo pipeline with MD5 dedup. EnrollPersonnelBatch with `WithoutOverlapping` per-camera mutex. Retention auto-unenroll scheduler. Dispatch map cameras layer.
+- **Recognition → IoT-Intake bridge (Phase 21)** — `FrasIncidentFactory` service as the single integration seam, reusing `IncidentChannel::IoT` (no new channel enum). Severity-aware Mapbox pulse on camera layer. fras.alerts Echo composable + SSR-seeded 50-event buffer. IntakeStation 4th rail with severity badge, read-only event modal, Escalate-to-P1 button.
+- **Alert feed + Event history + POI + DPA gate (Phase 22)** — `/fras/alerts` live feed with 100-alert ring buffer + cross-operator ACK broadcast. `/fras/events` filterable/paginated history with promote-to-Incident. Responder POI accordion (face crop + personnel + camera, never raw scene image — enforced by arch test). Public bilingual `/privacy` page (EN/TL toggle). `fras_access_log` audit trail. 5-minute signed URLs. Retention purge (30d/90d) with active-incident protection. `docs/dpa/` package + `fras:dpa:export` + `fras:legal-signoff` CLIs.
+
+### What Worked
+
+- **FrasIncidentFactory as the integration seam** — Phase 21's load-bearing architectural decision. Kept the FRAS port surgical (one service class is the bridge), preserved the constraint "no new IncidentChannel enum", and let the dispatch pipeline accept recognition events with zero new code paths.
+- **Live-broker UAT against real hardware (Phase 19 tests 7-10)** — Uncovered the `info.facesluiceId` nested firmware payload shape that Pest unit tests couldn't have found. Fixed inline during UAT, regression tests added to lock. Validated the decision to test against cloud broker 148.230.99.73 early.
+- **Arch test for DPA role-gating (Phase 22 D-27)** — A `grep '\bscene_image\b'` arch test on responder controller + accordion component turned "never shows scene image to responders" from a convention into a CI-enforced invariant. Much stronger than a code review checklist.
+- **RA 10173 compliance built in from the start (not bolted on)** — Phase 22 treated DPA as a first-class requirement alongside features. Public `/privacy`, audit log, signed URLs, retention, bilingual docs all shipped together. CDRRMO legal sign-off became a routine external gate, not a scramble.
+- **Override mechanism in VERIFICATION.md frontmatter** — Phase 19's 4 ops-environment overrides and Phase 22's CDRRMO legal override were recorded as structured `overrides:` arrays with per-item rationale. Audit-open tool + milestone audit both read this cleanly. No "known debt" hand-wave.
+- **Sequential CDRRMO-constrained decisions (D-XX in CONTEXT.md)** — Carried forward from v1.0. Phase 22 had ~30 D-XX decisions locked before plan-phase. Planner + executor had a single source of truth; no mid-implementation "wait, did we decide X?" thrash.
+- **Wave-based parallelization (Phase 20, 22)** — Plans within a phase split into waves based on dependency order. Executor ran wave-1 plans in parallel, synced, ran wave-2. Meaningfully faster than strict sequential without sacrificing atomic commits.
+
+### What Was Inefficient
+
+- **4 of 6 phases shipped with VALIDATION.md still in `draft` status** — Nyquist validation audit was not run for phases 17, 18, 19, 21. `nyquist_compliant: false` propagated through. Structural test coverage was green in each phase's VERIFICATION.md, so no actual quality gap — but the audit loop was skipped. Carried forward as v2.1 tech debt.
+- **REQUIREMENTS.md checkboxes drifted** — 21 v2.0 requirement boxes (MQTT, ALERTS, INTEGRATION-02, DPA) stayed as `[ ]` through the entire milestone despite the corresponding phases shipping. Found only at milestone audit. Automated check at phase-transition could flip these as evidence lands in VERIFICATION.md.
+- **2 debug sessions stale** — `chat-input-hidden-by-status-btn` (fixed in commit 600574f, 2026-03-14) and `incident-report-pdf-not-generated` (fixed in commit 25ec02a, 2026-04-21) both had status files stuck at `diagnosed` / `investigating` long after fix commits shipped. Pre-close audit caught them. Debug-session status should be flipped in the same commit as the fix.
+- **UAT status convention split** — Phases 17, 20 used `status: resolved`; Phase 22 used `status: complete`. audit-open tool only recognizes `complete`. Three files needed alignment. One-word convention in the scaffolder would prevent this.
+- **CLI-generated MILESTONES.md accomplishments were noise** — The `milestone.complete` extractor scraped "One-liner:" placeholders and "[Rule 2 - Correctness]" observation lines as "accomplishments". Had to hand-rewrite to 6 curated bullets. The extractor needs a better heuristic or should skip and let the operator write these.
+
+### Patterns Established
+
+- **`FrasIncidentFactory`-style integration seam** — When integrating a pre-existing system into an existing codebase, build ONE service class that is the load-bearing bridge. All wiring goes through it. Reuses existing enums/channels/tables rather than shadowing.
+- **Arch tests for DPA-style absence invariants** — `grep -c '\bscene_image\b' == 0` style assertions for "this role must never see X" are cheaper + more reliable than role-based tests that could miss new call sites.
+- **Documented overrides as first-class frontmatter** — `overrides: [{ item, resolution }]` array in VERIFICATION.md is machine-readable + human-auditable. Don't hide "human_needed" behind unstructured text.
+- **Live-broker smoke test during UAT, not only in unit tests** — Pest mocks are necessary but not sufficient for hardware protocols. Schedule a live session against the real broker/device at least once per phase.
+- **Public unauthenticated compliance pages isolated from app theme** — `/privacy` forced a light-mode token override (22-08 D-30) to prevent the dark-theme default from bleeding into a legal document. Pattern: public legal routes get their own layout.
+- **CDRRMO legal sign-off as a CLI-mediated external gate** — `fras:legal-signoff` creates an audit row rather than a file edit. Same pattern works for any "external human approval with persisted evidence" requirement.
+
+### Key Lessons
+
+1. **Architect the integration seam before porting** — Phase 21 decided FrasIncidentFactory upfront in CONTEXT.md. Every subsequent plan either used it or justified bypass. The port stayed surgical; the alternative (each plan decides its own hook point) would have sprawled.
+2. **Test against real hardware at least once** — Phase 19's cloud-broker UAT caught a payload-shape bug (`info.facesluiceId` nested) that wouldn't have surfaced otherwise. Unit test mocks shape the payloads you test; real hardware ships the payloads you get.
+3. **Compliance as a first-class requirement, not a gate at the end** — Phase 22 shipped DPA controls (audit log, signed URLs, retention, bilingual docs) alongside features. The CDRRMO legal sign-off became routine external review rather than a last-minute scramble.
+4. **Override blocks > human_needed lore** — When verification can't run in a given environment, document it as a structured override with the compensating evidence (unit tests, runbook, arch test). Audit tools can read these; future operators can trust them.
+5. **Status convention parity across phases** — Small scaffolder inconsistencies (`resolved` vs `complete`) cost real cycles at milestone close. Canonical frontmatter values should be enforced at write time.
+6. **CLI automation is a starting point, not the output** — `milestone.complete` did the mechanical work (archive, move phases, seed MILESTONES.md). The accomplishments and post-ship narrative still need human curation. Budget time for the hand-polish.
+
+### Cost Observations
+
+- 6 phases shipped in 6 calendar days (one phase per day cadence at quality level).
+- 283 commits averaging ~47/day; FRAS integration is feature-dense but the integration seam pattern kept churn low (+90k inserts dominated by migrations, DPA docs, and tests rather than rewrites; -4k deletions).
+- Wave-based parallelization (phases 20, 22) meaningfully reduced wall-clock time vs strict sequential.
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -76,13 +134,19 @@
 | Milestone | Phases | Plans | Key Change |
 |-----------|--------|-------|------------|
 | v1.0 | 16 | 51 | Established: CONTEXT.md locked-decisions pattern, PATTERNS.md mapper, Pest convention guards, `audited:` frontmatter key, sequential-mode for dirty trees |
+| v2.0 | 6 | 38 | Added: wave-based parallel execution, documented `overrides:` arrays in VERIFICATION.md, arch-test pattern for DPA absence invariants, FrasIncidentFactory-style integration seam, live-broker UAT against real hardware |
 
 ### Cumulative Quality
 
 | Milestone | Automated Tests | Pest Tests Passing | Convention Guards |
 |-----------|-----------------|---------------------|-------------------|
 | v1.0 | 100+ Pest + 16 PWA + 56 TDD | ~170 (48 pre-existing DB-state failures out of scope) | 1 (Wayfinder URL literals) |
+| v2.0 | +224 FRAS Pest (Mqtt/Camera/Personnel/Recognition/Fras domains) | ~400 total (baseline L12 families carried unchanged through L13 upgrade) | 2 (+ scene-image-absence arch test for DPA role-gating) |
 
 ### Top Lessons (Verified Across Milestones)
 
-*Populate after v2.0 — trends require ≥2 milestones.*
+1. **Lock architecture decisions in CONTEXT.md before planning** — v1.0 established, v2.0 confirmed. ~30 D-XX entries per phase eliminated mid-implementation thrash. Especially load-bearing for integration seams (Phase 21 FrasIncidentFactory) and constrained decisions (Phase 22 DPA role-gating).
+2. **Stub external integrations; activate later** — v1.0 stubbed agencies (SMS, NDRRMC, BFP, PNP, hospital EHR). v2.0 treated CDRRMO legal sign-off the same way (CLI mechanism tested, external review is a post-ship gate). Ship-ready architecture without blocking on external humans.
+3. **Archive phase directories at milestone close** — v1.0 + v2.0 both moved `phases/NN-slug/` → `milestones/vX.Y-phases/NN-slug/` via `git mv`. Preserves blame, keeps the active phases directory empty for the next milestone.
+4. **Human verification only where it's genuinely unautomatable** — v1.0 flagged color-mix/focus rings/audio distinctiveness. v2.0 flagged two-browser ACK propagation, audio playback, CDRRMO legal review, PDF legibility. In both milestones, the "obvious" impulse to automate would have produced brittle tests; `checkpoint:human-verify` was the right call.
+5. **Convention guards in Pest `tests/Unit/Conventions/`** — v1.0 shipped Wayfinder URL regression guard. v2.0 added DPA scene-image-absence arch test. Pattern: CI-enforced invariants are cheaper than code reviews for load-bearing rules.
