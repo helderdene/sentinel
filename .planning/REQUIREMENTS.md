@@ -82,14 +82,18 @@ Watch-list and enrollment pipeline.
 
 The integration seam: MQTT recognition event → IRMS Incident.
 
-- [ ] **RECOGNITION-01**: Every MQTT RecPush event (regardless of severity) persists to `recognition_events` with classified severity (Critical / Warning / Info), matched personnel FK (nullable), confidence score, and both image paths
+- [x] **RECOGNITION-01
+**: Every MQTT RecPush event (regardless of severity) persists to `recognition_events` with classified severity (Critical / Warning / Info), matched personnel FK (nullable), confidence score, and both image paths
 - [ ] **RECOGNITION-02**: `FrasIncidentFactory::createFromRecognition()` creates an IRMS Incident from a Critical recognition against BOLO personnel (block / missing / lost_child categories; `allow` excluded) with `channel = IoT`, `priority = P2` (default, P1 for lost_child per the configurable priority_map), `IncidentTimeline.event_data.source = 'fras_recognition'`, and sets `recognition_events.incident_id` to complete the FK round-trip
 - [ ] **RECOGNITION-03**: `IoTWebhookController` is refactored to delegate to `FrasIncidentFactory::createFromSensor()` so the existing IoT sensor flow and the new recognition flow share one adapter, preserving v1.0 IoT intake behavior
 - [ ] **RECOGNITION-04**: Dispatcher sees a one-click "Escalate to P1" button on Incidents created from recognition events; clicking it updates the Incident priority and writes an audit timeline entry
-- [ ] **RECOGNITION-05**: Warning-severity recognition events broadcast on `fras.alerts` for operator awareness but **never** auto-create Incidents (`FrasIncidentFactory` returns null for non-Critical)
+- [x] **RECOGNITION-05
+**: Warning-severity recognition events broadcast on `fras.alerts` for operator awareness but **never** auto-create Incidents (`FrasIncidentFactory` returns null for non-Critical)
 - [ ] **RECOGNITION-06**: Duplicate suppression: a second recognition event with the same `(camera_id, personnel_id)` within a configurable window (default 60s) does **not** create a second Incident (it still persists to `recognition_events` for history)
-- [ ] **RECOGNITION-07**: Recognition events below a configurable confidence threshold (default 0.75) are classified as Info and never surface beyond event history
-- [ ] **RECOGNITION-08**: All severity/dedup/confidence thresholds live in `config/fras.php` so field tuning doesn't require a code deploy
+- [x] **RECOGNITION-07
+**: Recognition events below a configurable confidence threshold (default 0.75) are classified as Info and never surface beyond event history
+- [x] **RECOGNITION-08
+**: All severity/dedup/confidence thresholds live in `config/fras.php` so field tuning doesn't require a code deploy
 
 ### ALERTS — Live Feed + Event History + Audio
 
@@ -107,7 +111,8 @@ Operator-facing alert surface.
 
 v1.0 feature surfaces gain FRAS context.
 
-- [ ] **INTEGRATION-01**: Dispatch console map gains a toggleable cameras layer alongside existing incidents + units layers, with a pulse animation triggered by `RecognitionAlertReceived` on the matched camera marker
+- [x] **INTEGRATION-01
+**: Dispatch console map gains a toggleable cameras layer alongside existing incidents + units layers, with a pulse animation triggered by `RecognitionAlertReceived` on the matched camera marker
 - [ ] **INTEGRATION-02**: Responder SceneTab on an Incident created from a recognition event shows a "Person of Interest" accordion with the face crop, personnel name + category, camera label, and event timestamp (responders see face crop but not raw scene image per DPA role-gating)
 - [ ] **INTEGRATION-03**: IntakeStation gains a 6th channel rail showing recent recognition events, so operators can triage FRAS alerts alongside Voice / SMS / App / IoT / Walk-in in one workspace
 - [ ] **INTEGRATION-04**: `useDispatchFeed` remains unchanged — recognition-created Incidents flow through existing `IncidentCreated` broadcast, so the dispatch console composable doesn't fork

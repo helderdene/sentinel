@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
-status: planning
-stopped_at: Phase 21 UI-SPEC approved
-last_updated: "2026-04-22T03:23:52.823Z"
-last_activity: 2026-04-21
+status: executing
+stopped_at: Completed 21-01
+last_updated: "2026-04-22T03:37:09.601Z"
+last_activity: 2026-04-22 -- Phase --phase execution started
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 29
-  completed_plans: 24
-  percent: 83
+  completed_plans: 25
+  percent: 86
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-21)
 
 **Core value:** Dispatchers can receive an incident report, triage it, assign the nearest available unit, and track the response in real-time on a live map.
-**Current focus:** Phase 20 — camera-personnel-admin-enrollment
+**Current focus:** Phase --phase — 21
 
 ## Current Position
 
-Phase: 21
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-04-21
+Phase: --phase (21) — EXECUTING
+Plan: 1 of --name
+Status: Executing Phase --phase
+Last activity: 2026-04-22 -- Phase --phase execution started
 
-Progress: [██████████] 100%
+Progress: [█████████░] 86%
 
 ## v2.0 Phase Breakdown
 
@@ -129,6 +129,7 @@ Progress: [██████████] 100%
 | Phase 20 P06 | 22min | 2 tasks | 7 files |
 | Phase 20 P07 | 18min | 2 tasks | 8 files |
 | Phase 20 P08 | 30min | 2 tasks tasks | 6 files files |
+| Phase 21 P21-01 | 13min | 2 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -376,6 +377,9 @@ Decisions are logged in PROJECT.md Key Decisions table.
 - [20-08]: Popup innerHTML content escaped via custom escapeHtml helper (5-char replace for & < > " ') with encodeURIComponent on the id URL path segment — T-20-08-01 XSS mitigation; every dynamic string goes through one of the two escapes before reaching innerHTML.
 - [20-08]: vite.config.ts PWA precache ceiling raised 2 MB -> 3 MB (pre-existing build failure baseline) — main bundle exceeded default after Phase 20 admin surfaces landed in Plan 07. Proper fix (bundle splitting) deferred to Phase 21+.
 - [20-08]: Integration test installs a known-messageId ACK cache entry post-upsertBatch rather than scanning for the service's random messageId — Cache facade has no enumeration API under the array driver; this preserves the correlation contract test while keeping the test deterministic.
+- [21-01]: person_of_interest IncidentType seeder routes via IncidentCategory name='Crime / Security' (exact shipped string); idempotent updateOrCreate keyed on code
+- [21-01]: RecognitionAlertReceived payload locked to 11-key denorm shape (D-12) using toHaveKeys assertion — additive migrations safe without test churn
+- [21-01]: Nyquist Wave 0 RED state = 17 failures across FrasIncidentFactory (11, Plan 02), EscalateToP1 trigger field (3, Plan 03), IntakeStation recentFrasEvents prop (3, Plan 03); all contract-locked before implementation
 
 ### Roadmap Evolution
 
@@ -419,9 +423,9 @@ All 5 items remain open for v2 milestone decision (verify / fix / close-out).
 
 ## Session Continuity
 
-Last session: --stopped-at
-Stopped at: Phase 21 UI-SPEC approved
-Resume file: --resume-file
+Last session: 2026-04-22T03:37:09.594Z
+Stopped at: Completed 21-01
+Resume file: None
 
 **Planned Phase:** 21 (Recognition → IoT-Intake Bridge + Dispatch Map + IntakeStation Rail) — 5 plans — 2026-04-22T03:23:52.812Z
 **Plan 06 Wave 3 progress:** CameraWatchdogCommand (irms:camera-watchdog, everyMinute, transition-only CameraStatusChanged dispatch) + PersonnelExpireSweepCommand (irms:personnel-expire-sweep, hourly, calls CameraEnrollmentService::deleteFromAllCameras + soft-decommission + bulk enrollment→Done + mqtt audit log). Schedule::command registrations appended to routes/console.php; both ->withoutOverlapping(). Pre-existing pgsql session TZ gap fixed by setting 'timezone' => env('DB_TIMEZONE', 'UTC') on the pgsql connection — without the fix, last_seen_at round-trip drift made every camera flip to Offline. Full fras group: 104 passed (+5 from baseline 99), 306 assertions. No regressions.
