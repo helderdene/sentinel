@@ -2,6 +2,7 @@
 import { Head } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import { downloadReport } from '@/actions/App/Http/Controllers/IncidentController';
+import EscalateToP1Button from '@/components/incidents/EscalateToP1Button.vue';
 import IncidentTimeline from '@/components/incidents/IncidentTimeline.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -84,6 +85,7 @@ const reversedTimeline = [...timeline].reverse();
                 <h1 class="text-2xl font-semibold text-foreground">
                     {{ incident.incident_no }}
                 </h1>
+                <EscalateToP1Button :incident="incident" />
                 <Badge :class="priorityBadgeClass[incident.priority]">
                     {{ incident.priority }}
                 </Badge>

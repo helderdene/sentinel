@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import type { Component } from 'vue';
 import type { ChannelKey } from '@/components/intake/ChBadge.vue';
 import FeedCard from '@/components/intake/FeedCard.vue';
+import FrasRailCard from '@/components/intake/FrasRailCard.vue';
 import IntakeIconApp from '@/components/intake/icons/IntakeIconApp.vue';
 import IntakeIconFras from '@/components/intake/icons/IntakeIconFras.vue';
 import IntakeIconIot from '@/components/intake/icons/IntakeIconIot.vue';
@@ -10,6 +11,7 @@ import IntakeIconSms from '@/components/intake/icons/IntakeIconSms.vue';
 import IntakeIconVoice from '@/components/intake/icons/IntakeIconVoice.vue';
 import IntakeIconWalkin from '@/components/intake/icons/IntakeIconWalkin.vue';
 import type { FeedFilter } from '@/composables/useIntakeFeed';
+import type { FrasRailEvent } from '@/types/fras';
 import type { Incident } from '@/types/incident';
 
 type Props = {
@@ -19,14 +21,18 @@ type Props = {
     activeFilter: FeedFilter;
     pendingCount: number;
     triagedCount: number;
+    frasEvents?: FrasRailEvent[];
 };
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+    frasEvents: () => [],
+});
 
 const emit = defineEmits<{
     'select-incident': [incident: Incident];
     'manual-entry': [];
     'set-filter': [filter: FeedFilter];
+    'open-fras-modal': [event: FrasRailEvent];
 }>();
 
 interface ChannelRow {
@@ -212,6 +218,32 @@ function isTriaged(incident: Incident): boolean {
                 class="flex flex-col items-center py-8 text-center"
             >
                 <p class="text-xs text-t-text-faint">No incidents to show</p>
+            </div>
+
+            <!-- FRAS Rail — recognition events (separate ring buffer) -->
+            <div v-if="frasEvents.length > 0" class="mt-4 space-y-2">
+                <div
+                    class="flex items-center justify-between px-1 pb-1 font-mono text-[9px] font-bold tracking-[2px] uppercase"
+                    style="color: var(--t-ch-fras)"
+                >
+                    <span>FRAS · Recognition Alerts</span>
+                    <span class="text-t-text-faint">
+                        {{ frasEvents.length }}
+                    </span>
+                </div>
+                <div
+                    role="log"
+                    aria-live="polite"
+                    aria-atomic="false"
+                    class="flex flex-col gap-2"
+                >
+                    <FrasRailCard
+                        v-for="frasEvent in frasEvents"
+                        :key="frasEvent.event_id"
+                        :event="frasEvent"
+                        @open-modal="emit('open-fras-modal', $event)"
+                    />
+                </div>
             </div>
         </div>
 

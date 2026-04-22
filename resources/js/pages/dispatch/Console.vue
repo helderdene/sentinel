@@ -23,6 +23,7 @@ import { useDispatchFeed } from '@/composables/useDispatchFeed';
 import type { DispatchCamera } from '@/composables/useDispatchMap';
 import { useDispatchMap } from '@/composables/useDispatchMap';
 import { useDispatchSession } from '@/composables/useDispatchSession';
+import { useFrasAlerts } from '@/composables/useFrasAlerts';
 import DispatchLayout from '@/layouts/DispatchLayout.vue';
 import type {
     DispatchAgency,
@@ -167,6 +168,7 @@ const {
     setUnitData,
     setCameraData,
     updateCameraStatus,
+    pulseCamera,
     updateConnectionLines,
     flyToIncident,
     flyToUnit,
@@ -174,6 +176,11 @@ const {
     onUnitClick,
     onDeselect,
 } = mapComposable;
+
+// Subscribe to fras.alerts broadcasts and pulse the matched camera marker
+// with a severity-aware halo/icon animation. Per D-16, Info severity is
+// filtered backend-side so the callback only fires for Critical + Warning.
+useFrasAlerts(pulseCamera);
 
 const camerasVisible = ref(true);
 

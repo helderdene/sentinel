@@ -6,12 +6,15 @@ import { computed, inject, ref, watch, watchEffect } from 'vue';
 
 import ChannelFeed from '@/components/intake/ChannelFeed.vue';
 import DispatchQueuePanel from '@/components/intake/DispatchQueuePanel.vue';
+import FrasEventDetailModal from '@/components/intake/FrasEventDetailModal.vue';
 import SessionLog from '@/components/intake/SessionLog.vue';
 import TriagePanel from '@/components/intake/TriagePanel.vue';
+import { useFrasRail } from '@/composables/useFrasRail';
 import { useIntakeFeed } from '@/composables/useIntakeFeed';
 import { useIntakeSession } from '@/composables/useIntakeSession';
 import IntakeLayout from '@/layouts/IntakeLayout.vue';
 import type { Auth } from '@/types/auth';
+import type { FrasRailEvent } from '@/types/fras';
 import type {
     Incident,
     IncidentChannel,
@@ -37,6 +40,7 @@ const props = defineProps<{
     triagedIncidents: Incident[];
     priorityConfig?: Record<string, unknown>;
     recentActivity?: SessionLogEntry[];
+    recentFrasEvents?: FrasRailEvent[];
 }>();
 
 const page = usePage<{ auth: Auth }>();
@@ -50,10 +54,19 @@ const {
     triagedCount,
     activeFilter,
     activeIncident,
-    channelCounts,
+    channelCounts: baseChannelCounts,
     setFilter,
     selectIncident,
 } = useIntakeFeed(props.pendingIncidents, props.triagedIncidents);
+
+const { frasEvents, frasCount } = useFrasRail(props.recentFrasEvents ?? []);
+
+// Merge FRAS count into the ChannelFeed's channelCounts bar so the 6th rail
+// reflects the live ring buffer length rather than the incident-only 0.
+const channelCounts = computed(() => ({
+    ...baseChannelCounts.value,
+    FRAS: frasCount.value,
+}));
 
 const initialTotal =
     props.pendingIncidents.length + props.triagedIncidents.length;
@@ -61,6 +74,15 @@ const session = useIntakeSession(initialTotal, props.triagedIncidents.length);
 
 const isManualEntry = ref(false);
 const sessionLogRef = ref<InstanceType<typeof SessionLog> | null>(null);
+
+// FRAS modal state — opened when a rail card without incident_id is clicked.
+const frasModalOpen = ref(false);
+const frasModalEvent = ref<FrasRailEvent | null>(null);
+
+function onOpenFrasModal(event: FrasRailEvent): void {
+    frasModalEvent.value = event;
+    frasModalOpen.value = true;
+}
 
 // When Inertia refreshes page props after triage redirect, the triaged
 // incident disappears from pendingIncidents. Detect this and clear the
@@ -212,9 +234,11 @@ watchEffect(() => {
             :active-filter="activeFilter"
             :pending-count="pendingCount"
             :triaged-count="triagedCount"
+            :fras-events="frasEvents"
             @select-incident="onSelectIncident"
             @manual-entry="onManualEntry"
             @set-filter="setFilter"
+            @open-fras-modal="onOpenFrasModal"
         />
 
         <!-- Center: Triage Panel (flex-1) -->
@@ -245,5 +269,12 @@ watchEffect(() => {
                 />
             </template>
         </DispatchQueuePanel>
+
+        <!-- FRAS Recognition Event detail modal (read-only, opened from
+             FrasRailCard when the event did not create an incident). -->
+        <FrasEventDetailModal
+            v-model:open="frasModalOpen"
+            :event="frasModalEvent"
+        />
     </div>
 </template>
