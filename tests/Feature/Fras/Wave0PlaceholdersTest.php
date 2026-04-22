@@ -38,9 +38,6 @@ it('Wave 0 placeholder — RetentionPurgeTest', fn () => expect(true)->toBeTrue(
 it('Wave 0 placeholder — PrivacyNoticeTest', fn () => expect(true)->toBeTrue())
     ->skip('Wave 0 stub — implementation lands in Plan 22-08');
 
-it('Wave 0 placeholder — LegalSignoffTest', fn () => expect(true)->toBeTrue())
-    ->skip('Wave 0 stub — implementation lands in Plan 22-09');
-
 it('Wave 0 placeholder — FrasAlertsFeed (browser)', fn () => expect(true)->toBeTrue())
     ->skip('Wave 0 stub — implementation lands in Plan 22-06');
 
