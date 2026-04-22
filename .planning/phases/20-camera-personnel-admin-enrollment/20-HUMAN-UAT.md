@@ -1,14 +1,18 @@
 ---
-status: partial
+status: testing
 phase: 20-camera-personnel-admin-enrollment
 source: [20-VERIFICATION.md]
 started: 2026-04-21T16:42:28Z
-updated: 2026-04-21T16:42:28Z
+updated: 2026-04-22T09:20:00Z
 ---
 
 ## Current Test
 
-[awaiting human testing]
+number: 1
+name: Camera Create + Mapbox-GL Picker Visual QA
+expected: |
+  On `/admin/cameras/create`, the Mapbox map renders interactively. Clicking anywhere on the map drops a pin; lat/lng fields update to those coordinates. Address field auto-fills via forward-geocode (may be empty if no Mapbox token). After filling name + device_id and submitting, the camera appears in `/admin/cameras` with an auto-assigned `CAM-NN` id (CAM-01 if first).
+awaiting: user response
 
 ## Tests
 
@@ -58,3 +62,26 @@ skipped: 0
 blocked: 0
 
 ## Gaps
+
+### G-01: Admin sidebar missing Cameras + Personnel links
+
+status: resolved
+found_during: Test 1 attempt (2026-04-22)
+severity: blocker (user could not reach /admin/cameras to test)
+
+issue:
+  The Admin sidebar submenu ships with Users, Barangays, Incident Categories,
+  Incident Types, Checklist Templates, Units, and City — but no Cameras or
+  Personnel entries. Admins had no UI path to reach the pages built in Plan 20-07.
+
+root_cause:
+  Plan 20-07 shipped the 4 Inertia pages + components + composable but did not
+  add the nav entries to `resources/js/components/AppSidebar.vue`. The plan's
+  scope focused on the per-page surface, not sidebar wiring.
+
+fix: commit 5cd2759 — added `Cameras` (Camera icon) and `Personnel` (IdCard
+icon) under Admin > children, positioned after Units so operational/fleet
+items group together above City. `npm run types:check` passes.
+
+retest: user needs to refresh the admin session (Vite dev server will hot-
+reload; `npm run build` needed for production bundle) and retry Test 1.
