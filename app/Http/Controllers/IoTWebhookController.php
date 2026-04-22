@@ -2,22 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\IncidentChannel;
-use App\Enums\IncidentPriority;
-use App\Enums\IncidentStatus;
-use App\Events\IncidentCreated;
-use App\Models\Incident;
-use App\Models\IncidentTimeline;
 use App\Models\IncidentType;
-use App\Services\BarangayLookupService;
-use Clickbar\Magellan\Data\Geometries\Point;
+use App\Services\FrasIncidentFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class IoTWebhookController extends Controller
 {
     public function __construct(
-        private BarangayLookupService $barangayLookup,
+        private FrasIncidentFactory $factory,
     ) {}
 
     /**
@@ -53,43 +46,7 @@ class IoTWebhookController extends Controller
             ], 422);
         }
 
-        $data = [
-            'incident_type_id' => $incidentType->id,
-            'priority' => IncidentPriority::from($mapping['priority']),
-            'status' => IncidentStatus::Pending,
-            'channel' => IncidentChannel::IoT,
-            'location_text' => $validated['location_text'] ?? null,
-            'notes' => "IoT Alert: {$sensorType} sensor {$validated['sensor_id']} reported value {$validated['value']} exceeding threshold {$validated['threshold']}",
-            'raw_message' => json_encode($request->all()),
-        ];
-
-        $latitude = $validated['latitude'] ?? null;
-        $longitude = $validated['longitude'] ?? null;
-
-        if ($latitude !== null && $longitude !== null) {
-            $data['coordinates'] = Point::makeGeodetic((float) $latitude, (float) $longitude);
-
-            $barangay = $this->barangayLookup->findByCoordinates((float) $latitude, (float) $longitude);
-
-            if ($barangay) {
-                $data['barangay_id'] = $barangay->id;
-            }
-        }
-
-        $incident = Incident::query()->create($data);
-
-        IncidentTimeline::query()->create([
-            'incident_id' => $incident->id,
-            'event_type' => 'incident_created',
-            'event_data' => [
-                'source' => 'iot_sensor',
-                'sensor_type' => $sensorType,
-                'sensor_id' => $validated['sensor_id'],
-            ],
-        ]);
-
-        $incident->load('incidentType', 'barangay');
-        IncidentCreated::dispatch($incident);
+        $incident = $this->factory->createFromSensor($validated, $mapping, $incidentType);
 
         return response()->json([
             'incident_no' => $incident->incident_no,

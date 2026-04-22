@@ -6,6 +6,7 @@ use App\Enums\RecognitionSeverity;
 use App\Models\Camera;
 use App\Models\RecognitionEvent;
 use App\Mqtt\Contracts\MqttHandler;
+use App\Services\FrasIncidentFactory;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +15,10 @@ use Illuminate\Support\Facades\Storage;
 
 class RecognitionHandler implements MqttHandler
 {
+    public function __construct(
+        private FrasIncidentFactory $factory,
+    ) {}
+
     /** Face image size cap in bytes (1 MB) — Pitfall 17. */
     private const FACE_IMAGE_MAX_BYTES = 1_048_576;
 
@@ -117,6 +122,12 @@ class RecognitionHandler implements MqttHandler
             $event,
             'scene_image_path',
         );
+
+        // Phase 21 D-07/D-10: hand the persisted event to the factory. The
+        // factory owns the 5-gate chain and all downstream broadcasts
+        // (IncidentCreated + RecognitionAlertReceived). Return value is
+        // informational only — the handler's contract is persist + images.
+        $this->factory->createFromRecognition($event);
     }
 
     /**

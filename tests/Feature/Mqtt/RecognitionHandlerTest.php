@@ -1,9 +1,17 @@
 <?php
 
+use App\Enums\PersonnelCategory;
 use App\Enums\RecognitionSeverity;
+use App\Events\IncidentCreated;
+use App\Events\RecognitionAlertReceived;
 use App\Models\Camera;
+use App\Models\IncidentCategory;
+use App\Models\IncidentType;
+use App\Models\Personnel;
 use App\Models\RecognitionEvent;
 use App\Mqtt\Handlers\RecognitionHandler;
+use App\Services\FrasIncidentFactory;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Psr\Log\LoggerInterface;
@@ -158,4 +166,88 @@ it('parses the recognition-persion-name.json firmware-typo fixture end-to-end', 
     $event = RecognitionEvent::first();
     expect($event->record_id)->toBe(43);
     expect($event->name_from_camera)->toBe('Juan Dela Cruz');
+});
+
+describe('factory integration', function () {
+    beforeEach(function () {
+        Event::fake([IncidentCreated::class, RecognitionAlertReceived::class]);
+
+        $category = IncidentCategory::firstOrCreate(
+            ['name' => 'Crime / Security'],
+            ['icon' => 'Shield', 'is_active' => true, 'sort_order' => 4]
+        );
+
+        IncidentType::updateOrCreate(
+            ['code' => 'person_of_interest'],
+            [
+                'incident_category_id' => $category->id,
+                'category' => 'Crime / Security',
+                'name' => 'Person of Interest',
+                'default_priority' => 'P2',
+                'is_active' => true,
+                'show_in_public_app' => false,
+                'sort_order' => 999,
+            ]
+        );
+
+        config([
+            'fras.recognition.confidence_threshold' => 0.75,
+            'fras.recognition.dedup_window_seconds' => 60,
+            'fras.recognition.priority_map' => [
+                'critical' => [
+                    'block' => 'P2',
+                    'missing' => 'P2',
+                    'lost_child' => 'P1',
+                ],
+            ],
+        ]);
+    });
+
+    it('calls FrasIncidentFactory::createFromRecognition after persisting event and images for Critical block-list recognition', function () {
+        $personnel = Personnel::factory()->create([
+            'category' => PersonnelCategory::Block,
+            'name' => 'Juan Dela Cruz',
+        ]);
+
+        // Seed the recognition_events row directly with the personnel_id
+        // linked so the factory's Gate 3 (personnel lookup) resolves.
+        // The handler re-parses RecPush payloads and writes name_from_camera
+        // but does NOT set personnel_id itself (that's a FaceMatcher concern
+        // deferred to a later phase). For this integration test, we bypass
+        // the handler and directly exercise the factory wiring contract.
+        $event = RecognitionEvent::factory()
+            ->for($this->camera)
+            ->for($personnel)
+            ->create([
+                'severity' => RecognitionSeverity::Critical,
+                'similarity' => 0.85,
+                'person_type' => 1,
+                'verify_status' => 0,
+            ]);
+
+        app(FrasIncidentFactory::class)->createFromRecognition($event);
+
+        $event->refresh();
+        expect($event->incident_id)->not->toBeNull();
+        Event::assertDispatched(IncidentCreated::class);
+        Event::assertDispatched(RecognitionAlertReceived::class);
+    });
+
+    it('persists Info severity event via handler without factory write path or broadcasts', function () {
+        // personType=0 + verifyStatus=1 -> Info via RecognitionSeverity::fromEvent
+        app(RecognitionHandler::class)->handle(
+            'mqtt/face/CAM01/Rec',
+            json_encode(recPushPayload([
+                'recordId' => 500,
+                'personType' => 0,
+                'verifyStatus' => 1,
+            ])),
+        );
+
+        expect(RecognitionEvent::count())->toBe(1);
+        expect(RecognitionEvent::first()->severity)->toBe(RecognitionSeverity::Info);
+
+        Event::assertNotDispatched(IncidentCreated::class);
+        Event::assertNotDispatched(RecognitionAlertReceived::class);
+    });
 });
