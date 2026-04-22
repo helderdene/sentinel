@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { useEcho } from '@laravel/echo-vue';
+import { computed, ref, watch } from 'vue';
 import AdminCameraController, {
     destroy,
     edit,
@@ -64,10 +65,40 @@ const search = ref('');
 const statusFilter = ref<'all' | CameraStatusValue | 'decommissioned'>('all');
 const hideDecommissioned = ref(true);
 
+// Local mutable copy so live CameraStatusChanged broadcasts can update rows
+// without a full Inertia reload. Re-synced from props whenever the page
+// reloads (e.g. after create/edit/decommission).
+const rows = ref<CameraRow[]>([...props.cameras]);
+watch(
+    () => props.cameras,
+    (next) => {
+        rows.value = [...next];
+    },
+);
+
+type CameraStatusChangedPayload = {
+    camera_id: string;
+    camera_id_display: string | null;
+    status: CameraStatusValue;
+    last_seen_at: string | null;
+    location: { lat: number; lng: number } | null;
+};
+
+useEcho<CameraStatusChangedPayload>(
+    'fras.cameras',
+    'CameraStatusChanged',
+    (e) => {
+        const row = rows.value.find((r) => r.id === e.camera_id);
+        if (row) {
+            row.status = e.status;
+        }
+    },
+);
+
 const filtered = computed(() => {
     const needle = search.value.trim().toLowerCase();
 
-    return props.cameras.filter((c) => {
+    return rows.value.filter((c) => {
         if (hideDecommissioned.value && c.decommissioned_at) {
             return false;
         }
