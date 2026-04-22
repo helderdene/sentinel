@@ -32,7 +32,9 @@ it('writes one fras_access_log row before streaming the face crop', function () 
     $response = $this->actingAs($user)->get($url);
 
     $response->assertOk();
-    $response->assertHeader('Cache-Control', 'private, no-store, max-age=0');
+    // Symfony normalises/sorts Cache-Control directives — compare as a set.
+    $directives = array_map('trim', explode(',', (string) $response->headers->get('Cache-Control')));
+    expect($directives)->toContain('private', 'no-store', 'max-age=0');
 
     expect(FrasAccessLog::count())->toBe(1);
 
