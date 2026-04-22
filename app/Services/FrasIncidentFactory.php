@@ -15,6 +15,7 @@ use App\Models\IncidentTimeline;
 use App\Models\IncidentType;
 use App\Models\Personnel;
 use App\Models\RecognitionEvent;
+use App\Models\User;
 use Clickbar\Magellan\Data\Geometries\Point;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -172,6 +173,87 @@ final class FrasIncidentFactory
                     'personnel_category' => $personnel->category->value,
                     'confidence' => (float) $event->similarity,
                     'captured_at' => $event->captured_at->toIso8601String(),
+                ],
+            ]);
+
+            $event->incident_id = $incident->id;
+            $event->save();
+
+            $incident->load('incidentType', 'barangay');
+            IncidentCreated::dispatch($incident);
+            RecognitionAlertReceived::dispatch($event, $incident);
+
+            return $incident;
+        });
+    }
+
+    /**
+     * Operator-driven manual promotion path (Phase 22 D-12, D-13).
+     *
+     * Additive to createFromRecognition; neither sensor nor automatic-
+     * recognition paths are modified. The operator override explicitly
+     * SKIPS the severity, confidence and dedup gates — only the category
+     * gate remains (unmatched faces and allow-list matches never create
+     * Incidents, even manually).
+     *
+     * The Incident timeline entry is tagged with trigger='fras_operator_promote'
+     * and carries the audit fields (promoted_by_user_id, promotion_reason,
+     * promoted_priority) for DPA compliance reporting.
+     */
+    public function createFromRecognitionManual(
+        RecognitionEvent $event,
+        IncidentPriority $priority,
+        string $reason,
+        User $actor,
+    ): Incident {
+        $personnel = $event->personnel_id
+            ? Personnel::query()->find($event->personnel_id)
+            : null;
+
+        if (! $personnel) {
+            abort(422, 'Cannot promote: no personnel match.');
+        }
+
+        if ($personnel->category === PersonnelCategory::Allow) {
+            abort(422, 'Cannot promote: allow-list match.');
+        }
+
+        return DB::transaction(function () use ($event, $personnel, $priority, $reason, $actor) {
+            $type = $this->personOfInterestType ??= IncidentType::query()
+                ->where('code', 'person_of_interest')
+                ->firstOrFail();
+
+            /** @var Camera|null $camera */
+            $camera = $event->camera()->first();
+
+            $incident = Incident::query()->create([
+                'incident_type_id' => $type->id,
+                'priority' => $priority,
+                'status' => IncidentStatus::Pending,
+                'channel' => IncidentChannel::IoT,
+                'coordinates' => $camera?->location,
+                'barangay_id' => $camera?->barangay_id,
+                'location_text' => $camera?->name ?? $camera?->camera_id_display,
+                'notes' => $this->formatNotes($event, $personnel, $camera)
+                    ." — Manually promoted by {$actor->name}: {$reason}",
+                'raw_message' => json_encode($event->raw_payload ?? []),
+            ]);
+
+            IncidentTimeline::query()->create([
+                'incident_id' => $incident->id,
+                'event_type' => 'incident_created',
+                'event_data' => [
+                    'source' => 'fras_recognition',
+                    'trigger' => 'fras_operator_promote',
+                    'recognition_event_id' => $event->id,
+                    'camera_id' => $event->camera_id,
+                    'personnel_id' => $event->personnel_id,
+                    'personnel_category' => $personnel->category->value,
+                    'confidence' => (float) $event->similarity,
+                    'captured_at' => $event->captured_at->toIso8601String(),
+                    'promoted_by_user_id' => $actor->id,
+                    'promoted_priority' => $priority->value,
+                    'promotion_reason' => $reason,
                 ],
             ]);
 
