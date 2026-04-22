@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
 status: planning
-stopped_at: Phase 22 context gathered
-last_updated: "2026-04-22T05:31:36.202Z"
+stopped_at: Phase 22 UI-SPEC approved
+last_updated: "2026-04-22T05:59:18.066Z"
 last_activity: 2026-04-22
 progress:
   total_phases: 6
@@ -444,7 +444,7 @@ All 5 items remain open for v2 milestone decision (verify / fix / close-out).
 ## Session Continuity
 
 Last session: --stopped-at
-Stopped at: Phase 22 context gathered
+Stopped at: Phase 22 UI-SPEC approved
 Resume file: --resume-file
 
 **Planned Phase:** 21 (Recognition → IoT-Intake Bridge + Dispatch Map + IntakeStation Rail) — 5 plans — 2026-04-22T03:23:52.812Z
