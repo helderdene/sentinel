@@ -4,6 +4,7 @@ import type { Component } from 'vue';
 import type { ChannelKey } from '@/components/intake/ChBadge.vue';
 import FeedCard from '@/components/intake/FeedCard.vue';
 import IntakeIconApp from '@/components/intake/icons/IntakeIconApp.vue';
+import IntakeIconFras from '@/components/intake/icons/IntakeIconFras.vue';
 import IntakeIconIot from '@/components/intake/icons/IntakeIconIot.vue';
 import IntakeIconSms from '@/components/intake/icons/IntakeIconSms.vue';
 import IntakeIconVoice from '@/components/intake/icons/IntakeIconVoice.vue';
@@ -65,6 +66,12 @@ const channelRows: ChannelRow[] = [
         label: 'Walk-in',
         icon: IntakeIconWalkin,
         color: 'var(--t-ch-walkin)',
+    },
+    {
+        key: 'FRAS',
+        label: 'FRAS',
+        icon: IntakeIconFras,
+        color: 'var(--t-ch-fras)',
     },
 ];
 

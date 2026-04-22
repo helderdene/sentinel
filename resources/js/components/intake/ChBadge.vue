@@ -1,5 +1,5 @@
 <script lang="ts">
-export type ChannelKey = 'SMS' | 'APP' | 'VOICE' | 'IOT' | 'WALKIN';
+export type ChannelKey = 'SMS' | 'APP' | 'VOICE' | 'IOT' | 'WALKIN' | 'FRAS';
 
 /**
  * Maps IncidentChannel enum values to intake display keys.
@@ -17,6 +17,7 @@ export const channelDisplayMap: Record<string, ChannelKey> = {
 import { computed } from 'vue';
 import type { Component } from 'vue';
 import IntakeIconApp from '@/components/intake/icons/IntakeIconApp.vue';
+import IntakeIconFras from '@/components/intake/icons/IntakeIconFras.vue';
 import IntakeIconIot from '@/components/intake/icons/IntakeIconIot.vue';
 import IntakeIconSms from '@/components/intake/icons/IntakeIconSms.vue';
 import IntakeIconVoice from '@/components/intake/icons/IntakeIconVoice.vue';
@@ -50,6 +51,11 @@ const channels: Record<ChannelKey, ChannelConfig> = {
         color: 'var(--t-ch-walkin)',
         icon: IntakeIconWalkin,
         label: 'WALK-IN',
+    },
+    FRAS: {
+        color: 'var(--t-ch-fras)',
+        icon: IntakeIconFras,
+        label: 'FRAS',
     },
 };
 

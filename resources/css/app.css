@@ -97,6 +97,7 @@
     --color-t-ch-voice: var(--t-ch-voice);
     --color-t-ch-iot: var(--t-ch-iot);
     --color-t-ch-walkin: var(--t-ch-walkin);
+    --color-t-ch-fras: var(--t-ch-fras);
 
     /* Intake Design System — Role */
     --color-t-role-operator: var(--t-role-operator);
@@ -156,6 +157,7 @@
     --t-ch-voice: #d97706;
     --t-ch-iot: #7c3aed;
     --t-ch-walkin: #a32d2d;
+    --t-ch-fras: #0e7490;
     --t-role-operator: #185fa5;
     --t-role-supervisor: #7c3aed;
     --t-role-admin: #0f6e56;
@@ -225,6 +227,9 @@
     --t-border: #0b1a2d;
     --t-border-med: #102e4e;
     --t-border-foc: #378add;
+
+    /* Channel — dark override for FRAS (Phase 21) */
+    --t-ch-fras: #22d3ee;
 
     /* Shadcn variables — remapped to design system dark tokens */
     --background: var(--t-bg);

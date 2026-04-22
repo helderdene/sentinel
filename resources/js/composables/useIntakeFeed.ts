@@ -45,6 +45,7 @@ export function useIntakeFeed(
             VOICE: 0,
             IOT: 0,
             WALKIN: 0,
+            FRAS: 0,
         };
 
         for (const incident of pendingIncidents.value) {
