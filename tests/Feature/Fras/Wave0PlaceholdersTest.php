@@ -23,9 +23,6 @@ it('Wave 0 placeholder — EventHistoryFilterTest', fn () => expect(true)->toBeT
 it('Wave 0 placeholder — EventPromoteToIncidentTest', fn () => expect(true)->toBeTrue())
     ->skip('Wave 0 stub — implementation lands in Plan 22-07');
 
-it('Wave 0 placeholder — ResponderSceneTabTest', fn () => expect(true)->toBeTrue())
-    ->skip('Wave 0 stub — implementation lands in Plan 22-08');
-
 it('Wave 0 placeholder — SignedUrlSceneImageTest', fn () => expect(true)->toBeTrue())
     ->skip('Wave 0 stub — implementation lands in Plan 22-03');
 
