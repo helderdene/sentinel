@@ -79,6 +79,18 @@ export function useFrasFeed(initialAlerts: FrasAlertItem[] = []) {
                 return;
             }
 
+            // Allow-category personnel are greenlisted and never render as
+            // alerts — AlertCard's CATEGORY_LABELS only covers blocklist
+            // types (block, missing, lost_child). Drop defensively in case
+            // the MQTT severity classifier ever lets one through.
+            if (
+                payload.personnel_category !== 'block' &&
+                payload.personnel_category !== 'missing' &&
+                payload.personnel_category !== 'lost_child'
+            ) {
+                return;
+            }
+
             alerts.value.unshift(mapPayloadToAlert(payload));
 
             if (alerts.value.length > MAX_ALERTS) {

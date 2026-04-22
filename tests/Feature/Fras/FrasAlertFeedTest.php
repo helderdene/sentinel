@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\PersonnelCategory;
 use App\Enums\RecognitionSeverity;
 use App\Events\FrasAlertAcknowledged;
 use App\Models\Camera;
@@ -129,7 +130,10 @@ it('ACK on an already-acknowledged event returns 409', function () {
 it('index hydrates Critical+Warning non-ack non-dismiss events with signed face URLs', function () {
     $operator = User::factory()->operator()->create();
     $camera = Camera::factory()->create(['camera_id_display' => 'CAM-A']);
-    $personnel = Personnel::factory()->create(['name' => 'Jane Doe']);
+    $personnel = Personnel::factory()->create([
+        'name' => 'Jane Doe',
+        'category' => PersonnelCategory::Block,
+    ]);
 
     // Eligible: Critical with face image
     $eligible = RecognitionEvent::factory()->for($camera)->for($personnel)->create([
@@ -176,7 +180,7 @@ it('index hydrates Critical+Warning non-ack non-dismiss events with signed face 
 it('index excludes events where personnel_id is null (unmatched face detections)', function () {
     $operator = User::factory()->operator()->create();
     $camera = Camera::factory()->create(['camera_id_display' => 'CAM-A']);
-    $personnel = Personnel::factory()->create();
+    $personnel = Personnel::factory()->create(['category' => PersonnelCategory::Block]);
 
     // Eligible: fully matched
     $matched = RecognitionEvent::factory()->for($camera)->for($personnel)->create([
@@ -196,5 +200,33 @@ it('index excludes events where personnel_id is null (unmatched face detections)
         ->assertInertia(fn ($page) => $page
             ->has('initialAlerts', 1)
             ->where('initialAlerts.0.event_id', $matched->id)
+        );
+});
+
+it('index excludes events where personnel category is Allow (greenlisted)', function () {
+    $operator = User::factory()->operator()->create();
+    $camera = Camera::factory()->create();
+
+    $blockListed = Personnel::factory()->create(['category' => PersonnelCategory::Block]);
+    $greenListed = Personnel::factory()->create(['category' => PersonnelCategory::Allow]);
+
+    // Eligible: blocklisted personnel
+    $eligible = RecognitionEvent::factory()->for($camera)->for($blockListed)->create([
+        'severity' => RecognitionSeverity::Critical,
+    ]);
+
+    // Excluded: greenlisted personnel — AlertCard's CATEGORY_LABELS only
+    // covers block/missing/lost_child; surfacing Allow would crash the Vue
+    // layer on categoryChip.value.label access.
+    RecognitionEvent::factory()->for($camera)->for($greenListed)->create([
+        'severity' => RecognitionSeverity::Critical,
+    ]);
+
+    $this->actingAs($operator)
+        ->get(route('fras.alerts.index'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->has('initialAlerts', 1)
+            ->where('initialAlerts.0.event_id', $eligible->id)
         );
 });

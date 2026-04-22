@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PersonnelCategory;
 use App\Enums\RecognitionSeverity;
 use App\Events\FrasAlertAcknowledged;
 use App\Http\Requests\Fras\AcknowledgeFrasAlertRequest;
@@ -37,6 +38,11 @@ final class FrasAlertFeedController extends Controller
             ->whereNull('acknowledged_at')
             ->whereNull('dismissed_at')
             ->whereNotNull('personnel_id')
+            ->whereHas('personnel', fn ($q) => $q->whereIn('category', [
+                PersonnelCategory::Block,
+                PersonnelCategory::Missing,
+                PersonnelCategory::LostChild,
+            ]))
             ->orderByDesc('captured_at')
             ->limit(100)
             ->get()
