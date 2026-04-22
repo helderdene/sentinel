@@ -51,4 +51,11 @@ return [
         ],
     ],
 
+    'retention' => [
+        'scene_image_days' => (int) env('FRAS_RETENTION_SCENE_IMAGE_DAYS', 30),
+        'face_crop_days' => (int) env('FRAS_RETENTION_FACE_CROP_DAYS', 90),
+        'purge_run_schedule' => env('FRAS_PURGE_RUN_SCHEDULE', '02:00'),
+        'access_log_retention_days' => (int) env('FRAS_ACCESS_LOG_RETENTION_DAYS', 730),
+    ],
+
 ];
