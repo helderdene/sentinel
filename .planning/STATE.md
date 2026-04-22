@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
-status: ready_to_plan
-stopped_at: Phase 20 Plan 08 complete (Wave 5 sequential — dispatch map cameras layer)
-last_updated: "2026-04-21T16:30:37.853Z"
+status: planning
+stopped_at: Phase 21 context gathered
+last_updated: "2026-04-22T02:15:41.759Z"
 last_activity: 2026-04-21
 progress:
   total_phases: 6
-  completed_phases: 5
+  completed_phases: 4
   total_plans: 24
   completed_plans: 24
-  percent: 83
+  percent: 100
 ---
 
 # Project State
@@ -419,9 +419,9 @@ All 5 items remain open for v2 milestone decision (verify / fix / close-out).
 
 ## Session Continuity
 
-Last session: 2026-04-21T16:30:13.542Z
-Stopped at: Phase 20 Plan 08 complete (Wave 5 sequential — dispatch map cameras layer)
-Resume file: None
+Last session: --stopped-at
+Stopped at: Phase 21 context gathered
+Resume file: --resume-file
 
 **Planned Phase:** 20 (Camera + Personnel Admin + Enrollment) — 8 plans — 2026-04-21T14:47:52.037Z
 **Plan 06 Wave 3 progress:** CameraWatchdogCommand (irms:camera-watchdog, everyMinute, transition-only CameraStatusChanged dispatch) + PersonnelExpireSweepCommand (irms:personnel-expire-sweep, hourly, calls CameraEnrollmentService::deleteFromAllCameras + soft-decommission + bulk enrollment→Done + mqtt audit log). Schedule::command registrations appended to routes/console.php; both ->withoutOverlapping(). Pre-existing pgsql session TZ gap fixed by setting 'timezone' => env('DB_TIMEZONE', 'UTC') on the pgsql connection — without the fix, last_seen_at round-trip drift made every camera flip to Offline. Full fras group: 104 passed (+5 from baseline 99), 306 assertions. No regressions.
