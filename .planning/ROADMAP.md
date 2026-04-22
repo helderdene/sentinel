@@ -50,7 +50,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 18: FRAS Schema Port to PostgreSQL** — Feature-free schema port: 4 empty FRAS tables with UUID PKs, JSONB + GIN indexes, TIMESTAMPTZ, Magellan geography; Pest runs FRAS groups on Postgres (completed 2026-04-21)
 - [ ] **Phase 19: MQTT Pipeline + Listener Infrastructure** — Dedicated `irms-mqtt` Supervisor program (not under Horizon), `irms:mqtt-listen` command, TopicRouter + 4 handlers, listener-health heartbeat banner
 - [x] **Phase 20: Camera + Personnel Admin + Enrollment** — Admin CRUD for cameras + personnel, MapLibre camera picker, `CameraEnrollmentService` with per-camera mutex, BOLO categories with expiry auto-unenroll (completed 2026-04-21)
-- [ ] **Phase 21: Recognition → IoT-Intake Bridge + Dispatch Map + IntakeStation Rail** — `FrasIncidentFactory` bridges Critical recognitions to `IncidentChannel::IoT` Incidents at P2 with one-click P1 escalation; dispatch map cameras layer with pulse animation; IntakeStation gains a 4th rail
+- [x] **Phase 21: Recognition → IoT-Intake Bridge + Dispatch Map + IntakeStation Rail** — `FrasIncidentFactory` bridges Critical recognitions to `IncidentChannel::IoT` Incidents at P2 with one-click P1 escalation; dispatch map cameras layer with pulse animation; IntakeStation gains a 4th rail (completed 2026-04-22)
 - [ ] **Phase 22: Alert Feed + Event History + Responder Context + DPA Compliance** — Operator `/fras/alerts` + `/fras/events`; responder SceneTab Person-of-Interest accordion; Privacy Notice route, `fras_access_log`, signed 5-min URLs, retention purge with active-incident protection — milestone gate: CDRRMO legal sign-off
 
 ## Phase Details

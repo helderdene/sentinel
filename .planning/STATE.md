@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
-status: Phase 21 shipped; ready for Phase 22 (Alert Feed + DPA Compliance) — milestone gate blocks on CDRRMO legal sign-off
+status: ready_to_plan
 stopped_at: Completed 21-04
 last_updated: "2026-04-22T04:46:49.338Z"
 last_activity: 2026-04-22 -- Completed Phase 21 Plan 05 (FRAS UI components + human-verify APPROVED)
 progress:
   total_phases: 6
-  completed_phases: 5
+  completed_phases: 6
   total_plans: 29
   completed_plans: 29
   percent: 100
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-04-21)
 
 ## Current Position
 
-Phase: 21 — COMPLETE (2026-04-22)
-Plan: 5/5 complete
-Status: Phase 21 shipped; ready for Phase 22 (Alert Feed + DPA Compliance) — milestone gate blocks on CDRRMO legal sign-off
-Last activity: 2026-04-22 -- Completed Phase 21 Plan 05 (FRAS UI components + human-verify APPROVED)
+Phase: 22
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-04-22
 
 Progress: [██████████] 100%
 
@@ -49,7 +49,7 @@ Progress: [██████████] 100%
 
 **Velocity:**
 
-- Total plans completed: 46
+- Total plans completed: 51
 - Average duration: 14min
 - Total execution time: 5.3 hours
 
@@ -68,6 +68,7 @@ Progress: [██████████] 100%
 | 17 | 4 | - | - |
 | 18 | 6 | - | - |
 | 20 | 8 | - | - |
+| 21 | 5 | - | - |
 
 **Recent Trend:**
 
