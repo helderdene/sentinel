@@ -1,10 +1,11 @@
 ---
 phase: 22
 slug: alert-feed-event-history-responder-context-dpa-compliance
-status: draft
+status: approved
 shadcn_initialized: true
 preset: project-native (Reka UI + Sentinel token layer, inherited from Phase 10/14/20/21)
 created: 2026-04-22
+reviewed_at: 2026-04-22
 ---
 
 # Phase 22 — UI Design Contract
@@ -1027,11 +1028,11 @@ Scoped styles in `Privacy.vue` (since no typography plugin is available):
 
 ## Checker Sign-Off
 
-- [ ] **Dimension 1 Copywriting:** PASS — page titles (`FRAS Alerts` / `FRAS Events` / `Privacy Notice`), CTAs (`Acknowledge` / `Dismiss` / `Promote to Incident` / `Close` / `Cancel`), empty states, error states, dismiss reason enum labels, promote reason counter messages, privacy content skeleton all declared with exact copy. Filipino variant declared for `/privacy` only. No bare/generic CTAs. Destructive confirmation patterns declared (Dismiss requires reason, Promote requires priority + reason, ACK requires none — documented rationale).
-- [ ] **Dimension 2 Visuals:** PASS — component inventory for all 5 surfaces enumerated; layout containers specified with measurements; pulse animation + audio tone conditions bound to existing Phase 21 primitives (no parallel stacks); modal shells reuse v1.0 conventions; POI accordion uses existing `collapsible` primitive (no new Reka Accordion).
-- [ ] **Dimension 3 Color:** PASS — 60/30/10 split declared; accent reserved-for list explicit; ACK (`--t-online` green) + Dismiss (`--destructive` red) color-coded distinctly per D-02; severity tokens reused from Phase 21 (no new tokens introduced); replay badge bound to `--t-accent` blue (operational-meta, not severity); category chip `lost_child` corrected to red per CONTEXT D-25; all WCAG AA verified; Warning amber mitigated with leading `●` dot; responder POI accordion bound to mobile-readable contrast.
-- [ ] **Dimension 4 Typography:** PASS — exactly 4 author-declared sizes (9px, 10px, 12px, 14px) and 2 weights (400, 600) across all authenticated surfaces; privacy prose exception scoped explicitly to the public `/privacy` article; component-internal sizes documented but not counted; `Bebas Neue` forbidden.
-- [ ] **Dimension 5 Spacing:** PASS — 4-multiple Tailwind scale; 13 explicit exceptions documented with rationale (alert thumbnail 48px, event thumbnail 40px, modal face 192px, modal scene h-64, POI thumbnail 80px mobile-touch, alert card max-w-2xl, alert card flexible height, button min-widths 96px, table columns w-16 + w-28, scroll container max-height, POI 44px touch target, prose max-w-680, privacy page-padding 48/64px); layout containers specified per surface.
-- [ ] **Dimension 6 Registry Safety:** PASS — no third-party registries; no new external UI deps; CommonMark dep is backend (confirmed in composer.lock); SafeHTML extension contract declared; all Phase 22 components local.
+- [x] **Dimension 1 Copywriting:** PASS — page titles (`FRAS Alerts` / `FRAS Events` / `Privacy Notice`), CTAs (`Acknowledge` / `Dismiss` / `Promote to Incident` / `Close` / `Cancel`), empty states, error states, dismiss reason enum labels, promote reason counter messages, privacy content skeleton all declared with exact copy. Filipino variant declared for `/privacy` only. No bare/generic CTAs. Destructive confirmation patterns declared (Dismiss requires reason, Promote requires priority + reason, ACK requires none — documented rationale).
+- [x] **Dimension 2 Visuals:** PASS — component inventory for all 5 surfaces enumerated; layout containers specified with measurements; pulse animation + audio tone conditions bound to existing Phase 21 primitives (no parallel stacks); modal shells reuse v1.0 conventions; POI accordion uses existing `collapsible` primitive (no new Reka Accordion).
+- [x] **Dimension 3 Color:** PASS — 60/30/10 split declared; accent reserved-for list explicit; ACK (`--t-online` green) + Dismiss (`--destructive` red) color-coded distinctly per D-02; severity tokens reused from Phase 21 (no new tokens introduced); replay badge bound to `--t-accent` blue (operational-meta, not severity); category chip `lost_child` corrected to red per CONTEXT D-25; all WCAG AA verified; Warning amber mitigated with leading `●` dot; responder POI accordion bound to mobile-readable contrast.
+- [x] **Dimension 4 Typography:** PASS — exactly 4 author-declared sizes (9px, 10px, 12px, 14px) and 2 weights (400, 600) across all authenticated surfaces; privacy prose exception scoped explicitly to the public `/privacy` article; component-internal sizes documented but not counted; `Bebas Neue` forbidden.
+- [x] **Dimension 5 Spacing:** PASS — 4-multiple Tailwind scale; 13 explicit exceptions documented with rationale (alert thumbnail 48px, event thumbnail 40px, modal face 192px, modal scene h-64, POI thumbnail 80px mobile-touch, alert card max-w-2xl, alert card flexible height, button min-widths 96px, table columns w-16 + w-28, scroll container max-height, POI 44px touch target, prose max-w-680, privacy page-padding 48/64px); layout containers specified per surface.
+- [x] **Dimension 6 Registry Safety:** PASS — no third-party registries; no new external UI deps; CommonMark dep is backend (confirmed in composer.lock); SafeHTML extension contract declared; all Phase 22 components local.
 
-**Approval:** pending
+**Approval:** approved 2026-04-22
