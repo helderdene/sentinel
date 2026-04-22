@@ -88,6 +88,7 @@ export function useResponderSession(
             on_scene_at: null,
             resolving_at: null,
             resolved_at: null,
+            person_of_interest: null,
         };
 
         showAssignmentNotification.value = true;

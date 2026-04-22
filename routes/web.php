@@ -11,6 +11,7 @@ use App\Http\Controllers\FrasEventSceneController;
 use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\IntakeStationController;
 use App\Http\Controllers\IoTWebhookController;
+use App\Http\Controllers\PrivacyNoticeController;
 use App\Http\Controllers\PushSubscriptionController;
 use App\Http\Controllers\ResponderController;
 use App\Http\Controllers\SmsWebhookController;
@@ -89,6 +90,10 @@ JS;
 Route::get('/', function () {
     return redirect()->route('login');
 })->name('home');
+
+// Public Privacy Notice (Phase 22 D-30..D-32). Unauthenticated, citizen-facing.
+// Content sourced from git-tracked Markdown and compiled via league/commonmark.
+Route::get('/privacy', [PrivacyNoticeController::class, 'show'])->name('privacy');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
