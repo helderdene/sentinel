@@ -171,8 +171,8 @@ Plans:
 Plans:
 - [x] 22-01-PLAN.md — Wave 1: schema additions (5 migrations) + 3 enums + 3 new models + RecognitionEvent/User extensions + FrasAccessLogFactory (ALERTS-02, DPA-04/05/07)
 - [x] 22-02-PLAN.md — Wave 1: 5 new gates + HandleInertiaRequests extension + FrasAlertAcknowledged broadcast event + FrasGatesTest + Wave0 placeholder stubs (DPA-07, ALERTS-02)
-- [ ] 22-03-PLAN.md — Wave 2: FrasEventFaceController wrap + new FrasEventSceneController + config/fras.php retention section + FrasAccessLogTest + SignedUrlSceneImageTest (DPA-02/03/05)
-- [ ] 22-04-PLAN.md — Wave 2: fras:purge-expired command + scheduler + createFromRecognitionManual factory method + FrasPurgeExpiredCommandTest (SC5 active-incident-protection) + PromoteRecognitionEventTest (DPA-04/05)
+- [x] 22-03-PLAN.md — Wave 2: FrasEventFaceController wrap + new FrasEventSceneController + config/fras.php retention section + FrasAccessLogTest + SignedUrlSceneImageTest (DPA-02/03/05)
+- [x] 22-04-PLAN.md — Wave 2: fras:purge-expired command + scheduler + createFromRecognitionManual factory method + FrasPurgeExpiredCommandTest (SC5 active-incident-protection) + PromoteRecognitionEventTest (DPA-04/05)
 - [ ] 22-05-PLAN.md — Wave 3: FrasAlertFeedController/FrasEventHistoryController/FrasAudioMuteController + 4 FormRequests + routes + FrasAlertFeedTest + FrasEventHistoryTest (ALERTS-01/02/04/05/07, DPA-07)
 - [ ] 22-06-PLAN.md — Wave 3: useFrasFeed composable + /fras/alerts Vue page + AlertCard + DismissReasonModal + AudioMuteToggle + types/fras.ts + two-browser human-verify (ALERTS-01/02/03/06)
 - [ ] 22-07-PLAN.md — Wave 3: /fras/events Vue page + 6 supporting components (filters/table/replay/purge placeholder/FrasEventDetailModal/PromoteIncidentModal) + human-verify (ALERTS-04/05/07)
