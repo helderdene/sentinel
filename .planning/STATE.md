@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
 status: executing
-stopped_at: Completed 21-03
-last_updated: "2026-04-22T03:51:27.317Z"
+stopped_at: Completed 21-04
+last_updated: "2026-04-22T04:02:11.407Z"
 last_activity: 2026-04-22 -- Phase --phase execution started
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 29
-  completed_plans: 27
-  percent: 93
+  completed_plans: 28
+  percent: 97
 ---
 
 # Project State
@@ -30,7 +30,7 @@ Plan: 1 of --name
 Status: Executing Phase --phase
 Last activity: 2026-04-22 -- Phase --phase execution started
 
-Progress: [█████████░] 93%
+Progress: [██████████] 97%
 
 ## v2.0 Phase Breakdown
 
@@ -132,6 +132,7 @@ Progress: [█████████░] 93%
 | Phase 21 P21-01 | 13min | 2 tasks | 10 files |
 | Phase 21 P02 | 3 | 2 tasks | 4 files |
 | Phase 21 P03 | 18min | 2 tasks | 6 files |
+| Phase 21 P04 | 7min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -388,6 +389,12 @@ Decisions are logged in PROJECT.md Key Decisions table.
 - [21-03]: routes/fras.php restructured to per-route URL/name prefixing — legacy admin.personnel.photo kept under /admin/ via inner Route::prefix('admin')->name('admin.') group, new fras.event.face lives at /fras/events/{event}/face (bootstrap no longer applies admin/ blanket); preserves existing route contract while honoring UI-SPEC URL shape for new route
 - [21-03]: FrasEventFaceController enforces role gate in-controller via abort_unless(in_array($user->role, [Operator,Supervisor,Admin])) in addition to bootstrap middleware — defense-in-depth; 5-min signed URLs pre-computed server-side at prop boot (not lazy) so rail SSR-renders 50 events without client round-trip; TODO(Phase 22) comment marks fras_access_log insertion point
 - [21-03]: overridePriority trigger field validated inline ('sometimes', 'in:manual_override,fras_escalate_button') per D-22 planner preference; default 'manual_override' written to event_data preserves v1.0 audit shape on legacy supervisor overrides while 'fras_escalate_button' differentiates rail-driven escalations for Phase 22 reporting
+- [21-04]: useDispatchMap map ref is shallowRef<mapboxgl.Map | null> named 'map' — pulseCamera uses map.value (not mapInstance.value); severity-aware feature-state paint case expressions on camera-body icon-size (0.55→0.88) and camera-halo circle-radius/color/opacity drive visual pulse per D-14/D-15
+- [21-04]: circle-color camera-halo uses nested case+match form [case pulse_severity=critical→#A32D2D, warning→#EF9F27, CAMERA_STATUS_COLORS] — Mapbox accepts via ExpressionSpecification cast; existing status-color halo preserved when no pulse active
+- [21-04]: useFrasAlerts takes pulseCamera as function parameter (not import) — avoids circular dep between channel subscription composable and map composable; page-level orchestrator wires them together
+- [21-04]: useFrasRail live events get face_image_path/url=null — broadcast payload omits signed URLs; SSR prop is sole source of face thumbnails until Phase 22 adds live signing
+- [21-04]: useIntakeFeed.channelCounts record extended with FRAS:0 — Rule 3 auto-fix cascaded from ChannelKey union extension; required for types:check parity (baseline 15 pre-existing Wayfinder errors unchanged)
+- [21-04]: --t-ch-fras light #0e7490 / dark #22d3ee with dark override in .dark block alongside surface tokens (not @theme inline) — follows Sentinel dark-mode convention from Phase 14
 
 ### Roadmap Evolution
 
@@ -431,8 +438,8 @@ All 5 items remain open for v2 milestone decision (verify / fix / close-out).
 
 ## Session Continuity
 
-Last session: 2026-04-22T03:51:27.312Z
-Stopped at: Completed 21-03
+Last session: 2026-04-22T04:01:51.886Z
+Stopped at: Completed 21-04
 Resume file: None
 
 **Planned Phase:** 21 (Recognition → IoT-Intake Bridge + Dispatch Map + IntakeStation Rail) — 5 plans — 2026-04-22T03:23:52.812Z

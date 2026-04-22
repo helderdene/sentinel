@@ -120,7 +120,8 @@ v1.0 feature surfaces gain FRAS context.
 - [ ] **INTEGRATION-02**: Responder SceneTab on an Incident created from a recognition event shows a "Person of Interest" accordion with the face crop, personnel name + category, camera label, and event timestamp (responders see face crop but not raw scene image per DPA role-gating)
 - [x] **INTEGRATION-03
 **: IntakeStation gains a 6th channel rail showing recent recognition events, so operators can triage FRAS alerts alongside Voice / SMS / App / IoT / Walk-in in one workspace
-- [ ] **INTEGRATION-04**: `useDispatchFeed` remains unchanged — recognition-created Incidents flow through existing `IncidentCreated` broadcast, so the dispatch console composable doesn't fork
+- [x] **INTEGRATION-04
+**: `useDispatchFeed` remains unchanged — recognition-created Incidents flow through existing `IncidentCreated` broadcast, so the dispatch console composable doesn't fork
 
 ### DPA — Privacy, Audit, Retention (milestone-completion gate)
 
