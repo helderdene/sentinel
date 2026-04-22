@@ -1,10 +1,11 @@
 ---
 phase: 21
 slug: recognition-iot-intake-bridge-dispatch-map-intakestation-rai
-status: draft
+status: approved
 shadcn_initialized: true
 preset: project-native (Reka UI + Sentinel token layer, inherited from Phase 10/14/20)
 created: 2026-04-22
+reviewed_at: 2026-04-22
 ---
 
 # Phase 21 — UI Design Contract
