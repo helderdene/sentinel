@@ -7,6 +7,7 @@ import {
     Camera,
     ClipboardList,
     FolderTree,
+    History,
     IdCard,
     LayoutGrid,
     Landmark,
@@ -14,6 +15,7 @@ import {
     Map,
     RadioTower,
     Shield,
+    Siren,
     Tags,
     Truck,
     Users,
@@ -69,6 +71,16 @@ const mainNavItems = computed<NavItem[]>(() => {
                 title: 'Intake Station',
                 href: '/intake',
                 icon: ClipboardList,
+            },
+            {
+                title: 'FRAS Alerts',
+                href: '/fras/alerts',
+                icon: Siren,
+            },
+            {
+                title: 'FRAS Events',
+                href: '/fras/events',
+                icon: History,
             },
             {
                 title: 'Analytics',
@@ -134,6 +146,16 @@ const mainNavItems = computed<NavItem[]>(() => {
                 href: '/intake',
                 icon: ClipboardList,
             },
+            {
+                title: 'FRAS Alerts',
+                href: '/fras/alerts',
+                icon: Siren,
+            },
+            {
+                title: 'FRAS Events',
+                href: '/fras/events',
+                icon: History,
+            },
         ],
         dispatcher: [
             {
@@ -174,6 +196,16 @@ const mainNavItems = computed<NavItem[]>(() => {
                 title: 'Intake Station',
                 href: '/intake',
                 icon: ClipboardList,
+            },
+            {
+                title: 'FRAS Alerts',
+                href: '/fras/alerts',
+                icon: Siren,
+            },
+            {
+                title: 'FRAS Events',
+                href: '/fras/events',
+                icon: History,
             },
             {
                 title: 'Dispatch Console',
