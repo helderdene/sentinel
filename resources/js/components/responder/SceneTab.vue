@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import PersonOfInterestAccordion from '@/components/fras/PersonOfInterestAccordion.vue';
 import AssessmentTags from '@/components/responder/AssessmentTags.vue';
 import ChecklistSection from '@/components/responder/ChecklistSection.vue';
 import VitalsForm from '@/components/responder/VitalsForm.vue';
@@ -90,6 +91,12 @@ const sections = computed<AccordionSection[]>(() => [
 
 <template>
     <div class="hide-scrollbar flex flex-1 flex-col overflow-y-auto">
+        <!-- Person-of-Interest accordion — rendered only for FRAS recognition-born
+             incidents. Scene imagery is never exposed to responders (D-26 layer 3). -->
+        <PersonOfInterestAccordion
+            v-if="props.incident.person_of_interest"
+            :data="props.incident.person_of_interest"
+        />
         <div
             v-for="section in sections"
             :key="section.id"

@@ -23,9 +23,6 @@ it('Wave 0 placeholder — EventHistoryFilterTest', fn () => expect(true)->toBeT
 it('Wave 0 placeholder — EventPromoteToIncidentTest', fn () => expect(true)->toBeTrue())
     ->skip('Wave 0 stub — implementation lands in Plan 22-07');
 
-it('Wave 0 placeholder — ResponderSceneTabTest', fn () => expect(true)->toBeTrue())
-    ->skip('Wave 0 stub — implementation lands in Plan 22-08');
-
 it('Wave 0 placeholder — SignedUrlSceneImageTest', fn () => expect(true)->toBeTrue())
     ->skip('Wave 0 stub — implementation lands in Plan 22-03');
 
@@ -34,9 +31,6 @@ it('Wave 0 placeholder — FrasAccessLogTest', fn () => expect(true)->toBeTrue()
 
 it('Wave 0 placeholder — RetentionPurgeTest', fn () => expect(true)->toBeTrue())
     ->skip('Wave 0 stub — implementation lands in Plan 22-04');
-
-it('Wave 0 placeholder — PrivacyNoticeTest', fn () => expect(true)->toBeTrue())
-    ->skip('Wave 0 stub — implementation lands in Plan 22-08');
 
 it('Wave 0 placeholder — FrasAlertsFeed (browser)', fn () => expect(true)->toBeTrue())
     ->skip('Wave 0 stub — implementation lands in Plan 22-06');

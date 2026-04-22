@@ -26,10 +26,12 @@ use App\Jobs\GenerateIncidentReport;
 use App\Jobs\GenerateNdrrmcSitRep;
 use App\Models\ChecklistTemplate;
 use App\Models\Incident;
+use App\Models\RecognitionEvent;
 use App\Models\User;
 use Clickbar\Magellan\Data\Geometries\Point;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -49,7 +51,13 @@ class ResponderController extends Controller
 
         if ($unit) {
             $activeIncidentModel = $unit->activeIncidents()
-                ->with(['incidentType.checklistTemplate', 'barangay', 'timeline', 'messages', 'assignedUnits'])
+                ->with([
+                    'incidentType.checklistTemplate',
+                    'barangay',
+                    'timeline' => fn ($q) => $q->orderBy('created_at'),
+                    'messages',
+                    'assignedUnits',
+                ])
                 ->first();
 
             if ($activeIncidentModel) {
@@ -57,6 +65,8 @@ class ResponderController extends Controller
                     ?? ChecklistTemplate::fallback();
 
                 $activeIncident = $activeIncidentModel->toArray();
+
+                $activeIncident['person_of_interest'] = $this->hydratePersonOfInterest($activeIncidentModel);
             }
         }
 
@@ -387,5 +397,57 @@ class ResponderController extends Controller
         );
 
         return response()->json(['message' => 'Resource requested.']);
+    }
+
+    /**
+     * Hydrate the Person-of-Interest context for a FRAS recognition-born incident.
+     *
+     * Returns a prop array with a 5-minute signed face-image URL + personnel/camera
+     * metadata when the incident's first timeline entry is a fras_recognition source
+     * AND the referenced RecognitionEvent has a face image + personnel link.
+     *
+     * CRITICAL (D-26): this payload MUST NEVER expose any scene-image URL —
+     * defense-in-depth layer 3 (controller + channel + prop) keeps scene imagery
+     * off the responder device entirely. The face URL is handed to the browser but
+     * Phase 21's FrasEventFaceController role gate [Operator, Supervisor, Admin]
+     * denies the responder per D-27; the Vue template renders a UserRound icon
+     * fallback on the 403 (UI-SPEC lines 520 + 526).
+     *
+     * @return array<string, string|null>|null
+     */
+    private function hydratePersonOfInterest(Incident $incident): ?array
+    {
+        $firstTimeline = $incident->timeline->first();
+
+        if (! $firstTimeline || ($firstTimeline->event_data['source'] ?? null) !== 'fras_recognition') {
+            return null;
+        }
+
+        $recognitionEventId = $firstTimeline->event_data['recognition_event_id'] ?? null;
+
+        if (! $recognitionEventId) {
+            return null;
+        }
+
+        $rec = RecognitionEvent::query()
+            ->with(['camera:id,camera_id_display,name', 'personnel:id,name,category'])
+            ->find($recognitionEventId);
+
+        if (! $rec || ! $rec->face_image_path || ! $rec->personnel_id) {
+            return null;
+        }
+
+        return [
+            'face_image_url' => URL::temporarySignedRoute(
+                'fras.event.face',
+                now()->addMinutes(5),
+                ['event' => $rec->id],
+            ),
+            'personnel_name' => $rec->personnel?->name,
+            'personnel_category' => $rec->personnel?->category?->value,
+            'camera_label' => $rec->camera?->camera_id_display,
+            'camera_name' => $rec->camera?->name,
+            'captured_at' => $rec->captured_at?->toIso8601String(),
+        ];
     }
 }
