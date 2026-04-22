@@ -90,3 +90,11 @@ blocked: 0
   test: 3
   artifacts: [resources/js/components/fras/EventHistoryFilters.vue]
   missing: []
+
+- truth: "Cross-operator ACK propagation and live alert feed arrival must fire Vue handlers on broadcast receipt"
+  status: resolved
+  reason: "User clicked ACK but card did not disappear from other operator's tab without page refresh. Diagnosed via DevTools WS Messages panel: broadcast event arrived as 'App\\\\Events\\\\RecognitionAlertReceived' (full PHP FQN) because the event class lacked broadcastAs(). Three frontend composables (useFrasFeed, useFrasAlerts, useFrasRail) subscribe via useEcho('fras.alerts', 'RecognitionAlertReceived', ...) — expecting the short name — so Echo's internal namespace matcher failed silently and handlers never fired. FrasAlertAcknowledged already had broadcastAs(), which is why the server-side probe for that event DID reach the client (first WS screenshot at 18:00). Fix: added broadcastAs() returning 'RecognitionAlertReceived' to the Phase 21 event class + locked in via regression assertion in RecognitionAlertReceivedBroadcastTest. Phase 21 regression tests (38/38) + new assertion all green. Also applied separately: ran `php artisan migrate --force` to bring dev DB up to date with Phase 22 schema (5 migrations — face/scene fetch was 500-ing on missing fras_access_log table)."
+  severity: blocker
+  test: 1
+  artifacts: [app/Events/RecognitionAlertReceived.php, tests/Feature/Fras/RecognitionAlertReceivedBroadcastTest.php]
+  missing: []

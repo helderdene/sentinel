@@ -28,6 +28,11 @@ final class RecognitionAlertReceived implements ShouldBroadcast, ShouldDispatchA
         return [new PrivateChannel('fras.alerts')];
     }
 
+    public function broadcastAs(): string
+    {
+        return 'RecognitionAlertReceived';
+    }
+
     /**
      * Full denorm payload (D-12) so dispatch map, IntakeStation rail, and
      * Phase 22 /fras/alerts all render without follow-up HTTP calls.
