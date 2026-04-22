@@ -29,6 +29,7 @@ class User extends Authenticatable
         'unit_id',
         'badge_number',
         'phone',
+        'fras_audio_muted',
     ];
 
     /**
@@ -55,6 +56,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
             'role' => UserRole::class,
+            'fras_audio_muted' => 'bool',
         ];
     }
 
