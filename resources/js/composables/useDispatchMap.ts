@@ -1,3 +1,4 @@
+import { usePage } from '@inertiajs/vue3';
 import mapboxgl from 'mapbox-gl';
 import type { ExpressionSpecification, GeoJSONSource } from 'mapbox-gl';
 import { onMounted, onUnmounted, ref, shallowRef } from 'vue';
@@ -7,6 +8,10 @@ import {
 } from '@/composables/useCategoryIcons';
 import { useDirections } from '@/composables/useDirections';
 import type { DispatchIncident, DispatchUnit } from '@/types/dispatch';
+
+// Phase 21: per-camera pulse timeout tracker. New alert on a camera with an
+// active pulse clears the prior timeout and starts a fresh one (D-15).
+const pulseTimeouts = new Map<string, number>();
 
 const BUTUAN_CENTER: [number, number] = [125.5406, 8.9475];
 const BUTUAN_ZOOM = 13;
@@ -391,19 +396,42 @@ export function useDispatchMap(
         // --- Camera halo (circle behind camera icon) ---
         // Added BEFORE incident-halo so camera features render beneath incidents
         // + units at identical map coordinates (Pitfall 6: z-fighting avoided).
+        //
+        // Phase 21: paint is severity-aware via feature-state (D-14/D-15).
+        // When pulseCamera() sets { pulsing: true, pulse_severity: 'critical'|'warning' }
+        // on a feature, the case expressions swap radius/color/opacity. After the
+        // timeout clears the state, the layer falls back to default camera-status colors.
         map.value.addLayer({
             id: 'camera-halo',
             type: 'circle',
             source: 'cameras',
             paint: {
-                'circle-radius': 18,
-                'circle-color': CAMERA_STATUS_COLORS,
-                'circle-opacity': 0.15,
+                'circle-radius': [
+                    'case',
+                    ['boolean', ['feature-state', 'pulsing'], false],
+                    32,
+                    18,
+                ],
+                'circle-color': [
+                    'case',
+                    ['==', ['feature-state', 'pulse_severity'], 'critical'],
+                    '#A32D2D',
+                    ['==', ['feature-state', 'pulse_severity'], 'warning'],
+                    '#EF9F27',
+                    CAMERA_STATUS_COLORS,
+                ] as unknown as ExpressionSpecification,
+                'circle-opacity': [
+                    'case',
+                    ['boolean', ['feature-state', 'pulsing'], false],
+                    0.35,
+                    0.15,
+                ],
                 'circle-blur': 1,
             },
         });
 
         // --- Camera body (symbol: camera-online/degraded/offline icon) ---
+        // Phase 21: icon-size scales up during pulse (feature-state 'pulsing').
         map.value.addLayer({
             id: 'camera-body',
             type: 'symbol',
@@ -414,7 +442,12 @@ export function useDispatchMap(
                     'camera-',
                     ['get', 'status'],
                 ] as unknown as ExpressionSpecification,
-                'icon-size': 0.55,
+                'icon-size': [
+                    'case',
+                    ['boolean', ['feature-state', 'pulsing'], false],
+                    0.88,
+                    0.55,
+                ] as unknown as ExpressionSpecification,
                 'icon-allow-overlap': true,
                 'icon-ignore-placement': true,
                 'icon-anchor': 'center',
@@ -768,10 +801,7 @@ export function useDispatchMap(
                     id: c.id,
                     geometry: {
                         type: 'Point' as const,
-                        coordinates: [
-                            c.coordinates!.lng,
-                            c.coordinates!.lat,
-                        ],
+                        coordinates: [c.coordinates!.lng, c.coordinates!.lat],
                     },
                     properties: {
                         id: c.id,
@@ -786,6 +816,65 @@ export function useDispatchMap(
             | GeoJSONSource
             | undefined;
         source?.setData(currentCameraData);
+    }
+
+    /**
+     * Phase 21: trigger a severity-aware pulse on a camera icon (D-13/D-14/D-15).
+     *
+     * Writes Mapbox feature-state { pulsing, pulse_severity } which drives the
+     * camera-body + camera-halo paint case expressions defined in addLayers().
+     * After the configured pulse duration (or 500ms when reduced-motion is active)
+     * the feature-state is cleared and the halo falls back to its status color.
+     *
+     * Re-triggering on a camera with an active pulse clears the prior timeout
+     * and starts a fresh one — the most recent alert always wins.
+     */
+    function pulseCamera(
+        cameraId: string,
+        severity: 'critical' | 'warning',
+    ): void {
+        const m = map.value;
+
+        if (!m || !m.getSource('cameras')) {
+            return;
+        }
+
+        const prior = pulseTimeouts.get(cameraId);
+
+        if (prior !== undefined) {
+            window.clearTimeout(prior);
+        }
+
+        const reduceMotion =
+            window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ??
+            false;
+        const pulseDurationSeconds =
+            (
+                usePage().props as unknown as {
+                    frasConfig?: { pulseDurationSeconds?: number };
+                }
+            ).frasConfig?.pulseDurationSeconds ?? 3;
+        const durationMs = reduceMotion ? 500 : pulseDurationSeconds * 1000;
+
+        m.setFeatureState(
+            { source: 'cameras', id: cameraId },
+            { pulsing: true, pulse_severity: severity },
+        );
+
+        const timeoutId = window.setTimeout(() => {
+            const current = map.value;
+
+            if (current && current.getSource('cameras')) {
+                current.setFeatureState(
+                    { source: 'cameras', id: cameraId },
+                    { pulsing: false, pulse_severity: null },
+                );
+            }
+
+            pulseTimeouts.delete(cameraId);
+        }, durationMs);
+
+        pulseTimeouts.set(cameraId, timeoutId);
     }
 
     function updateCameraStatus(
@@ -1014,6 +1103,7 @@ export function useDispatchMap(
         setUnitData,
         setCameraData,
         updateCameraStatus,
+        pulseCamera,
         updateUnitPosition,
         animateUnitTo,
         updateConnectionLines,
