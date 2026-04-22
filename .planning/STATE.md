@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
 status: executing
-stopped_at: Completed 21-01
-last_updated: "2026-04-22T03:37:09.601Z"
+stopped_at: Completed 21-02
+last_updated: "2026-04-22T03:43:56.050Z"
 last_activity: 2026-04-22 -- Phase --phase execution started
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 29
-  completed_plans: 25
-  percent: 86
+  completed_plans: 26
+  percent: 90
 ---
 
 # Project State
@@ -30,7 +30,7 @@ Plan: 1 of --name
 Status: Executing Phase --phase
 Last activity: 2026-04-22 -- Phase --phase execution started
 
-Progress: [█████████░] 86%
+Progress: [█████████░] 90%
 
 ## v2.0 Phase Breakdown
 
@@ -130,6 +130,7 @@ Progress: [█████████░] 86%
 | Phase 20 P07 | 18min | 2 tasks | 8 files |
 | Phase 20 P08 | 30min | 2 tasks tasks | 6 files files |
 | Phase 21 P21-01 | 13min | 2 tasks | 10 files |
+| Phase 21 P02 | 3 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -380,6 +381,9 @@ Decisions are logged in PROJECT.md Key Decisions table.
 - [21-01]: person_of_interest IncidentType seeder routes via IncidentCategory name='Crime / Security' (exact shipped string); idempotent updateOrCreate keyed on code
 - [21-01]: RecognitionAlertReceived payload locked to 11-key denorm shape (D-12) using toHaveKeys assertion — additive migrations safe without test churn
 - [21-01]: Nyquist Wave 0 RED state = 17 failures across FrasIncidentFactory (11, Plan 02), EscalateToP1 trigger field (3, Plan 03), IntakeStation recentFrasEvents prop (3, Plan 03); all contract-locked before implementation
+- [21-02]: Constructor injection for RecognitionHandler (not app() helper) — matches AckHandler precedent; single dep, test-friendly
+- [21-02]: FrasIncidentFactory is the single load-bearing bridge — 5-gate chain (severity/confidence/category/dedup/write) observable via ordered it() blocks; Cache::add atomic dedup
+- [21-02]: IoTWebhookController 99 -> 56 lines via delegation; raw_message now json_encode($validated) — invisible to v1.0 IoTWebhookTest which only checks sensor_type/sensor_id roundtrip
 
 ### Roadmap Evolution
 
@@ -423,8 +427,8 @@ All 5 items remain open for v2 milestone decision (verify / fix / close-out).
 
 ## Session Continuity
 
-Last session: 2026-04-22T03:37:09.594Z
-Stopped at: Completed 21-01
+Last session: 2026-04-22T03:43:56.042Z
+Stopped at: Completed 21-02
 Resume file: None
 
 **Planned Phase:** 21 (Recognition → IoT-Intake Bridge + Dispatch Map + IntakeStation Rail) — 5 plans — 2026-04-22T03:23:52.812Z
