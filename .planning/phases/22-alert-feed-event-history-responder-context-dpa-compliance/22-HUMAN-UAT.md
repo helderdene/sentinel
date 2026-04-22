@@ -1,5 +1,5 @@
 ---
-status: partial
+status: testing
 phase: 22-alert-feed-event-history-responder-context-dpa-compliance
 source: [22-VERIFICATION.md]
 started: 2026-04-22T00:00:00Z
@@ -8,7 +8,11 @@ updated: 2026-04-22T00:00:00Z
 
 ## Current Test
 
-[awaiting human testing]
+number: 1
+name: Two-browser ACK propagation (ALERTS-01/02)
+expected: |
+  Visit /fras/alerts in two browser tabs logged in as different operators. Trigger a Critical RecognitionAlertReceived via tinker. The alert appears in both tabs. ACK in Tab 1 → card disappears from Tab 2 within ~1s via FrasAlertAcknowledged broadcast on fras.alerts channel.
+awaiting: user response
 
 ## Tests
 
@@ -70,3 +74,11 @@ skipped: 0
 blocked: 0
 
 ## Gaps
+
+- truth: "FrasAlertFeedController hydration must not crash the Vue layer when RecognitionEvent rows have null personnel_id"
+  status: resolved
+  reason: "User encountered Uncaught TypeError 'Cannot read properties of null (reading name)' at AlertCard.vue:76 when visiting /fras/alerts. Root cause: controller emitted personnel:null for anonymous face detections, but FrasAlertItem type declared personnel as non-null. Fix: added whereNotNull('personnel_id') to controller query + regression test (FrasAlertFeedTest > index excludes events where personnel_id is null). 9/9 tests green."
+  severity: blocker
+  test: 1
+  artifacts: [app/Http/Controllers/FrasAlertFeedController.php, tests/Feature/Fras/FrasAlertFeedTest.php]
+  missing: []

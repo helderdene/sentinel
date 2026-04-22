@@ -36,6 +36,7 @@ final class FrasAlertFeedController extends Controller
             ->whereIn('severity', [RecognitionSeverity::Critical, RecognitionSeverity::Warning])
             ->whereNull('acknowledged_at')
             ->whereNull('dismissed_at')
+            ->whereNotNull('personnel_id')
             ->orderByDesc('captured_at')
             ->limit(100)
             ->get()
@@ -51,20 +52,16 @@ final class FrasAlertFeedController extends Controller
                 return [
                     'event_id' => $event->id,
                     'severity' => $event->severity->value,
-                    'personnel' => $event->personnel
-                        ? [
-                            'id' => $event->personnel->id,
-                            'name' => $event->personnel->name,
-                            'category' => $event->personnel->category->value,
-                        ]
-                        : null,
-                    'camera' => $event->camera
-                        ? [
-                            'id' => $event->camera->id,
-                            'camera_id_display' => $event->camera->camera_id_display,
-                            'name' => $event->camera->name,
-                        ]
-                        : null,
+                    'personnel' => [
+                        'id' => $event->personnel->id,
+                        'name' => $event->personnel->name,
+                        'category' => $event->personnel->category->value,
+                    ],
+                    'camera' => [
+                        'id' => $event->camera->id,
+                        'camera_id_display' => $event->camera->camera_id_display,
+                        'name' => $event->camera->name,
+                    ],
                     'captured_at' => $event->captured_at?->toIso8601String(),
                     'face_image_url' => $faceImageUrl,
                     'can_promote' => $event->severity !== RecognitionSeverity::Critical

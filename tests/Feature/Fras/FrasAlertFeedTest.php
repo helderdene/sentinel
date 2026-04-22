@@ -1,7 +1,6 @@
 <?php
 
 use App\Enums\RecognitionSeverity;
-use App\Enums\UserRole;
 use App\Events\FrasAlertAcknowledged;
 use App\Models\Camera;
 use App\Models\Personnel;
@@ -171,5 +170,31 @@ it('index hydrates Critical+Warning non-ack non-dismiss events with signed face 
             ->has('initialAlerts.0.face_image_url')
             ->has('audioMuted')
             ->where('frasConfig.audioEnabled', true)
+        );
+});
+
+it('index excludes events where personnel_id is null (unmatched face detections)', function () {
+    $operator = User::factory()->operator()->create();
+    $camera = Camera::factory()->create(['camera_id_display' => 'CAM-A']);
+    $personnel = Personnel::factory()->create();
+
+    // Eligible: fully matched
+    $matched = RecognitionEvent::factory()->for($camera)->for($personnel)->create([
+        'severity' => RecognitionSeverity::Critical,
+    ]);
+
+    // Excluded: no personnel match (anonymous face detection — crashes Vue
+    // if surfaced, since AlertCard assumes a non-null personnel object)
+    RecognitionEvent::factory()->for($camera)->create([
+        'severity' => RecognitionSeverity::Warning,
+        'personnel_id' => null,
+    ]);
+
+    $this->actingAs($operator)
+        ->get(route('fras.alerts.index'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->has('initialAlerts', 1)
+            ->where('initialAlerts.0.event_id', $matched->id)
         );
 });
