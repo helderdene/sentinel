@@ -1,5 +1,5 @@
 ---
-status: resolved
+status: complete
 phase: 20-camera-personnel-admin-enrollment
 source: [20-VERIFICATION.md]
 started: 2026-04-21T16:42:28Z
