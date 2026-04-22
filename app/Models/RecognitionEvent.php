@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\FrasDismissReason;
 use App\Enums\RecognitionSeverity;
 use Database\Factories\RecognitionEventFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -45,6 +46,9 @@ class RecognitionEvent extends Model
         'acknowledged_by',
         'acknowledged_at',
         'dismissed_at',
+        'dismissed_by',
+        'dismiss_reason',
+        'dismiss_reason_note',
     ];
 
     /**
@@ -62,6 +66,7 @@ class RecognitionEvent extends Model
             'acknowledged_at' => 'datetime',
             'dismissed_at' => 'datetime',
             'severity' => RecognitionSeverity::class,
+            'dismiss_reason' => FrasDismissReason::class,
             'is_real_time' => 'boolean',
             'similarity' => 'decimal:2',
             'verify_status' => 'integer',
@@ -100,5 +105,13 @@ class RecognitionEvent extends Model
     public function acknowledgedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'acknowledged_by');
+    }
+
+    /**
+     * Get the user who dismissed this event (Phase 22).
+     */
+    public function dismissedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'dismissed_by');
     }
 }
