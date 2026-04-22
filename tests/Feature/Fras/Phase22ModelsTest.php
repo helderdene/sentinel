@@ -3,6 +3,7 @@
 use App\Enums\FrasAccessAction;
 use App\Enums\FrasAccessSubject;
 use App\Enums\FrasDismissReason;
+use App\Models\Camera;
 use App\Models\FrasAccessLog;
 use App\Models\FrasLegalSignoff;
 use App\Models\FrasPurgeRun;
@@ -92,7 +93,7 @@ it('FrasLegalSignoff model uses HasUuids and datetime cast', function () {
 });
 
 it('RecognitionEvent has dismissedBy relation + dismiss_reason enum cast', function () {
-    $camera = \App\Models\Camera::factory()->create();
+    $camera = Camera::factory()->create();
     $dismisser = User::factory()->create();
 
     $event = RecognitionEvent::factory()->create([
@@ -123,7 +124,7 @@ it('User model has fras_audio_muted fillable + bool cast', function () {
 });
 
 it('FrasAccessLogFactory produces a valid row', function () {
-    $log = \App\Models\FrasAccessLog::factory()->create();
+    $log = FrasAccessLog::factory()->create();
 
     expect($log->id)->toBeString();
     expect($log->actor_user_id)->not->toBeNull();
