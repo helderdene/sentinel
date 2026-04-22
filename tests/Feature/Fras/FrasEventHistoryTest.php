@@ -1,8 +1,6 @@
 <?php
 
-use App\Enums\IncidentStatus;
 use App\Enums\RecognitionSeverity;
-use App\Enums\UserRole;
 use App\Models\Camera;
 use App\Models\Personnel;
 use App\Models\RecognitionEvent;
@@ -14,9 +12,6 @@ pest()->group('fras');
 
 beforeEach(function () {
     Storage::fake('fras_events');
-    // The fras/Events Vue page lands in Plan 22-07. Plan 22-05 asserts on
-    // the Inertia prop contract only.
-    config()->set('inertia.testing.ensure_pages_exist', false);
 });
 
 it('filters by severity=critical', function () {
