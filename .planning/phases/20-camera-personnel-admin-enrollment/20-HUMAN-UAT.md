@@ -3,15 +3,15 @@ status: testing
 phase: 20-camera-personnel-admin-enrollment
 source: [20-VERIFICATION.md]
 started: 2026-04-21T16:42:28Z
-updated: 2026-04-22T09:20:00Z
+updated: 2026-04-22T09:30:00Z
 ---
 
 ## Current Test
 
-number: 1
-name: Camera Create + Mapbox-GL Picker Visual QA
+number: 2
+name: Dispatch Console Cameras Layer UAT
 expected: |
-  On `/admin/cameras/create`, the Mapbox map renders interactively. Clicking anywhere on the map drops a pin; lat/lng fields update to those coordinates. Address field auto-fills via forward-geocode (may be empty if no Mapbox token). After filling name + device_id and submitting, the camera appears in `/admin/cameras` with an auto-assigned `CAM-NN` id (CAM-01 if first).
+  Log in as dispatcher. Navigate to `/dispatch/console`. Camera markers render as colored WebGL symbols on the map (blue = online, amber = degraded, gray = offline). A toggle button (top-left map area) hides all camera markers on click and restores them on the next click. Clicking one camera marker opens a Popup with camera name, status badge, last-seen timestamp, and an "Edit camera" link that navigates to `/admin/cameras/{id}/edit`.
 awaiting: user response
 
 ## Tests
@@ -31,7 +31,8 @@ steps:
 
 why_human: Mapbox-GL rendering + forward-geocoding are browser/network interactions that cannot be verified programmatically.
 
-result: [pending]
+result: pass
+notes: Initial attempt blocked by G-01 (missing sidebar nav link); after fix in commit 5cd2759 user confirmed pass on 2026-04-22.
 
 ### 2. Dispatch Console Cameras Layer UAT (CAMERA-03 + CAMERA-04)
 
@@ -55,9 +56,9 @@ result: [pending]
 ## Summary
 
 total: 2
-passed: 0
+passed: 1
 issues: 0
-pending: 2
+pending: 1
 skipped: 0
 blocked: 0
 
@@ -85,3 +86,33 @@ items group together above City. `npm run types:check` passes.
 
 retest: user needs to refresh the admin session (Vite dev server will hot-
 reload; `npm run build` needed for production bundle) and retry Test 1.
+
+### G-02: Camera Popup text invisible in dark mode
+
+status: resolved
+found_during: Test 2 (2026-04-22)
+severity: warning (popup is the primary way dispatchers see camera detail)
+
+issue:
+  On `/dispatch/console` in dark mode, clicking a camera marker opens a
+  mapbox-gl Popup whose background is hardcoded white. The name line
+  (font-medium inherits foreground) and Edit-camera link rendered in
+  dark-mode light colors that disappeared against the white popup.
+  Only the `• online` middle row stayed legible (text-muted-foreground
+  happens to resolve to a darker gray that's barely visible).
+
+root_cause:
+  `useDispatchMap.ts` camera popup used theme-aware Tailwind utilities
+  (`font-medium` inherits `text-foreground`; `text-muted-foreground`;
+  underlined link inherits primary color) that flip lightness in dark
+  mode. Mapbox Popup has no dark-mode variant — its container CSS is
+  hardcoded white.
+
+fix: commit c2e5928 — switched popup text to explicit theme-independent
+colors: `text-slate-900` (name), `text-slate-600` (status row),
+`text-blue-600` (Edit camera link). All three stay readable against the
+popup's white background regardless of app theme.
+
+retest: refresh `/dispatch/console` and click a camera marker; name +
+status + edit link should all be visible against the popup's white
+background in both light and dark modes.
