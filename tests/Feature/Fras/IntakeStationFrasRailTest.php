@@ -2,11 +2,14 @@
 
 use App\Enums\PersonnelCategory;
 use App\Enums\RecognitionSeverity;
+use App\Enums\UserRole;
 use App\Models\Camera;
 use App\Models\Personnel;
 use App\Models\RecognitionEvent;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 uses(RefreshDatabase::class);
 
@@ -77,4 +80,82 @@ it('shares frasConfig Inertia prop with pulseDurationSeconds', function () {
         ->assertInertia(fn ($page) => $page
             ->has('frasConfig.pulseDurationSeconds')
         );
+});
+
+/**
+ * Build a signed fras.event.face URL with a valid face_image_path and a
+ * stubbed byte-string on the fras_events disk so the controller's
+ * Storage::exists check passes.
+ */
+function signedFaceUrl(RecognitionEvent $event, int $minutes = 5): string
+{
+    return URL::temporarySignedRoute(
+        'fras.event.face',
+        now()->addMinutes($minutes),
+        ['event' => $event->id],
+    );
+}
+
+it('fras.event.face route allows operator and denies dispatcher + responder', function () {
+    Storage::fake('fras_events');
+
+    $camera = Camera::factory()->create();
+    $event = RecognitionEvent::factory()->for($camera)->create([
+        'face_image_path' => 'events/2026/04/abc.jpg',
+    ]);
+    Storage::disk('fras_events')->put('events/2026/04/abc.jpg', 'fake-jpeg-bytes');
+
+    $url = signedFaceUrl($event);
+
+    // Operator gets image
+    $operator = User::factory()->create(['role' => UserRole::Operator]);
+    $this->actingAs($operator)
+        ->get($url)
+        ->assertOk()
+        ->assertHeader('Content-Type', 'image/jpeg');
+
+    // Dispatcher denied
+    $dispatcher = User::factory()->create(['role' => UserRole::Dispatcher]);
+    $this->actingAs($dispatcher)
+        ->get($url)
+        ->assertForbidden();
+
+    // Responder denied
+    $responder = User::factory()->create(['role' => UserRole::Responder]);
+    $this->actingAs($responder)
+        ->get($url)
+        ->assertForbidden();
+});
+
+it('fras.event.face returns 404 when event face_image_path is null', function () {
+    Storage::fake('fras_events');
+
+    $camera = Camera::factory()->create();
+    $event = RecognitionEvent::factory()->for($camera)->create([
+        'face_image_path' => null,
+    ]);
+
+    $operator = User::factory()->create(['role' => UserRole::Operator]);
+    $url = signedFaceUrl($event);
+
+    $this->actingAs($operator)
+        ->get($url)
+        ->assertNotFound();
+});
+
+it('fras.event.face returns 403 when URL signature is missing', function () {
+    Storage::fake('fras_events');
+
+    $camera = Camera::factory()->create();
+    $event = RecognitionEvent::factory()->for($camera)->create([
+        'face_image_path' => 'events/2026/04/abc.jpg',
+    ]);
+    Storage::disk('fras_events')->put('events/2026/04/abc.jpg', 'fake-jpeg-bytes');
+
+    $operator = User::factory()->create(['role' => UserRole::Operator]);
+
+    // Unsigned URL (no signature query param) → 403 from signed middleware.
+    $this->actingAs($operator)
+        ->get(route('fras.event.face', ['event' => $event->id]))
+        ->assertForbidden();
 });

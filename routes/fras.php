@@ -1,16 +1,31 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminPersonnelPhotoController;
+use App\Http\Controllers\FrasEventFaceController;
 use Illuminate\Support\Facades\Route;
 
 /*
  | FRAS authenticated routes gated at role:operator,supervisor,admin (D-22).
- | Registered in bootstrap/app.php alongside routes/admin.php. The URL prefix
- | ("admin/") and name prefix ("admin.") are preserved so operator-facing URLs
- | remain /admin/personnel/{id}/photo even though the role gate is broader
- | than `role:admin` (the admin.php group inherits).
+ | Registered in bootstrap/app.php alongside routes/admin.php under the
+ | middleware chain ['web','auth','verified','role:operator,supervisor,admin'].
+ |
+ | Per-route URL + name prefixes are applied explicitly below so legacy
+ | operator-facing URLs remain /admin/personnel/{id}/photo (name
+ | `admin.personnel.photo`) while newer FRAS-specific routes live under
+ | /fras/* (name `fras.*`).
  */
 
-Route::get('personnel/{personnel}/photo', [AdminPersonnelPhotoController::class, 'show'])
+// Legacy admin-prefixed operator photo stream (Phase 20 D-22).
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('personnel/{personnel}/photo', [AdminPersonnelPhotoController::class, 'show'])
+        ->middleware('signed')
+        ->name('personnel.photo');
+});
+
+// Phase 21 D-20 (option a): signed 5-min URL for face-image crops on the
+// IntakeStation FRAS rail + modal. Role gate enforced at the bootstrap
+// layer; signed middleware added here per-route. Phase 22 will layer
+// `fras_access_log` writes inside FrasEventFaceController.
+Route::get('fras/events/{event}/face', [FrasEventFaceController::class, 'show'])
     ->middleware('signed')
-    ->name('personnel.photo');
+    ->name('fras.event.face');

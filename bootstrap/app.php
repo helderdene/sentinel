@@ -25,13 +25,13 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->name('admin.')
                 ->group(base_path('routes/admin.php'));
 
-            // D-22: broader role gate for FRAS operator-facing routes that
-            // share the admin/ URL + admin. name prefix (e.g. signed photo
-            // stream). Operators and supervisors need access; full admin is
-            // too narrow.
+            // D-22: broader role gate for FRAS operator-facing routes.
+            // Operators and supervisors need access; full admin is too
+            // narrow. The file itself applies URL/name prefixes explicitly
+            // per-route since some routes (e.g. admin.personnel.photo) keep
+            // the legacy admin/ prefix while newer routes (fras.event.face)
+            // live under /fras/*.
             Route::middleware(['web', 'auth', 'verified', 'role:operator,supervisor,admin'])
-                ->prefix('admin')
-                ->name('admin.')
                 ->group(base_path('routes/fras.php'));
         },
     )
