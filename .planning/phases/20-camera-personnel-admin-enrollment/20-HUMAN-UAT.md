@@ -1,18 +1,15 @@
 ---
-status: testing
+status: resolved
 phase: 20-camera-personnel-admin-enrollment
 source: [20-VERIFICATION.md]
 started: 2026-04-21T16:42:28Z
-updated: 2026-04-22T09:30:00Z
+updated: 2026-04-22T09:35:00Z
+completed: 2026-04-22T09:35:00Z
 ---
 
 ## Current Test
 
-number: 2
-name: Dispatch Console Cameras Layer UAT
-expected: |
-  Log in as dispatcher. Navigate to `/dispatch/console`. Camera markers render as colored WebGL symbols on the map (blue = online, amber = degraded, gray = offline). A toggle button (top-left map area) hides all camera markers on click and restores them on the next click. Clicking one camera marker opens a Popup with camera name, status badge, last-seen timestamp, and an "Edit camera" link that navigates to `/admin/cameras/{id}/edit`.
-awaiting: user response
+[all tests complete]
 
 ## Tests
 
@@ -51,14 +48,15 @@ steps:
 
 why_human: WebGL map rendering correctness, layer z-ordering, Popup HTML content, and color-coded status transitions require a live browser with WebGL hardware acceleration.
 
-result: [pending]
+result: pass
+notes: Initial attempt surfaced G-02 (popup text invisible in dark mode); after fix in commit c2e5928 user confirmed pass on 2026-04-22.
 
 ## Summary
 
 total: 2
-passed: 1
+passed: 2
 issues: 0
-pending: 1
+pending: 0
 skipped: 0
 blocked: 0
 

@@ -1,8 +1,9 @@
 ---
 phase: 20-camera-personnel-admin-enrollment
 verified: 2026-04-21T16:42:28Z
-status: human_needed
-score: 13/13 must-haves verified
+uat_completed: 2026-04-22T09:35:00Z
+status: passed
+score: 13/13 must-haves verified; 2/2 human UAT passed (after gap fixes G-01 + G-02)
 overrides_applied: 0
 human_verification:
   - test: "Navigate to /admin/cameras as admin, create a camera via the Mapbox-GL picker, verify the location pin appears and forward-geocoded address populates."
