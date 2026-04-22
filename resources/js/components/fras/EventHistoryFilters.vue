@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input';
 export interface FilterState {
     severity: string[];
     camera_id: string | null;
-    q: string;
+    q: string | null;
     from: string | null;
     to: string | null;
 }
@@ -42,13 +42,14 @@ const SEVERITY_OPTIONS: Array<{ value: string; label: string }> = [
     { value: 'info', label: 'Info' },
 ];
 
-const localSearch = ref<string>(props.modelValue.q);
+const localSearch = ref<string>(props.modelValue.q ?? '');
 
 watch(
     () => props.modelValue.q,
     (next) => {
-        if (next !== localSearch.value) {
-            localSearch.value = next;
+        const nextValue = next ?? '';
+        if (nextValue !== localSearch.value) {
+            localSearch.value = nextValue;
         }
     },
 );
@@ -81,7 +82,7 @@ const hasAnyFilter = computed(() => {
     return (
         m.severity.length > 0 ||
         m.camera_id !== null ||
-        m.q.trim().length > 0 ||
+        (m.q !== null && m.q.trim().length > 0) ||
         m.from !== null ||
         m.to !== null
     );

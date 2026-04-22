@@ -82,3 +82,11 @@ blocked: 0
   test: 1
   artifacts: [app/Http/Controllers/FrasAlertFeedController.php, tests/Feature/Fras/FrasAlertFeedTest.php]
   missing: []
+
+- truth: "EventHistoryFilters must not crash when backend emits null for absent q filter"
+  status: resolved
+  reason: "User encountered Uncaught TypeError 'Cannot read properties of null (reading trim)' at EventHistoryFilters.vue:84 when visiting /fras/events. Root cause: backend consistently returns null for absent string filters (same pattern as camera_id/from/to), but FilterState.q was typed string and hasAnyFilter called .trim() without a null guard. Fix: q typed string|null, null-guarded in hasAnyFilter + localSearch initializer + watch handler. Types clean (only pre-existing UnitForm.vue error unrelated). FrasEventHistoryTest 11/11 green."
+  severity: blocker
+  test: 3
+  artifacts: [resources/js/components/fras/EventHistoryFilters.vue]
+  missing: []
