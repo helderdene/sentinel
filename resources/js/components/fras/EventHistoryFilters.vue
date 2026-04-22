@@ -211,7 +211,7 @@ function clearFilters(): void {
                         <ComboboxEmpty>No cameras found.</ComboboxEmpty>
                         <ComboboxItem
                             v-if="modelValue.camera_id !== null"
-                            value=""
+                            value="__clear__"
                             @select.prevent="selectCamera(null)"
                         >
                             <span class="text-xs text-t-text-faint">
