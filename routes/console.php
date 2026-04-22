@@ -3,6 +3,7 @@
 use App\Jobs\GenerateDilgMonthlyReport;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schedule;
 
 Artisan::command('inspire', function () {
@@ -27,3 +28,10 @@ Schedule::command('irms:personnel-expire-sweep')
     ->hourly()
     ->withoutOverlapping()
     ->description('Unenroll personnel whose BOLO expiry has passed');
+
+Schedule::command('fras:purge-expired')
+    ->dailyAt((string) config('fras.retention.purge_run_schedule', '02:00'))
+    ->timezone('Asia/Manila')
+    ->withoutOverlapping()
+    ->onFailure(fn () => Log::error('FRAS retention purge failed'))
+    ->description('Purge expired FRAS face/scene images per DPA retention policy');
