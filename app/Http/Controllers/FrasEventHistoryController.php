@@ -132,12 +132,27 @@ final class FrasEventHistoryController extends Controller
      */
     public function promote(PromoteRecognitionEventRequest $request, RecognitionEvent $event): RedirectResponse
     {
+        $user = $request->user();
+
         $incident = $this->factory->createFromRecognitionManual(
             $event,
             IncidentPriority::from($request->validated('priority')),
             $request->validated('reason'),
-            $request->user(),
+            $user,
         );
+
+        // Operators are not authorised on the incidents.show route
+        // (dispatcher/supervisor/admin only). Route them back to the feed
+        // with a success flash referencing the new incident id.
+        if ($user?->role?->value === 'operator') {
+            return redirect()
+                ->route('fras.events.index')
+                ->with('flash', [
+                    'type' => 'success',
+                    'message' => "Promoted to incident #{$incident->id}.",
+                    'incident_id' => $incident->id,
+                ]);
+        }
 
         return redirect()->route('incidents.show', $incident);
     }

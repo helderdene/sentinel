@@ -16,6 +16,7 @@ use App\Models\User;
 use App\Services\FrasIncidentFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 uses(RefreshDatabase::class);
 
@@ -112,7 +113,7 @@ it('rejects promotion when personnel_id is null (422)', function () {
         IncidentPriority::P2,
         'Trying to promote unmatched event.',
         $actor,
-    ))->toThrow(Symfony\Component\HttpKernel\Exception\HttpException::class);
+    ))->toThrow(HttpException::class);
 });
 
 it('rejects promotion for allow-category personnel (422)', function () {
@@ -124,7 +125,7 @@ it('rejects promotion for allow-category personnel (422)', function () {
         IncidentPriority::P2,
         'Trying to promote an allow-list match.',
         $actor,
-    ))->toThrow(Symfony\Component\HttpKernel\Exception\HttpException::class);
+    ))->toThrow(HttpException::class);
 });
 
 it('writes fras_operator_promote trigger + audit fields on the timeline entry', function () {
@@ -197,4 +198,31 @@ it('links the promoted event to the new incident', function () {
     );
 
     expect($event->fresh()->incident_id)->toBe($incident->id);
+});
+
+it('HTTP promote as operator redirects back to /fras/events (operators cannot view incidents.show)', function () {
+    $operator = User::factory()->operator()->create();
+    $event = promoteEvent(PersonnelCategory::Missing, RecognitionSeverity::Warning);
+
+    $response = $this->actingAs($operator)
+        ->post(route('fras.events.promote', ['event' => $event->id]), [
+            'priority' => 'P2',
+            'reason' => 'Operator manual promote during UAT retest.',
+        ]);
+
+    $response->assertRedirect(route('fras.events.index'));
+    $response->assertSessionHas('flash');
+});
+
+it('HTTP promote as supervisor redirects to incidents.show (supervisor is authorised)', function () {
+    $supervisor = User::factory()->supervisor()->create();
+    $event = promoteEvent(PersonnelCategory::Missing, RecognitionSeverity::Warning);
+
+    $response = $this->actingAs($supervisor)
+        ->post(route('fras.events.promote', ['event' => $event->id]), [
+            'priority' => 'P2',
+            'reason' => 'Supervisor taking direct ownership of match.',
+        ]);
+
+    $response->assertRedirectContains('/incidents/');
 });
