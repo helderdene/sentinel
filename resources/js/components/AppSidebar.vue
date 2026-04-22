@@ -4,8 +4,10 @@ import {
     AlertTriangle,
     BarChart3,
     Building2,
+    Camera,
     ClipboardList,
     FolderTree,
+    IdCard,
     LayoutGrid,
     Landmark,
     ListChecks,
@@ -107,6 +109,16 @@ const mainNavItems = computed<NavItem[]>(() => {
                         title: 'Units',
                         href: '/admin/units',
                         icon: Truck,
+                    },
+                    {
+                        title: 'Cameras',
+                        href: '/admin/cameras',
+                        icon: Camera,
+                    },
+                    {
+                        title: 'Personnel',
+                        href: '/admin/personnel',
+                        icon: IdCard,
                     },
                     {
                         title: 'City',
