@@ -187,6 +187,27 @@ class AppServiceProvider extends ServiceProvider
 
             return false;
         });
+
+        // Phase 22 FRAS gates (D-27 / 22-PATTERNS §Wave 1).
+        Gate::define('view-fras-alerts', fn (User $user): bool => in_array($user->role, [
+            UserRole::Operator, UserRole::Supervisor, UserRole::Admin,
+        ], true));
+
+        Gate::define('manage-cameras', fn (User $user): bool => in_array($user->role, [
+            UserRole::Supervisor, UserRole::Admin,
+        ], true));
+
+        Gate::define('manage-personnel', fn (User $user): bool => in_array($user->role, [
+            UserRole::Supervisor, UserRole::Admin,
+        ], true));
+
+        Gate::define('trigger-enrollment-retry', fn (User $user): bool => in_array($user->role, [
+            UserRole::Supervisor, UserRole::Admin,
+        ], true));
+
+        Gate::define('view-recognition-image', fn (User $user): bool => in_array($user->role, [
+            UserRole::Operator, UserRole::Supervisor, UserRole::Admin,
+        ], true));
     }
 
     /**

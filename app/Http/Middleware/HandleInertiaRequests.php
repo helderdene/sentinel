@@ -48,7 +48,7 @@ class HandleInertiaRequests extends Middleware
             'name' => config('app.name'),
             'auth' => [
                 'user' => $user ? array_merge(
-                    $user->only('id', 'name', 'email', 'role', 'avatar', 'email_verified_at'),
+                    $user->only('id', 'name', 'email', 'role', 'avatar', 'email_verified_at', 'fras_audio_muted'),
                     ['can' => [
                         'manage_users' => $user->can('manage-users'),
                         'manage_incident_types' => $user->can('manage-incident-types'),
@@ -65,6 +65,11 @@ class HandleInertiaRequests extends Middleware
                         'override_priority' => $user->can('override-priority'),
                         'recall_incident' => $user->can('recall-incident'),
                         'view_session_log' => $user->can('view-session-log'),
+                        'view_fras_alerts' => $user->can('view-fras-alerts'),
+                        'manage_cameras' => $user->can('manage-cameras'),
+                        'manage_personnel' => $user->can('manage-personnel'),
+                        'trigger_enrollment_retry' => $user->can('trigger-enrollment-retry'),
+                        'view_recognition_image' => $user->can('view-recognition-image'),
                     ]]
                 ) : null,
             ],
