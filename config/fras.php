@@ -38,4 +38,17 @@ return [
         'max_size_bytes' => (int) env('FRAS_PHOTO_MAX_SIZE_BYTES', 1_048_576),
     ],
 
+    'recognition' => [
+        'confidence_threshold' => (float) env('FRAS_CONFIDENCE_THRESHOLD', 0.75),
+        'dedup_window_seconds' => (int) env('FRAS_DEDUP_WINDOW_SECONDS', 60),
+        'pulse_duration_seconds' => (int) env('FRAS_PULSE_DURATION_SECONDS', 3),
+        'priority_map' => [
+            'critical' => [
+                'block' => env('FRAS_PRIORITY_CRITICAL_BLOCK', 'P2'),
+                'missing' => env('FRAS_PRIORITY_CRITICAL_MISSING', 'P2'),
+                'lost_child' => env('FRAS_PRIORITY_CRITICAL_LOST_CHILD', 'P1'),
+            ],
+        ],
+    ],
+
 ];

@@ -18,6 +18,10 @@ Broadcast::channel('fras.cameras', function (User $user) use ($dispatchRoles): b
     return in_array($user->role, $dispatchRoles);
 });
 
+Broadcast::channel('fras.alerts', function (User $user) use ($dispatchRoles): bool {
+    return in_array($user->role, $dispatchRoles);
+});
+
 Broadcast::channel('fras.enrollments', function (User $user): bool {
     return in_array($user->role, [UserRole::Supervisor, UserRole::Admin]);
 });
