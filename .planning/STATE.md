@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
-status: planning
+status: executing
 stopped_at: Phase 22 UI-SPEC approved
-last_updated: "2026-04-22T07:19:21.711Z"
-last_activity: 2026-04-22
+last_updated: "2026-04-22T07:24:58.952Z"
+last_activity: 2026-04-22 -- Phase 22 execution started
 progress:
   total_phases: 6
   completed_phases: 5
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-21)
 
 **Core value:** Dispatchers can receive an incident report, triage it, assign the nearest available unit, and track the response in real-time on a live map.
-**Current focus:** Phase 21 COMPLETE — FRAS recognition bridge + dispatch map + IntakeStation 6th rail + human-verify APPROVED
+**Current focus:** Phase 22 — alert-feed-event-history-responder-context-dpa-compliance
 
 ## Current Position
 
-Phase: 22
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-04-22
+Phase: 22 (alert-feed-event-history-responder-context-dpa-compliance) — EXECUTING
+Plan: 3 of 9 (Wave 1 complete — 22-01, 22-02)
+Status: Executing Phase 22 — Wave 2 next
+Last activity: 2026-04-22 -- Wave 1 complete (22-01 + 22-02 merged, 50 tests passing)
 
 Progress: [██████████] 100%
 
