@@ -625,9 +625,9 @@ export function useDispatchMap(
 
             const html = `
                 <div class="space-y-1 text-sm">
-                    <div class="font-medium">${name}</div>
-                    <div class="text-xs text-muted-foreground">${display} &bull; ${status}</div>
-                    <a href="${editUrl}" class="text-xs underline">Edit camera</a>
+                    <div class="font-medium text-slate-900">${name}</div>
+                    <div class="text-xs text-slate-600">${display} &bull; ${status}</div>
+                    <a href="${editUrl}" class="text-xs text-blue-600 underline">Edit camera</a>
                 </div>
             `;
 
