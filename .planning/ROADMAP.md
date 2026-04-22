@@ -176,8 +176,8 @@ Plans:
 - [x] 22-05-PLAN.md — Wave 3: FrasAlertFeedController/FrasEventHistoryController/FrasAudioMuteController + 4 FormRequests + routes + FrasAlertFeedTest + FrasEventHistoryTest (ALERTS-01/02/04/05/07, DPA-07)
 - [x] 22-06-PLAN.md — Wave 3: useFrasFeed composable + /fras/alerts Vue page + AlertCard + DismissReasonModal + AudioMuteToggle + types/fras.ts + two-browser human-verify (ALERTS-01/02/03/06)
 - [x] 22-07-PLAN.md — Wave 3: /fras/events Vue page + 6 supporting components (filters/table/replay/purge placeholder/FrasEventDetailModal/PromoteIncidentModal) + human-verify (ALERTS-04/05/07)
-- [ ] 22-08-PLAN.md — Wave 4: ResponderController prop + SceneTab MOD + PersonOfInterestAccordion + PrivacyNoticeController + Privacy page + PublicLayout + 2 Markdown content files + ResponderSceneTabTest + PrivacyNoticeTest (INTEGRATION-02, DPA-01/02)
-- [ ] 22-09-PLAN.md — Wave 4: 4 DPA docs (PIA/signage/operator-training) + dompdf export template + FrasDpaExport command + FrasLegalSignoff command + final VALIDATION fill-in + human milestone-gate verify (DPA-06/07, INTEGRATION-02)
+- [x] 22-08-PLAN.md — Wave 4: ResponderController prop + SceneTab MOD + PersonOfInterestAccordion + PrivacyNoticeController + Privacy page + PublicLayout + 2 Markdown content files + ResponderSceneTabTest + PrivacyNoticeTest (INTEGRATION-02, DPA-01/02)
+- [x] 22-09-PLAN.md — Wave 4: 4 DPA docs (PIA/signage/operator-training) + dompdf export template + FrasDpaExport command + FrasLegalSignoff command + final VALIDATION fill-in + human milestone-gate verify (DPA-06/07, INTEGRATION-02)
 **UI hint**: yes
 
 ## Progress

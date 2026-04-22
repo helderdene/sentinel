@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-04-21)
 ## Current Position
 
 Phase: 22 (alert-feed-event-history-responder-context-dpa-compliance) — EXECUTING
-Plan: 8 of 9 (Waves 1–3 complete — 22-01..22-07)
-Status: Executing Phase 22 — Wave 4 next
-Last activity: 2026-04-22 -- Wave 3 complete (22-05 backend + 22-06 Alerts.vue + 22-07 Events.vue merged, 197 FRAS tests passing)
+Plan: 9 of 9 (All waves complete — 22-01..22-09)
+Status: Phase 22 execution complete — awaiting verification
+Last activity: 2026-04-22 -- Wave 4 complete (22-08 responder POI + /privacy + 22-09 DPA docs/export/signoff merged, 224 FRAS tests passing)
 
 Progress: [██████████] 100%
 
