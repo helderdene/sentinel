@@ -56,9 +56,10 @@ it('broadcasts on private fras.alerts channel with full denorm payload', functio
     expect($channels)->toHaveCount(1);
     expect($channels[0]->name)->toBe('private-fras.alerts');
 
-    // broadcastAs short name — client listeners in useFrasFeed, useFrasAlerts,
-    // and useFrasRail all bind to 'RecognitionAlertReceived', not the FQN.
-    expect($broadcast->broadcastAs())->toBe('RecognitionAlertReceived');
+    // Broadcast name defaults to PHP FQN — client's Echo default namespace
+    // "App.Events" resolves short-name listeners to the FQN, so no custom
+    // broadcastAs() should be defined. Locked in as regression guard.
+    expect(method_exists($broadcast, 'broadcastAs'))->toBeFalse();
 
     $payload = $broadcast->broadcastWith();
     expect($payload)->toHaveKeys([

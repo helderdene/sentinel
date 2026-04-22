@@ -18,10 +18,14 @@ it('broadcasts on the fras.alerts private channel', function () {
     expect($channels[0]->name)->toBe('private-fras.alerts');
 });
 
-it('broadcasts as FrasAlertAcknowledged', function () {
+it('broadcasts under the default FQN (no custom broadcastAs)', function () {
+    // Echo default namespace is 'App.Events', so client listeners via
+    // useEcho('fras.alerts', 'FrasAlertAcknowledged', ...) resolve to the
+    // FQN after namespace prepending. Defining broadcastAs() would emit
+    // the short name and silently break all client handlers.
     $event = new FrasAlertAcknowledged('uuid-x', 'ack', 42, 'Op A');
 
-    expect($event->broadcastAs())->toBe('FrasAlertAcknowledged');
+    expect(method_exists($event, 'broadcastAs'))->toBeFalse();
 });
 
 it('implements ShouldBroadcast and ShouldDispatchAfterCommit', function () {

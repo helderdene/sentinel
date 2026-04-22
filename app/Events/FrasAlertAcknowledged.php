@@ -38,11 +38,6 @@ final class FrasAlertAcknowledged implements ShouldBroadcast, ShouldDispatchAfte
         return [new PrivateChannel('fras.alerts')];
     }
 
-    public function broadcastAs(): string
-    {
-        return 'FrasAlertAcknowledged';
-    }
-
     /**
      * @return array<string, mixed>
      */

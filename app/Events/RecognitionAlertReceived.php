@@ -28,14 +28,15 @@ final class RecognitionAlertReceived implements ShouldBroadcast, ShouldDispatchA
         return [new PrivateChannel('fras.alerts')];
     }
 
-    public function broadcastAs(): string
-    {
-        return 'RecognitionAlertReceived';
-    }
-
     /**
      * Full denorm payload (D-12) so dispatch map, IntakeStation rail, and
      * Phase 22 /fras/alerts all render without follow-up HTTP calls.
+     *
+     * Broadcast event name is the default FQN (`App\Events\RecognitionAlertReceived`)
+     * — @laravel/echo-vue's default namespace is `App.Events`, so the client's
+     * short-name listeners (`useEcho('fras.alerts', 'RecognitionAlertReceived', ...)`)
+     * resolve to the FQN after namespace prepending. Adding broadcastAs() breaks
+     * this symmetry and silently drops all events client-side.
      *
      * @return array<string, mixed>
      */
