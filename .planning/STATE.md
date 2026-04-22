@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
-status: executing
+status: Phase 21 shipped; ready for Phase 22 (Alert Feed + DPA Compliance) — milestone gate blocks on CDRRMO legal sign-off
 stopped_at: Completed 21-04
-last_updated: "2026-04-22T04:02:11.407Z"
-last_activity: 2026-04-22 -- Phase --phase execution started
+last_updated: "2026-04-22T04:46:49.338Z"
+last_activity: 2026-04-22 -- Completed Phase 21 Plan 05 (FRAS UI components + human-verify APPROVED)
 progress:
   total_phases: 6
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 29
-  completed_plans: 28
-  percent: 97
+  completed_plans: 29
+  percent: 100
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-21)
 
 **Core value:** Dispatchers can receive an incident report, triage it, assign the nearest available unit, and track the response in real-time on a live map.
-**Current focus:** Phase --phase — 21
+**Current focus:** Phase 21 COMPLETE — FRAS recognition bridge + dispatch map + IntakeStation 6th rail + human-verify APPROVED
 
 ## Current Position
 
-Phase: --phase (21) — EXECUTING
-Plan: 1 of --name
-Status: Executing Phase --phase
-Last activity: 2026-04-22 -- Phase --phase execution started
+Phase: 21 — COMPLETE (2026-04-22)
+Plan: 5/5 complete
+Status: Phase 21 shipped; ready for Phase 22 (Alert Feed + DPA Compliance) — milestone gate blocks on CDRRMO legal sign-off
+Last activity: 2026-04-22 -- Completed Phase 21 Plan 05 (FRAS UI components + human-verify APPROVED)
 
-Progress: [██████████] 97%
+Progress: [██████████] 100%
 
 ## v2.0 Phase Breakdown
 
@@ -133,6 +133,7 @@ Progress: [██████████] 97%
 | Phase 21 P02 | 3 | 2 tasks | 4 files |
 | Phase 21 P03 | 18min | 2 tasks | 6 files |
 | Phase 21 P04 | 7min | 2 tasks | 9 files |
+| Phase 21 P05 | 21min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -395,6 +396,9 @@ Decisions are logged in PROJECT.md Key Decisions table.
 - [21-04]: useFrasRail live events get face_image_path/url=null — broadcast payload omits signed URLs; SSR prop is sole source of face thumbnails until Phase 22 adds live signing
 - [21-04]: useIntakeFeed.channelCounts record extended with FRAS:0 — Rule 3 auto-fix cascaded from ChannelKey union extension; required for types:check parity (baseline 15 pre-existing Wayfinder errors unchanged)
 - [21-04]: --t-ch-fras light #0e7490 / dark #22d3ee with dark override in .dark block alongside surface tokens (not @theme inline) — follows Sentinel dark-mode convention from Phase 14
+- [21-05] Wayfinder actions use single-file named-export shape (@/actions/.../IntakeStationController { overridePriority }, not subdirectory indirection) — Wayfinder v0 emits one .ts per controller
+- [21-05] No backend edit to IncidentController::show — timeline was already eager-loaded via timeline.actor relation; plan anticipated possible 1-line add but it was unnecessary
+- [21-05] EscalateToP1Button placed between h1 and priority Badge per UI-SPEC §4 reading order; self-gates on timeline source + priority so dispatchers never see it in DOM
 
 ### Roadmap Evolution
 

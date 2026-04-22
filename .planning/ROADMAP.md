@@ -146,13 +146,13 @@ Plans:
   4. A dispatcher viewing an Incident created from a recognition event sees a one-click "Escalate to P1" button that, when clicked, updates the Incident priority and writes an audit timeline entry — without taking any other action
   5. The dispatch console map gains a toggleable cameras layer alongside the existing incidents + units layers, with a pulse animation on the matched camera marker triggered by `RecognitionAlertReceived` within 500ms; `useDispatchFeed` remains unchanged (recognition-created Incidents flow through the existing `IncidentCreated` broadcast)
   6. The IntakeStation gains a 6th channel rail showing recent recognition events, so operators triage FRAS alerts alongside Voice / SMS / App / IoT / Walk-in in one workspace — verified by a load test of 50 events/sec/camera that confirms dispatch console frame rate and Reverb throttle hold up
-**Plans:** 5 plans
+**Plans:** 5/5 plans complete
 Plans:
 - [x] 21-01-PLAN.md — Wave 1: test scaffolding (4 failing Fras tests) + PersonOfInterestIncidentTypeSeeder + config/fras.php recognition section + RecognitionAlertReceived event + fras.alerts channel + ROADMAP/REQUIREMENTS text amendments (RECOGNITION-01/05/07/08, INTEGRATION-01)
-- [ ] 21-02-PLAN.md — Wave 2: FrasIncidentFactory (createFromSensor factored + createFromRecognition 5-gate chain) + IoTWebhookController thin refactor + RecognitionHandler factory wire + RecognitionHandlerTest extension (RECOGNITION-01/02/03/05/06/07/08)
+- [x] 21-02-PLAN.md — Wave 2: FrasIncidentFactory (createFromSensor factored + createFromRecognition 5-gate chain) + IoTWebhookController thin refactor + RecognitionHandler factory wire + RecognitionHandlerTest extension (RECOGNITION-01/02/03/05/06/07/08)
 - [x] 21-03-PLAN.md — Wave 2: IntakeStationController.show recentFrasEvents prop + overridePriority trigger field + HandleInertiaRequests frasConfig shared prop + signed fras.event.face route + FrasEventFaceController (RECOGNITION-04/08, INTEGRATION-03)
-- [ ] 21-04-PLAN.md — Wave 3: useDispatchMap pulseCamera + feature-state paint expressions + useFrasAlerts + useFrasRail + resources/js/types/fras.ts + ChBadge/ChannelFeed 6th rail + IntakeIconFras + --t-ch-fras token (INTEGRATION-01/03/04, RECOGNITION-05)
-- [ ] 21-05-PLAN.md — Wave 4: FrasSeverityBadge + FrasRailCard + FrasEventDetailModal + EscalateToP1Button + IntakeStation/incidents-Show/Console wiring + Wayfinder regen + human-verify checkpoint (RECOGNITION-04, INTEGRATION-01/03)
+- [x] 21-04-PLAN.md — Wave 3: useDispatchMap pulseCamera + feature-state paint expressions + useFrasAlerts + useFrasRail + resources/js/types/fras.ts + ChBadge/ChannelFeed 6th rail + IntakeIconFras + --t-ch-fras token (INTEGRATION-01/03/04, RECOGNITION-05)
+- [x] 21-05-PLAN.md — Wave 4: FrasSeverityBadge + FrasRailCard + FrasEventDetailModal + EscalateToP1Button + IntakeStation/incidents-Show/Console wiring + Wayfinder regen + human-verify checkpoint (RECOGNITION-04, INTEGRATION-01/03)
 **UI hint**: yes
 
 ### Phase 22: Alert Feed + Event History + Responder Context + DPA Compliance
@@ -201,5 +201,5 @@ Plans:
 | 18. FRAS Schema Port to PostgreSQL | v2.0 | 6/6 | Complete    | 2026-04-21 |
 | 19. MQTT Pipeline + Listener Infrastructure | v2.0 | 0/? | Not started | — |
 | 20. Camera + Personnel Admin + Enrollment | v2.0 | 8/8 | Complete    | 2026-04-21 |
-| 21. Recognition → IoT-Intake Bridge + Dispatch Map + IntakeStation Rail | v2.0 | 0/? | Not started | — |
+| 21. Recognition → IoT-Intake Bridge + Dispatch Map + IntakeStation Rail | v2.0 | 5/5 | Complete    | 2026-04-22 |
 | 22. Alert Feed + Event History + Responder Context + DPA Compliance | v2.0 | 0/? | Not started | — |
