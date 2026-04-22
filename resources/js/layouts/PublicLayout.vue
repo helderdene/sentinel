@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { ShieldCheck } from 'lucide-vue-next';
 // Citizen-facing public layout. Always light-mode (D-30 isolation from
-// operator UI). Uses project design tokens so it visually ties into the
-// authenticated IRMS surfaces without inheriting their full chrome.
+// operator UI). The `force-light` wrapper class re-declares the `--t-*`
+// design tokens with their light values, overriding any ancestor `.dark`
+// class set by the authenticated shell (preserves operator preference
+// across sessions without leaking dark mode into the public DPA page).
 </script>
 
 <template>
     <div
-        class="light relative min-h-screen bg-[var(--t-bg)] text-[var(--t-text)]"
+        class="force-light relative min-h-screen bg-[var(--t-bg)] text-[var(--t-text)]"
     >
         <div
             aria-hidden="true"

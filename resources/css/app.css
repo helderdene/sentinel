@@ -342,3 +342,48 @@
         box-shadow: 0 0 0 3px rgba(55, 138, 221, 0.1);
     }
 }
+
+/*
+ * .force-light — scoped light-mode override for citizen-facing public
+ * surfaces (Privacy Notice, etc.). Restates every `--t-*` design token
+ * at its light value so the subtree always renders in light mode even
+ * when the html element carries `.dark` from an authenticated session
+ * (D-30 citizen-surface isolation).
+ */
+.force-light {
+    color-scheme: light;
+
+    /* Sentinel Design System Tokens — Light (mirror of :root) */
+    --t-bg: #eff3fa;
+    --t-surface: #ffffff;
+    --t-surface-alt: #f0f4fa;
+    --t-text: #042c53;
+    --t-text-mid: #185fa5;
+    --t-text-dim: #9aa9ba;
+    --t-text-faint: #8ba3c1;
+    --t-border: #d3dce8;
+    --t-border-med: #abbdcf;
+    --t-border-foc: #185fa5;
+    --t-brand: #042c53;
+    --t-accent: #185fa5;
+    --t-online: #1d9e75;
+    --t-queued: #185fa5;
+    --t-p1: #a32d2d;
+    --t-p2: #854f0b;
+    --t-p3: #0f6e56;
+    --t-p4: #185fa5;
+    --t-ch-sms: #059669;
+    --t-ch-app: #185fa5;
+    --t-ch-voice: #d97706;
+    --t-ch-iot: #7c3aed;
+    --t-ch-walkin: #a32d2d;
+    --t-ch-fras: #0e7490;
+    --t-role-operator: #185fa5;
+    --t-role-supervisor: #7c3aed;
+    --t-role-admin: #0f6e56;
+    --t-unit-available: #1d9e75;
+    --t-unit-dispatched: #185fa5;
+    --t-unit-enroute: #185fa5;
+    --t-unit-onscene: #ef9f27;
+    --t-unit-offline: #6b7280;
+}
