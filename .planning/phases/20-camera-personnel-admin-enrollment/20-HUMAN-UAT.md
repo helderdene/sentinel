@@ -3,8 +3,8 @@ status: resolved
 phase: 20-camera-personnel-admin-enrollment
 source: [20-VERIFICATION.md]
 started: 2026-04-21T16:42:28Z
-updated: 2026-04-22T09:35:00Z
-completed: 2026-04-22T09:35:00Z
+updated: 2026-04-22T09:45:00Z
+completed: 2026-04-22T09:45:00Z
 ---
 
 ## Current Test
@@ -114,3 +114,35 @@ popup's white background regardless of app theme.
 retest: refresh `/dispatch/console` and click a camera marker; name +
 status + edit link should all be visible against the popup's white
 background in both light and dark modes.
+
+### G-03: Admin cameras table does not live-update on CameraStatusChanged
+
+status: resolved
+found_during: post-UAT inspection (2026-04-22)
+severity: functional gap (admins saw stale status until manual refresh)
+
+issue:
+  `/admin/cameras` displayed camera CAM-02 "CCTV sa Balay" as **Offline**
+  even though MQTT heartbeats were being received and the DB showed
+  `status: online`, `last_seen_at: 8s ago`. Verified the backend state
+  via `php artisan tinker` and confirmed `CameraWatchdogCommand` was
+  running via `schedule:list`. The dispatch console DID show the correct
+  status live — only the admin table was stale.
+
+root_cause:
+  Plan 20-07 shipped `Cameras.vue` consuming `props.cameras` directly
+  with no `useEcho('fras.cameras', 'CameraStatusChanged', ...)`
+  subscription. Plan 20-08 wired the same broadcast into the dispatch
+  console (`Console.vue`) via `updateCameraStatus`, but the admin index
+  was not wired. Broadcasts fired but had no listener on the admin
+  surface → admin table only reflected status at page-load time.
+
+fix: commit 10bd211 — mirror `props.cameras` into reactive `ref(rows)`
+with a `watch(props.cameras)` re-sync on Inertia reload, subscribe via
+`useEcho<CameraStatusChangedPayload>('fras.cameras', 'CameraStatusChanged', ...)`
+and mutate the matching row's `status` on arrival. `CameraStatusBadge`
+already reacts to `row.status` via Vue reactivity. Types-check clean.
+
+retest: refresh `/admin/cameras`, observe a camera with heartbeats
+coming in (or wait for the watchdog to run). The status badge should
+flip online/degraded/offline in place without a page reload.
