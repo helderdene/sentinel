@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
 status: planning
-stopped_at: Phase 21 context gathered
-last_updated: "2026-04-22T02:15:41.759Z"
+stopped_at: Phase 21 UI-SPEC approved
+last_updated: "2026-04-22T02:37:24.598Z"
 last_activity: 2026-04-21
 progress:
   total_phases: 6
@@ -420,7 +420,7 @@ All 5 items remain open for v2 milestone decision (verify / fix / close-out).
 ## Session Continuity
 
 Last session: --stopped-at
-Stopped at: Phase 21 context gathered
+Stopped at: Phase 21 UI-SPEC approved
 Resume file: --resume-file
 
 **Planned Phase:** 20 (Camera + Personnel Admin + Enrollment) — 8 plans — 2026-04-21T14:47:52.037Z
