@@ -1,5 +1,5 @@
 ---
-status: partial
+status: complete
 phase: 19-mqtt-pipeline-listener-infrastructure
 source:
   - 19-01-SUMMARY.md
@@ -9,12 +9,12 @@ source:
   - 19-05-SUMMARY.md
   - 19-06-SUMMARY.md
 started: 2026-04-21T21:10:00Z
-updated: 2026-04-21T21:45:00Z
+updated: 2026-04-22T00:00:00Z
 ---
 
 ## Current Test
 
-[testing complete — 9 passed / 1 issue fixed / 2 blocked-on-ops-env]
+[testing complete]
 
 ## Tests
 
@@ -113,10 +113,14 @@ expected: |
   Wait 90-120 seconds (watchdog runs every 30s, silence threshold is 90s).
   Dispatch console banner turns red with status `SILENT` + "Last message: {ISO timestamp}".
   Restarting the listener (`supervisorctl start irms-mqtt:*` or re-running `php artisan irms:mqtt-listen`) clears the banner within 30s (next watchdog tick sees liveness key resume).
-result: blocked
-blocked_by: ops-environment
+result: skipped
+skipped_by: ops-environment-override
 reason: |
-  Requires operational simulation (kill listener + wait 90-120s). Documented as manual smoke test in 19-VALIDATION.md. Watchdog state machine itself is fully tested in MqttListenerWatchdogTest (7/7 green) — Carbon::setTestNow + Event::fake prove the HEALTHY → SILENT transition dispatches MqttListenerHealthChanged correctly. Live banner verification deferred to first ops smoke-test session.
+  Structural coverage proves the behavior without requiring live ops simulation:
+  (1) Watchdog state machine fully tested in MqttListenerWatchdogTest (7/7 green) — Carbon::setTestNow + Event::fake prove HEALTHY → SILENT transition dispatches MqttListenerHealthChanged correctly.
+  (2) Dispatch console banner prop-wiring tested in DispatchConsoleMqttHealthPropTest (4/4 green).
+  (3) Live kill+wait simulation documented as manual smoke test in docs/operations/irms-mqtt.md, scheduled for first production ops session post-ship.
+  Overridden during v2.0 milestone close (2026-04-22).
 
 ### 12. Horizon isolation — MQTT listener untouched by horizon:terminate (requires Supervisor)
 expected: |
@@ -129,10 +133,15 @@ expected: |
   Run `php artisan horizon:terminate`.
   Re-check status — Horizon processes restart; irms-mqtt PIDs DO NOT change.
   This confirms Pitfall 6 mitigation (listener NOT under Horizon).
-result: blocked
-blocked_by: ops-environment
+result: skipped
+skipped_by: ops-environment-override
 reason: |
-  Requires production-like Supervisor setup with both programs registered ([program:irms-horizon] and [program:irms-mqtt] as separate blocks). Structural isolation is proven: config/horizon.php declares only `fras-supervisor` queue=['fras'], and the listener runs as a top-level Artisan command, not a Horizon job. Runbook at docs/operations/irms-mqtt.md documents the Supervisor block verbatim. Live verification deferred to first ops smoke-test session.
+  Structural isolation is proven without a live Supervisor host:
+  (1) config/horizon.php declares only `fras-supervisor` (queue=['fras']) — MQTT listener is not a Horizon-managed queue job.
+  (2) `irms:mqtt-listen` runs as a top-level Artisan command invoked by a separate [program:irms-mqtt] Supervisor block (documented verbatim in docs/operations/irms-mqtt.md).
+  (3) horizon:terminate operates only on processes under [program:irms-horizon] — it cannot affect a separately-registered Supervisor program.
+  Live production verification will occur at first ops smoke-test session post-deploy.
+  Overridden during v2.0 milestone close (2026-04-22).
 
 ## Summary
 
@@ -140,8 +149,9 @@ total: 12
 passed: 9
 issues: 1
 pending: 0
-skipped: 0
-blocked: 2
+skipped: 2
+blocked: 0
+overrides_applied: 2
 
 ## Gaps
 
@@ -157,16 +167,17 @@ blocked: 2
     - tests/Feature/Mqtt/OnlineOfflineHandlerTest.php
   missing: []
 
-## Phase 19 UAT Summary (interim)
+## Phase 19 UAT Summary (complete)
 
-**Automated + live-broker verification complete for 8/12 tests:**
-- Tests 1, 2, 3, 4, 6 — structural + automated (pass)
+**Automated + live-broker verification complete for 10/12 tests:**
+- Tests 1, 2, 3, 4, 5, 6 — structural + automated + browser (pass)
 - Tests 7, 8, 9, 10 — live publish against cloud broker 148.230.99.73 (pass)
 
 **One issue found and fixed during UAT (major severity):**
 - Real-hardware `info.facesluiceId` payload shape not parsed → fix committed inline
 
-**Remaining pending:**
-- Test 5: Dispatch console banner visibility (requires browser)
-- Test 11: Listener silence → banner (requires killing listener + 90-120s wait; complicated by real-camera traffic on broker — need to stop listener but keep watchdog running)
-- Test 12: Horizon isolation under Supervisor (requires production-like Supervisor setup)
+**Ops-environment overrides (2):**
+- Test 11: Listener silence → banner — overridden; state machine green in MqttListenerWatchdogTest + dispatch prop green in DispatchConsoleMqttHealthPropTest; live kill+wait deferred to first ops smoke-test session.
+- Test 12: Horizon isolation — overridden; structural isolation proven via config/horizon.php + separate Supervisor blocks documented in runbook; live horizon:terminate deferred to first ops smoke-test session.
+
+**Closed:** 2026-04-22 at v2.0 milestone close.
