@@ -1,8 +1,10 @@
 ---
-status: diagnosed
+status: resolved
 trigger: "Investigate why the responder Chat tab's free text input is hidden behind the RESOLVING > status button"
 created: 2026-03-14T00:00:00Z
-updated: 2026-03-14T00:00:00Z
+updated: 2026-04-22T00:00:00Z
+resolved_at: 2026-03-14T14:22:45Z
+resolution_commit: 600574f
 ---
 
 ## Current Focus
@@ -89,6 +91,16 @@ root_cause: |
   The same issue likely affects other tabs but is most noticeable on Chat because it has
   interactive content (input field) at the bottom, whereas other tabs scroll.
 
-fix: (not applied -- diagnosis only)
-verification: (not applicable)
-files_changed: []
+fix: |
+  Added `pb-[100px]` to ChatTab root container to reserve clearance for the
+  ~96px StatusButton overlay (pt-8 + 52px button + pb-3). ChatTab is the only
+  tab with interactive content pinned to the bottom (quick-reply chips + text
+  input); scrollable tabs are unaffected because their content scrolls behind
+  the gradient.
+verification: |
+  Verified live on responder station in Chat tab with active incident in
+  ON_SCENE status. Free text input and quick-reply chips now sit fully above
+  the RESOLVING status button with no overlap. Applied 2026-03-14 in commit
+  600574f fix(12-04): add bottom padding to ChatTab for StatusButton clearance.
+files_changed:
+  - resources/js/components/responder/ChatTab.vue
