@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: FRAS Integration
 status: executing
-stopped_at: Completed 21-02
-last_updated: "2026-04-22T03:43:56.050Z"
+stopped_at: Completed 21-03
+last_updated: "2026-04-22T03:51:27.317Z"
 last_activity: 2026-04-22 -- Phase --phase execution started
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 29
-  completed_plans: 26
-  percent: 90
+  completed_plans: 27
+  percent: 93
 ---
 
 # Project State
@@ -30,7 +30,7 @@ Plan: 1 of --name
 Status: Executing Phase --phase
 Last activity: 2026-04-22 -- Phase --phase execution started
 
-Progress: [█████████░] 90%
+Progress: [█████████░] 93%
 
 ## v2.0 Phase Breakdown
 
@@ -131,6 +131,7 @@ Progress: [█████████░] 90%
 | Phase 20 P08 | 30min | 2 tasks tasks | 6 files files |
 | Phase 21 P21-01 | 13min | 2 tasks | 10 files |
 | Phase 21 P02 | 3 | 2 tasks | 4 files |
+| Phase 21 P03 | 18min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -384,6 +385,9 @@ Decisions are logged in PROJECT.md Key Decisions table.
 - [21-02]: Constructor injection for RecognitionHandler (not app() helper) — matches AckHandler precedent; single dep, test-friendly
 - [21-02]: FrasIncidentFactory is the single load-bearing bridge — 5-gate chain (severity/confidence/category/dedup/write) observable via ordered it() blocks; Cache::add atomic dedup
 - [21-02]: IoTWebhookController 99 -> 56 lines via delegation; raw_message now json_encode($validated) — invisible to v1.0 IoTWebhookTest which only checks sensor_type/sensor_id roundtrip
+- [21-03]: routes/fras.php restructured to per-route URL/name prefixing — legacy admin.personnel.photo kept under /admin/ via inner Route::prefix('admin')->name('admin.') group, new fras.event.face lives at /fras/events/{event}/face (bootstrap no longer applies admin/ blanket); preserves existing route contract while honoring UI-SPEC URL shape for new route
+- [21-03]: FrasEventFaceController enforces role gate in-controller via abort_unless(in_array($user->role, [Operator,Supervisor,Admin])) in addition to bootstrap middleware — defense-in-depth; 5-min signed URLs pre-computed server-side at prop boot (not lazy) so rail SSR-renders 50 events without client round-trip; TODO(Phase 22) comment marks fras_access_log insertion point
+- [21-03]: overridePriority trigger field validated inline ('sometimes', 'in:manual_override,fras_escalate_button') per D-22 planner preference; default 'manual_override' written to event_data preserves v1.0 audit shape on legacy supervisor overrides while 'fras_escalate_button' differentiates rail-driven escalations for Phase 22 reporting
 
 ### Roadmap Evolution
 
@@ -427,8 +431,8 @@ All 5 items remain open for v2 milestone decision (verify / fix / close-out).
 
 ## Session Continuity
 
-Last session: 2026-04-22T03:43:56.042Z
-Stopped at: Completed 21-02
+Last session: 2026-04-22T03:51:27.312Z
+Stopped at: Completed 21-03
 Resume file: None
 
 **Planned Phase:** 21 (Recognition → IoT-Intake Bridge + Dispatch Map + IntakeStation Rail) — 5 plans — 2026-04-22T03:23:52.812Z

@@ -88,7 +88,8 @@ The integration seam: MQTT recognition event → IRMS Incident.
 **: `FrasIncidentFactory::createFromRecognition()` creates an IRMS Incident from a Critical recognition against BOLO personnel (block / missing / lost_child categories; `allow` excluded) with `channel = IoT`, `priority = P2` (default, P1 for lost_child per the configurable priority_map), `IncidentTimeline.event_data.source = 'fras_recognition'`, and sets `recognition_events.incident_id` to complete the FK round-trip
 - [x] **RECOGNITION-03
 **: `IoTWebhookController` is refactored to delegate to `FrasIncidentFactory::createFromSensor()` so the existing IoT sensor flow and the new recognition flow share one adapter, preserving v1.0 IoT intake behavior
-- [ ] **RECOGNITION-04**: Dispatcher sees a one-click "Escalate to P1" button on Incidents created from recognition events; clicking it updates the Incident priority and writes an audit timeline entry
+- [x] **RECOGNITION-04
+**: Dispatcher sees a one-click "Escalate to P1" button on Incidents created from recognition events; clicking it updates the Incident priority and writes an audit timeline entry
 - [x] **RECOGNITION-05
 **: Warning-severity recognition events broadcast on `fras.alerts` for operator awareness but **never** auto-create Incidents (`FrasIncidentFactory` returns null for non-Critical)
 - [x] **RECOGNITION-06
@@ -117,7 +118,8 @@ v1.0 feature surfaces gain FRAS context.
 - [x] **INTEGRATION-01
 **: Dispatch console map gains a toggleable cameras layer alongside existing incidents + units layers, with a pulse animation triggered by `RecognitionAlertReceived` on the matched camera marker
 - [ ] **INTEGRATION-02**: Responder SceneTab on an Incident created from a recognition event shows a "Person of Interest" accordion with the face crop, personnel name + category, camera label, and event timestamp (responders see face crop but not raw scene image per DPA role-gating)
-- [ ] **INTEGRATION-03**: IntakeStation gains a 6th channel rail showing recent recognition events, so operators can triage FRAS alerts alongside Voice / SMS / App / IoT / Walk-in in one workspace
+- [x] **INTEGRATION-03
+**: IntakeStation gains a 6th channel rail showing recent recognition events, so operators can triage FRAS alerts alongside Voice / SMS / App / IoT / Walk-in in one workspace
 - [ ] **INTEGRATION-04**: `useDispatchFeed` remains unchanged — recognition-created Incidents flow through existing `IncidentCreated` broadcast, so the dispatch console composable doesn't fork
 
 ### DPA — Privacy, Audit, Retention (milestone-completion gate)
@@ -190,13 +192,13 @@ Phase mapping (populated 2026-04-21 by gsd-roadmapper). All 43 v2.0 requirements
 | RECOGNITION-01 | Phase 21 | Pending |
 | RECOGNITION-02 | Phase 21 | Pending |
 | RECOGNITION-03 | Phase 21 | Pending |
-| RECOGNITION-04 | Phase 21 | Pending |
+| RECOGNITION-04 | Phase 21 | Complete |
 | RECOGNITION-05 | Phase 21 | Pending |
 | RECOGNITION-06 | Phase 21 | Pending |
 | RECOGNITION-07 | Phase 21 | Pending |
-| RECOGNITION-08 | Phase 21 | Pending |
+| RECOGNITION-08 | Phase 21 | Complete |
 | INTEGRATION-01 | Phase 21 | Pending |
-| INTEGRATION-03 | Phase 21 | Pending |
+| INTEGRATION-03 | Phase 21 | Complete |
 | INTEGRATION-04 | Phase 21 | Pending |
 | ALERTS-01 | Phase 22 | Pending |
 | ALERTS-02 | Phase 22 | Pending |

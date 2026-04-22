@@ -150,7 +150,7 @@ Plans:
 Plans:
 - [x] 21-01-PLAN.md — Wave 1: test scaffolding (4 failing Fras tests) + PersonOfInterestIncidentTypeSeeder + config/fras.php recognition section + RecognitionAlertReceived event + fras.alerts channel + ROADMAP/REQUIREMENTS text amendments (RECOGNITION-01/05/07/08, INTEGRATION-01)
 - [ ] 21-02-PLAN.md — Wave 2: FrasIncidentFactory (createFromSensor factored + createFromRecognition 5-gate chain) + IoTWebhookController thin refactor + RecognitionHandler factory wire + RecognitionHandlerTest extension (RECOGNITION-01/02/03/05/06/07/08)
-- [ ] 21-03-PLAN.md — Wave 2: IntakeStationController.show recentFrasEvents prop + overridePriority trigger field + HandleInertiaRequests frasConfig shared prop + signed fras.event.face route + FrasEventFaceController (RECOGNITION-04/08, INTEGRATION-03)
+- [x] 21-03-PLAN.md — Wave 2: IntakeStationController.show recentFrasEvents prop + overridePriority trigger field + HandleInertiaRequests frasConfig shared prop + signed fras.event.face route + FrasEventFaceController (RECOGNITION-04/08, INTEGRATION-03)
 - [ ] 21-04-PLAN.md — Wave 3: useDispatchMap pulseCamera + feature-state paint expressions + useFrasAlerts + useFrasRail + resources/js/types/fras.ts + ChBadge/ChannelFeed 6th rail + IntakeIconFras + --t-ch-fras token (INTEGRATION-01/03/04, RECOGNITION-05)
 - [ ] 21-05-PLAN.md — Wave 4: FrasSeverityBadge + FrasRailCard + FrasEventDetailModal + EscalateToP1Button + IntakeStation/incidents-Show/Console wiring + Wayfinder regen + human-verify checkpoint (RECOGNITION-04, INTEGRATION-01/03)
 **UI hint**: yes
