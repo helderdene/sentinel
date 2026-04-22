@@ -4,14 +4,14 @@ milestone: v2.0
 milestone_name: FRAS Integration
 status: planning
 stopped_at: Phase 22 UI-SPEC approved
-last_updated: "2026-04-22T05:59:18.066Z"
+last_updated: "2026-04-22T07:19:21.711Z"
 last_activity: 2026-04-22
 progress:
   total_phases: 6
   completed_phases: 5
-  total_plans: 29
+  total_plans: 38
   completed_plans: 29
-  percent: 100
+  percent: 76
 ---
 
 # Project State
@@ -447,5 +447,5 @@ Last session: --stopped-at
 Stopped at: Phase 22 UI-SPEC approved
 Resume file: --resume-file
 
-**Planned Phase:** 21 (Recognition → IoT-Intake Bridge + Dispatch Map + IntakeStation Rail) — 5 plans — 2026-04-22T03:23:52.812Z
+**Planned Phase:** 22 (Alert Feed + Event History + Responder Context + DPA Compliance) — 9 plans — 2026-04-22T07:19:21.701Z
 **Plan 06 Wave 3 progress:** CameraWatchdogCommand (irms:camera-watchdog, everyMinute, transition-only CameraStatusChanged dispatch) + PersonnelExpireSweepCommand (irms:personnel-expire-sweep, hourly, calls CameraEnrollmentService::deleteFromAllCameras + soft-decommission + bulk enrollment→Done + mqtt audit log). Schedule::command registrations appended to routes/console.php; both ->withoutOverlapping(). Pre-existing pgsql session TZ gap fixed by setting 'timezone' => env('DB_TIMEZONE', 'UTC') on the pgsql connection — without the fix, last_seen_at round-trip drift made every camera flip to Offline. Full fras group: 104 passed (+5 from baseline 99), 306 assertions. No regressions.

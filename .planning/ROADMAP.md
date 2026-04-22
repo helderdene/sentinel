@@ -167,14 +167,17 @@ Plans:
   5. A scheduled retention cleanup purges scene images at 30 days and face crops at 90 days (both configurable in `config/fras.php`), with an active-incident-protection clause that never purges images referenced by open Incidents — verified by a feature test that creates an expired image linked to an open Incident and asserts it survives
   6. A CDRRMO operator or citizen visiting `/privacy` sees a published CDRRMO-branded Privacy Notice covering biometric data collection, lawful basis, retention, and data-subject rights; `docs/dpa/` contains the PIA template, signage-template generator, and operator training notes ready for the Butuan LGU Data Privacy Officer handoff
   7. Five new gates (`view-fras-alerts`, `manage-cameras`, `manage-personnel`, `trigger-enrollment-retry`, `view-recognition-image`) extend the existing 9 without creating a new role; supervisor + admin have full access, operator has view-only on alerts, and CDRRMO legal sign-off is recorded in the Phase 22 VALIDATION before the milestone closes
-**Plans:** 6 plans
+**Plans:** 9 plans
 Plans:
-- [ ] 18-01-PLAN.md — Wave 1: cameras table + CameraStatus enum + Camera model + CameraFactory (FRAMEWORK-04)
-- [ ] 18-02-PLAN.md — Wave 1: personnel table + PersonnelCategory enum + Personnel model + PersonnelFactory (FRAMEWORK-04)
-- [ ] 18-03-PLAN.md — Wave 2: camera_enrollments pivot + CameraEnrollmentStatus enum + CameraEnrollment model + factory (FRAMEWORK-04)
-- [ ] 18-04-PLAN.md — Wave 2: recognition_events table + RecognitionSeverity enum + RecognitionEvent model + factory with states (FRAMEWORK-04, FRAMEWORK-06)
-- [ ] 18-05-PLAN.md — Wave 3: mandatory Pest feature tests (CameraSpatialQueryTest + RecognitionEventIdempotencyTest) + FrasPlaceholderSeeder + FRAMEWORK-05 verification (SC2/SC3/SC4/SC5)
-- [ ] 18-06-PLAN.md — Wave 3: optional regression tests (SchemaTest + EnumCheckParityTest) — belt-and-suspenders drift guard for Phases 19-22
+- [ ] 22-01-PLAN.md — Wave 1: schema additions (5 migrations) + 3 enums + 3 new models + RecognitionEvent/User extensions + FrasAccessLogFactory (ALERTS-02, DPA-04/05/07)
+- [ ] 22-02-PLAN.md — Wave 1: 5 new gates + HandleInertiaRequests extension + FrasAlertAcknowledged broadcast event + FrasGatesTest + Wave0 placeholder stubs (DPA-07, ALERTS-02)
+- [ ] 22-03-PLAN.md — Wave 2: FrasEventFaceController wrap + new FrasEventSceneController + config/fras.php retention section + FrasAccessLogTest + SignedUrlSceneImageTest (DPA-02/03/05)
+- [ ] 22-04-PLAN.md — Wave 2: fras:purge-expired command + scheduler + createFromRecognitionManual factory method + FrasPurgeExpiredCommandTest (SC5 active-incident-protection) + PromoteRecognitionEventTest (DPA-04/05)
+- [ ] 22-05-PLAN.md — Wave 3: FrasAlertFeedController/FrasEventHistoryController/FrasAudioMuteController + 4 FormRequests + routes + FrasAlertFeedTest + FrasEventHistoryTest (ALERTS-01/02/04/05/07, DPA-07)
+- [ ] 22-06-PLAN.md — Wave 3: useFrasFeed composable + /fras/alerts Vue page + AlertCard + DismissReasonModal + AudioMuteToggle + types/fras.ts + two-browser human-verify (ALERTS-01/02/03/06)
+- [ ] 22-07-PLAN.md — Wave 3: /fras/events Vue page + 6 supporting components (filters/table/replay/purge placeholder/FrasEventDetailModal/PromoteIncidentModal) + human-verify (ALERTS-04/05/07)
+- [ ] 22-08-PLAN.md — Wave 4: ResponderController prop + SceneTab MOD + PersonOfInterestAccordion + PrivacyNoticeController + Privacy page + PublicLayout + 2 Markdown content files + ResponderSceneTabTest + PrivacyNoticeTest (INTEGRATION-02, DPA-01/02)
+- [ ] 22-09-PLAN.md — Wave 4: 4 DPA docs (PIA/signage/operator-training) + dompdf export template + FrasDpaExport command + FrasLegalSignoff command + final VALIDATION fill-in + human milestone-gate verify (DPA-06/07, INTEGRATION-02)
 **UI hint**: yes
 
 ## Progress
