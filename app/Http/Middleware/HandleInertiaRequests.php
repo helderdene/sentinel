@@ -91,6 +91,9 @@ class HandleInertiaRequests extends Middleware
                     ->groupBy('channel')
                     ->pluck('count', 'channel');
             },
+            'frasConfig' => [
+                'pulseDurationSeconds' => (int) config('fras.recognition.pulse_duration_seconds', 3),
+            ],
         ];
     }
 }

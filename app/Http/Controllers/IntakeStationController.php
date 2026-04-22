@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\IncidentChannel;
 use App\Enums\IncidentPriority;
 use App\Enums\IncidentStatus;
+use App\Enums\RecognitionSeverity;
 use App\Events\IncidentCreated;
 use App\Events\IncidentStatusChanged;
 use App\Http\Requests\ManualEntryRequest;
@@ -12,11 +13,13 @@ use App\Http\Requests\TriageIncidentRequest;
 use App\Models\Incident;
 use App\Models\IncidentTimeline;
 use App\Models\IncidentType;
+use App\Models\RecognitionEvent;
 use App\Models\User;
 use Clickbar\Magellan\Data\Geometries\Point;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -63,6 +66,39 @@ class IntakeStationController extends Controller
                 'priority' => $entry->event_data['priority'] ?? $entry->event_data['new_priority'] ?? null,
             ]);
 
+        $recentFrasEvents = RecognitionEvent::query()
+            ->with(['camera:id,camera_id_display,name', 'personnel:id,name,category'])
+            ->whereIn('severity', [
+                RecognitionSeverity::Critical,
+                RecognitionSeverity::Warning,
+            ])
+            ->orderByDesc('received_at')
+            ->limit(50)
+            ->get()
+            ->map(function (RecognitionEvent $event) {
+                $faceImagePath = $event->face_image_path;
+                $faceImageUrl = $faceImagePath
+                    ? URL::temporarySignedRoute(
+                        'fras.event.face',
+                        now()->addMinutes(5),
+                        ['event' => $event->id],
+                    )
+                    : null;
+
+                return [
+                    'event_id' => $event->id,
+                    'severity' => $event->severity->value,
+                    'camera_label' => $event->camera?->camera_id_display,
+                    'personnel_name' => $event->personnel?->name,
+                    'personnel_category' => $event->personnel?->category?->value,
+                    'confidence' => (float) $event->similarity,
+                    'captured_at' => $event->captured_at?->toIso8601String(),
+                    'incident_id' => $event->incident_id,
+                    'face_image_path' => $faceImagePath,
+                    'face_image_url' => $faceImageUrl,
+                ];
+            });
+
         return Inertia::render('intake/IntakeStation', [
             'incidentTypes' => $incidentTypes,
             'channels' => IncidentChannel::cases(),
@@ -71,6 +107,7 @@ class IntakeStationController extends Controller
             'triagedIncidents' => $triagedIncidents,
             'priorityConfig' => config('priority'),
             'recentActivity' => $recentActivity,
+            'recentFrasEvents' => $recentFrasEvents,
         ]);
     }
 
@@ -206,6 +243,7 @@ class IntakeStationController extends Controller
 
         $validated = $request->validate([
             'priority' => ['required', 'in:P1,P2,P3,P4'],
+            'trigger' => ['sometimes', 'in:manual_override,fras_escalate_button'],
         ]);
 
         $oldPriority = $incident->priority->value;
@@ -220,6 +258,7 @@ class IntakeStationController extends Controller
             'event_data' => [
                 'old_priority' => $oldPriority,
                 'new_priority' => $validated['priority'],
+                'trigger' => $validated['trigger'] ?? 'manual_override',
             ],
             'actor_type' => User::class,
             'actor_id' => $request->user()->id,
