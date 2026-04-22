@@ -34,6 +34,16 @@ export interface ResponderIncident {
     on_scene_at: string | null;
     resolving_at: string | null;
     resolved_at: string | null;
+    person_of_interest: PersonOfInterestContext | null;
+}
+
+export interface PersonOfInterestContext {
+    face_image_url: string | null;
+    personnel_name: string | null;
+    personnel_category: string | null;
+    camera_label: string | null;
+    camera_name: string | null;
+    captured_at: string | null;
 }
 
 export interface ResponderUnit {
