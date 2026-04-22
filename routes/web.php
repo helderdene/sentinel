@@ -4,6 +4,10 @@ use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\DirectionsController;
 use App\Http\Controllers\DispatchConsoleController;
 use App\Http\Controllers\Fras\FrasPhotoAccessController;
+use App\Http\Controllers\FrasAlertFeedController;
+use App\Http\Controllers\FrasAudioMuteController;
+use App\Http\Controllers\FrasEventHistoryController;
+use App\Http\Controllers\FrasEventSceneController;
 use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\IntakeStationController;
 use App\Http\Controllers\IoTWebhookController;
@@ -101,6 +105,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('intake/{incident}/override-priority', [IntakeStationController::class, 'overridePriority'])->name('intake.override-priority');
         Route::post('intake/{incident}/recall', [IntakeStationController::class, 'recall'])->name('intake.recall');
     });
+
+    // Phase 22 FRAS alerts + events — operator/supervisor/admin with gate for 3-layer defense (D-29).
+    Route::middleware(['role:operator,supervisor,admin', 'can:view-fras-alerts'])
+        ->prefix('fras')->name('fras.')->group(function () {
+            Route::get('alerts', [FrasAlertFeedController::class, 'index'])->name('alerts.index');
+            Route::post('alerts/{event}/ack', [FrasAlertFeedController::class, 'acknowledge'])->name('alerts.ack');
+            Route::post('alerts/{event}/dismiss', [FrasAlertFeedController::class, 'dismiss'])->name('alerts.dismiss');
+            Route::get('events', [FrasEventHistoryController::class, 'index'])->name('events.index');
+            Route::post('events/{event}/promote', [FrasEventHistoryController::class, 'promote'])->name('events.promote');
+            Route::get('events/{event}/scene', [FrasEventSceneController::class, 'show'])
+                ->middleware('signed')
+                ->name('events.scene.show');
+        });
+
+    // User audio-mute preference — any authenticated user (T-22-05-05 scoped write).
+    Route::post('fras/settings/audio-mute', [FrasAudioMuteController::class, 'update'])
+        ->name('fras.settings.audio-mute.update');
 
     // Dispatcher + Supervisor + Admin routes
     Route::middleware(['role:dispatcher,supervisor,admin'])->group(function () {

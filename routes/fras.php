@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\Admin\AdminPersonnelPhotoController;
 use App\Http\Controllers\FrasEventFaceController;
-use App\Http\Controllers\FrasEventSceneController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,7 +32,6 @@ Route::get('fras/events/{event}/face', [FrasEventFaceController::class, 'show'])
 
 // Phase 22 D-26: scene image endpoint — operator/supervisor/admin only
 // (defense-in-depth layer 1 of 3 for responder exclusion). Every fetch
-// writes a fras_access_log row synchronously per D-16.
-Route::get('fras/events/{event}/scene', [FrasEventSceneController::class, 'show'])
-    ->middleware('signed')
-    ->name('fras.events.scene.show');
+// writes a fras_access_log row synchronously per D-16. Registered in
+// routes/web.php under the fras.* group to compose with the
+// `can:view-fras-alerts` gate layer alongside the signed-URL middleware.
