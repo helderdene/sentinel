@@ -5,7 +5,6 @@ use App\Enums\UnitStatus;
 use App\Events\IncidentCreated;
 use App\Events\IncidentStatusChanged;
 use App\Events\UnitStatusChanged;
-use App\Jobs\GenerateIncidentReport;
 use App\Models\Incident;
 use App\Models\IncidentType;
 use App\Models\Unit;
@@ -53,7 +52,6 @@ it('resolves an incident with outcome', function () {
 
     Event::assertDispatched(IncidentStatusChanged::class);
     Event::assertDispatched(UnitStatusChanged::class);
-    Queue::assertPushed(GenerateIncidentReport::class);
 });
 
 it('requires hospital when outcome is TRANSPORTED_TO_HOSPITAL', function () {

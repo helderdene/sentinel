@@ -16,6 +16,8 @@ use App\Contracts\WeatherServiceInterface;
 use App\Enums\UserRole;
 use App\Events\AssignmentPushed;
 use App\Events\IncidentCreated;
+use App\Events\IncidentStatusChanged;
+use App\Listeners\GenerateReportsOnIncidentResolution;
 use App\Listeners\SendAssignmentPushNotification;
 use App\Listeners\SendP1PushNotification;
 use App\Models\Incident;
@@ -243,6 +245,11 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(
             IncidentCreated::class,
             SendP1PushNotification::class,
+        );
+
+        Event::listen(
+            IncidentStatusChanged::class,
+            GenerateReportsOnIncidentResolution::class,
         );
     }
 

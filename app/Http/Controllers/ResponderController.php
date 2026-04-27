@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\IncidentPriority;
 use App\Enums\IncidentStatus;
 use App\Enums\ResourceType;
 use App\Enums\UnitStatus;
@@ -21,8 +20,6 @@ use App\Http\Requests\UpdateAssessmentTagsRequest;
 use App\Http\Requests\UpdateChecklistRequest;
 use App\Http\Requests\UpdateLocationRequest;
 use App\Http\Requests\UpdateVitalsRequest;
-use App\Jobs\GenerateIncidentReport;
-use App\Jobs\GenerateNdrrmcSitRep;
 use App\Models\ChecklistTemplate;
 use App\Models\Incident;
 use App\Models\IncidentOutcome;
@@ -391,12 +388,6 @@ class ResponderController extends Controller
         }
 
         IncidentStatusChanged::dispatch($incident->fresh(), $oldStatus);
-
-        GenerateIncidentReport::dispatch($incident);
-
-        if ($incident->priority === IncidentPriority::P1) {
-            GenerateNdrrmcSitRep::dispatch($incident);
-        }
 
         return response()->json(['message' => 'Incident resolved.']);
     }
