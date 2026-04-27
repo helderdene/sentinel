@@ -20,6 +20,7 @@ class Barangay extends Model
      */
     protected $fillable = [
         'name',
+        'psgc_code',
         'district',
         'city',
         'boundary',

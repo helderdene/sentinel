@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             IncidentOutcomeSeeder::class,
             UnitSeeder::class,
             BarangaySeeder::class,
+            BarangayPsgcSeeder::class,
             AgencySeeder::class,
             IncidentSeeder::class,
         ]);
