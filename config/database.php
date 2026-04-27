@@ -97,12 +97,14 @@ return [
             'prefix_indexes' => true,
             'search_path' => 'public',
             'sslmode' => env('DB_SSLMODE', 'prefer'),
-            // Force PG session timezone to UTC so TIMESTAMPTZ round-trips preserve
-            // UTC instants when Eloquent serializes Carbon via Y-m-d H:i:s (no TZ
-            // suffix). Without this, a session TZ of Asia/Manila reinterprets
-            // UTC-anchored Carbons as local time, producing an 8hr skew between
-            // writes and reads. Surfaced by Phase 20 Plan 06 CameraWatchdogCommand.
-            'timezone' => env('DB_TIMEZONE', 'UTC'),
+            // PG session timezone follows APP_TIMEZONE so Carbons surface in
+            // the same zone the rest of the app uses (production = Asia/Manila,
+            // test env = UTC). Belt-and-suspenders: AppServiceProvider::boot
+            // also pins the pgsql query grammar's date format to
+            // `Y-m-d H:i:s.uP` so Eloquent writes carry an explicit offset and
+            // TIMESTAMPTZ round-trips can't drift even if a future operator
+            // changes the session zone independently.
+            'timezone' => env('DB_TIMEZONE', env('APP_TIMEZONE', 'UTC')),
         ],
 
         'sqlsrv' => [

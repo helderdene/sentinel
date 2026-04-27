@@ -114,6 +114,27 @@ it('maps V1.25 info keys to the recognition_events columns', function () {
     expect($event->target_bbox)->toBe([10, 20, 30, 40]);
 });
 
+it('preserves the payload wall-time instant on captured_at', function () {
+    // Regression: the FRAS Events table was rendering every captured_at as
+    // "Just now" because Eloquent serialized the Carbon without a TZ offset
+    // and the PG session was UTC, stamping Manila wall times as UTC and
+    // landing 8h in the future. Fix is in config/database.php (PG session is
+    // now Asia/Manila); this test pins the round-trip instant regardless of
+    // APP_TIMEZONE so it survives the test env's UTC default and prod's
+    // Asia/Manila default alike.
+    app(RecognitionHandler::class)->handle(
+        'mqtt/face/CAM01/Rec',
+        json_encode(recPushPayload([
+            'RecordID' => '999',
+            'time' => '2026-04-21T09:15:30+08:00',
+        ])),
+    );
+
+    $event = RecognitionEvent::first();
+
+    expect($event->captured_at->equalTo('2026-04-21T09:15:30+08:00'))->toBeTrue();
+});
+
 it('resolves personnel_id from customId when a matching Personnel exists', function () {
     $personnel = Personnel::factory()->create([
         'custom_id' => 'cid-linked-1',

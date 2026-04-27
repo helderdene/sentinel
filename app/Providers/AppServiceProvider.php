@@ -13,6 +13,7 @@ use App\Contracts\ProximityServiceInterface;
 use App\Contracts\SmsParserServiceInterface;
 use App\Contracts\SmsServiceInterface;
 use App\Contracts\WeatherServiceInterface;
+use App\Database\PostgresGrammar;
 use App\Enums\UserRole;
 use App\Events\AssignmentPushed;
 use App\Events\IncidentCreated;
@@ -94,6 +95,18 @@ class AppServiceProvider extends ServiceProvider
     protected function configureDefaults(): void
     {
         Date::use(CarbonImmutable::class);
+
+        // Swap the pgsql query grammar so Eloquent writes Carbons with an
+        // explicit TZ offset (`+08:00`) instead of the offset-less default
+        // (`Y-m-d H:i:s` — hardcoded in Illuminate\Database\Grammar in
+        // Laravel 13+, hence the subclass). Makes TIMESTAMPTZ writes
+        // unambiguous regardless of session zone — fix for the FRAS Events
+        // "Just now" bug. SQLite (test env) keeps its own grammar.
+        if (DB::connection()->getDriverName() === 'pgsql') {
+            DB::connection()->setQueryGrammar(
+                new PostgresGrammar(DB::connection()),
+            );
+        }
 
         DB::prohibitDestructiveCommands(
             app()->isProduction(),

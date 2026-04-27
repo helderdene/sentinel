@@ -207,8 +207,12 @@ class RecognitionHandler implements MqttHandler
 
     /**
      * V1.25 emits `time` as "YYYY-MM-DD HH:mm:ss" in camera-local wall time.
-     * With APP_TIMEZONE=Asia/Manila that parses directly; we still accept ISO
-     * 8601 strings with explicit offsets for legacy fixtures and tests.
+     * With APP_TIMEZONE=Asia/Manila that parses directly; we also accept ISO
+     * 8601 strings with explicit offsets for legacy fixtures and tests. The
+     * returned Carbon stays in the app timezone (Asia/Manila) — the Postgres
+     * session timezone (config/database.php pgsql.timezone) is matched to
+     * Asia/Manila so Eloquent's offset-less serialization round-trips cleanly
+     * through TIMESTAMPTZ columns.
      */
     private function parseCapturedAt(?string $time): Carbon
     {
