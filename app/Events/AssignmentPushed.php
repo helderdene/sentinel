@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Models\Incident;
+use App\Services\PersonOfInterestHydrator;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -49,6 +50,8 @@ class AssignmentPushed implements ShouldBroadcast, ShouldDispatchAfterCommit
             ] : null,
             'notes' => $this->incident->notes,
             'unit_id' => $this->unitId,
+            'person_of_interest' => app(PersonOfInterestHydrator::class)
+                ->hydrate($this->incident),
         ];
     }
 }

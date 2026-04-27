@@ -87,11 +87,11 @@ it('returns 403 when the signed URL is expired', function () {
     expect(FrasAccessLog::count())->toBe(0);
 });
 
-it('returns 403 for a responder even with a valid signed URL', function () {
+it('allows a responder with a valid signed URL and writes a fras_access_log row', function () {
     $event = RecognitionEvent::factory()->create([
-        'face_image_path' => 'face/resp-block.jpg',
+        'face_image_path' => 'face/resp-allowed.jpg',
     ]);
-    Storage::disk('fras_events')->put('face/resp-block.jpg', 'fake');
+    Storage::disk('fras_events')->put('face/resp-allowed.jpg', 'fake');
     $user = User::factory()->create(['role' => UserRole::Responder]);
 
     $url = URL::temporarySignedRoute(
@@ -100,8 +100,8 @@ it('returns 403 for a responder even with a valid signed URL', function () {
         ['event' => $event->id],
     );
 
-    $this->actingAs($user)->get($url)->assertForbidden();
-    expect(FrasAccessLog::count())->toBe(0);
+    $this->actingAs($user)->get($url)->assertOk();
+    expect(FrasAccessLog::count())->toBe(1);
 });
 
 it('appends one row per consecutive fetch — log is append-only', function () {

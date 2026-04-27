@@ -10,9 +10,10 @@ use App\Models\Camera;
 use App\Models\CameraEnrollment;
 use App\Models\Personnel;
 use App\Services\CameraEnrollmentService;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 use PhpMqtt\Client\Facades\MQTT;
 
 pest()->group('fras');
@@ -78,20 +79,20 @@ it('upsertBatch transitions enrollment to syncing, broadcasts progress, and publ
     });
 });
 
-it('upsertBatch includes photo_url in MQTT payload via Personnel::photo_url accessor', function () {
-    if (! \Illuminate\Support\Facades\Route::has('fras.photo.show')) {
-        test()->markTestSkipped('Wave 2 dependency — route fras.photo.show is registered in plan 20-05');
-    }
-
+it('upsertBatch embeds photo as base64 data URI in EditPerson payload (spec §4.1)', function () {
     Event::fake([EnrollmentProgressed::class]);
+    Storage::fake('fras_photos');
 
     $camera = Camera::factory()->create(['device_id' => 'cam-42']);
     $personnel = Personnel::factory()->create([
         'custom_id' => 'abc123',
         'photo_hash' => 'hashA',
-        'photo_path' => 'personnel/'.Str::uuid().'.jpg',
-        'photo_access_token' => Str::uuid()->toString(),
+        'photo_path' => 'personnel/dummy.jpg',
     ]);
+    Storage::disk('fras_photos')->put(
+        'personnel/'.$personnel->id.'.jpg',
+        UploadedFile::fake()->image('face.jpg')->get(),
+    );
     CameraEnrollment::factory()->create([
         'camera_id' => $camera->id,
         'personnel_id' => $personnel->id,
@@ -107,9 +108,10 @@ it('upsertBatch includes photo_url in MQTT payload via Personnel::photo_url acce
 
     app(CameraEnrollmentService::class)->upsertBatch($camera, [$personnel->id]);
 
-    // The photo_access_token is the invariant — it appears only in the route URL
-    // built by Personnel::photo_url, which is embedded as the `picURI` field.
-    expect($capturedJson)->toContain($personnel->photo_access_token);
+    $decoded = json_decode($capturedJson, true);
+    expect($decoded['operator'])->toBe('EditPerson');
+    expect($decoded['info']['customId'])->toBe('abc123');
+    expect($decoded['info']['pic'])->toStartWith('data:image/jpeg;base64,');
 });
 
 it('translateErrorCode maps the 10 FRAS error codes to non-empty strings with a default fallback', function () {

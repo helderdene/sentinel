@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\IncidentOutcome;
 use App\Enums\IncidentStatus;
 use App\Models\Barangay;
 use App\Models\Incident;
@@ -17,7 +16,7 @@ it('dashboard page loads with kpis prop containing all 5 metric keys', function 
         'dispatched_at' => now()->subMinutes(30),
         'on_scene_at' => now()->subMinutes(20),
         'resolved_at' => now(),
-        'outcome' => IncidentOutcome::TreatedOnScene,
+        'outcome' => 'TREATED_ON_SCENE',
     ]);
 
     $this->actingAs($supervisor)
@@ -43,7 +42,7 @@ it('dashboard page respects date range filter', function () {
         'incident_type_id' => $type->id,
         'status' => IncidentStatus::Resolved,
         'created_at' => now()->subDays(3),
-        'outcome' => IncidentOutcome::TreatedOnScene,
+        'outcome' => 'TREATED_ON_SCENE',
     ]);
 
     // Out-of-range incident
@@ -51,7 +50,7 @@ it('dashboard page respects date range filter', function () {
         'incident_type_id' => $type->id,
         'status' => IncidentStatus::Resolved,
         'created_at' => now()->subDays(60),
-        'outcome' => IncidentOutcome::FalseAlarm,
+        'outcome' => 'FALSE_ALARM',
     ]);
 
     $this->actingAs($supervisor)

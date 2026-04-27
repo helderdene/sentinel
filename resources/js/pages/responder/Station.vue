@@ -25,6 +25,7 @@ import type {
     Hospital,
     IncidentMessageItem,
     IncidentStatus,
+    OutcomeOption,
     ResponderIncident,
     ResponderTab,
     ResponderUnit,
@@ -41,6 +42,7 @@ const props = defineProps<{
     hospitals: Hospital[];
     userId: number;
     checklistTemplate: ChecklistTemplate | null;
+    outcomeOptions: OutcomeOption[];
 }>();
 
 const session = useResponderSession(
@@ -305,6 +307,7 @@ const assignmentPayload = computed<AssignmentPayload | null>(() => {
         coordinates: inc.coordinates,
         notes: inc.notes,
         unit_id: props.unit.id,
+        person_of_interest: inc.person_of_interest,
     };
 });
 
@@ -449,6 +452,7 @@ function handleMessagesRead(): void {
             :incident-id="session.activeIncident.value.id"
             :is-open="session.showOutcomeSheet.value"
             :hospitals="props.hospitals"
+            :outcome-options="props.outcomeOptions"
             @close="session.showOutcomeSheet.value = false"
             @resolved="handleOutcomeResolved"
         />

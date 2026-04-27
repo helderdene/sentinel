@@ -4,6 +4,7 @@ namespace App\Mqtt\Handlers;
 
 use App\Enums\RecognitionSeverity;
 use App\Models\Camera;
+use App\Models\Personnel;
 use App\Models\RecognitionEvent;
 use App\Mqtt\Contracts\MqttHandler;
 use App\Services\FrasIncidentFactory;
@@ -12,6 +13,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Throwable;
 
 class RecognitionHandler implements MqttHandler
 {
@@ -19,21 +21,24 @@ class RecognitionHandler implements MqttHandler
         private FrasIncidentFactory $factory,
     ) {}
 
-    /** Face image size cap in bytes (1 MB) — Pitfall 17. */
+    /** Face image size cap in bytes (1 MB) — spec §5 `pic`. */
     private const FACE_IMAGE_MAX_BYTES = 1_048_576;
 
-    /** Scene image size cap in bytes (2 MB) — Pitfall 17. */
+    /** Scene image size cap in bytes (2 MB) — spec §5 `scene`. */
     private const SCENE_IMAGE_MAX_BYTES = 2_097_152;
 
     /**
-     * Parse a RecPush payload, classify severity, persist a recognition_events row
-     * idempotently (camera_id, record_id UNIQUE), and write face + scene images to
-     * the fras_events private disk under {YYYY-MM-DD}/{faces|scenes}/{event_id}.jpg.
+     * Parse a V1.25 RecPush payload (spec §5), classify severity, persist a
+     * recognition_events row idempotently (camera_id, record_id UNIQUE), and
+     * write face + scene images to the fras_events private disk under
+     * {YYYY-MM-DD}/{faces|scenes}/{event_id}.jpg.
      *
-     * FRAS-specific columns (custom_id, camera_person_id, facesluice_id, id_card,
-     * is_no_mask, target_bbox, is_real_time) that exist in the Phase 18 schema are
-     * left at their defaults here — the full payload survives in `raw_payload`
-     * (JSONB) for later Phase 22 DPA extraction.
+     * V1.25 envelope: { operator: "RecPush", info: { customId, personId,
+     * RecordID, VerifyStatus, PersonType, similarity1 (0–100), Sendintime,
+     * personName, facesluiceId, idCard, telnum, time, isNoMask, PushType,
+     * targetPosInScene, pic, scene } }. All FRAS record data lives under `info`;
+     * the outer deviceId is carried by the topic path (mqtt/face/{deviceId}/Rec)
+     * rather than the payload.
      */
     public function handle(string $topic, string $message): void
     {
@@ -45,11 +50,32 @@ class RecognitionHandler implements MqttHandler
             return;
         }
 
-        $deviceId = $payload['deviceId'] ?? null;
-        $recordId = $payload['recordId'] ?? null;
+        if (($payload['operator'] ?? null) !== 'RecPush') {
+            Log::channel('mqtt')->warning('RecPush operator mismatch', [
+                'topic' => $topic,
+                'operator' => $payload['operator'] ?? null,
+            ]);
 
-        if (! $deviceId || $recordId === null) {
-            Log::channel('mqtt')->warning('RecPush missing deviceId or recordId', ['topic' => $topic]);
+            return;
+        }
+
+        $info = is_array($payload['info'] ?? null) ? $payload['info'] : null;
+
+        if ($info === null) {
+            Log::channel('mqtt')->warning('RecPush missing info block', ['topic' => $topic]);
+
+            return;
+        }
+
+        // V1.25 drops top-level deviceId; extract from the topic path and
+        // cross-check against info.facesluiceId when present.
+        $deviceId = $this->extractDeviceIdFromTopic($topic);
+        $recordId = $info['RecordID'] ?? null;
+
+        if ($deviceId === null || $recordId === null) {
+            Log::channel('mqtt')->warning('RecPush missing deviceId or recordId', [
+                'topic' => $topic,
+            ]);
 
             return;
         }
@@ -65,14 +91,32 @@ class RecognitionHandler implements MqttHandler
             return;
         }
 
-        // FRAS firmware typo fallback: accept personName OR persionName (D-61).
-        $personName = $payload['personName'] ?? $payload['persionName'] ?? null;
-        $personType = (int) ($payload['personType'] ?? 0);
-        $verifyStatus = (int) ($payload['verifyStatus'] ?? 0);
-        $similarity = isset($payload['similarity']) ? (float) $payload['similarity'] : 0.0;
+        // Firmware-typo fallback preserved from V1.x deployments (D-61).
+        $personName = $info['personName'] ?? $info['persionName'] ?? null;
+        $personType = (int) ($info['PersonType'] ?? 0);
+        $verifyStatus = (int) ($info['VerifyStatus'] ?? 0);
+        $similarity = $this->normalizeSimilarity($info['similarity1'] ?? 0);
+
+        $customId = $this->nullableString($info['customId'] ?? null);
+        $cameraPersonId = $this->nullableString($info['personId'] ?? null);
+        $facesluiceId = $this->nullableString($info['facesluiceId'] ?? null);
+        $idCard = $this->nullableString($info['idCard'] ?? null);
+        $phone = $this->nullableString($info['telnum'] ?? null);
+
+        $isNoMask = (int) ($info['isNoMask'] ?? 0);
+        // Sendintime: 1 = real-time (within 10s), 0 = replayed/stored-and-forward.
+        $isRealTime = (int) ($info['Sendintime'] ?? 1) === 1;
+        $targetBbox = is_array($info['targetPosInScene'] ?? null) ? $info['targetPosInScene'] : null;
 
         $severity = RecognitionSeverity::fromEvent($personType, $verifyStatus);
-        $capturedAt = isset($payload['capturedAt']) ? Carbon::parse($payload['capturedAt']) : now();
+        $capturedAt = $this->parseCapturedAt($info['time'] ?? null);
+
+        // V1.25 echoes the platform-assigned customId back on RecPush, so we
+        // can resolve personnel_id here rather than deferring to a FaceMatcher.
+        // Factory Gate 3 (personnel_id NOT NULL + not allow-list) relies on this.
+        $personnelId = $customId !== null
+            ? Personnel::where('custom_id', $customId)->value('id')
+            : null;
 
         try {
             // Nested DB::transaction emits a SAVEPOINT on Postgres so a
@@ -81,13 +125,20 @@ class RecognitionHandler implements MqttHandler
             /** @var RecognitionEvent $event */
             $event = DB::transaction(fn () => RecognitionEvent::create([
                 'camera_id' => $camera->id,
+                'personnel_id' => $personnelId,
                 'record_id' => (int) $recordId,
+                'custom_id' => $customId,
+                'camera_person_id' => $cameraPersonId,
+                'facesluice_id' => $facesluiceId,
                 'name_from_camera' => $personName,
                 'person_type' => $personType,
                 'verify_status' => $verifyStatus,
                 'similarity' => $similarity,
-                'is_real_time' => true,
-                'is_no_mask' => 0,
+                'is_real_time' => $isRealTime,
+                'is_no_mask' => $isNoMask,
+                'id_card' => $idCard,
+                'phone' => $phone,
+                'target_bbox' => $targetBbox,
                 'severity' => $severity,
                 'raw_payload' => $payload,
                 'captured_at' => $capturedAt,
@@ -106,7 +157,7 @@ class RecognitionHandler implements MqttHandler
         $datePrefix = $capturedAt->format('Y-m-d');
 
         $this->persistImage(
-            $payload['faceImage'] ?? null,
+            $info['pic'] ?? null,
             "{$datePrefix}/faces/{$event->id}.jpg",
             self::FACE_IMAGE_MAX_BYTES,
             'face',
@@ -115,7 +166,7 @@ class RecognitionHandler implements MqttHandler
         );
 
         $this->persistImage(
-            $payload['sceneImage'] ?? null,
+            $info['scene'] ?? null,
             "{$datePrefix}/scenes/{$event->id}.jpg",
             self::SCENE_IMAGE_MAX_BYTES,
             'scene',
@@ -131,13 +182,74 @@ class RecognitionHandler implements MqttHandler
     }
 
     /**
-     * Decode a base64 image, enforce the size cap, write to the fras_events disk,
-     * and persist the resulting path on the given RecognitionEvent column.
+     * Extract {deviceId} from an MQTT topic of shape `<prefix>/{deviceId}/Rec`.
      */
-    private function persistImage(?string $base64, string $path, int $maxBytes, string $kind, RecognitionEvent $event, string $column): void
+    private function extractDeviceIdFromTopic(string $topic): ?string
     {
-        if (! $base64) {
+        return preg_match('#/([^/]+)/Rec$#', $topic, $m) === 1 ? $m[1] : null;
+    }
+
+    /**
+     * V1.25 `similarity1` is a 0–100 score (often emitted as a string like
+     * "94.000000"); the schema stores a 0–1 decimal(5,2). Normalise by dividing
+     * anything >1 by 100 so both representations persist consistently.
+     */
+    private function normalizeSimilarity(mixed $raw): float
+    {
+        $value = is_numeric($raw) ? (float) $raw : 0.0;
+
+        if ($value > 1.0) {
+            $value /= 100.0;
+        }
+
+        return round($value, 4);
+    }
+
+    /**
+     * V1.25 emits `time` as "YYYY-MM-DD HH:mm:ss" in camera-local wall time.
+     * With APP_TIMEZONE=Asia/Manila that parses directly; we still accept ISO
+     * 8601 strings with explicit offsets for legacy fixtures and tests.
+     */
+    private function parseCapturedAt(?string $time): Carbon
+    {
+        if ($time === null || $time === '') {
+            return now();
+        }
+
+        try {
+            return Carbon::parse($time);
+        } catch (Throwable) {
+            return now();
+        }
+    }
+
+    private function nullableString(mixed $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $string = is_string($value) ? $value : (string) $value;
+
+        return $string === '' ? null : $string;
+    }
+
+    /**
+     * Decode a base64 image, enforce the size cap, write to the fras_events disk,
+     * and persist the resulting path on the given RecognitionEvent column. V1.25
+     * may wrap the payload as a data URI ("data:image/jpeg;base64,..."); strip
+     * the prefix before decoding.
+     */
+    private function persistImage(?string $raw, string $path, int $maxBytes, string $kind, RecognitionEvent $event, string $column): void
+    {
+        if ($raw === null || $raw === '') {
             return;
+        }
+
+        $base64 = $raw;
+
+        if (str_starts_with($base64, 'data:') && ($comma = strpos($base64, ',')) !== false) {
+            $base64 = substr($base64, $comma + 1);
         }
 
         $binary = base64_decode($base64, true);

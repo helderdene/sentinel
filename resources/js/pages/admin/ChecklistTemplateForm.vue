@@ -179,8 +179,8 @@ function itemError(index: number, field: 'key' | 'label'): string | undefined {
                     <div class="flex items-center gap-2">
                         <Checkbox
                             id="is_default"
-                            :checked="form.is_default"
-                            @update:checked="
+                            :model-value="form.is_default"
+                            @update:model-value="
                                 (val: boolean | 'indeterminate') =>
                                     (form.is_default = val === true)
                             "
@@ -192,8 +192,8 @@ function itemError(index: number, field: 'key' | 'label'): string | undefined {
                     <div class="flex items-center gap-2">
                         <Checkbox
                             id="is_active"
-                            :checked="form.is_active"
-                            @update:checked="
+                            :model-value="form.is_active"
+                            @update:model-value="
                                 (val: boolean | 'indeterminate') =>
                                     (form.is_active = val === true)
                             "

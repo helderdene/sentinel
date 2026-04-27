@@ -3,6 +3,7 @@
 use App\Enums\IncidentStatus;
 use App\Enums\PersonnelCategory;
 use App\Enums\RecognitionSeverity;
+use App\Events\AssignmentPushed;
 use App\Models\Camera;
 use App\Models\Incident;
 use App\Models\IncidentTimeline;
@@ -164,42 +165,79 @@ it('denies responder fetch of scene signed URL (layer 1 defense via scene contro
     $this->actingAs($responder)->get($url)->assertForbidden();
 });
 
-it('denies responder fetch of face signed URL per Phase 21 D-27 role gate (UI-SPEC fallback contract)', function () {
+it('allows responder fetch of face signed URL so the Person-of-Interest accordion can render the capture', function () {
     Storage::fake('fras_events');
 
     $event = RecognitionEvent::factory()->create([
-        'face_image_path' => 'face/responder-denied.jpg',
+        'face_image_path' => 'face/responder-allowed.jpg',
     ]);
-    Storage::disk('fras_events')->put('face/responder-denied.jpg', 'fake');
+    Storage::disk('fras_events')->put('face/responder-allowed.jpg', 'fake-jpeg-bytes');
 
     $unit = Unit::factory()->create();
     $responder = User::factory()->responder()->create(['unit_id' => $unit->id]);
 
-    // The responder's ResponderController prop hydrates this URL; when the browser
-    // fetches, Phase 21 FrasEventFaceController gate [Operator, Supervisor, Admin]
-    // returns 403. UI-SPEC lines 520/526 mandate the Vue template swap to a
-    // UserRound icon on that denial.
+    // CDRRMO operational override of D-27: responders need the face crop to
+    // identify a PoI on scene. Scene imagery remains denied (D-26 layer 1).
     $url = URL::temporarySignedRoute(
         'fras.event.face',
         now()->addMinutes(5),
         ['event' => $event->id],
     );
 
-    $this->actingAs($responder)->get($url)->assertForbidden();
+    $this->actingAs($responder)->get($url)->assertOk();
 });
 
-it('preserves D-27 role gate lock: FrasEventFaceController references exactly [Operator, Supervisor, Admin]', function () {
-    // Arch-style assertion: the Face controller source must contain the three
-    // operator-tier roles and must NOT reference Responder. Phase 22 does NOT
-    // extend the D-27 gate; the responder's fetch is denied and the UI falls
-    // back to UserRound (UI-SPEC lines 520/526).
+it('AssignmentPushed broadcast includes person_of_interest payload for fras_recognition incidents', function () {
+    $unit = Unit::factory()->create();
+    $responder = User::factory()->responder()->create(['unit_id' => $unit->id]);
+
+    [$incident] = seedFrasIncidentForResponder($responder);
+
+    $event = new AssignmentPushed($incident->fresh(['timeline']), $unit->id, $responder->id);
+    $payload = $event->broadcastWith();
+
+    expect($payload)->toHaveKey('person_of_interest');
+    expect($payload['person_of_interest'])->toBeArray();
+    expect($payload['person_of_interest']['personnel_name'])->toBe('Juan Dela Cruz');
+    expect($payload['person_of_interest']['personnel_category'])->toBe('block');
+    expect($payload['person_of_interest']['camera_label'])->toBe('CAM-07');
+    expect($payload['person_of_interest'])->not->toHaveKey('scene_image_url');
+});
+
+it('AssignmentPushed broadcast person_of_interest is null for non-fras incidents', function () {
+    $unit = Unit::factory()->create();
+    $responder = User::factory()->responder()->create(['unit_id' => $unit->id]);
+
+    $type = IncidentType::factory()->create();
+    $incident = Incident::factory()->create([
+        'incident_type_id' => $type->id,
+        'status' => IncidentStatus::Dispatched,
+    ]);
+    IncidentTimeline::query()->create([
+        'incident_id' => $incident->id,
+        'event_type' => 'incident_created',
+        'event_data' => ['source' => 'manual'],
+    ]);
+
+    $event = new AssignmentPushed($incident->fresh(['timeline']), $unit->id, $responder->id);
+    $payload = $event->broadcastWith();
+
+    expect($payload['person_of_interest'])->toBeNull();
+});
+
+it('FrasEventFaceController role gate references the four allowed roles and never anonymous access', function () {
+    // Arch-style assertion: the Face controller source must contain the four
+    // roles allowed to view face crops. The CDRRMO override (post-Phase-22)
+    // adds Responder to the original [Operator, Supervisor, Admin] set so
+    // responders can identify a PoI on scene; scene imagery remains denied.
     $source = file_get_contents(base_path('app/Http/Controllers/FrasEventFaceController.php'));
 
     expect($source)->toContain('UserRole::Operator');
     expect($source)->toContain('UserRole::Supervisor');
     expect($source)->toContain('UserRole::Admin');
-    expect($source)->not->toContain('UserRole::Responder');
+    expect($source)->toContain('UserRole::Responder');
 
-    // Sanity: the role-allow-list array is present in the expected shape.
-    expect($source)->toContain('[UserRole::Operator, UserRole::Supervisor, UserRole::Admin]');
+    // The role check must remain in place (no anonymous bypass).
+    expect($source)->toContain('abort_unless');
+    expect($source)->toContain('in_array');
 });

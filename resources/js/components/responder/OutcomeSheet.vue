@@ -2,12 +2,23 @@
 import { computed, ref } from 'vue';
 import { resolve } from '@/actions/App/Http/Controllers/ResponderController';
 import HospitalSelect from '@/components/responder/HospitalSelect.vue';
-import type { Hospital, IncidentOutcome } from '@/types/responder';
+import type {
+    Hospital,
+    IncidentOutcome,
+    OutcomeOption as ServerOutcomeOption,
+} from '@/types/responder';
 
 const props = defineProps<{
     incidentId: string | number;
     isOpen: boolean;
     hospitals: Hospital[];
+    /**
+     * Category-filtered outcome options from the server. The full
+     * IncidentOutcome enum is filtered server-side via
+     * IncidentOutcome::forCategory() so responders only see outcomes
+     * appropriate to the active incident's incident-type category.
+     */
+    outcomeOptions: ServerOutcomeOption[];
 }>();
 
 const emit = defineEmits<{
@@ -15,39 +26,29 @@ const emit = defineEmits<{
     resolved: [];
 }>();
 
-interface OutcomeOption {
-    type: IncidentOutcome;
-    label: string;
-    color: string;
-}
+// Per-outcome accent colors. Outcomes not listed fall back to the neutral
+// slate. Keeps the visual encoding consistent with the existing palette.
+const OUTCOME_COLORS: Record<IncidentOutcome, string> = {
+    TREATED_ON_SCENE: '#1D9E75',
+    TRANSPORTED_TO_HOSPITAL: '#378ADD',
+    REFUSED_TREATMENT: '#EF9F27',
+    DECLARED_DOA: '#64748b',
+    SUBJECT_DETAINED: '#1D9E75',
+    SUBJECT_NOT_LOCATED: '#EF9F27',
+    SUBJECT_FLED: '#E24B4A',
+    MISMATCH: '#64748b',
+    SITUATION_RESOLVED: '#1D9E75',
+    HANDOFF_TO_AGENCY: '#378ADD',
+    FALSE_ALARM: '#E24B4A',
+};
 
-const OUTCOME_OPTIONS: OutcomeOption[] = [
-    {
-        type: 'TREATED_ON_SCENE',
-        label: 'Treated On Scene',
-        color: '#1D9E75',
-    },
-    {
-        type: 'TRANSPORTED_TO_HOSPITAL',
-        label: 'Transported to Hospital',
-        color: '#378ADD',
-    },
-    {
-        type: 'REFUSED_TREATMENT',
-        label: 'Patient Refused Treatment',
-        color: '#EF9F27',
-    },
-    {
-        type: 'DECLARED_DOA',
-        label: 'Declared DOA',
-        color: '#64748b',
-    },
-    {
-        type: 'FALSE_ALARM',
-        label: 'False Alarm / Stand Down',
-        color: '#E24B4A',
-    },
-];
+const outcomeOptions = computed(() =>
+    props.outcomeOptions.map((opt) => ({
+        type: opt.value,
+        label: opt.label,
+        color: OUTCOME_COLORS[opt.value] ?? '#64748b',
+    })),
+);
 
 const selectedOutcome = ref<IncidentOutcome | null>(null);
 const selectedHospital = ref<string | null>(null);
@@ -194,7 +195,7 @@ function handleClose(): void {
 
                             <div class="space-y-2">
                                 <button
-                                    v-for="option in OUTCOME_OPTIONS"
+                                    v-for="option in outcomeOptions"
                                     :key="option.type"
                                     type="button"
                                     class="flex min-h-[56px] w-full items-center gap-3 rounded-[10px] border px-4 text-left text-[13px] font-semibold transition-colors active:scale-[0.99]"

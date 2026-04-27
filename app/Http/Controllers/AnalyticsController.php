@@ -9,6 +9,7 @@ use App\Jobs\GenerateAnnualReport;
 use App\Jobs\GenerateQuarterlyReport;
 use App\Models\Barangay;
 use App\Models\GeneratedReport;
+use App\Models\Incident;
 use App\Models\IncidentType;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -113,8 +114,30 @@ class AnalyticsController extends Controller
             ->orderByDesc('created_at')
             ->paginate(20);
 
+        // Per-incident PDFs are written by GenerateIncidentReport on resolve
+        // and stored at incidents.report_pdf_url. Surface them here so the
+        // Reports center is the single download surface for both aggregate
+        // (quarterly / annual) and per-incident reports.
+        $incidentReports = Incident::query()
+            ->whereNotNull('report_pdf_url')
+            ->with('incidentType:id,name')
+            ->orderByDesc('resolved_at')
+            ->limit(50)
+            ->get(['id', 'incident_no', 'priority', 'outcome', 'resolved_at', 'incident_type_id', 'report_pdf_url'])
+            ->map(fn (Incident $i) => [
+                'id' => $i->id,
+                'incident_no' => $i->incident_no,
+                'priority' => $i->priority->value,
+                'outcome' => $i->outcome,
+                'resolved_at' => $i->resolved_at?->toIso8601String(),
+                'incident_type' => $i->incidentType?->name,
+                'download_url' => route('incidents.download-report', $i),
+            ])
+            ->values();
+
         return Inertia::render('analytics/Reports', [
             'reports' => $reports,
+            'incidentReports' => $incidentReports,
         ]);
     }
 

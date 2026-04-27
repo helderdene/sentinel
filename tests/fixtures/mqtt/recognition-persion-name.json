@@ -1,11 +1,22 @@
 {
-  "deviceId": "CAM01",
-  "recordId": 43,
-  "persionName": "Juan Dela Cruz",
-  "personType": 0,
-  "verifyStatus": 1,
-  "similarity": 0.87,
-  "capturedAt": "2026-04-21T09:15:31+08:00",
-  "faceImage": "aGVsbG8tZmFjZS1pbWFnZS1ieXRlcw==",
-  "sceneImage": "aGVsbG8tc2NlbmUtaW1hZ2UtYnl0ZXM="
+  "operator": "RecPush",
+  "info": {
+    "customId": "cam01-custom-43",
+    "personId": "22",
+    "RecordID": "43",
+    "VerifyStatus": "1",
+    "PersonType": "0",
+    "similarity1": "87.000000",
+    "Sendintime": 1,
+    "persionName": "Juan Dela Cruz",
+    "facesluiceId": "CAM01",
+    "idCard": "",
+    "telnum": "",
+    "time": "2026-04-21 09:15:31",
+    "isNoMask": "0",
+    "PushType": 0,
+    "targetPosInScene": [217, 0, 1333, 1080],
+    "pic": "aGVsbG8tZmFjZS1pbWFnZS1ieXRlcw==",
+    "scene": "aGVsbG8tc2NlbmUtaW1hZ2UtYnl0ZXM="
+  }
 }

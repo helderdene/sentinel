@@ -10,17 +10,14 @@ const emit = defineEmits<{
     done: [];
 }>();
 
-const OUTCOME_LABELS: Record<string, string> = {
-    TREATED_ON_SCENE: 'Treated On Scene',
-    TRANSPORTED_TO_HOSPITAL: 'Transported to Hospital',
-    REFUSED_TREATMENT: 'Patient Refused Treatment',
-    DECLARED_DOA: 'Declared DOA',
-    FALSE_ALARM: 'False Alarm / Stand Down',
-};
-
+// outcome_label is hydrated server-side (Inertia page-load + IncidentStatusChanged
+// broadcast) by joining incidents.outcome → incident_outcomes.label, so the UI
+// always shows the human label regardless of which custom outcome the admin
+// has authored. Falls back to the raw code if the lookup row is missing,
+// then to "Unknown" if the incident has no outcome at all (pre-resolve).
 const outcomeLabel = computed(
     () =>
-        OUTCOME_LABELS[props.incident.outcome ?? ''] ??
+        props.incident.outcome_label ??
         props.incident.outcome ??
         'Unknown',
 );
@@ -39,7 +36,14 @@ const sceneTime = computed(() => {
     return `${minutes} min ${seconds} sec`;
 });
 
+// Prefer the server-side checklist_pct (kept in sync by the resolve handler
+// + IncidentStatusChanged broadcast) over recomputing from checklist_data,
+// since the local checklist_data may be stale after a real-time update.
 const checklistPct = computed(() => {
+    if (typeof props.incident.checklist_pct === 'number') {
+        return props.incident.checklist_pct;
+    }
+
     const data = props.incident.checklist_data;
 
     if (!data) {

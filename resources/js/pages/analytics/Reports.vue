@@ -28,9 +28,32 @@ interface PaginatedReports {
     };
 }
 
+interface IncidentReport {
+    id: string;
+    incident_no: string;
+    priority: string;
+    outcome: string | null;
+    resolved_at: string | null;
+    incident_type: string | null;
+    download_url: string;
+}
+
 const props = defineProps<{
     reports: PaginatedReports;
+    incidentReports: IncidentReport[];
 }>();
+
+function formatResolved(iso: string | null): string {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    return d.toLocaleString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Analytics', href: '/analytics' },
@@ -289,7 +312,12 @@ const years = computed(() => {
                     Checking for updates...
                 </div>
 
-                <!-- Report List -->
+                <!-- Aggregate Reports (Quarterly / Annual) -->
+                <h3
+                    class="mb-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                >
+                    Aggregate Reports
+                </h3>
                 <div v-if="reports.data.length > 0" class="space-y-3">
                     <ReportRow
                         v-for="report in reports.data"
@@ -297,18 +325,105 @@ const years = computed(() => {
                         :report="report"
                     />
                 </div>
-
-                <!-- Empty State -->
                 <div
                     v-else
-                    class="flex flex-col items-center justify-center py-16 text-t-text-faint"
+                    class="rounded-[var(--radius)] border border-dashed border-border p-6 text-center text-xs text-t-text-faint"
                 >
-                    <FileDown class="mb-3 h-10 w-10" />
-                    <p class="text-sm">No reports generated yet</p>
-                    <p class="mt-1 text-xs">
-                        Use the buttons above to generate quarterly or annual
-                        reports.
-                    </p>
+                    No quarterly or annual reports yet. Use the buttons above
+                    to generate one.
+                </div>
+
+                <!-- Per-Incident Reports -->
+                <h3
+                    class="mt-6 mb-3 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                >
+                    Incident Reports
+                </h3>
+                <div
+                    v-if="incidentReports.length > 0"
+                    class="overflow-hidden rounded-[var(--radius)] border border-border bg-card shadow-[var(--shadow-1)]"
+                >
+                    <table class="w-full text-left text-sm">
+                        <thead class="border-b border-border bg-card">
+                            <tr>
+                                <th
+                                    class="px-4 py-2 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                                >
+                                    Incident
+                                </th>
+                                <th
+                                    class="px-4 py-2 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                                >
+                                    Type
+                                </th>
+                                <th
+                                    class="px-4 py-2 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                                >
+                                    Priority
+                                </th>
+                                <th
+                                    class="px-4 py-2 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                                >
+                                    Outcome
+                                </th>
+                                <th
+                                    class="px-4 py-2 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                                >
+                                    Resolved
+                                </th>
+                                <th
+                                    class="px-4 py-2 font-mono text-[9px] font-bold tracking-[2px] text-t-text-faint uppercase"
+                                ></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr
+                                v-for="report in incidentReports"
+                                :key="report.id"
+                                class="border-b border-border last:border-b-0 hover:bg-accent"
+                            >
+                                <td
+                                    class="px-4 py-2 font-mono text-xs font-bold text-foreground"
+                                >
+                                    {{ report.incident_no }}
+                                </td>
+                                <td class="px-4 py-2 text-foreground">
+                                    {{ report.incident_type ?? '—' }}
+                                </td>
+                                <td
+                                    class="px-4 py-2 font-mono text-xs text-t-text-dim"
+                                >
+                                    {{ report.priority }}
+                                </td>
+                                <td class="px-4 py-2 text-xs text-t-text-dim">
+                                    {{ report.outcome ?? '—' }}
+                                </td>
+                                <td
+                                    class="px-4 py-2 font-mono text-[11px] text-t-text-faint"
+                                >
+                                    {{ formatResolved(report.resolved_at) }}
+                                </td>
+                                <td class="px-4 py-2 text-right">
+                                    <a
+                                        :href="report.download_url"
+                                        class="inline-flex items-center gap-1.5 rounded-[var(--radius)] bg-secondary px-2.5 py-1.5 text-xs font-medium text-secondary-foreground transition-colors hover:bg-accent"
+                                        target="_blank"
+                                        rel="noopener"
+                                    >
+                                        <FileDown class="h-3.5 w-3.5" />
+                                        PDF
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div
+                    v-else
+                    class="rounded-[var(--radius)] border border-dashed border-border p-6 text-center text-xs text-t-text-faint"
+                >
+                    No incident reports yet. They are generated automatically
+                    when an incident is resolved.
                 </div>
 
                 <!-- Pagination -->

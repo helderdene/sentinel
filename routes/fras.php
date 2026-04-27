@@ -23,11 +23,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
 });
 
 // Phase 21 D-20 (option a): signed 5-min URL for face-image crops on the
-// IntakeStation FRAS rail + modal. Role gate enforced at the bootstrap
-// layer; signed middleware added here per-route. Phase 22 will layer
-// `fras_access_log` writes inside FrasEventFaceController.
+// IntakeStation FRAS rail + modal. The bootstrap group applies the strict
+// operator/supervisor/admin role gate; this route opts out of the strict
+// gate and applies a relaxed gate that includes `responder` so the
+// Person-of-Interest accordion on /responder can render the capture
+// (CDRRMO operational override). FrasEventFaceController re-checks the
+// role list and writes a fras_access_log row on every successful fetch.
 Route::get('fras/events/{event}/face', [FrasEventFaceController::class, 'show'])
-    ->middleware('signed')
+    ->withoutMiddleware('role:operator,supervisor,admin')
+    ->middleware(['role:operator,supervisor,admin,responder', 'signed'])
     ->name('fras.event.face');
 
 // Phase 22 D-26: scene image endpoint — operator/supervisor/admin only

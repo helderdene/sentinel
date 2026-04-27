@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\IncidentOutcome;
 use App\Enums\IncidentPriority;
 use App\Enums\IncidentStatus;
 use App\Enums\ResourceType;
@@ -26,17 +25,21 @@ use App\Jobs\GenerateIncidentReport;
 use App\Jobs\GenerateNdrrmcSitRep;
 use App\Models\ChecklistTemplate;
 use App\Models\Incident;
-use App\Models\RecognitionEvent;
+use App\Models\IncidentOutcome;
 use App\Models\User;
+use App\Services\PersonOfInterestHydrator;
 use Clickbar\Magellan\Data\Geometries\Point;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class ResponderController extends Controller
 {
+    public function __construct(
+        private PersonOfInterestHydrator $personOfInterestHydrator,
+    ) {}
+
     /**
      * Display the responder station page.
      */
@@ -66,9 +69,18 @@ class ResponderController extends Controller
 
                 $activeIncident = $activeIncidentModel->toArray();
 
-                $activeIncident['person_of_interest'] = $this->hydratePersonOfInterest($activeIncidentModel);
+                $activeIncident['person_of_interest'] = $this->personOfInterestHydrator->hydrate($activeIncidentModel);
+                $activeIncident['outcome_label'] = $activeIncidentModel->outcome
+                    ? (IncidentOutcome::query()
+                        ->where('code', $activeIncidentModel->outcome)
+                        ->value('label') ?? $activeIncidentModel->outcome)
+                    : null;
             }
         }
+
+        $outcomeOptions = $this->buildOutcomeOptions(
+            $activeIncidentModel?->incidentType?->category,
+        );
 
         return Inertia::render('responder/Station', [
             'incident' => $activeIncident,
@@ -76,10 +88,29 @@ class ResponderController extends Controller
             'hospitals' => config('hospitals'),
             'userId' => $user->id,
             'checklistTemplate' => $checklistTemplate,
+            'outcomeOptions' => $outcomeOptions,
             'messages' => $activeIncident
                 ? Incident::find($activeIncident['id'])?->messages()->orderBy('created_at')->get()
                 : [],
         ]);
+    }
+
+    /**
+     * Build the OutcomeSheet's option list for the active incident's
+     * incident-type category. Returns serialised value/label pairs ready to
+     * hand to the Vue component.
+     *
+     * @return list<array{value: string, label: string}>
+     */
+    private function buildOutcomeOptions(?string $category): array
+    {
+        return IncidentOutcome::forCategory($category)
+            ->map(fn (IncidentOutcome $o) => [
+                'value' => $o->code,
+                'label' => $o->label,
+            ])
+            ->values()
+            ->all();
     }
 
     /**
@@ -307,10 +338,11 @@ class ResponderController extends Controller
         /** @var User $user */
         $user = $request->user();
         $unit = $user->unit;
-        $outcome = IncidentOutcome::from($request->validated('outcome'));
+        $outcomeCode = (string) $request->validated('outcome');
+        $outcome = IncidentOutcome::query()->where('code', $outcomeCode)->first();
         $oldStatus = $incident->status;
 
-        if ($outcome->isMedical() && empty($incident->vitals)) {
+        if ($outcome?->requiresVitals() && empty($incident->vitals)) {
             return response()->json([
                 'message' => 'Vitals must be recorded before resolving with a medical outcome.',
             ], 422);
@@ -323,7 +355,7 @@ class ResponderController extends Controller
         $incident->update([
             'status' => IncidentStatus::Resolved,
             'resolved_at' => now(),
-            'outcome' => $outcome->value,
+            'outcome' => $outcomeCode,
             'hospital' => $request->validated('hospital'),
             'closure_notes' => $request->validated('closure_notes'),
             'scene_time_sec' => $sceneTimeSec,
@@ -334,7 +366,7 @@ class ResponderController extends Controller
             'event_data' => [
                 'old_status' => $oldStatus->value,
                 'new_status' => IncidentStatus::Resolved->value,
-                'outcome' => $outcome->value,
+                'outcome' => $outcomeCode,
             ],
             'actor_type' => get_class($user),
             'actor_id' => $user->id,
@@ -397,57 +429,5 @@ class ResponderController extends Controller
         );
 
         return response()->json(['message' => 'Resource requested.']);
-    }
-
-    /**
-     * Hydrate the Person-of-Interest context for a FRAS recognition-born incident.
-     *
-     * Returns a prop array with a 5-minute signed face-image URL + personnel/camera
-     * metadata when the incident's first timeline entry is a fras_recognition source
-     * AND the referenced RecognitionEvent has a face image + personnel link.
-     *
-     * CRITICAL (D-26): this payload MUST NEVER expose any scene-image URL —
-     * defense-in-depth layer 3 (controller + channel + prop) keeps scene imagery
-     * off the responder device entirely. The face URL is handed to the browser but
-     * Phase 21's FrasEventFaceController role gate [Operator, Supervisor, Admin]
-     * denies the responder per D-27; the Vue template renders a UserRound icon
-     * fallback on the 403 (UI-SPEC lines 520 + 526).
-     *
-     * @return array<string, string|null>|null
-     */
-    private function hydratePersonOfInterest(Incident $incident): ?array
-    {
-        $firstTimeline = $incident->timeline->first();
-
-        if (! $firstTimeline || ($firstTimeline->event_data['source'] ?? null) !== 'fras_recognition') {
-            return null;
-        }
-
-        $recognitionEventId = $firstTimeline->event_data['recognition_event_id'] ?? null;
-
-        if (! $recognitionEventId) {
-            return null;
-        }
-
-        $rec = RecognitionEvent::query()
-            ->with(['camera:id,camera_id_display,name', 'personnel:id,name,category'])
-            ->find($recognitionEventId);
-
-        if (! $rec || ! $rec->face_image_path || ! $rec->personnel_id) {
-            return null;
-        }
-
-        return [
-            'face_image_url' => URL::temporarySignedRoute(
-                'fras.event.face',
-                now()->addMinutes(5),
-                ['event' => $rec->id],
-            ),
-            'personnel_name' => $rec->personnel?->name,
-            'personnel_category' => $rec->personnel?->category?->value,
-            'camera_label' => $rec->camera?->camera_id_display,
-            'camera_name' => $rec->camera?->name,
-            'captured_at' => $rec->captured_at?->toIso8601String(),
-        ];
     }
 }

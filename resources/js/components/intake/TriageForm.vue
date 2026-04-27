@@ -281,6 +281,147 @@ const sourceChannelKey = computed(() => {
 
     return channelDisplayMap[sourceChannel.value] ?? null;
 });
+
+type FrasField = { label: string; value: string };
+
+const frasInfo = computed<Record<string, unknown> | null>(() => {
+    const raw = props.activeIncident?.raw_message;
+
+    if (!raw) {
+        return null;
+    }
+
+    const trimmed = raw.trim();
+
+    if (!trimmed.startsWith('{')) {
+        return null;
+    }
+
+    try {
+        const parsed = JSON.parse(trimmed) as Record<string, unknown>;
+
+        if (
+            parsed?.operator === 'RecPush' &&
+            parsed?.info &&
+            typeof parsed.info === 'object'
+        ) {
+            return parsed.info as Record<string, unknown>;
+        }
+    } catch {
+        return null;
+    }
+
+    return null;
+});
+
+const frasFields = computed<FrasField[]>(() => {
+    const info = frasInfo.value;
+
+    if (!info) {
+        return [];
+    }
+
+    const fields: FrasField[] = [];
+
+    const str = (val: unknown): string | null => {
+        if (val === null || val === undefined) {
+            return null;
+        }
+
+        const trimmed = String(val).trim();
+
+        return trimmed === '' ? null : trimmed;
+    };
+
+    const num = (val: unknown): number | null => {
+        const n = Number(val);
+
+        return Number.isFinite(n) ? n : null;
+    };
+
+    const personName = str(info.personName) ?? str(info.persionName);
+
+    if (personName) {
+        fields.push({ label: 'Person', value: personName });
+    }
+
+    const similarity = num(info.similarity1);
+
+    if (similarity !== null) {
+        fields.push({
+            label: 'Match',
+            value: `${similarity.toFixed(1)}%`,
+        });
+    }
+
+    const time = str(info.time);
+
+    if (time) {
+        fields.push({ label: 'Captured', value: time });
+    }
+
+    const personType = num(info.PersonType);
+    const personTypeLabel =
+        personType === 1
+            ? 'Block-list match'
+            : personType === 2
+              ? 'Visitor / stranger'
+              : personType
+                ? `Type ${personType}`
+                : null;
+
+    if (personTypeLabel) {
+        fields.push({ label: 'Person type', value: personTypeLabel });
+    }
+
+    const verifyStatus = num(info.VerifyStatus);
+    const verifyLabel =
+        verifyStatus === 1
+            ? 'Match'
+            : verifyStatus === 2
+              ? 'Refused'
+              : verifyStatus
+                ? `Status ${verifyStatus}`
+                : null;
+
+    if (verifyLabel) {
+        fields.push({ label: 'Verify', value: verifyLabel });
+    }
+
+    if (info.isNoMask !== undefined) {
+        fields.push({
+            label: 'Mask',
+            value: num(info.isNoMask) === 1 ? 'No mask' : 'Wearing mask',
+        });
+    }
+
+    if (info.Sendintime !== undefined) {
+        fields.push({
+            label: 'Delivery',
+            value: num(info.Sendintime) === 1 ? 'Real-time' : 'Replayed',
+        });
+    }
+
+    const idCard = str(info.idCard);
+
+    if (idCard) {
+        fields.push({ label: 'ID card', value: idCard });
+    }
+
+    const phone = str(info.telnum);
+
+    if (phone) {
+        fields.push({ label: 'Phone', value: phone });
+    }
+
+    const camera = str(info.facesluiceId);
+
+    if (camera) {
+        fields.push({ label: 'Camera', value: camera });
+    }
+
+    return fields;
+});
 </script>
 
 <template>
@@ -312,9 +453,25 @@ const sourceChannelKey = computed(() => {
             <span
                 class="mb-1 block font-mono text-[9px] font-bold tracking-[1.5px] text-t-text-faint uppercase"
             >
-                ORIGINAL MESSAGE
+                {{
+                    frasFields.length > 0
+                        ? 'FRAS Recognition Alert'
+                        : 'Original Message'
+                }}
             </span>
-            <p class="text-[12px] leading-relaxed text-t-text-mid">
+            <dl
+                v-if="frasFields.length > 0"
+                class="grid grid-cols-[max-content_1fr] gap-x-3 gap-y-1 text-[12px] leading-relaxed"
+            >
+                <template
+                    v-for="field in frasFields"
+                    :key="field.label"
+                >
+                    <dt class="text-t-text-faint">{{ field.label }}</dt>
+                    <dd class="text-t-text-mid">{{ field.value }}</dd>
+                </template>
+            </dl>
+            <p v-else class="text-[12px] leading-relaxed text-t-text-mid">
                 {{ activeIncident.raw_message || activeIncident.notes || '' }}
             </p>
         </div>

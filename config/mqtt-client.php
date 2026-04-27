@@ -33,7 +33,9 @@ return [
     |   auto_reconnect=true so the listener recovers from broker bounces.
     | - `publisher` — short-lived enrollment / control publisher
     |   (use_clean_session=true, independent client id so publishes do not
-    |   race the subscriber session).
+    |   race the subscriber session). auto_reconnect MUST be false here:
+    |   php-mqtt forbids clean_session + auto_reconnect together, and the
+    |   publisher is fire-and-forget — it connects, publishes, disconnects.
     |
     | MQTT-06 mandates these be SEPARATE top-level connection entries rather
     | than a single shared connection. The top-level `auto_reconnect` key on
@@ -112,7 +114,7 @@ return [
             'log_channel' => env('MQTT_LOG_CHANNEL', 'mqtt'),
             'repository' => MemoryRepository::class,
 
-            'auto_reconnect' => true,
+            'auto_reconnect' => false,
 
             'connection_settings' => [
 
@@ -141,9 +143,7 @@ return [
                 'keep_alive_interval' => (int) (config('fras.mqtt.keepalive') ?? env('FRAS_MQTT_KEEPALIVE', 60)),
 
                 'auto_reconnect' => [
-                    'enabled' => true,
-                    'max_reconnect_attempts' => (int) env('MQTT_MAX_RECONNECT_ATTEMPTS', 10),
-                    'delay_between_reconnect_attempts' => (int) (config('fras.mqtt.reconnect_delay') ?? env('FRAS_MQTT_RECONNECT_DELAY', 5)),
+                    'enabled' => false,
                 ],
 
             ],

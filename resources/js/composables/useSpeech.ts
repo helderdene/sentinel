@@ -88,7 +88,7 @@ export function useSpeech() {
             window.speechSynthesis.cancel();
 
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.rate = 0.9;
+            utterance.rate = 0.65;
             utterance.pitch = 1;
             utterance.volume = 1;
             utterance.lang = 'en-US';

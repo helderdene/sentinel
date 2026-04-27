@@ -96,7 +96,7 @@ function signedFaceUrl(RecognitionEvent $event, int $minutes = 5): string
     );
 }
 
-it('fras.event.face route allows operator and denies dispatcher + responder', function () {
+it('fras.event.face route allows operator and responder, denies dispatcher', function () {
     Storage::fake('fras_events');
 
     $camera = Camera::factory()->create();
@@ -114,17 +114,19 @@ it('fras.event.face route allows operator and denies dispatcher + responder', fu
         ->assertOk()
         ->assertHeader('Content-Type', 'image/jpeg');
 
-    // Dispatcher denied
+    // Dispatcher denied — face controller never exposed to dispatch console
     $dispatcher = User::factory()->create(['role' => UserRole::Dispatcher]);
     $this->actingAs($dispatcher)
         ->get($url)
         ->assertForbidden();
 
-    // Responder denied
+    // Responder allowed (CDRRMO override) — needed for the PoI accordion on
+    // /responder. Scene imagery remains denied via the separate scene route.
     $responder = User::factory()->create(['role' => UserRole::Responder]);
     $this->actingAs($responder)
         ->get($url)
-        ->assertForbidden();
+        ->assertOk()
+        ->assertHeader('Content-Type', 'image/jpeg');
 });
 
 it('fras.event.face returns 404 when event face_image_path is null', function () {

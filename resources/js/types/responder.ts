@@ -27,6 +27,7 @@ export interface ResponderIncident {
     checklist_data: Record<string, boolean> | null;
     checklist_pct: number;
     outcome: string | null;
+    outcome_label: string | null;
     hospital: string | null;
     timeline: IncidentTimelineEntry[];
     acknowledged_at: string | null;
@@ -85,6 +86,7 @@ export interface AssignmentPayload {
     coordinates: { lat: number; lng: number } | null;
     notes: string | null;
     unit_id: string;
+    person_of_interest: PersonOfInterestContext | null;
 }
 
 export interface MessagePayload {
@@ -119,7 +121,18 @@ export type IncidentOutcome =
     | 'TRANSPORTED_TO_HOSPITAL'
     | 'REFUSED_TREATMENT'
     | 'DECLARED_DOA'
+    | 'SUBJECT_DETAINED'
+    | 'SUBJECT_NOT_LOCATED'
+    | 'SUBJECT_FLED'
+    | 'MISMATCH'
+    | 'SITUATION_RESOLVED'
+    | 'HANDOFF_TO_AGENCY'
     | 'FALSE_ALARM';
+
+export interface OutcomeOption {
+    value: IncidentOutcome;
+    label: string;
+}
 
 export type ResourceType =
     | 'ADDITIONAL_AMBULANCE'

@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\IncidentOutcome;
 use App\Enums\IncidentPriority;
 use App\Enums\IncidentStatus;
 use App\Models\Barangay;
@@ -21,7 +20,7 @@ it('computeKpis returns correct structure with all 5 keys', function () {
         'dispatched_at' => now()->subMinutes(50),
         'on_scene_at' => now()->subMinutes(40),
         'resolved_at' => now(),
-        'outcome' => IncidentOutcome::TreatedOnScene,
+        'outcome' => 'TREATED_ON_SCENE',
     ]);
 
     $result = $service->computeKpis([
@@ -50,7 +49,7 @@ it('computeKpis with date range filter excludes out-of-range incidents', functio
         'dispatched_at' => now()->subDays(5)->addMinutes(10),
         'on_scene_at' => now()->subDays(5)->addMinutes(20),
         'resolved_at' => now()->subDays(5)->addMinutes(60),
-        'outcome' => IncidentOutcome::TreatedOnScene,
+        'outcome' => 'TREATED_ON_SCENE',
     ]);
 
     // Out-of-range: 30 days ago
@@ -61,7 +60,7 @@ it('computeKpis with date range filter excludes out-of-range incidents', functio
         'dispatched_at' => now()->subDays(30)->addMinutes(5),
         'on_scene_at' => now()->subDays(30)->addMinutes(15),
         'resolved_at' => now()->subDays(30)->addHour(),
-        'outcome' => IncidentOutcome::FalseAlarm,
+        'outcome' => 'FALSE_ALARM',
     ]);
 
     $result = $service->computeKpis([
@@ -82,13 +81,13 @@ it('computeKpis computes correct false alarm rate', function () {
     Incident::factory()->create([
         'incident_type_id' => $type->id,
         'status' => IncidentStatus::Resolved,
-        'outcome' => IncidentOutcome::FalseAlarm,
+        'outcome' => 'FALSE_ALARM',
     ]);
 
     Incident::factory()->create([
         'incident_type_id' => $type->id,
         'status' => IncidentStatus::Resolved,
-        'outcome' => IncidentOutcome::TreatedOnScene,
+        'outcome' => 'TREATED_ON_SCENE',
     ]);
 
     $result = $service->computeKpis([

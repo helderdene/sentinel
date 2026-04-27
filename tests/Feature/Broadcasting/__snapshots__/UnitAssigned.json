@@ -11,5 +11,6 @@
         "lng": 125.5406
     },
     "notes": "Fixture data",
-    "unit_id": "AMB-01"
+    "unit_id": "AMB-01",
+    "person_of_interest": null
 }

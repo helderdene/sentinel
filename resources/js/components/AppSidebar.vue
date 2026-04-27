@@ -118,6 +118,11 @@ const mainNavItems = computed<NavItem[]>(() => {
                         icon: ListChecks,
                     },
                     {
+                        title: 'Incident Outcomes',
+                        href: '/admin/incident-outcomes',
+                        icon: Tags,
+                    },
+                    {
                         title: 'Units',
                         href: '/admin/units',
                         icon: Truck,

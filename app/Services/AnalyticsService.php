@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Contracts\AnalyticsServiceInterface;
-use App\Enums\IncidentOutcome;
 use App\Enums\IncidentPriority;
 use App\Enums\IncidentStatus;
 use App\Models\Barangay;
@@ -59,9 +58,12 @@ class AnalyticsService implements AnalyticsServiceInterface
             ? round(($activeUnits / $totalUnits) * 100, 1)
             : 0.0;
 
-        // False alarm rate: outcome=FALSE_ALARM / total resolved
+        // False alarm rate: outcome=FALSE_ALARM / total resolved. Code is
+        // a literal here (rather than a model lookup) to avoid an extra
+        // query on every KPI tick — IncidentOutcome row with this code is
+        // seeded as universal and is_active by IncidentOutcomeSeeder.
         $falseAlarmCount = (clone $resolvedQuery)
-            ->where('outcome', IncidentOutcome::FalseAlarm->value)
+            ->where('outcome', 'FALSE_ALARM')
             ->count();
 
         $falseAlarmRate = $resolvedCount > 0

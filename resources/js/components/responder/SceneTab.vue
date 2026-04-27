@@ -64,29 +64,56 @@ interface AccordionSection {
     total: string;
 }
 
-const sections = computed<AccordionSection[]>(() => [
-    {
-        id: 'checklist',
-        label: 'Checklist',
-        icon: 'clipboard',
-        progress: checklistProgress.value,
-        total: checklistTotal.value,
-    },
-    {
-        id: 'vitals',
-        label: 'Vitals',
-        icon: 'heart',
-        progress: vitalsCount.value,
-        total: '4',
-    },
-    {
-        id: 'assessment',
-        label: 'Assessment',
-        icon: 'tag',
-        progress: assessmentCount.value,
-        total: '11',
-    },
+// Vitals + Assessment are medical/patient-care sections (BP, HR, SpO2, GCS;
+// Conscious / Breathing / Bleeding tags). They are noise for non-medical
+// incident categories like Crime / Security or Public Disturbance, where the
+// responder workflow is detention / de-escalation, not patient care. The
+// Checklist itself is always shown — it's templated per-type via
+// ChecklistTemplate.items.
+const PATIENT_CARE_CATEGORIES = new Set<string>([
+    'Medical',
+    'Fire',
+    'Vehicular',
+    'Water Rescue',
+    'Hazmat',
 ]);
+
+const showsPatientCare = computed(() =>
+    PATIENT_CARE_CATEGORIES.has(props.incident.incident_type.category),
+);
+
+const sections = computed<AccordionSection[]>(() => {
+    const list: AccordionSection[] = [
+        {
+            id: 'checklist',
+            label: 'Checklist',
+            icon: 'clipboard',
+            progress: checklistProgress.value,
+            total: checklistTotal.value,
+        },
+    ];
+
+    if (showsPatientCare.value) {
+        list.push(
+            {
+                id: 'vitals',
+                label: 'Vitals',
+                icon: 'heart',
+                progress: vitalsCount.value,
+                total: '4',
+            },
+            {
+                id: 'assessment',
+                label: 'Assessment',
+                icon: 'tag',
+                progress: assessmentCount.value,
+                total: '11',
+            },
+        );
+    }
+
+    return list;
+});
 </script>
 
 <template>

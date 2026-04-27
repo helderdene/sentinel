@@ -65,9 +65,11 @@ it('correlates ACK failure with error code via translateErrorCode', function () 
         'dispatched_at' => now()->toIso8601String(),
     ], 300);
 
+    // Camera firmware sends `errcode` (lowercase, no capital), not `errorCode`.
+    // Per MQTT V1.25 §29.6: 468 = "Failed to extract facial features from images".
     app(AckHandler::class)->handle(
         'mqtt/face/cam-42/Ack',
-        json_encode(['messageId' => 'msg-err', 'info' => ['AddErrInfo' => [['customId' => 'abc123', 'errorCode' => 467]]]])
+        json_encode(['messageId' => 'msg-err', 'info' => ['AddErrInfo' => [['customId' => 'abc123', 'errcode' => 468]]]])
     );
 
     $updated = CameraEnrollment::where('camera_id', $camera->id)->where('personnel_id', $personnel->id)->first();

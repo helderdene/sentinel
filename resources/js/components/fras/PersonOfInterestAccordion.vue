@@ -1,11 +1,18 @@
 <script setup lang="ts">
-import { ChevronRight, UserRound } from 'lucide-vue-next';
+import { ChevronRight, UserRound, X } from 'lucide-vue-next';
 import { ref } from 'vue';
 import {
     Collapsible,
     CollapsibleContent,
     CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogTitle,
+} from '@/components/ui/dialog';
 
 export interface PersonOfInterestData {
     face_image_url: string | null;
@@ -22,6 +29,7 @@ const props = defineProps<{
 
 const isOpen = ref(false);
 const imgFailed = ref(false);
+const showImageModal = ref(false);
 </script>
 
 <template>
@@ -54,21 +62,31 @@ const imgFailed = ref(false);
         </CollapsibleTrigger>
         <CollapsibleContent id="poi-accordion-body" class="space-y-3 p-4">
             <div class="flex items-start gap-4">
-                <!-- 80x80 face thumbnail slot. Responders are denied by Phase 21
-                     FrasEventFaceController (D-27 gate); on 403 the @error handler
-                     trips imgFailed and the UserRound fallback renders (UI-SPEC
-                     lines 520/526). Scene imagery is NEVER rendered here. -->
-                <div
-                    class="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-[var(--radius)] bg-t-surface-alt"
+                <!-- 80x80 face thumbnail. Responders ARE allowed to fetch the
+                     face crop (post-Phase-22 CDRRMO override); the @error handler
+                     still trips imgFailed → UserRound fallback if the image is
+                     missing on disk or the signed URL has expired. Scene imagery
+                     is NEVER rendered here (D-26 still applies to scenes).
+                     Click opens a larger preview in a dialog. -->
+                <button
+                    v-if="props.data.face_image_url && !imgFailed"
+                    type="button"
+                    class="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-[var(--radius)] bg-t-surface-alt transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-t-accent focus-visible:outline-none"
+                    aria-label="View larger face image"
+                    @click="showImageModal = true"
                 >
                     <img
-                        v-if="props.data.face_image_url && !imgFailed"
                         :src="props.data.face_image_url"
                         alt=""
                         class="size-full object-cover"
                         @error="imgFailed = true"
                     />
-                    <UserRound v-else class="size-10 text-t-text-faint" />
+                </button>
+                <div
+                    v-else
+                    class="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-[var(--radius)] bg-t-surface-alt"
+                >
+                    <UserRound class="size-10 text-t-text-faint" />
                 </div>
                 <div class="flex-1 space-y-1">
                     <p class="text-sm font-semibold text-t-text">
@@ -85,4 +103,39 @@ const imgFailed = ref(false);
             </div>
         </CollapsibleContent>
     </Collapsible>
+
+    <Dialog v-model:open="showImageModal">
+        <DialogContent
+            class="max-w-md gap-3 border-t-border bg-t-surface p-4 sm:max-w-lg"
+        >
+            <DialogTitle class="text-sm font-semibold text-t-text">
+                {{ props.data.personnel_name ?? 'Person of Interest' }}
+            </DialogTitle>
+            <DialogDescription
+                class="font-mono text-xs text-t-text-faint"
+            >
+                {{ props.data.camera_label }} ·
+                {{ props.data.camera_name }} ·
+                {{ props.data.captured_at }}
+            </DialogDescription>
+            <div
+                class="flex aspect-square w-full items-center justify-center overflow-hidden rounded-[var(--radius)] bg-t-surface-alt"
+            >
+                <img
+                    v-if="props.data.face_image_url && !imgFailed"
+                    :src="props.data.face_image_url"
+                    alt=""
+                    class="size-full object-contain"
+                    @error="imgFailed = true"
+                />
+                <UserRound v-else class="size-24 text-t-text-faint" />
+            </div>
+            <DialogClose
+                class="absolute top-3 right-3 inline-flex size-7 items-center justify-center rounded-full text-t-text-dim transition-colors hover:bg-t-surface-alt hover:text-t-text focus-visible:ring-2 focus-visible:ring-t-accent focus-visible:outline-none"
+                aria-label="Close"
+            >
+                <X class="size-4" />
+            </DialogClose>
+        </DialogContent>
+    </Dialog>
 </template>

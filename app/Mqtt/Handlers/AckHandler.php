@@ -85,9 +85,69 @@ class AckHandler implements MqttHandler
         }
 
         $info = $data['info'] ?? [];
+        $operator = $data['operator'] ?? '';
 
+        // EditPerson-Ack (spec §4.8): single-person result with "ok"/"fail".
+        if ($operator === 'EditPerson-Ack') {
+            $this->processEditPersonAck($camera, $info, $pending);
+
+            return;
+        }
+
+        // EditPersonsNew-Ack (spec §4.3.2): batch result with AddSucInfo/AddErrInfo.
         $this->processSuccesses($camera, $info['AddSucInfo'] ?? [], $pending);
         $this->processFailures($camera, $info['AddErrInfo'] ?? []);
+    }
+
+    /**
+     * Handle the single-person EditPerson-Ack response shape: the `info` block
+     * has just `customId`, `result` ("ok"/"fail"), and optional `detail`.
+     * When the ACK does not include a customId (spec lists it optional), fall
+     * back to the single personnel_id cached at dispatch time.
+     *
+     * @param  array<string, mixed>  $info
+     * @param  array<string, mixed>  $pending
+     */
+    private function processEditPersonAck(Camera $camera, array $info, array $pending): void
+    {
+        $result = $info['result'] ?? 'fail';
+        $customId = is_string($info['customId'] ?? null) ? $info['customId'] : null;
+
+        $personnel = $customId !== null
+            ? Personnel::where('custom_id', $customId)->first()
+            : Personnel::find($pending['personnel_ids'][0] ?? null);
+
+        if (! $personnel) {
+            return;
+        }
+
+        $enrollment = CameraEnrollment::where('camera_id', $camera->id)
+            ->where('personnel_id', $personnel->id)
+            ->first();
+
+        if (! $enrollment) {
+            return;
+        }
+
+        if ($result === 'ok') {
+            $photoHashes = $pending['photo_hashes'] ?? [];
+            $enrollment->update([
+                'status' => CameraEnrollmentStatus::Done,
+                'enrolled_at' => now(),
+                'photo_hash' => $photoHashes[$personnel->custom_id] ?? $enrollment->photo_hash,
+                'last_error' => null,
+            ]);
+        } else {
+            $detail = is_string($info['detail'] ?? null) && $info['detail'] !== ''
+                ? $info['detail']
+                : 'Camera rejected the enrollment.';
+            $enrollment->update([
+                'status' => CameraEnrollmentStatus::Failed,
+                'last_error' => $detail,
+            ]);
+        }
+
+        EnrollmentProgressed::dispatch($enrollment->fresh());
     }
 
     /**
@@ -131,13 +191,13 @@ class AckHandler implements MqttHandler
     }
 
     /**
-     * @param  array<int, array{customId?: string, errorCode?: int}>  $failures
+     * @param  array<int, array{customId?: string, errcode?: int|string}>  $failures
      */
     private function processFailures(Camera $camera, array $failures): void
     {
         foreach ($failures as $entry) {
             $customId = $entry['customId'] ?? null;
-            $code = isset($entry['errorCode']) ? (int) $entry['errorCode'] : 0;
+            $code = isset($entry['errcode']) ? (int) $entry['errcode'] : 0;
 
             if (! is_string($customId)) {
                 continue;

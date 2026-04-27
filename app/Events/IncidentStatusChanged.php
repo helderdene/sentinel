@@ -4,6 +4,7 @@ namespace App\Events;
 
 use App\Enums\IncidentStatus;
 use App\Models\Incident;
+use App\Models\IncidentOutcome;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -36,6 +37,11 @@ class IncidentStatusChanged implements ShouldBroadcast, ShouldDispatchAfterCommi
      */
     public function broadcastWith(): array
     {
+        $outcomeCode = $this->incident->outcome;
+        $outcomeLabel = $outcomeCode
+            ? (IncidentOutcome::query()->where('code', $outcomeCode)->value('label') ?? $outcomeCode)
+            : null;
+
         return [
             'id' => $this->incident->id,
             'incident_no' => $this->incident->incident_no,
@@ -47,6 +53,11 @@ class IncidentStatusChanged implements ShouldBroadcast, ShouldDispatchAfterCommi
             'on_scene_at' => $this->incident->on_scene_at?->toIso8601String(),
             'resolving_at' => $this->incident->resolving_at?->toIso8601String(),
             'resolved_at' => $this->incident->resolved_at?->toIso8601String(),
+            'outcome' => $outcomeCode,
+            'outcome_label' => $outcomeLabel,
+            'hospital' => $this->incident->hospital,
+            'checklist_pct' => (int) ($this->incident->checklist_pct ?? 0),
+            'checklist_data' => $this->incident->checklist_data,
         ];
     }
 }

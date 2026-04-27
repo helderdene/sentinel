@@ -22,6 +22,11 @@ interface IncidentStatusChangedPayload {
     on_scene_at: string | null;
     resolving_at: string | null;
     resolved_at: string | null;
+    outcome?: string | null;
+    outcome_label?: string | null;
+    hospital?: string | null;
+    checklist_pct?: number | null;
+    checklist_data?: Record<string, boolean> | null;
 }
 
 export function useResponderSession(
@@ -81,6 +86,7 @@ export function useResponderSession(
             checklist_data: null,
             checklist_pct: 0,
             outcome: null,
+            outcome_label: null,
             hospital: null,
             timeline: [],
             acknowledged_at: null,
@@ -88,7 +94,7 @@ export function useResponderSession(
             on_scene_at: null,
             resolving_at: null,
             resolved_at: null,
-            person_of_interest: null,
+            person_of_interest: p.person_of_interest,
         };
 
         showAssignmentNotification.value = true;
@@ -119,6 +125,14 @@ export function useResponderSession(
                 payload.resolving_at ?? activeIncident.value.resolving_at,
             resolved_at:
                 payload.resolved_at ?? activeIncident.value.resolved_at,
+            outcome: payload.outcome ?? activeIncident.value.outcome,
+            outcome_label:
+                payload.outcome_label ?? activeIncident.value.outcome_label,
+            hospital: payload.hospital ?? activeIncident.value.hospital,
+            checklist_pct:
+                payload.checklist_pct ?? activeIncident.value.checklist_pct,
+            checklist_data:
+                payload.checklist_data ?? activeIncident.value.checklist_data,
         };
 
         if (payload.new_status === 'RESOLVED') {

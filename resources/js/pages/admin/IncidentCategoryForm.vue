@@ -281,8 +281,8 @@ function submit(): void {
                     <div class="flex items-center gap-2 pt-6">
                         <Checkbox
                             id="is_active"
-                            :checked="form.is_active"
-                            @update:checked="
+                            :model-value="form.is_active"
+                            @update:model-value="
                                 (val: boolean | 'indeterminate') =>
                                     (form.is_active = val === true)
                             "

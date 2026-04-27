@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             IncidentTypeSeeder::class,
             PersonOfInterestIncidentTypeSeeder::class,
             ChecklistTemplateSeeder::class,
+            IncidentOutcomeSeeder::class,
             UnitSeeder::class,
             BarangaySeeder::class,
             AgencySeeder::class,
