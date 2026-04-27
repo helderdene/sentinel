@@ -22,6 +22,7 @@ class FrasPurgeRun extends Model
         'scene_images_purged',
         'skipped_for_active_incident',
         'access_log_rows_purged',
+        'unpromoted_events_purged',
         'error_summary',
     ];
 
@@ -40,6 +41,7 @@ class FrasPurgeRun extends Model
             'scene_images_purged' => 'integer',
             'skipped_for_active_incident' => 'integer',
             'access_log_rows_purged' => 'integer',
+            'unpromoted_events_purged' => 'integer',
         ];
     }
 }

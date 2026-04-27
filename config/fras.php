@@ -56,6 +56,11 @@ return [
         'face_crop_days' => (int) env('FRAS_RETENTION_FACE_CROP_DAYS', 90),
         'purge_run_schedule' => env('FRAS_PURGE_RUN_SCHEDULE', '02:00'),
         'access_log_retention_days' => (int) env('FRAS_ACCESS_LOG_RETENTION_DAYS', 730),
+        // Window after which recognition_events rows that never linked to an
+        // Incident (incident_id IS NULL) are row-deleted. Default matches the
+        // face_crop window so file and row drop together. Must be >= face_crop_days
+        // to avoid orphaning face/scene files on disk.
+        'unpromoted_event_days' => (int) env('FRAS_RETENTION_UNPROMOTED_EVENT_DAYS', 90),
     ],
 
 ];

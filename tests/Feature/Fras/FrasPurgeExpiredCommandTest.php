@@ -27,11 +27,16 @@ beforeEach(function () {
         'fras.retention.face_crop_days' => 90,
         'fras.retention.purge_run_schedule' => '02:00',
         'fras.retention.access_log_retention_days' => 730,
+        'fras.retention.unpromoted_event_days' => 90,
     ]);
 });
 
 it('purges face crops older than retention window', function () {
+    // Attach to a Resolved incident so the unpromoted-event row purge does
+    // NOT also delete the row — this test focuses on the file pass only.
+    $incident = Incident::factory()->create(['status' => IncidentStatus::Resolved]);
     $event = RecognitionEvent::factory()->create([
+        'incident_id' => $incident->id,
         'face_image_path' => 'face/old.jpg',
         'captured_at' => now()->subDays(100),
     ]);
@@ -163,4 +168,75 @@ it('respects env override for face_crop_days', function () {
     expect($event->fresh()->face_image_path)->toBeNull();
     expect(Storage::disk('fras_events')->exists('face/override.jpg'))->toBeFalse();
     expect(FrasPurgeRun::latest('started_at')->first()->face_crops_purged)->toBe(1);
+});
+
+it('row-deletes unpromoted recognition events past retention window', function () {
+    $event = RecognitionEvent::factory()->create([
+        'incident_id' => null,
+        'captured_at' => now()->subDays(100),
+    ]);
+
+    Artisan::call('fras:purge-expired');
+
+    expect(RecognitionEvent::find($event->id))->toBeNull();
+    expect(FrasPurgeRun::latest('started_at')->first()->unpromoted_events_purged)->toBe(1);
+});
+
+it('keeps unpromoted recognition event younger than retention window', function () {
+    $event = RecognitionEvent::factory()->create([
+        'incident_id' => null,
+        'captured_at' => now()->subDays(89),
+    ]);
+
+    Artisan::call('fras:purge-expired');
+
+    expect(RecognitionEvent::find($event->id))->not->toBeNull();
+    expect(FrasPurgeRun::latest('started_at')->first()->unpromoted_events_purged)->toBe(0);
+});
+
+it('preserves promoted events past retention window (incident_id is set)', function () {
+    $incident = Incident::factory()->create(['status' => IncidentStatus::Resolved]);
+    $event = RecognitionEvent::factory()->create([
+        'incident_id' => $incident->id,
+        'captured_at' => now()->subDays(365),
+    ]);
+
+    Artisan::call('fras:purge-expired');
+
+    expect(RecognitionEvent::find($event->id))->not->toBeNull();
+    expect(FrasPurgeRun::latest('started_at')->first()->unpromoted_events_purged)->toBe(0);
+});
+
+it('cleans up straggler image files when row-deleting an unpromoted event', function () {
+    config(['fras.retention.unpromoted_event_days' => 30]);
+
+    $event = RecognitionEvent::factory()->create([
+        'incident_id' => null,
+        'face_image_path' => 'face/straggler.jpg',
+        'scene_image_path' => 'scene/straggler.jpg',
+        'captured_at' => now()->subDays(45),
+    ]);
+    Storage::disk('fras_events')->put('face/straggler.jpg', 'x');
+    Storage::disk('fras_events')->put('scene/straggler.jpg', 'x');
+
+    Artisan::call('fras:purge-expired');
+
+    expect(RecognitionEvent::find($event->id))->toBeNull();
+    expect(Storage::disk('fras_events')->exists('face/straggler.jpg'))->toBeFalse();
+    expect(Storage::disk('fras_events')->exists('scene/straggler.jpg'))->toBeFalse();
+});
+
+it('--dry-run counts unpromoted events but does not delete them', function () {
+    $event = RecognitionEvent::factory()->create([
+        'incident_id' => null,
+        'captured_at' => now()->subDays(120),
+    ]);
+
+    Artisan::call('fras:purge-expired', ['--dry-run' => true]);
+
+    expect(RecognitionEvent::find($event->id))->not->toBeNull();
+
+    $run = FrasPurgeRun::latest('started_at')->first();
+    expect($run->dry_run)->toBeTrue();
+    expect($run->unpromoted_events_purged)->toBe(1);
 });
