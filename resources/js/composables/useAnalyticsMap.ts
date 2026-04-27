@@ -9,7 +9,11 @@ import type { BarangayDensity, BarangayDetail } from '@/types/analytics';
 const BUTUAN_CENTER: [number, number] = [125.5406, 8.9475];
 const BUTUAN_ZOOM = 12;
 
-const LIGHT_STYLE = 'mapbox://styles/helderdene/cmmq06eqr005j01skbwodfq08';
+const BLANK_STYLE: mapboxgl.StyleSpecification = {
+    version: 8,
+    sources: {},
+    layers: [],
+};
 
 const DENSITY_COLORS: Array<[number, string]> = [
     [0, '#E8F4FD'],
@@ -248,7 +252,7 @@ export function useAnalyticsMap(
 
         map.value = new mapboxgl.Map({
             container: containerRef.value,
-            style: LIGHT_STYLE,
+            style: BLANK_STYLE,
             center: BUTUAN_CENTER,
             zoom: BUTUAN_ZOOM,
             preserveDrawingBuffer: true,
