@@ -1,0 +1,25 @@
+; /etc/supervisor/conf.d/irms-mqtt.conf
+; FRAS MQTT subscriber. Long-lived process that subscribes to mqtt/face/#
+; and routes messages to RecognitionHandler / AckHandler / HeartbeatHandler /
+; OnlineOfflineHandler. MUST run separately from Horizon (Pitfall 6 in
+; docs/operations/irms-mqtt.md): Horizon restarts must not affect this
+; long-lived MQTT connection.
+;
+; --max-time=3600 makes the listener exit cleanly every hour so Supervisor
+; can restart it with fresh code (Pitfall 7 mitigation aid). The deploy
+; script also runs `supervisorctl restart irms-mqtt:*` to pick up new code
+; immediately after deploys.
+
+[program:irms-mqtt]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/irms/current/artisan irms:mqtt-listen --max-time=3600
+autostart=true
+autorestart=unexpected
+stopwaitsecs=30
+stopsignal=TERM
+user=www-data
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/var/log/irms/mqtt.log
+stdout_logfile_maxbytes=50MB
+stdout_logfile_backups=10

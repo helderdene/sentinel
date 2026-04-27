@@ -80,6 +80,11 @@ php artisan horizon:terminate || true
 echo "==> Signaling Reverb to restart (supervisor)"
 sudo supervisorctl restart irms-reverb || true
 
+echo "==> Signaling MQTT listener to restart (supervisor)"
+# Pitfall 7: MQTT listener must restart after every deploy, otherwise it
+# keeps running against the previous release's code indefinitely.
+sudo supervisorctl restart irms-mqtt:* || true
+
 echo "==> Pruning old releases (keeping last ${KEEP_RELEASES})"
 ls -1dt "${RELEASES}"/*/ | tail -n +$((KEEP_RELEASES + 1)) | xargs -r rm -rf
 
