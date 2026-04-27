@@ -70,6 +70,15 @@ export default defineConfig({
                 // Re-evaluate in Phase 21 (Recognition bridge) if bundle
                 // splitting becomes warranted.
                 maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+                // The SW is registered from /sw.js (site root) but Vite emits
+                // build assets under /build/. Without this prefix, manifest
+                // URLs (assets/foo.js) resolve to /assets/foo.js when fetched
+                // from /sw.js and 404. Prepend /build/ so precaching points at
+                // the real asset location served by the existing /build/
+                // location block in nginx.
+                modifyURLPrefix: {
+                    '': '/build/',
+                },
             },
             devOptions: {
                 enabled: true,
