@@ -87,6 +87,22 @@ JS;
     ]);
 })->name('service-worker');
 
+// Serve the PWA web app manifest from site root. Vite emits it under
+// public/build/manifest.webmanifest; without this route the SW's precache
+// pass 404s on /manifest.webmanifest and rejects the install batch
+// (bad-precaching-response).
+Route::get('manifest.webmanifest', function () {
+    $path = public_path('build/manifest.webmanifest');
+
+    if (! file_exists($path)) {
+        abort(404);
+    }
+
+    return response()->file($path, [
+        'Content-Type' => 'application/manifest+json',
+    ]);
+})->name('web-manifest');
+
 Route::get('/', function () {
     return redirect()->route('login');
 })->name('home');
