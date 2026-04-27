@@ -171,6 +171,19 @@ class AnalyticsController extends Controller
                 ->with('warning', 'A report of this type and period is already being generated.');
         }
 
+        $title = $type === 'quarterly'
+            ? 'Quarterly Performance Report - '.str_replace('-', ' ', $period)
+            : 'Annual Statistical Summary - '.$period;
+
+        GeneratedReport::create([
+            'type' => $type,
+            'title' => $title,
+            'period' => $period,
+            'file_path' => '',
+            'status' => 'generating',
+            'generated_by' => $userId,
+        ]);
+
         match ($type) {
             'quarterly' => GenerateQuarterlyReport::dispatch($period, $userId),
             'annual' => GenerateAnnualReport::dispatch((int) $period, $userId),

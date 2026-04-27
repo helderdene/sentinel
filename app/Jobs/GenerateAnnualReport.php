@@ -46,14 +46,18 @@ class GenerateAnnualReport implements ShouldQueue
             return;
         }
 
-        $report = GeneratedReport::create([
-            'type' => 'annual',
-            'title' => 'Annual Statistical Summary - '.$this->year,
-            'period' => $period,
-            'file_path' => '',
-            'status' => 'generating',
-            'generated_by' => $this->userId,
-        ]);
+        $report = GeneratedReport::firstOrCreate(
+            [
+                'type' => 'annual',
+                'period' => $period,
+                'status' => 'generating',
+            ],
+            [
+                'title' => 'Annual Statistical Summary - '.$this->year,
+                'file_path' => '',
+                'generated_by' => $this->userId,
+            ],
+        );
 
         try {
             $startDate = CarbonImmutable::create($this->year, 1, 1)->startOfDay();

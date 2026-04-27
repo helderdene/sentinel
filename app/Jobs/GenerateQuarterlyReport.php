@@ -44,14 +44,18 @@ class GenerateQuarterlyReport implements ShouldQueue
             return;
         }
 
-        $report = GeneratedReport::create([
-            'type' => 'quarterly',
-            'title' => 'Quarterly Performance Report - '.str_replace('-', ' ', $this->period),
-            'period' => $this->period,
-            'file_path' => '',
-            'status' => 'generating',
-            'generated_by' => $this->userId,
-        ]);
+        $report = GeneratedReport::firstOrCreate(
+            [
+                'type' => 'quarterly',
+                'period' => $this->period,
+                'status' => 'generating',
+            ],
+            [
+                'title' => 'Quarterly Performance Report - '.str_replace('-', ' ', $this->period),
+                'file_path' => '',
+                'generated_by' => $this->userId,
+            ],
+        );
 
         try {
             // Parse period: Q1-2026 -> quarter 1, year 2026
