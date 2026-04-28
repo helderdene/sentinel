@@ -431,7 +431,10 @@ export function useDispatchMap(
         });
 
         // --- Camera body (symbol: camera-online/degraded/offline icon) ---
-        // Phase 21: icon-size scales up during pulse (feature-state 'pulsing').
+        // icon-size MUST be a constant: Mapbox rejects feature-state in layout
+        // properties (entire layer drops if it's a case expression). The pulse
+        // visual is carried by the camera-halo paint props (circle-radius +
+        // circle-opacity case on feature-state 'pulsing'), which IS valid.
         map.value.addLayer({
             id: 'camera-body',
             type: 'symbol',
@@ -442,12 +445,7 @@ export function useDispatchMap(
                     'camera-',
                     ['get', 'status'],
                 ] as unknown as ExpressionSpecification,
-                'icon-size': [
-                    'case',
-                    ['boolean', ['feature-state', 'pulsing'], false],
-                    0.88,
-                    0.55,
-                ] as unknown as ExpressionSpecification,
+                'icon-size': 0.55,
                 'icon-allow-overlap': true,
                 'icon-ignore-placement': true,
                 'icon-anchor': 'center',
