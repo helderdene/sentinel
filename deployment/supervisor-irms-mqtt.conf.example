@@ -14,7 +14,10 @@
 process_name=%(program_name)s_%(process_num)02d
 command=php /var/www/irms/current/artisan irms:mqtt-listen --max-time=3600
 autostart=true
-autorestart=unexpected
+; The listener exits cleanly with code 0 every hour via --max-time=3600.
+; Use `true` (not `unexpected`) so supervisor revives it after that planned
+; exit; `unexpected` treats code 0 as "expected" and leaves it dead.
+autorestart=true
 stopwaitsecs=30
 stopsignal=TERM
 user=www-data
